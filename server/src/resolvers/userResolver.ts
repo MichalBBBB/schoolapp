@@ -33,6 +33,7 @@ class UserResponse {
 
 @Resolver(User)
 export class userResolver {
+  // Login mutation
   @Mutation(() => UserResponse)
   async login(
     @Arg("email") email: string,
@@ -40,6 +41,7 @@ export class userResolver {
     @Ctx() { res }: MyContext
   ): Promise<UserResponse> {
     const user = await User.findOne({ where: { email } });
+    // Check if user exists
     if (!user) {
       return {
         errors: [
@@ -47,13 +49,14 @@ export class userResolver {
         ],
       };
     }
+    // Verify password
     const valid = argon2.verify(user.password, password);
     if (!valid) {
       return {
         errors: [{ field: "password", message: "Incorrect password" }],
       };
     }
-
+    // Send refresh token cookie
     sendRefreshToken(res, createRefreshToken(user));
 
     return {
@@ -62,6 +65,7 @@ export class userResolver {
     };
   }
 
+  // Register mutation
   @Mutation(() => UserResponse)
   async register(
     @Arg("email") email: string,
@@ -75,7 +79,9 @@ export class userResolver {
         errors,
       };
     }
+
     const hashedPassword = await argon2.hash(password);
+
     let user;
 
     try {
@@ -86,8 +92,10 @@ export class userResolver {
         .values({ email, password: hashedPassword, fullName: name })
         .returning("*")
         .execute();
+
       user = result.raw[0];
     } catch (err) {
+      // Catch postgres error about broken unique contstraint on email
       if (err.code === "23505") {
         return {
           errors: [
@@ -99,6 +107,7 @@ export class userResolver {
         };
       }
     }
+    // Send refresh token cookie
     sendRefreshToken(res, createRefreshToken(user));
     return {
       user,

@@ -1,5 +1,7 @@
 import { UserError } from "../resolvers/userResolver";
 
+// TODO - fix validation
+
 export const validateRegister = (
   email: string,
   password: string
