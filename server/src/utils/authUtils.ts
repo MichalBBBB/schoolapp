@@ -29,3 +29,7 @@ export interface RefreshTokenPayload {
   userId: string;
   tokenVersion: number;
 }
+
+export interface AccesTokenPayload {
+  userId: string;
+}

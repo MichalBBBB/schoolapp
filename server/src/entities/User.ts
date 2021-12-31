@@ -4,9 +4,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Task } from "./Task";
 
 @Entity()
 @ObjectType()
@@ -36,6 +38,9 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   @Field({ nullable: true })
   imageURL: string;
+
+  @OneToMany(() => Task, (task) => task.user)
+  tasks: Task[];
 
   @CreateDateColumn()
   @Field()

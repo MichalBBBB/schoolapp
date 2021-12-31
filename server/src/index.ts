@@ -20,6 +20,7 @@ import {
 import { Task } from "./entities/Task";
 import { userResolver } from "./resolvers/userResolver";
 import cookieParser from "cookie-parser";
+import { taskResolver } from "./resolvers/taskResolver";
 
 const main = async () => {
   // Initialize typeorm connection
@@ -80,7 +81,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, userResolver],
+      resolvers: [HelloResolver, userResolver, taskResolver],
     }),
     plugins: [
       __prod__
