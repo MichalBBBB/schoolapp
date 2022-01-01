@@ -5,9 +5,11 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Subtask } from "./Subtask";
 import { User } from "./User";
 
 @Entity()
@@ -36,6 +38,10 @@ export class Task extends BaseEntity {
   @Column({ default: false })
   @Field()
   done: boolean;
+
+  @OneToMany(() => Subtask, (subtask) => subtask.task)
+  @Field(() => [Subtask])
+  subtasks: Subtask[];
 
   @CreateDateColumn()
   @Field()

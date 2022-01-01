@@ -21,6 +21,7 @@ import { Task } from "./entities/Task";
 import { userResolver } from "./resolvers/userResolver";
 import cookieParser from "cookie-parser";
 import { taskResolver } from "./resolvers/taskResolver";
+import { Subtask } from "./entities/Subtask";
 
 const main = async () => {
   // Initialize typeorm connection
@@ -31,9 +32,10 @@ const main = async () => {
     database: "schoolapp",
     logging: true,
     synchronize: true,
-    entities: [User, Task],
+    entities: [User, Task, Subtask],
   });
   //User.delete({});
+  //Task.delete({});
 
   const app = express();
 

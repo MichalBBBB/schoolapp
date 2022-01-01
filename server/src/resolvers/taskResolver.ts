@@ -4,12 +4,26 @@ import { MyContext } from "../utils/MyContext";
 import {
   Arg,
   Ctx,
+  Field,
+  FieldResolver,
   Mutation,
+  ObjectType,
   Query,
   Resolver,
+  Root,
   UseMiddleware,
 } from "type-graphql";
 import { getConnection } from "typeorm";
+import { Subtask } from "../entities/Subtask";
+
+@ObjectType()
+class SignleTaskResponse {
+  @Field(() => Task, { nullable: true })
+  task?: Task;
+
+  @Field(() => String, { nullable: true })
+  errors?: String[];
+}
 
 @Resolver(Task)
 export class taskResolver {
@@ -17,6 +31,16 @@ export class taskResolver {
   @Query(() => [Task])
   getAllTasks() {
     return Task.find();
+  }
+
+  @FieldResolver()
+  async subtasks(@Root() root: Task) {
+    const result = await Subtask.createQueryBuilder("subtask")
+      .select()
+      .where("subtask.taskId = :taskId", { taskId: root.id })
+      .getMany();
+    console.log(result);
+    return result;
   }
 
   @Mutation(() => Task)
@@ -58,5 +82,30 @@ export class taskResolver {
     }
 
     return true;
+  }
+
+  @Mutation(() => SignleTaskResponse)
+  @UseMiddleware(isAuth)
+  async toggleTask(
+    @Ctx() { payload }: MyContext,
+    @Arg("id") id: string
+  ): Promise<SignleTaskResponse> {
+    const task = await Task.findOne(id);
+    if (task?.userId === payload?.userId && task) {
+      const newValue = !task.done;
+      const updateResult = await Task.createQueryBuilder()
+        .update()
+        .set({ done: newValue })
+        .where("id = :id", { id })
+        .returning("*")
+        .execute();
+      return {
+        task: updateResult.raw[0],
+      };
+    } else {
+      return {
+        errors: ["something went wrong"],
+      };
+    }
   }
 }
