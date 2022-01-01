@@ -22,6 +22,8 @@ import { userResolver } from "./resolvers/userResolver";
 import cookieParser from "cookie-parser";
 import { taskResolver } from "./resolvers/taskResolver";
 import { Subtask } from "./entities/Subtask";
+import { Subject } from "./entities/Subject";
+import { subtaskResolver } from "./resolvers/subtaskResolver";
 
 const main = async () => {
   // Initialize typeorm connection
@@ -32,7 +34,7 @@ const main = async () => {
     database: "schoolapp",
     logging: true,
     synchronize: true,
-    entities: [User, Task, Subtask],
+    entities: [User, Task, Subtask, Subject],
   });
   //User.delete({});
   //Task.delete({});
@@ -83,7 +85,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, userResolver, taskResolver],
+      resolvers: [HelloResolver, userResolver, taskResolver, subtaskResolver],
     }),
     plugins: [
       __prod__

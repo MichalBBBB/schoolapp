@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Subject } from "./Subject";
 import { Subtask } from "./Subtask";
 import { User } from "./User";
 
@@ -42,6 +43,14 @@ export class Task extends BaseEntity {
   @OneToMany(() => Subtask, (subtask) => subtask.task)
   @Field(() => [Subtask])
   subtasks: Subtask[];
+
+  @ManyToOne(() => Subject, (subject) => subject.tasks, { nullable: true })
+  @Field({ nullable: true })
+  subject: Subject;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  subjectId: string;
 
   @CreateDateColumn()
   @Field()

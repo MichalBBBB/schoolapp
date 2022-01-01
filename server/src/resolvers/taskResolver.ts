@@ -15,6 +15,32 @@ import {
 } from "type-graphql";
 import { getConnection } from "typeorm";
 import { Subtask } from "../entities/Subtask";
+import { Subject } from "../entities/Subject";
+import DataLoader from "dataloader";
+
+const subjectLoader = new DataLoader((keys) => loadSubjects(keys as [string]), {
+  cache: false,
+});
+
+const loadSubjects = async (keys: [string]) => {
+  const result = await Subject.createQueryBuilder("subject")
+    .select()
+    .where("subject.id IN (:...ids)", { ids: keys })
+    .getMany();
+  return keys.map((key) => result.find((subject) => subject.id === key));
+};
+
+const subtaskLoader = new DataLoader((keys) => loadSubtasks(keys as [string]), {
+  cache: false,
+});
+
+const loadSubtasks = async (keys: [string]) => {
+  const result = await Subtask.createQueryBuilder("subtask")
+    .select()
+    .where("subtask.taskId IN (:...ids)", { ids: keys })
+    .getMany();
+  return keys.map((key) => result.filter((subtask) => subtask.taskId === key));
+};
 
 @ObjectType()
 class SignleTaskResponse {
@@ -35,22 +61,26 @@ export class taskResolver {
 
   @FieldResolver()
   async subtasks(@Root() root: Task) {
-    const result = await Subtask.createQueryBuilder("subtask")
-      .select()
-      .where("subtask.taskId = :taskId", { taskId: root.id })
-      .getMany();
-    console.log(result);
-    return result;
+    return subtaskLoader.load(root.id);
+  }
+
+  @FieldResolver()
+  async subject(@Root() root: Task) {
+    return subjectLoader.load(root.subjectId);
   }
 
   @Mutation(() => Task)
   @UseMiddleware(isAuth)
-  async createTask(@Arg("name") name: string, @Ctx() { payload }: MyContext) {
+  async createTask(
+    @Arg("name") name: string,
+    @Arg("subjectId", { nullable: true }) subjectId: string,
+    @Ctx() { payload }: MyContext
+  ) {
     const result = await getConnection()
       .createQueryBuilder()
       .insert()
       .into(Task)
-      .values({ name, userId: payload?.userId })
+      .values({ name, userId: payload?.userId, subjectId })
       .returning("*")
       .execute();
     return result.raw[0];
