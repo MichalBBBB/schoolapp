@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Subject } from "../entities/Subject";
 import { Task } from "./Task";
 
 @Entity()
@@ -41,6 +42,10 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Task, (task) => task.user)
   tasks: Task[];
+
+  @Field(() => [Subject])
+  @OneToMany(() => Subject, (subject) => subject.user)
+  subjects: Subject[];
 
   @CreateDateColumn()
   @Field()

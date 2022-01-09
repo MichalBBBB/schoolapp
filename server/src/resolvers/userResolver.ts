@@ -1,5 +1,13 @@
 import { User } from "../entities/User";
-import { Arg, Ctx, Field, Mutation, ObjectType, Resolver } from "type-graphql";
+import {
+  Arg,
+  createUnionType,
+  Ctx,
+  Field,
+  Mutation,
+  ObjectType,
+  Resolver,
+} from "type-graphql";
 import argon2 from "argon2";
 import {
   createAccesToken,
@@ -13,17 +21,20 @@ import { getConnection } from "typeorm";
 @ObjectType()
 export class UserError {
   @Field({ nullable: true })
-  field?: string;
+  field?: "email" | "password";
 
   @Field()
   message: string;
 }
 
 @ObjectType()
-class UserResponse {
-  @Field(() => [UserError], { nullable: true })
-  errors?: UserError[];
+class UserFail {
+  @Field(() => [UserError])
+  errors: UserError[];
+}
 
+@ObjectType()
+class UserSucces {
   @Field(() => User, { nullable: true })
   user?: User;
 
@@ -31,15 +42,39 @@ class UserResponse {
   accesToken?: string;
 }
 
+const RegisterUnion = createUnionType({
+  name: "RegisterResponse",
+  types: () => [UserSucces, UserFail] as const,
+  resolveType: (value) => {
+    if ("user" in value) {
+      return UserSucces;
+    } else {
+      return UserFail;
+    }
+  },
+});
+
+const LoginUnion = createUnionType({
+  name: "LoginResponse",
+  types: () => [UserSucces, UserFail] as const,
+  resolveType: (value) => {
+    if ("user" in value) {
+      return UserSucces;
+    } else {
+      return UserFail;
+    }
+  },
+});
+
 @Resolver(User)
 export class userResolver {
   // Login mutation
-  @Mutation(() => UserResponse)
+  @Mutation(() => LoginUnion)
   async login(
     @Arg("email") email: string,
     @Arg("password") password: string,
     @Ctx() { res }: MyContext
-  ): Promise<UserResponse> {
+  ): Promise<typeof LoginUnion> {
     const user = await User.findOne({ where: { email } });
     // Check if user exists
     if (!user) {
@@ -50,11 +85,10 @@ export class userResolver {
       };
     }
     // Verify password
-    const valid = argon2.verify(user.password, password);
+    const valid = await argon2.verify(user.password, password);
+    console.log(valid);
     if (!valid) {
-      return {
-        errors: [{ field: "password", message: "Incorrect password" }],
-      };
+      return { errors: [{ field: "password", message: "Incorrect password" }] };
     }
     // Send refresh token cookie
     sendRefreshToken(res, createRefreshToken(user));
@@ -66,13 +100,13 @@ export class userResolver {
   }
 
   // Register mutation
-  @Mutation(() => UserResponse)
+  @Mutation(() => RegisterUnion)
   async register(
     @Arg("email") email: string,
     @Arg("password") password: string,
     @Arg("name") name: string,
     @Ctx() { res }: MyContext
-  ): Promise<UserResponse> {
+  ): Promise<typeof RegisterUnion> {
     const errors = validateRegister(email, password);
     if (errors) {
       return {

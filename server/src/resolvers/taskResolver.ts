@@ -3,6 +3,7 @@ import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../utils/MyContext";
 import {
   Arg,
+  createUnionType,
   Ctx,
   Field,
   FieldResolver,
@@ -43,13 +44,22 @@ const loadSubtasks = async (keys: [string]) => {
 };
 
 @ObjectType()
-class SignleTaskResponse {
-  @Field(() => Task, { nullable: true })
-  task?: Task;
-
-  @Field(() => String, { nullable: true })
-  errors?: String[];
+export class TaskFail {
+  @Field(() => [String])
+  errors: string[];
 }
+
+const TaskUnion = createUnionType({
+  name: "TaskResponse",
+  types: () => [Task, TaskFail] as const,
+  resolveType: (value) => {
+    if ("errors" in value) {
+      return TaskFail;
+    } else {
+      return Task;
+    }
+  },
+});
 
 @Resolver(Task)
 export class taskResolver {
@@ -110,16 +120,15 @@ export class taskResolver {
     } else {
       return false;
     }
-
     return true;
   }
 
-  @Mutation(() => SignleTaskResponse)
+  @Mutation(() => TaskUnion)
   @UseMiddleware(isAuth)
   async toggleTask(
     @Ctx() { payload }: MyContext,
     @Arg("id") id: string
-  ): Promise<SignleTaskResponse> {
+  ): Promise<typeof TaskUnion> {
     const task = await Task.findOne(id);
     if (task?.userId === payload?.userId && task) {
       const newValue = !task.done;
@@ -129,9 +138,7 @@ export class taskResolver {
         .where("id = :id", { id })
         .returning("*")
         .execute();
-      return {
-        task: updateResult.raw[0],
-      };
+      return updateResult.raw[0];
     } else {
       return {
         errors: ["something went wrong"],

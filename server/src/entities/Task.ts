@@ -28,7 +28,9 @@ export class Task extends BaseEntity {
   @Field({ nullable: true })
   dueDate: Date;
 
-  @ManyToOne(() => User, (user) => user.tasks)
+  @ManyToOne(() => User, (user) => user.tasks, {
+    onDelete: "CASCADE",
+  })
   @Field(() => User)
   user: User;
 
@@ -45,7 +47,7 @@ export class Task extends BaseEntity {
   subtasks: Subtask[];
 
   @ManyToOne(() => Subject, (subject) => subject.tasks, { nullable: true })
-  @Field({ nullable: true })
+  @Field(() => Subject, { nullable: true })
   subject: Subject;
 
   @Column({ nullable: true })

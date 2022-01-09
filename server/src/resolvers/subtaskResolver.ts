@@ -4,38 +4,81 @@ import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../utils/MyContext";
 import {
   Arg,
+  createUnionType,
   Ctx,
+  Field,
   Mutation,
+  ObjectType,
   Query,
   Resolver,
   UseMiddleware,
 } from "type-graphql";
 
+@ObjectType()
+class SubTaskFail {
+  @Field(() => [String])
+  errors: string[];
+}
+
+@ObjectType()
+class ManySubtasksResponse {
+  @Field(() => [Subtask])
+  tasks: Subtask[];
+}
+
+const ManySubtasksUnion = createUnionType({
+  name: "ManySubtaskResponse",
+  types: () => [ManySubtasksResponse, SubTaskFail] as const,
+  resolveType: (value) => {
+    if ("errors" in value) {
+      return SubTaskFail;
+    } else {
+      return ManySubtasksResponse;
+    }
+  },
+});
+
+const SingleSubtaskUnion = createUnionType({
+  name: "SingleSubtaskResponse",
+  types: () => [Subtask, SubTaskFail] as const,
+  resolveType: (value) => {
+    if ("errors" in value) {
+      return SubTaskFail;
+    } else {
+      return Subtask;
+    }
+  },
+});
+
 @Resolver(Subtask)
 export class subtaskResolver {
-  @Query(() => [Subtask])
+  @Query(() => ManySubtasksUnion)
   @UseMiddleware(isAuth)
   async getAllSubtasksOfTask(
     @Ctx() { payload }: MyContext,
     @Arg("id") id: string
-  ) {
+  ): Promise<typeof ManySubtasksUnion> {
     const task = await Task.findOne(id);
     if (task?.userId === payload?.userId) {
-      return Subtask.createQueryBuilder("subtask")
+      const tasks = await Subtask.createQueryBuilder("subtask")
         .select()
         .where("subtask.taskId = :id", { id })
         .getMany();
+      return {
+        tasks,
+      };
+    } else {
+      return { errors: ["You are not authorized for this action"] };
     }
-    throw new Error("you don't have permission for this action");
   }
 
-  @Mutation(() => Subtask)
+  @Mutation(() => SingleSubtaskUnion)
   @UseMiddleware(isAuth)
   async createSubtask(
     @Arg("name") name: string,
     @Arg("taskId") taskId: string,
     @Ctx() { payload }: MyContext
-  ): Promise<Subtask> {
+  ): Promise<typeof SingleSubtaskUnion> {
     const task = await Task.findOne({ where: { id: taskId } });
     if (task?.userId == payload?.userId) {
       const result = await Subtask.createQueryBuilder()
@@ -46,15 +89,15 @@ export class subtaskResolver {
 
       return result.raw[0];
     }
-    throw new Error("you don't have permission for this action");
+    return { errors: ["Your are not authorized for this action"] };
   }
 
-  @Mutation(() => Subtask)
+  @Mutation(() => SingleSubtaskUnion)
   @UseMiddleware(isAuth)
   async toggleTask(
     @Ctx() { payload }: MyContext,
     @Arg("id") id: string
-  ): Promise<Subtask> {
+  ): Promise<typeof SingleSubtaskUnion> {
     const task = await Task.findOne(id);
     if (task?.userId === payload?.userId && task) {
       const newValue = !task.done;
@@ -66,7 +109,9 @@ export class subtaskResolver {
         .execute();
       return updateResult.raw[0];
     }
-    throw new Error("you don't have permission for this action");
+    return {
+      errors: ["Your are not authorized for this action"],
+    };
   }
 
   @Mutation(() => Boolean)
@@ -81,8 +126,8 @@ export class subtaskResolver {
           .where("subtask.id = :id", { id });
         return true;
       }
-      throw new Error("you don't have permission for this action");
+      return false;
     }
-    throw new Error("this subtask does not exist");
+    return false;
   }
 }
