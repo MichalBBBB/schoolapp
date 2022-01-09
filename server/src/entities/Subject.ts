@@ -24,6 +24,6 @@ export class Subject extends BaseEntity {
   @OneToMany(() => Task, (task) => task.subject, { nullable: true })
   tasks: Task[];
 
-  @ManyToOne(() => User, (user) => user.subjects)
+  @ManyToOne(() => User, (user) => user.subjects, { onDelete: "CASCADE" })
   user: User;
 }

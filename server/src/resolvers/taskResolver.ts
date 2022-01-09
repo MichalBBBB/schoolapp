@@ -22,12 +22,13 @@ import DataLoader from "dataloader";
 const subjectLoader = new DataLoader((keys) => loadSubjects(keys as [string]), {
   cache: false,
 });
-
+// loading subjects for all tasks at once
 const loadSubjects = async (keys: [string]) => {
   const result = await Subject.createQueryBuilder("subject")
     .select()
     .where("subject.id IN (:...ids)", { ids: keys })
     .getMany();
+  // mapping loaded subjects to task ids
   return keys.map((key) => result.find((subject) => subject.id === key));
 };
 
@@ -35,11 +36,13 @@ const subtaskLoader = new DataLoader((keys) => loadSubtasks(keys as [string]), {
   cache: false,
 });
 
+// loading subtasks for all tasks at once
 const loadSubtasks = async (keys: [string]) => {
   const result = await Subtask.createQueryBuilder("subtask")
     .select()
     .where("subtask.taskId IN (:...ids)", { ids: keys })
     .getMany();
+  // mapping loaded subtasks to task ids
   return keys.map((key) => result.filter((subtask) => subtask.taskId === key));
 };
 
@@ -109,6 +112,7 @@ export class taskResolver {
   @UseMiddleware(isAuth)
   async deleteTask(@Ctx() { payload }: MyContext, @Arg("id") id: string) {
     const task = await Task.findOne(id);
+    // check if tasks user is the same as currenct user
     if (task?.userId == payload?.userId) {
       Task.createQueryBuilder()
         .delete()
@@ -130,6 +134,7 @@ export class taskResolver {
     @Arg("id") id: string
   ): Promise<typeof TaskUnion> {
     const task = await Task.findOne(id);
+    // check if tasks user is the same as currenct user and task exists
     if (task?.userId === payload?.userId && task) {
       const newValue = !task.done;
       const updateResult = await Task.createQueryBuilder()

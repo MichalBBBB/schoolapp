@@ -25,7 +25,7 @@ class ManySubtasksResponse {
   @Field(() => [Subtask])
   tasks: Subtask[];
 }
-
+// create a return type for a many task reponse that can result in an error
 const ManySubtasksUnion = createUnionType({
   name: "ManySubtaskResponse",
   types: () => [ManySubtasksResponse, SubTaskFail] as const,
@@ -37,7 +37,7 @@ const ManySubtasksUnion = createUnionType({
     }
   },
 });
-
+// create a return type for a single task reponse that can result in an error
 const SingleSubtaskUnion = createUnionType({
   name: "SingleSubtaskResponse",
   types: () => [Subtask, SubTaskFail] as const,
@@ -59,6 +59,7 @@ export class subtaskResolver {
     @Arg("id") id: string
   ): Promise<typeof ManySubtasksUnion> {
     const task = await Task.findOne(id);
+    //check if tasks user is same as current user
     if (task?.userId === payload?.userId) {
       const tasks = await Subtask.createQueryBuilder("subtask")
         .select()
@@ -80,6 +81,7 @@ export class subtaskResolver {
     @Ctx() { payload }: MyContext
   ): Promise<typeof SingleSubtaskUnion> {
     const task = await Task.findOne({ where: { id: taskId } });
+    // check if tasks user is same as current user
     if (task?.userId == payload?.userId) {
       const result = await Subtask.createQueryBuilder()
         .insert()
@@ -99,6 +101,7 @@ export class subtaskResolver {
     @Arg("id") id: string
   ): Promise<typeof SingleSubtaskUnion> {
     const task = await Task.findOne(id);
+    // check if tasks user is the same as currenct user and task exists
     if (task?.userId === payload?.userId && task) {
       const newValue = !task.done;
       const updateResult = await Task.createQueryBuilder()
@@ -120,6 +123,7 @@ export class subtaskResolver {
     const subtask = await Subtask.findOne(id);
     if (subtask) {
       const task = await Task.findOne(subtask.taskId);
+      // check if task exists and tasks user is same as current user
       if (task && task.userId == payload?.userId) {
         Subtask.createQueryBuilder("subtask")
           .delete()
