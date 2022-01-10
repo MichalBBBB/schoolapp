@@ -4,9 +4,13 @@ import {
   createUnionType,
   Ctx,
   Field,
+  FieldResolver,
   Mutation,
   ObjectType,
+  Query,
   Resolver,
+  Root,
+  UseMiddleware,
 } from "type-graphql";
 import argon2 from "argon2";
 import {
@@ -17,6 +21,9 @@ import {
 import { MyContext } from "../utils/MyContext";
 import { validateRegister } from "../utils/validateRegister";
 import { getConnection } from "typeorm";
+import { isAuth } from "../middleware/isAuth";
+import { Task } from "../entities/Task";
+import { Subject } from "../entities/Subject";
 
 @ObjectType()
 export class UserError {
@@ -68,6 +75,29 @@ const LoginUnion = createUnionType({
 
 @Resolver(User)
 export class userResolver {
+  @Query(() => User)
+  @UseMiddleware(isAuth)
+  me(@Ctx() { payload }: MyContext) {
+    return User.createQueryBuilder("user")
+      .select()
+      .where("user.id = :id", { id: payload?.userId })
+      .getOne();
+  }
+
+  @FieldResolver()
+  async subjects(@Root() root: User) {
+    return Subject.createQueryBuilder("subject")
+      .where("subject.userId = :id", { id: root.id })
+      .getMany();
+  }
+
+  @FieldResolver()
+  async tasks(@Root() root: User) {
+    return Task.createQueryBuilder("task")
+      .select()
+      .where("task.userId = :id", { id: root.id })
+      .getMany();
+  }
   // Login mutation
   @Mutation(() => LoginUnion)
   async login(

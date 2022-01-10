@@ -24,6 +24,7 @@ import { taskResolver } from "./resolvers/taskResolver";
 import { Subtask } from "./entities/Subtask";
 import { Subject } from "./entities/Subject";
 import { subtaskResolver } from "./resolvers/subtaskResolver";
+import { subjectResolver } from "./resolvers/subjectResolver";
 
 const main = async () => {
   // Initialize typeorm connection
@@ -85,7 +86,13 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, userResolver, taskResolver, subtaskResolver],
+      resolvers: [
+        HelloResolver,
+        userResolver,
+        taskResolver,
+        subtaskResolver,
+        subjectResolver,
+      ],
     }),
     plugins: [
       __prod__

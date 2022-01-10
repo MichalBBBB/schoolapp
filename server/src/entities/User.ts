@@ -40,6 +40,7 @@ export class User extends BaseEntity {
   @Field({ nullable: true })
   imageURL: string;
 
+  @Field(() => [Task])
   @OneToMany(() => Task, (task) => task.user)
   tasks: Task[];
 

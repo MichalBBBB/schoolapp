@@ -74,12 +74,17 @@ export class taskResolver {
 
   @FieldResolver()
   async subtasks(@Root() root: Task) {
+    console.log("taskid", root.id);
     return subtaskLoader.load(root.id);
   }
 
   @FieldResolver()
   async subject(@Root() root: Task) {
-    return subjectLoader.load(root.subjectId);
+    if (root.subjectId) {
+      return subjectLoader.load(root.subjectId);
+    } else {
+      return null;
+    }
   }
 
   @Mutation(() => Task)

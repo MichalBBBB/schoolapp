@@ -26,4 +26,7 @@ export class Subject extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.subjects, { onDelete: "CASCADE" })
   user: User;
+
+  @Column()
+  userId: string;
 }
