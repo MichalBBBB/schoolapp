@@ -155,4 +155,26 @@ export class taskResolver {
       };
     }
   }
+
+  @Mutation(() => Task)
+  @UseMiddleware(isAuth)
+  async changeSubjectOfTask(
+    @Ctx() { payload }: MyContext,
+    @Arg("subjectId") subjectId: string,
+    @Arg("taskId") taskId: string
+  ) {
+    const result = await Task.createQueryBuilder("task")
+      .update()
+      .set({ subjectId })
+      .where('task.id = :taskId and task."userId" = :userId', {
+        taskId,
+        userId: payload?.userId,
+      })
+      .returning("*")
+      .execute();
+    if (result.raw.length == 0) {
+      throw new Error("you are not authorized for this action");
+    }
+    return result.raw[0];
+  }
 }

@@ -72,7 +72,7 @@ const main = async () => {
         });
       }
       // Checking whether version of token is equal to latest version of token for the user
-      // If tokenVersion version of user is higher, it was manually changed to revoke acces
+      // If tokenVersion version of user is higher, it was manually changed to revoke acces from existing refresh tokens
       if (user.tokenVersion !== payload.tokenVersion) {
         return res.send({ ok: false, accesToken: "" });
       }

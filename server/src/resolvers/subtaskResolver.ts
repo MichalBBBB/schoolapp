@@ -25,7 +25,7 @@ class ManySubtasksResponse {
   @Field(() => [Subtask])
   tasks: Subtask[];
 }
-// create a return type for a many task reponse that can result in an error
+// create a return type for a many-task reponse that can result in an error
 const ManySubtasksUnion = createUnionType({
   name: "ManySubtaskResponse",
   types: () => [ManySubtasksResponse, SubTaskFail] as const,
@@ -37,7 +37,7 @@ const ManySubtasksUnion = createUnionType({
     }
   },
 });
-// create a return type for a single task reponse that can result in an error
+// create a return type for a single-task reponse that can result in an error
 const SingleSubtaskUnion = createUnionType({
   name: "SingleSubtaskResponse",
   types: () => [Subtask, SubTaskFail] as const,
