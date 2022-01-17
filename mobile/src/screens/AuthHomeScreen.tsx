@@ -10,12 +10,7 @@ const AuthHomeScreen: React.FC<
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <View style={styles.loginButton}>
-          <Text>Login</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-        <View style={styles.registerButton}>
-          <Text>Register</Text>
+          <Text>Email Login</Text>
         </View>
       </TouchableOpacity>
     </View>

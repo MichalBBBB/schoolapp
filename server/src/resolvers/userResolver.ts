@@ -42,11 +42,11 @@ class UserFail {
 
 @ObjectType()
 class UserSucces {
-  @Field(() => User, { nullable: true })
-  user?: User;
+  @Field(() => User)
+  user: User;
 
-  @Field({ nullable: true })
-  accesToken?: string;
+  @Field()
+  accesToken: string;
 }
 
 const RegisterUnion = createUnionType({
@@ -177,5 +177,15 @@ export class userResolver {
       user,
       accesToken: createAccesToken(user),
     };
+  }
+
+  @Query(() => Boolean)
+  async userExists(@Arg("email") email: string) {
+    const user = await User.findOne({ where: { email } });
+    if (user) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

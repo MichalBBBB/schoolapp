@@ -4,13 +4,12 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {isLoggedInVar} from './App';
 import HomeStack from './routes/HomeStack';
-import AuthHomeScreen from './screens/AuthHomeScreen';
-import LoginScreen from './screens/LoginScreen';
-import RegisterScreen from './screens/RegisterScreen';
 import AuthStack from './routes/AuthStack';
+import {useReactiveVar} from '@apollo/client';
 
 const Routes = () => {
   let screens;
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   const Tab = createBottomTabNavigator();
   screens = (
@@ -21,7 +20,7 @@ const Routes = () => {
 
   return (
     <NavigationContainer>
-      {isLoggedInVar() ? screens : <AuthStack />}
+      {isLoggedIn ? screens : <AuthStack />}
     </NavigationContainer>
   );
 };

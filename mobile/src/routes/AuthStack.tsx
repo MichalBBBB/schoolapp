@@ -1,20 +1,15 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
+import {Text, View} from 'react-native';
 import AuthHomeScreen from '../screens/AuthHomeScreen';
-import LoginScreen from '../screens/LoginScreen';
-import RegisterScreen from '../screens/RegisterScreen';
+import EmailLoginScreen from '../screens/EmailLoginScreen';
 
 const AuthStack = () => {
   const Stack = createNativeStackNavigator();
   return (
     <Stack.Navigator>
-      <Stack.Screen
-        name="AuthHome"
-        component={AuthHomeScreen}
-        options={{header: () => null}}
-      />
-      <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="AuthHome" component={AuthHomeScreen} />
+      <Stack.Screen name="Login" component={EmailLoginScreen} />
     </Stack.Navigator>
   );
 };

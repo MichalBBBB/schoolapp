@@ -1,0 +1,18 @@
+mutation Register($email: String!, $password: String!, $name: String!) {
+  register(email: $email, password: $password, name: $name) {
+    ... on UserSucces {
+      accesToken
+      user {
+        id
+        email
+        fullName
+      }
+    }
+    ... on UserFail {
+      errors {
+        field
+        message
+      }
+    }
+  }
+}
