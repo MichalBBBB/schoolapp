@@ -14,14 +14,12 @@ import {
   useUserExistsLazyQuery,
   useUserExistsQuery,
 } from '../generated/graphql';
-import {setAccesToken} from '../utils/AccesToken';
+import {getAccesToken, setAccesToken} from '../utils/AccesToken';
 const EmailLoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordControl, setPasswordControl] = useState('');
   const [fullName, setFullName] = useState('');
-  const [shouldRegister, setShouldRegister] = useState(false);
-  const [emailEntered, setEmailEntered] = useState(false);
   const [loginMutation] = useLoginMutation();
   const [registerMutation] = useRegisterMutation();
   const [checkUserExists, {data: UserExistsResult}] = useUserExistsLazyQuery();
@@ -98,7 +96,7 @@ const EmailLoginScreen = () => {
           </View>
         </TouchableOpacity>
       ) : (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => register()}>
           <View>
             <Text>Register</Text>
           </View>

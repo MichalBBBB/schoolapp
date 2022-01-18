@@ -94,6 +94,7 @@ export class taskResolver {
     @Arg("subjectId", { nullable: true }) subjectId: string,
     @Ctx() { payload }: MyContext
   ) {
+    console.log(name);
     const result = await getConnection()
       .createQueryBuilder()
       .insert()

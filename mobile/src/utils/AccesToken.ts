@@ -4,6 +4,6 @@ export const getAccesToken = () => {
   return accesToken;
 };
 
-export const setAccesToken = (accesToken: string) => {
-  accesToken = accesToken;
+export const setAccesToken = (s: string) => {
+  accesToken = s;
 };
