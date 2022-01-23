@@ -2,6 +2,7 @@ import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useLayoutEffect} from 'react';
 import {Button, FlatList, StyleSheet, Text, View} from 'react-native';
+import Task from '../components/task';
 import {useGetAllTasksQuery} from '../generated/graphql';
 import {TaskStackParamList} from '../routes/TaskStack';
 
@@ -24,11 +25,7 @@ const TaskHomeScreen: React.FC<
   return (
     <FlatList
       data={data?.getAllTasks}
-      renderItem={({item, index}) => (
-        <View style={styles.task}>
-          <Text>{item.name}</Text>
-        </View>
-      )}
+      renderItem={({item, index}) => <Task name={item.name} />}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
     />
   );

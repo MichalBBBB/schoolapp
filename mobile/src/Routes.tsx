@@ -6,6 +6,7 @@ import HomeStack from './routes/HomeStack';
 import AuthStack from './routes/AuthStack';
 import {useReactiveVar} from '@apollo/client';
 import TaskStack from './routes/TaskStack';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 export type TabStackParamList = {
   HomeStack: undefined;
@@ -25,9 +26,11 @@ const Routes = () => {
   );
 
   return (
-    <NavigationContainer>
-      {isLoggedIn ? screens : <AuthStack />}
-    </NavigationContainer>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <NavigationContainer>
+        {isLoggedIn ? screens : <AuthStack />}
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 };
 
