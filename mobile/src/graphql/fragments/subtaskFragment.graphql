@@ -1,0 +1,5 @@
+fragment Subtask on Subtask {
+  name
+  id
+  taskId
+}

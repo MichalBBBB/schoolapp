@@ -1,0 +1,11 @@
+fragment Task on Task {
+  id
+  name
+  userId
+  createdAt
+  subtasks {
+    ...Subtask
+  }
+  done
+  updatedAt
+}

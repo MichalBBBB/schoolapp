@@ -1,0 +1,5 @@
+mutation CreateSubtask($taskId: String!, $name: String!) {
+  createSubtask(taskId: $taskId, name: $name) {
+    ...Subtask
+  }
+}

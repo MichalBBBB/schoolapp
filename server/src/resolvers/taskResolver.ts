@@ -3,12 +3,9 @@ import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../utils/MyContext";
 import {
   Arg,
-  createUnionType,
   Ctx,
-  Field,
   FieldResolver,
   Mutation,
-  ObjectType,
   Query,
   Resolver,
   Root,
@@ -45,24 +42,6 @@ const loadSubtasks = async (keys: [string]) => {
   // mapping loaded subtasks to task ids
   return keys.map((key) => result.filter((subtask) => subtask.taskId === key));
 };
-
-@ObjectType()
-export class TaskFail {
-  @Field(() => [String])
-  errors: string[];
-}
-
-const TaskUnion = createUnionType({
-  name: "TaskResponse",
-  types: () => [Task, TaskFail] as const,
-  resolveType: (value) => {
-    if ("errors" in value) {
-      return TaskFail;
-    } else {
-      return Task;
-    }
-  },
-});
 
 @Resolver(Task)
 export class taskResolver {
@@ -133,12 +112,12 @@ export class taskResolver {
     return true;
   }
 
-  @Mutation(() => TaskUnion)
+  @Mutation(() => Task)
   @UseMiddleware(isAuth)
   async toggleTask(
     @Ctx() { payload }: MyContext,
     @Arg("id") id: string
-  ): Promise<typeof TaskUnion> {
+  ): Promise<Task> {
     const task = await Task.findOne(id);
     // check if tasks user is the same as currenct user and task exists
     if (task?.userId === payload?.userId && task) {
@@ -151,9 +130,7 @@ export class taskResolver {
         .execute();
       return updateResult.raw[0];
     } else {
-      return {
-        errors: ["something went wrong"],
-      };
+      throw new Error("you are not authorized for this action");
     }
   }
 

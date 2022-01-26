@@ -1,31 +1,32 @@
-import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useLayoutEffect} from 'react';
-import {Button, FlatList, StyleSheet, Text, View} from 'react-native';
+import {Button, FlatList, StyleSheet, View} from 'react-native';
+import Subtask from '../components/subtask';
 import Task from '../components/task';
 import {useGetAllTasksQuery} from '../generated/graphql';
 import {TaskStackParamList} from '../routes/TaskStack';
 
-const TaskHomeScreen: React.FC<
-  NativeStackScreenProps<TaskStackParamList, 'TaskHomeScreen'>
-> = ({navigation}) => {
+const TaskDetailScreen: React.FC<
+  NativeStackScreenProps<TaskStackParamList, 'TaskDetailScreen'>
+> = ({navigation, route}) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <Button
           title="add"
           onPress={() => {
-            navigation.navigate('AddTaskScreen');
+            navigation.navigate('AddSubtaskScreen', {
+              taskId: route.params.task.id,
+            });
           }}
         />
       ),
     });
   });
-  const {data} = useGetAllTasksQuery();
   return (
     <FlatList
-      data={data?.getAllTasks}
-      renderItem={({item, index}) => <Task task={item} />}
+      data={route.params.task.subtasks}
+      renderItem={({item, index}) => <Subtask subtask={item} />}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
     />
   );
@@ -42,4 +43,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TaskHomeScreen;
+export default TaskDetailScreen;

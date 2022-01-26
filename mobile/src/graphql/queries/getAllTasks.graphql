@@ -1,13 +1,5 @@
 query GetAllTasks {
   getAllTasks {
-    id
-    name
-    userId
-    createdAt
-    subtasks {
-      name
-      id
-      taskId
-    }
+    ...Task
   }
 }

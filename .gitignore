@@ -3,3 +3,4 @@ dist
 .vscode
 Pods
 .env
+.DS_Store

@@ -1,0 +1,3 @@
+mutation DeleteSubtask($id: String!) {
+  deleteSubtask(id: $id)
+}
