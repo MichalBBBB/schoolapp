@@ -1,7 +1,15 @@
 import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useLayoutEffect} from 'react';
-import {Button, FlatList, StyleSheet, Text, View} from 'react-native';
+import React, {createRef, useLayoutEffect, useRef} from 'react';
+import {
+  Button,
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import Task from '../components/task';
 import {useGetAllTasksQuery} from '../generated/graphql';
 import {TaskStackParamList} from '../routes/TaskStack';
@@ -12,12 +20,15 @@ const TaskHomeScreen: React.FC<
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Button
-          title="add"
+        <TouchableOpacity
           onPress={() => {
             navigation.navigate('AddTaskScreen');
-          }}
-        />
+          }}>
+          <Image
+            source={require('../../assets/Plus.png')}
+            style={styles.plusButton}
+          />
+        </TouchableOpacity>
       ),
     });
   });
@@ -26,7 +37,7 @@ const TaskHomeScreen: React.FC<
     <FlatList
       data={data?.getAllTasks}
       renderItem={({item, index}) => <Task task={item} />}
-      ItemSeparatorComponent={() => <View style={styles.separator} />}
+      //ItemSeparatorComponent={() => <View style={styles.separator} />}
     />
   );
 };
@@ -36,9 +47,14 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   separator: {
-    height: 0.5,
-    backgroundColor: '#ccc',
+    height: 1,
+    backgroundColor: '#eee',
     marginHorizontal: 10,
+  },
+  plusButton: {
+    resizeMode: 'stretch',
+    height: 30,
+    width: 30,
   },
 });
 

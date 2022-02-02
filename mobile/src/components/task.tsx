@@ -2,13 +2,21 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useState} from 'react';
 import {Image, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import {TaskFragment, useDeleteTaskMutation} from '../generated/graphql';
+import {FlatList, GestureType} from 'react-native-gesture-handler';
+import {
+  TaskFragment,
+  useDeleteTaskMutation,
+  useToggleTaskMutation,
+} from '../generated/graphql';
 import {TaskNavigationProp} from '../utils/types';
 import SlidingView from './slidingView';
 
-const Task: React.FC<{task: TaskFragment}> = ({task}) => {
+const Task: React.FC<{
+  task: TaskFragment;
+}> = ({task}) => {
   const [deleteTask] = useDeleteTaskMutation();
   const navigation = useNavigation<TaskNavigationProp>();
+  const [toggleTask] = useToggleTaskMutation();
 
   const deleteTaskFunc = async () => {
     await deleteTask({
@@ -51,8 +59,26 @@ const Task: React.FC<{task: TaskFragment}> = ({task}) => {
             onPress={() => {
               navigation.navigate('TaskDetailScreen', {task: task});
             }}>
-            <View style={{padding: 10, backgroundColor: 'white'}}>
-              <Text>{task.name}</Text>
+            <View style={styles.container}>
+              <TouchableOpacity
+                onPress={() => {
+                  toggleTask({variables: {id: task.id}});
+                }}>
+                <Image
+                  source={
+                    task.done
+                      ? require('../../assets/Checkmark.png')
+                      : require('../../assets/Circle.png')
+                  }
+                  style={styles.checkMark}
+                />
+              </TouchableOpacity>
+              <View>
+                <Text style={styles.name}>{task.name}</Text>
+                {task.subject?.name && (
+                  <Text style={styles.subject}>{task.subject?.name}</Text>
+                )}
+              </View>
             </View>
           </TouchableOpacity>
         }
@@ -63,5 +89,25 @@ const Task: React.FC<{task: TaskFragment}> = ({task}) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  subject: {
+    color: 'grey',
+  },
+  name: {},
+  checkMark: {
+    resizeMode: 'stretch',
+    width: 25,
+    height: 25,
+    marginRight: 10,
+  },
+  container: {
+    padding: 10,
+    backgroundColor: 'white',
+    paddingHorizontal: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+});
 
 export default Task;

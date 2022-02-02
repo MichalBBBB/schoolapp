@@ -8,4 +8,8 @@ fragment Task on Task {
   }
   done
   updatedAt
+  subject {
+    ...Subject
+  }
+  text
 }

@@ -1,12 +1,17 @@
-import React from 'react';
-import {Image, Text, View, TouchableOpacity} from 'react-native';
-import {SubtaskFragment, useDeleteSubtaskMutation} from '../generated/graphql';
+import React, {useRef} from 'react';
+import {Image, Text, View, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  SubtaskFragment,
+  useDeleteSubtaskMutation,
+  useToggleSubtaskMutation,
+} from '../generated/graphql';
 import {TaskNavigationProp} from '../utils/types';
 import SlidingView from './slidingView';
 
 const Subtask: React.FC<{subtask: SubtaskFragment}> = ({subtask}) => {
   const [deleteSubtask] = useDeleteSubtaskMutation();
-  const deleteTaskFunc = async () => {
+  const [toggleSubtask] = useToggleSubtaskMutation();
+  const deleteSubtaskFunc = async () => {
     await deleteSubtask({
       variables: {id: subtask.id},
       update: cache => {
@@ -21,7 +26,7 @@ const Subtask: React.FC<{subtask: SubtaskFragment}> = ({subtask}) => {
   const back = (
     <TouchableOpacity
       onPress={() => {
-        deleteTaskFunc();
+        deleteSubtaskFunc();
       }}>
       <View
         style={{
@@ -46,7 +51,26 @@ const Subtask: React.FC<{subtask: SubtaskFragment}> = ({subtask}) => {
     <View>
       <SlidingView
         frontView={
-          <View style={{padding: 10, backgroundColor: 'white'}}>
+          <View
+            style={{
+              padding: 10,
+              backgroundColor: 'white',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                toggleSubtask({variables: {id: subtask.id}});
+              }}>
+              <Image
+                source={
+                  subtask.done
+                    ? require('../../assets/Checkmark.png')
+                    : require('../../assets/Circle.png')
+                }
+                style={styles.checkMark}
+              />
+            </TouchableOpacity>
             <Text>{subtask.name}</Text>
           </View>
         }
@@ -57,5 +81,14 @@ const Subtask: React.FC<{subtask: SubtaskFragment}> = ({subtask}) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  checkMark: {
+    resizeMode: 'stretch',
+    width: 25,
+    height: 25,
+    marginRight: 10,
+  },
+});
 
 export default Subtask;

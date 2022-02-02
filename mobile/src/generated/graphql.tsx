@@ -27,6 +27,7 @@ export type Mutation = {
   createTask: Task;
   deleteSubtask: Scalars['Boolean'];
   deleteTask: Scalars['Boolean'];
+  editTask: Task;
   login: LoginResponse;
   register: RegisterResponse;
   toggleSubtask: Subtask;
@@ -64,6 +65,13 @@ export type MutationDeleteSubtaskArgs = {
 
 export type MutationDeleteTaskArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationEditTaskArgs = {
+  id: Scalars['String'];
+  name: Scalars['String'];
+  text?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -138,6 +146,7 @@ export type Task = {
   subject?: Maybe<Subject>;
   subjectId?: Maybe<Scalars['String']>;
   subtasks: Array<Subtask>;
+  text?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   user: User;
   userId: Scalars['String'];
@@ -173,9 +182,11 @@ export type UserSucces = {
   user: User;
 };
 
-export type SubtaskFragment = { __typename?: 'Subtask', name: string, id: string, taskId: string };
+export type SubjectFragment = { __typename?: 'Subject', id: string, name: string };
 
-export type TaskFragment = { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string }> };
+export type SubtaskFragment = { __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean };
+
+export type TaskFragment = { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined };
 
 export type CreateSubtaskMutationVariables = Exact<{
   taskId: Scalars['String'];
@@ -183,7 +194,7 @@ export type CreateSubtaskMutationVariables = Exact<{
 }>;
 
 
-export type CreateSubtaskMutation = { __typename?: 'Mutation', createSubtask: { __typename?: 'Subtask', name: string, id: string, taskId: string } };
+export type CreateSubtaskMutation = { __typename?: 'Mutation', createSubtask: { __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean } };
 
 export type CreateTaskMutationVariables = Exact<{
   name: Scalars['String'];
@@ -206,6 +217,15 @@ export type DeleteTaskMutationVariables = Exact<{
 
 export type DeleteTaskMutation = { __typename?: 'Mutation', deleteTask: boolean };
 
+export type EditTaskMutationVariables = Exact<{
+  id: Scalars['String'];
+  name: Scalars['String'];
+  text?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type EditTaskMutation = { __typename?: 'Mutation', editTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
+
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
@@ -223,10 +243,24 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null | undefined, message: string }> } | { __typename?: 'UserSucces', accesToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
 
+export type ToggleSubtaskMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type ToggleSubtaskMutation = { __typename?: 'Mutation', toggleSubtask: { __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean } };
+
+export type ToggleTaskMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type ToggleTaskMutation = { __typename?: 'Mutation', toggleTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
+
 export type GetAllTasksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllTasksQuery = { __typename?: 'Query', getAllTasks: Array<{ __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string }> }> };
+export type GetAllTasksQuery = { __typename?: 'Query', getAllTasks: Array<{ __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined }> };
 
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -250,6 +284,13 @@ export const SubtaskFragmentDoc = gql`
   name
   id
   taskId
+  done
+}
+    `;
+export const SubjectFragmentDoc = gql`
+    fragment Subject on Subject {
+  id
+  name
 }
     `;
 export const TaskFragmentDoc = gql`
@@ -263,8 +304,13 @@ export const TaskFragmentDoc = gql`
   }
   done
   updatedAt
+  subject {
+    ...Subject
+  }
+  text
 }
-    ${SubtaskFragmentDoc}`;
+    ${SubtaskFragmentDoc}
+${SubjectFragmentDoc}`;
 export const CreateSubtaskDocument = gql`
     mutation CreateSubtask($taskId: String!, $name: String!) {
   createSubtask(taskId: $taskId, name: $name) {
@@ -395,6 +441,41 @@ export function useDeleteTaskMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeleteTaskMutationHookResult = ReturnType<typeof useDeleteTaskMutation>;
 export type DeleteTaskMutationResult = Apollo.MutationResult<DeleteTaskMutation>;
 export type DeleteTaskMutationOptions = Apollo.BaseMutationOptions<DeleteTaskMutation, DeleteTaskMutationVariables>;
+export const EditTaskDocument = gql`
+    mutation EditTask($id: String!, $name: String!, $text: String) {
+  editTask(id: $id, name: $name, text: $text) {
+    ...Task
+  }
+}
+    ${TaskFragmentDoc}`;
+export type EditTaskMutationFn = Apollo.MutationFunction<EditTaskMutation, EditTaskMutationVariables>;
+
+/**
+ * __useEditTaskMutation__
+ *
+ * To run a mutation, you first call `useEditTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editTaskMutation, { data, loading, error }] = useEditTaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      text: // value for 'text'
+ *   },
+ * });
+ */
+export function useEditTaskMutation(baseOptions?: Apollo.MutationHookOptions<EditTaskMutation, EditTaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditTaskMutation, EditTaskMutationVariables>(EditTaskDocument, options);
+      }
+export type EditTaskMutationHookResult = ReturnType<typeof useEditTaskMutation>;
+export type EditTaskMutationResult = Apollo.MutationResult<EditTaskMutation>;
+export type EditTaskMutationOptions = Apollo.BaseMutationOptions<EditTaskMutation, EditTaskMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
@@ -490,6 +571,72 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const ToggleSubtaskDocument = gql`
+    mutation ToggleSubtask($id: String!) {
+  toggleSubtask(id: $id) {
+    ...Subtask
+  }
+}
+    ${SubtaskFragmentDoc}`;
+export type ToggleSubtaskMutationFn = Apollo.MutationFunction<ToggleSubtaskMutation, ToggleSubtaskMutationVariables>;
+
+/**
+ * __useToggleSubtaskMutation__
+ *
+ * To run a mutation, you first call `useToggleSubtaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleSubtaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleSubtaskMutation, { data, loading, error }] = useToggleSubtaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useToggleSubtaskMutation(baseOptions?: Apollo.MutationHookOptions<ToggleSubtaskMutation, ToggleSubtaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ToggleSubtaskMutation, ToggleSubtaskMutationVariables>(ToggleSubtaskDocument, options);
+      }
+export type ToggleSubtaskMutationHookResult = ReturnType<typeof useToggleSubtaskMutation>;
+export type ToggleSubtaskMutationResult = Apollo.MutationResult<ToggleSubtaskMutation>;
+export type ToggleSubtaskMutationOptions = Apollo.BaseMutationOptions<ToggleSubtaskMutation, ToggleSubtaskMutationVariables>;
+export const ToggleTaskDocument = gql`
+    mutation ToggleTask($id: String!) {
+  toggleTask(id: $id) {
+    ...Task
+  }
+}
+    ${TaskFragmentDoc}`;
+export type ToggleTaskMutationFn = Apollo.MutationFunction<ToggleTaskMutation, ToggleTaskMutationVariables>;
+
+/**
+ * __useToggleTaskMutation__
+ *
+ * To run a mutation, you first call `useToggleTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleTaskMutation, { data, loading, error }] = useToggleTaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useToggleTaskMutation(baseOptions?: Apollo.MutationHookOptions<ToggleTaskMutation, ToggleTaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ToggleTaskMutation, ToggleTaskMutationVariables>(ToggleTaskDocument, options);
+      }
+export type ToggleTaskMutationHookResult = ReturnType<typeof useToggleTaskMutation>;
+export type ToggleTaskMutationResult = Apollo.MutationResult<ToggleTaskMutation>;
+export type ToggleTaskMutationOptions = Apollo.BaseMutationOptions<ToggleTaskMutation, ToggleTaskMutationVariables>;
 export const GetAllTasksDocument = gql`
     query GetAllTasks {
   getAllTasks {

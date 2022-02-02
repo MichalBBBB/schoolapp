@@ -59,19 +59,23 @@ export class subtaskResolver {
     @Ctx() { payload }: MyContext,
     @Arg("id") id: string
   ): Promise<Subtask> {
-    const task = await Task.findOne(id);
-    // check if tasks user is the same as currenct user and task exists
-    if (task?.userId === payload?.userId && task) {
-      const newValue = !task.done;
-      const updateResult = await Task.createQueryBuilder()
-        .update()
-        .set({ done: newValue })
-        .where("id = :id", { id })
-        .returning("*")
-        .execute();
-      return updateResult.raw[0];
+    const subtask = await Subtask.findOne(id);
+    if (subtask) {
+      const task = await Task.findOne(subtask.taskId);
+
+      if (task?.userId === payload?.userId && task) {
+        const newValue = !subtask.done;
+        const updateResult = await Subtask.createQueryBuilder()
+          .update()
+          .set({ done: newValue })
+          .where("id = :id", { id })
+          .returning("*")
+          .execute();
+        return updateResult.raw[0];
+      }
+      throw new Error("you are not authorized for this action");
     }
-    throw new Error("you are not authorized for this action");
+    throw new Error("subtask doesn't exist");
   }
 
   @Mutation(() => Boolean)

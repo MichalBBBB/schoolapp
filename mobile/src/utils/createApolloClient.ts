@@ -45,7 +45,7 @@ const refreshLink = new TokenRefreshLink({
     }
   },
   fetchAccessToken: () => {
-    return fetch('http://localhost:5000/fefresh_token', {
+    return fetch('http://localhost:5002/refresh_token', {
       credentials: 'include',
       method: 'post',
     });

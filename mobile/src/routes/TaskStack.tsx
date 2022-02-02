@@ -1,6 +1,8 @@
 import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
+import {Image, TouchableOpacity} from 'react-native';
+import BackButton from '../components/backButton';
 import {TaskFragment} from '../generated/graphql';
 import {TabStackParamList} from '../Routes';
 import AddSubtaskScreen from '../screens/AddSubtaskScreen';
@@ -20,7 +22,17 @@ const TaskStack: React.FC<
 > = () => {
   const Stack = createNativeStackNavigator<TaskStackParamList>();
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={({navigation}) => ({
+        headerShadowVisible: false,
+        headerBackTitleVisible: false,
+        headerBackVisible: false,
+        headerLeft: props => {
+          if (props.canGoBack) {
+            return <BackButton onPress={() => navigation.goBack()} />;
+          }
+        },
+      })}>
       <Stack.Screen name="TaskHomeScreen" component={TaskHomeScreen} />
       <Stack.Screen name="AddTaskScreen" component={AddTaskScreen} />
       <Stack.Screen

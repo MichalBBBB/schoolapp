@@ -1,0 +1,5 @@
+mutation ToggleTask($id: String!) {
+  toggleTask(id: $id) {
+    ...Task
+  }
+}

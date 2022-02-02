@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Image, Text, StyleSheet} from 'react-native';
+import {View} from 'react-native';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
@@ -56,7 +56,8 @@ const SlidingView: React.FC<SlidingViewProps> = ({
         isPulled.value = false;
       }
       x.value = withTiming(isPulled.value ? -pulledOffset : 0);
-    });
+    })
+    .activeOffsetX([-10, 10]);
 
   const findDimensions = (layout: any) => {
     const {x, y, width, height} = layout;

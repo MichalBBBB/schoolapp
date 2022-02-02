@@ -155,4 +155,25 @@ export class taskResolver {
     }
     return result.raw[0];
   }
+
+  @Mutation(() => Task)
+  @UseMiddleware(isAuth)
+  async editTask(
+    @Ctx() { payload }: MyContext,
+    @Arg("name") name: string,
+    @Arg("text", { nullable: true }) text: string,
+    @Arg("id") id: string
+  ) {
+    const task = await Task.findOne(id);
+    if (task?.userId === payload?.userId && task) {
+      task.name = name;
+      task.text = text;
+      task.save();
+      return task;
+    } else {
+      throw new Error(
+        "your are not authorized for this action or task doesn't exist"
+      );
+    }
+  }
 }
