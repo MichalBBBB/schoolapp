@@ -68,7 +68,11 @@ const TaskDetailScreen: React.FC<
         defaultValue={task.name}
         style={styles.name}
       />
-      <TextInput multiline={true} />
+      <TextInput
+        multiline={true}
+        onChangeText={setText}
+        defaultValue={task.text || ''}
+      />
       <FlatList
         data={task.subtasks}
         renderItem={({item, index}) => <Subtask subtask={item} />}

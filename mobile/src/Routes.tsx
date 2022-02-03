@@ -8,10 +8,12 @@ import {useReactiveVar} from '@apollo/client';
 import TaskStack from './routes/TaskStack';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {View} from 'react-native';
+import CalendarStack from './routes/CalendarStack';
 
 export type TabStackParamList = {
   HomeStack: undefined;
   TaskStack: undefined;
+  CalendarStack: undefined;
 };
 
 const LighTheme = {
@@ -35,6 +37,7 @@ const Routes = () => {
       }}>
       <Tab.Screen name="HomeStack" component={HomeStack} />
       <Tab.Screen name="TaskStack" component={TaskStack} />
+      <Tab.Screen name="CalendarStack" component={CalendarStack} />
     </Tab.Navigator>
   );
 

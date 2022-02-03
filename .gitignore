@@ -4,3 +4,4 @@ dist
 Pods
 .env
 .DS_Store
+.VSCodeCounter
