@@ -14,7 +14,7 @@ import { Subject } from "../entities/Subject";
 export class subjectResolver {
   @Query(() => [Subject])
   @UseMiddleware(isAuth)
-  getSubjectsOfUser(@Ctx() { payload }: MyContext) {
+  getAllSubjects(@Ctx() { payload }: MyContext) {
     return Subject.createQueryBuilder("subject")
       .select()
       .where("subject.userId = :id", { id: payload?.userId })

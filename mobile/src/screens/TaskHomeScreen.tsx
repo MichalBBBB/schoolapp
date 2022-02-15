@@ -1,6 +1,6 @@
 import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {createRef, useLayoutEffect, useRef} from 'react';
+import React, {createRef, useLayoutEffect, useRef, useState} from 'react';
 import {
   Button,
   StyleSheet,
@@ -10,6 +10,8 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
+import AddButton from '../components/addButton';
+import AddTaskWindow from '../components/addTaskWindow';
 import Task from '../components/task';
 import {useGetAllTasksQuery} from '../generated/graphql';
 import {TaskStackParamList} from '../routes/TaskStack';
@@ -17,28 +19,30 @@ import {TaskStackParamList} from '../routes/TaskStack';
 const TaskHomeScreen: React.FC<
   NativeStackScreenProps<TaskStackParamList, 'TaskHomeScreen'>
 > = ({navigation}) => {
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('AddTaskScreen');
-          }}>
-          <Image
-            source={require('../../assets/Plus.png')}
-            style={styles.plusButton}
-          />
-        </TouchableOpacity>
-      ),
-    });
-  });
   const {data} = useGetAllTasksQuery();
+  const [addTaskOpen, setAddTaskOpen] = useState(false);
   return (
-    <FlatList
-      data={data?.getAllTasks}
-      renderItem={({item, index}) => <Task task={item} />}
-      //ItemSeparatorComponent={() => <View style={styles.separator} />}
-    />
+    <View style={{flex: 1}}>
+      <FlatList
+        data={data?.getAllTasks}
+        renderItem={({item, index}) => <Task task={item} />}
+        //ItemSeparatorComponent={() => <View style={styles.separator} />}
+      />
+      <View style={{position: 'absolute', right: 0, bottom: 0, margin: 20}}>
+        <AddButton
+          onPress={() => {
+            setAddTaskOpen(true);
+          }}
+        />
+      </View>
+      {addTaskOpen && (
+        <AddTaskWindow
+          onClose={() => {
+            setAddTaskOpen(false);
+          }}
+        />
+      )}
+    </View>
   );
 };
 

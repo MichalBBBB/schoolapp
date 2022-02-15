@@ -247,10 +247,12 @@ const Calendar: React.FC<calendarProps> = ({screenHeight}) => {
       </View>
       {isWeekView ? (
         <View
-          style={{
-            position: 'absolute',
-            marginTop: weekHeaderHeight,
-          }}>
+          style={[
+            {
+              position: 'absolute',
+              marginTop: weekHeaderHeight,
+            },
+          ]}>
           <WeekView
             week={selectedDay}
             onDayPress={onDayPress}

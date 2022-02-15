@@ -99,9 +99,9 @@ export type MutationToggleTaskArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  getAllSubjects: Array<Subject>;
   getAllSubtasksOfTask: Array<Subtask>;
   getAllTasks: Array<Task>;
-  getSubjectsOfUser: Array<Subject>;
   getTasksOfUser: Array<Task>;
   hello: Scalars['String'];
   me: User;
@@ -198,6 +198,7 @@ export type CreateSubtaskMutation = { __typename?: 'Mutation', createSubtask: { 
 
 export type CreateTaskMutationVariables = Exact<{
   name: Scalars['String'];
+  subjectId?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -256,6 +257,11 @@ export type ToggleTaskMutationVariables = Exact<{
 
 
 export type ToggleTaskMutation = { __typename?: 'Mutation', toggleTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
+
+export type GetAllSubjectsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllSubjectsQuery = { __typename?: 'Query', getAllSubjects: Array<{ __typename?: 'Subject', id: string, name: string }> };
 
 export type GetAllTasksQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -346,8 +352,8 @@ export type CreateSubtaskMutationHookResult = ReturnType<typeof useCreateSubtask
 export type CreateSubtaskMutationResult = Apollo.MutationResult<CreateSubtaskMutation>;
 export type CreateSubtaskMutationOptions = Apollo.BaseMutationOptions<CreateSubtaskMutation, CreateSubtaskMutationVariables>;
 export const CreateTaskDocument = gql`
-    mutation CreateTask($name: String!) {
-  createTask(name: $name) {
+    mutation CreateTask($name: String!, $subjectId: String) {
+  createTask(name: $name, subjectId: $subjectId) {
     name
     id
   }
@@ -369,6 +375,7 @@ export type CreateTaskMutationFn = Apollo.MutationFunction<CreateTaskMutation, C
  * const [createTaskMutation, { data, loading, error }] = useCreateTaskMutation({
  *   variables: {
  *      name: // value for 'name'
+ *      subjectId: // value for 'subjectId'
  *   },
  * });
  */
@@ -637,6 +644,40 @@ export function useToggleTaskMutation(baseOptions?: Apollo.MutationHookOptions<T
 export type ToggleTaskMutationHookResult = ReturnType<typeof useToggleTaskMutation>;
 export type ToggleTaskMutationResult = Apollo.MutationResult<ToggleTaskMutation>;
 export type ToggleTaskMutationOptions = Apollo.BaseMutationOptions<ToggleTaskMutation, ToggleTaskMutationVariables>;
+export const GetAllSubjectsDocument = gql`
+    query GetAllSubjects {
+  getAllSubjects {
+    ...Subject
+  }
+}
+    ${SubjectFragmentDoc}`;
+
+/**
+ * __useGetAllSubjectsQuery__
+ *
+ * To run a query within a React component, call `useGetAllSubjectsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllSubjectsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllSubjectsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllSubjectsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllSubjectsQuery, GetAllSubjectsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllSubjectsQuery, GetAllSubjectsQueryVariables>(GetAllSubjectsDocument, options);
+      }
+export function useGetAllSubjectsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllSubjectsQuery, GetAllSubjectsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllSubjectsQuery, GetAllSubjectsQueryVariables>(GetAllSubjectsDocument, options);
+        }
+export type GetAllSubjectsQueryHookResult = ReturnType<typeof useGetAllSubjectsQuery>;
+export type GetAllSubjectsLazyQueryHookResult = ReturnType<typeof useGetAllSubjectsLazyQuery>;
+export type GetAllSubjectsQueryResult = Apollo.QueryResult<GetAllSubjectsQuery, GetAllSubjectsQueryVariables>;
 export const GetAllTasksDocument = gql`
     query GetAllTasks {
   getAllTasks {
