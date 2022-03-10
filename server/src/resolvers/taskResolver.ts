@@ -71,6 +71,7 @@ export class taskResolver {
   async createTask(
     @Arg("name") name: string,
     @Arg("subjectId", { nullable: true }) subjectId: string,
+    @Arg("dueDate", { nullable: true }) dueDate: Date,
     @Ctx() { payload }: MyContext
   ) {
     console.log(name);
@@ -78,7 +79,7 @@ export class taskResolver {
       .createQueryBuilder()
       .insert()
       .into(Task)
-      .values({ name, userId: payload?.userId, subjectId })
+      .values({ name, userId: payload?.userId, subjectId, dueDate: dueDate })
       .returning("*")
       .execute();
     return result.raw[0];

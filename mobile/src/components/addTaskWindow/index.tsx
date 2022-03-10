@@ -1,4 +1,5 @@
 import {useHeaderHeight} from '@react-navigation/elements';
+import dayjs from 'dayjs';
 import React, {createRef, useEffect, useRef, useState} from 'react';
 import {
   KeyboardAvoidingView,
@@ -19,18 +20,17 @@ import {
 import AddButton from '../addButton';
 import EditDateWindow from '../editDateWindow';
 import KeyboardTopView from '../keyboardTopWindow';
+import {calendarConfigWithoutTime} from '../task';
 import SubjectButton from './subjectButton';
 
 interface addTaskWindowProps {
   onClose: () => void;
   onAddSubject: () => void;
-  onEditDate: () => void;
 }
 
 const AddTaskWindow: React.FC<addTaskWindowProps> = ({
   onClose,
   onAddSubject,
-  onEditDate,
 }) => {
   const headerHeight = useHeaderHeight();
   const taskInputRef = createRef<TextInput>();
@@ -38,6 +38,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({
   const [name, setName] = useState('');
   const [subject, setSubject] = useState<SubjectFragment | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [taskDate, setTaskDate] = useState<dayjs.Dayjs | null>();
 
   useEffect(() => {
     taskInputRef.current?.focus();
@@ -72,15 +73,21 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({
               setModalVisible(true);
             }}>
             <View style={styles.button}>
-              <Text>Tomorrow</Text>
+              <Text>
+                {taskDate
+                  ? taskDate.calendar(null, calendarConfigWithoutTime)
+                  : 'Select Date'}
+              </Text>
             </View>
           </TouchableOpacity>
           <AddButton
             onPress={() => {
+              console.log(taskDate);
               addTask({
                 variables: {
                   name,
                   subjectId: subject ? subject.id : undefined,
+                  dueDate: taskDate,
                 },
                 refetchQueries: [GetAllTasksDocument],
               });
@@ -92,7 +99,12 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({
       <Modal visible={modalVisible} transparent={true}>
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <EditDateWindow
+            initialDate={taskDate ? taskDate : undefined}
             onClose={() => {
+              setModalVisible(false);
+            }}
+            onSubmit={date => {
+              setTaskDate(date);
               setModalVisible(false);
             }}
           />

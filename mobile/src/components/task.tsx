@@ -2,7 +2,14 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import React, {useState} from 'react';
-import {Image, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  LayoutAnimation,
+} from 'react-native';
 import {FlatList, GestureType} from 'react-native-gesture-handler';
 import {
   TaskFragment,
@@ -32,6 +39,7 @@ const Task: React.FC<{
   const [toggleTask] = useToggleTaskMutation();
 
   const deleteTaskFunc = async () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     await deleteTask({
       variables: {id: task.id},
       update: cache => {

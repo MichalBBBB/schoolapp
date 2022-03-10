@@ -24,7 +24,6 @@ const TaskHomeScreen: React.FC<
   const {data} = useGetAllTasksQuery();
   const [addTaskOpen, setAddTaskOpen] = useState(false);
   const [addSubjectOpen, setAddSubjectOpen] = useState(false);
-  const [editDateOpen, setEditDateOpen] = useState(false);
   return (
     <View style={{flex: 1}}>
       <FlatList
@@ -48,10 +47,6 @@ const TaskHomeScreen: React.FC<
             setAddTaskOpen(false);
             setAddSubjectOpen(true);
           }}
-          onEditDate={() => {
-            setAddTaskOpen(false);
-            setEditDateOpen(true);
-          }}
         />
       )}
       {addSubjectOpen && (
@@ -62,7 +57,6 @@ const TaskHomeScreen: React.FC<
           }}
         />
       )}
-      {editDateOpen && <EditDateWindow />}
     </View>
   );
 };

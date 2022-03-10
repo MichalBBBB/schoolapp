@@ -53,6 +53,7 @@ export type MutationCreateSubtaskArgs = {
 
 
 export type MutationCreateTaskArgs = {
+  dueDate?: InputMaybe<Scalars['DateTime']>;
   name: Scalars['String'];
   subjectId?: InputMaybe<Scalars['String']>;
 };
@@ -206,10 +207,11 @@ export type CreateSubtaskMutation = { __typename?: 'Mutation', createSubtask: { 
 export type CreateTaskMutationVariables = Exact<{
   name: Scalars['String'];
   subjectId?: InputMaybe<Scalars['String']>;
+  dueDate?: InputMaybe<Scalars['DateTime']>;
 }>;
 
 
-export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Task', name: string, id: string } };
+export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
 
 export type DeleteSubtaskMutationVariables = Exact<{
   id: Scalars['String'];
@@ -393,13 +395,12 @@ export type CreateSubtaskMutationHookResult = ReturnType<typeof useCreateSubtask
 export type CreateSubtaskMutationResult = Apollo.MutationResult<CreateSubtaskMutation>;
 export type CreateSubtaskMutationOptions = Apollo.BaseMutationOptions<CreateSubtaskMutation, CreateSubtaskMutationVariables>;
 export const CreateTaskDocument = gql`
-    mutation CreateTask($name: String!, $subjectId: String) {
-  createTask(name: $name, subjectId: $subjectId) {
-    name
-    id
+    mutation CreateTask($name: String!, $subjectId: String, $dueDate: DateTime) {
+  createTask(name: $name, subjectId: $subjectId, dueDate: $dueDate) {
+    ...Task
   }
 }
-    `;
+    ${TaskFragmentDoc}`;
 export type CreateTaskMutationFn = Apollo.MutationFunction<CreateTaskMutation, CreateTaskMutationVariables>;
 
 /**
@@ -417,6 +418,7 @@ export type CreateTaskMutationFn = Apollo.MutationFunction<CreateTaskMutation, C
  *   variables: {
  *      name: // value for 'name'
  *      subjectId: // value for 'subjectId'
+ *      dueDate: // value for 'dueDate'
  *   },
  * });
  */

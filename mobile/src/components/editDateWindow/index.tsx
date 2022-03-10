@@ -1,7 +1,12 @@
 import dayjs from 'dayjs';
 import React, {useEffect, useState} from 'react';
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+} from 'react-native';
 import BackgroundPress from '../backgroundPress';
 import Calendar from '../calendar';
 import WeekDays from '../calendar/weekDays';
@@ -9,6 +14,7 @@ import WeekDays from '../calendar/weekDays';
 interface EditDateWindowProps {
   onClose: () => void;
   onSubmit: (date: dayjs.Dayjs) => void;
+  initialDate?: dayjs.Dayjs | null;
 }
 
 type SpecialDate = {
@@ -29,9 +35,13 @@ const specialDates: SpecialDate[][] = [
 
 const windowWidth = Dimensions.get('screen').width - 30;
 
-const EditDateWindow: React.FC<EditDateWindowProps> = ({onClose}) => {
+const EditDateWindow: React.FC<EditDateWindowProps> = ({
+  onClose,
+  onSubmit,
+  initialDate,
+}) => {
   const [selectedDay, setSelectedDay] = useState<dayjs.Dayjs | SpecialDate>(
-    dayjs(),
+    initialDate || dayjs(),
   );
   const [height, setHeight] = useState(0);
   const [specialDays, setSpecialDays] = useState<SpecialDate[][]>(specialDates);
@@ -109,7 +119,12 @@ const EditDateWindow: React.FC<EditDateWindowProps> = ({onClose}) => {
           selectedDay={'get' in selectedDay ? selectedDay : null}
           onChangeSelectedDay={setSelectedDay}
         />
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity
+          onPress={() => {
+            const date: dayjs.Dayjs =
+              'get' in selectedDay ? selectedDay : selectedDay.date;
+            onSubmit(date);
+          }}>
           <Text>Submit</Text>
         </TouchableOpacity>
       </View>
