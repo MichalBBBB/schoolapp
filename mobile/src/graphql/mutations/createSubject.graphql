@@ -1,0 +1,5 @@
+mutation CreateSubject($name: String!) {
+  createSubject(name: $name) {
+    ...Subject
+  }
+}

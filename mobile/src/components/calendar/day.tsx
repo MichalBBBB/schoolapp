@@ -4,7 +4,7 @@ import {TouchableOpacity, View, Text} from 'react-native';
 
 interface DayProps {
   day: dayjs.Dayjs;
-  selectedDay: dayjs.Dayjs;
+  selectedDay: dayjs.Dayjs | null;
   monthNum: number | undefined;
   onPress: (date: dayjs.Dayjs) => void;
 }

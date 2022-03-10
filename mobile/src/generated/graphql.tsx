@@ -186,7 +186,14 @@ export type SubjectFragment = { __typename?: 'Subject', id: string, name: string
 
 export type SubtaskFragment = { __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean };
 
-export type TaskFragment = { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined };
+export type TaskFragment = { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined };
+
+export type CreateSubjectMutationVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type CreateSubjectMutation = { __typename?: 'Mutation', createSubject: { __typename?: 'Subject', id: string, name: string } };
 
 export type CreateSubtaskMutationVariables = Exact<{
   taskId: Scalars['String'];
@@ -225,7 +232,7 @@ export type EditTaskMutationVariables = Exact<{
 }>;
 
 
-export type EditTaskMutation = { __typename?: 'Mutation', editTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
+export type EditTaskMutation = { __typename?: 'Mutation', editTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
 
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
@@ -256,7 +263,7 @@ export type ToggleTaskMutationVariables = Exact<{
 }>;
 
 
-export type ToggleTaskMutation = { __typename?: 'Mutation', toggleTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
+export type ToggleTaskMutation = { __typename?: 'Mutation', toggleTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
 
 export type GetAllSubjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -266,7 +273,7 @@ export type GetAllSubjectsQuery = { __typename?: 'Query', getAllSubjects: Array<
 export type GetAllTasksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllTasksQuery = { __typename?: 'Query', getAllTasks: Array<{ __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined }> };
+export type GetAllTasksQuery = { __typename?: 'Query', getAllTasks: Array<{ __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined }> };
 
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -314,9 +321,43 @@ export const TaskFragmentDoc = gql`
     ...Subject
   }
   text
+  dueDate
 }
     ${SubtaskFragmentDoc}
 ${SubjectFragmentDoc}`;
+export const CreateSubjectDocument = gql`
+    mutation CreateSubject($name: String!) {
+  createSubject(name: $name) {
+    ...Subject
+  }
+}
+    ${SubjectFragmentDoc}`;
+export type CreateSubjectMutationFn = Apollo.MutationFunction<CreateSubjectMutation, CreateSubjectMutationVariables>;
+
+/**
+ * __useCreateSubjectMutation__
+ *
+ * To run a mutation, you first call `useCreateSubjectMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateSubjectMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createSubjectMutation, { data, loading, error }] = useCreateSubjectMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useCreateSubjectMutation(baseOptions?: Apollo.MutationHookOptions<CreateSubjectMutation, CreateSubjectMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateSubjectMutation, CreateSubjectMutationVariables>(CreateSubjectDocument, options);
+      }
+export type CreateSubjectMutationHookResult = ReturnType<typeof useCreateSubjectMutation>;
+export type CreateSubjectMutationResult = Apollo.MutationResult<CreateSubjectMutation>;
+export type CreateSubjectMutationOptions = Apollo.BaseMutationOptions<CreateSubjectMutation, CreateSubjectMutationVariables>;
 export const CreateSubtaskDocument = gql`
     mutation CreateSubtask($taskId: String!, $name: String!) {
   createSubtask(taskId: $taskId, name: $name) {

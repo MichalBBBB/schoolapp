@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {FlatList} from 'react-native-gesture-handler';
+import {StyleSheet, Text, TouchableOpacity, View, FlatList} from 'react-native';
 import {SubjectFragment, useGetAllSubjectsQuery} from '../../generated/graphql';
 
 const SubjectButton: React.FC<{
   onChangeSubject: (subject: SubjectFragment) => void;
-}> = ({onChangeSubject}) => {
+  onAddSubject: () => void;
+}> = ({onChangeSubject, onAddSubject}) => {
   const [isOpen, setIsOpen] = useState(false);
   const {data} = useGetAllSubjectsQuery();
   const [subject, setSubject] = useState<SubjectFragment | null>(null);
@@ -43,6 +43,9 @@ const SubjectButton: React.FC<{
                 padding: 5,
                 backgroundColor: '#ddd',
                 borderRadius: 10,
+              }}
+              onPress={() => {
+                onAddSubject();
               }}>
               <Text>Add</Text>
             </TouchableOpacity>

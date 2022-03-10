@@ -1,5 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import dayjs from 'dayjs';
 import React, {useState} from 'react';
 import {Image, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import {FlatList, GestureType} from 'react-native-gesture-handler';
@@ -10,6 +11,18 @@ import {
 } from '../generated/graphql';
 import {TaskNavigationProp} from '../utils/types';
 import SlidingView from './slidingView';
+import calendar from 'dayjs/plugin/calendar';
+
+dayjs.extend(calendar);
+
+export const calendarConfigWithoutTime = {
+  sameDay: '[Today]',
+  nextDay: '[Tomorrow]',
+  nextWeek: 'dddd',
+  lastDay: '[Yesterday]',
+  lastWeek: '[Last] dddd',
+  sameElse: 'DD/MM/YYYY',
+};
 
 const Task: React.FC<{
   task: TaskFragment;
@@ -73,12 +86,20 @@ const Task: React.FC<{
                   style={styles.checkMark}
                 />
               </TouchableOpacity>
-              <View>
+              <View style={{flex: 1}}>
                 <Text style={styles.name}>{task.name}</Text>
                 {task.subject?.name && (
                   <Text style={styles.subject}>{task.subject?.name}</Text>
                 )}
               </View>
+              {task.dueDate && (
+                <Text style={styles.dueDate}>
+                  {dayjs(task.dueDate).calendar(
+                    null,
+                    calendarConfigWithoutTime,
+                  )}
+                </Text>
+              )}
             </View>
           </TouchableOpacity>
         }
@@ -91,6 +112,9 @@ const Task: React.FC<{
 };
 
 const styles = StyleSheet.create({
+  dueDate: {
+    color: 'grey',
+  },
   subject: {
     color: 'grey',
   },

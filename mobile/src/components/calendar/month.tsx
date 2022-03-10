@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import React from 'react';
 import {Text, View} from 'react-native';
-import {calendarWidth} from '.';
 import Week from './week';
 
 // ctreate table of days in 6 weeks
@@ -30,11 +29,19 @@ export const createMatrix = (year: number, month: number) => {
 
 interface MonthProps {
   month: dayjs.Dayjs | string;
-  selectedDay: dayjs.Dayjs;
+  selectedDay: dayjs.Dayjs | null;
   onDayPress: (date: dayjs.Dayjs) => void;
+  calendarWidth: number;
+  weekHeight: number;
 }
 
-const Month: React.FC<MonthProps> = ({month, selectedDay, onDayPress}) => {
+const Month: React.FC<MonthProps> = ({
+  month,
+  selectedDay,
+  onDayPress,
+  calendarWidth,
+  weekHeight,
+}) => {
   // if month is far away from being visible, only a simple view will appear with the string date
   if (typeof month == 'string') {
     return (
@@ -54,6 +61,8 @@ const Month: React.FC<MonthProps> = ({month, selectedDay, onDayPress}) => {
       {createMatrix(month.get('year'), month.get('month')).map(
         (week, index) => (
           <Week
+            calendarWidth={calendarWidth}
+            weekHeight={weekHeight}
             week={week}
             monthNum={month.get('month') + 1}
             key={index}

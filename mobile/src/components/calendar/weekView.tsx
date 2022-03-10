@@ -3,13 +3,13 @@ import dayjs from 'dayjs';
 import React, {useEffect, useState} from 'react';
 import {View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
-import {calendarWidth} from '.';
 import Week from './week';
 
 interface weekViewProps {
   week: dayjs.Dayjs;
   selectedDay: dayjs.Dayjs;
   onDayPress: (date: dayjs.Dayjs) => void;
+  calendarWidth: number;
 }
 
 const createWeek = (date: dayjs.Dayjs | string) => {
@@ -28,7 +28,12 @@ const createWeek = (date: dayjs.Dayjs | string) => {
 const pastScrollRange = 10;
 const futureScrollRange = 20;
 
-const WeekView: React.FC<weekViewProps> = ({week, selectedDay, onDayPress}) => {
+const WeekView: React.FC<weekViewProps> = ({
+  week,
+  selectedDay,
+  onDayPress,
+  calendarWidth,
+}) => {
   const [weeks, setWeeks] = useState<Array<dayjs.Dayjs | string>>([week]);
   const [index, setIndex] = useState(pastScrollRange);
   const navigation = useNavigation();

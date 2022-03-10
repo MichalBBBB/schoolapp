@@ -11,7 +11,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import AddButton from '../components/addButton';
+import AddSubjectWindow from '../components/addSubjectWindow';
 import AddTaskWindow from '../components/addTaskWindow';
+import EditDateWindow from '../components/editDateWindow';
 import Task from '../components/task';
 import {useGetAllTasksQuery} from '../generated/graphql';
 import {TaskStackParamList} from '../routes/TaskStack';
@@ -21,6 +23,8 @@ const TaskHomeScreen: React.FC<
 > = ({navigation}) => {
   const {data} = useGetAllTasksQuery();
   const [addTaskOpen, setAddTaskOpen] = useState(false);
+  const [addSubjectOpen, setAddSubjectOpen] = useState(false);
+  const [editDateOpen, setEditDateOpen] = useState(false);
   return (
     <View style={{flex: 1}}>
       <FlatList
@@ -40,8 +44,25 @@ const TaskHomeScreen: React.FC<
           onClose={() => {
             setAddTaskOpen(false);
           }}
+          onAddSubject={() => {
+            setAddTaskOpen(false);
+            setAddSubjectOpen(true);
+          }}
+          onEditDate={() => {
+            setAddTaskOpen(false);
+            setEditDateOpen(true);
+          }}
         />
       )}
+      {addSubjectOpen && (
+        <AddSubjectWindow
+          onClose={() => {
+            setAddSubjectOpen(false);
+            setAddTaskOpen(true);
+          }}
+        />
+      )}
+      {editDateOpen && <EditDateWindow />}
     </View>
   );
 };
