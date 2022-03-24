@@ -10,6 +10,7 @@ interface weekViewProps {
   selectedDay: dayjs.Dayjs;
   onDayPress: (date: dayjs.Dayjs) => void;
   calendarWidth: number;
+  weekHeight: number;
 }
 
 const createWeek = (date: dayjs.Dayjs | string) => {
@@ -33,6 +34,7 @@ const WeekView: React.FC<weekViewProps> = ({
   selectedDay,
   onDayPress,
   calendarWidth,
+  weekHeight,
 }) => {
   const [weeks, setWeeks] = useState<Array<dayjs.Dayjs | string>>([week]);
   const [index, setIndex] = useState(pastScrollRange);
@@ -64,6 +66,8 @@ const WeekView: React.FC<weekViewProps> = ({
             console.log('weekview');
             onDayPress(date);
           }}
+          calendarWidth={calendarWidth}
+          weekHeight={weekHeight}
         />
       </View>
     );

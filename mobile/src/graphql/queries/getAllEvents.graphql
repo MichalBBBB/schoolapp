@@ -1,0 +1,5 @@
+query GetAllEvents {
+  getAllEvents {
+    ...CalendarEvent
+  }
+}

@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Text, View} from 'react-native';
 import AddButton from '../components/addButton';
 import Calendar from '../components/calendar';
-import CalendarView from '../components/calendarView';
+import CalendarView from '../components/calendarView/calendarView';
 
 const CalendarHomeScreen = () => {
   const [screenHeight, setScreenHeight] = useState(0);

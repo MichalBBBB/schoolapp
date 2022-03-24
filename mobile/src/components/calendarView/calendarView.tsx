@@ -1,12 +1,14 @@
 import dayjs from 'dayjs';
-import React, {createRef, useEffect, useState} from 'react';
-import {Dimensions, FlatList, Text, TouchableOpacity, View} from 'react-native';
+import React, {createRef, useEffect, useRef, useState} from 'react';
+import {Dimensions, Text, TouchableOpacity, View} from 'react-native';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import {useNavigation} from '@react-navigation/native';
 import {
   Gesture,
   GestureDetector,
+  FlatList,
   ScrollView,
+  GestureType,
 } from 'react-native-gesture-handler';
 import Animated, {
   interpolate,
@@ -15,9 +17,12 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import WeekView from './calendar/weekView';
-import Calendar from './calendar';
-import WeekDays from './calendar/weekDays';
+import WeekView from '../calendar/weekView';
+import Calendar from '../calendar';
+import WeekDays from '../calendar/weekDays';
+import DayEvents from './dayEvents';
+import {useGetAllEventsQuery} from '../../generated/graphql';
+import Event from './event';
 
 // constants
 export const calendarWidth = Dimensions.get('screen').width;
@@ -39,7 +44,9 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
   const [isMonthView, setIsMonthView] = useState(true);
   const y = useSharedValue(0);
   const weekRow = useSharedValue(0);
-  const scrollViewRef = createRef<ScrollView>();
+  const flatListRef = createRef<FlatList>();
+  const panGestureRef = useRef<GestureType>();
+  const {data} = useGetAllEventsQuery();
 
   // function to find the row of given day in active month
   const findRowOfDate = (date: dayjs.Dayjs) => {
@@ -109,7 +116,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
         });
       }
     })
-    .simultaneousWithExternalGesture(scrollViewRef);
+    .withRef(panGestureRef);
 
   const onDayPress = (date: dayjs.Dayjs) => {
     setSelectedDay(date);
@@ -138,7 +145,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
 
   return (
     <View style={{flex: 1, justifyContent: 'space-between'}}>
-      <WeekDays weekHeaderHeight={weekHeaderHeight} />
+      <WeekDays weekHeaderHeight={weekHeaderHeight} width={calendarWidth} />
       {isWeekView ? (
         <View
           style={[
@@ -152,6 +159,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
             week={selectedDay}
             onDayPress={onDayPress}
             selectedDay={selectedDay}
+            weekHeight={weekHeight}
           />
         </View>
       ) : (
@@ -159,8 +167,12 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
       )}
       <GestureDetector gesture={panGesture}>
         <Animated.View style={[animatedStyle]}>
-          <ScrollView
-            ref={scrollViewRef}
+          <FlatList
+            data={data?.getAllEvents.filter(item =>
+              dayjs(item.startDate).isSame(selectedDay, 'day'),
+            )}
+            renderItem={({item}) => <Event event={item} />}
+            ref={flatListRef}
             scrollEnabled={isWeekView}
             style={{flex: 1, backgroundColor: 'white', paddingTop: 5}}
             onScroll={e => {
@@ -169,20 +181,10 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
                 setIsWeekView(false);
               }
             }}
-            scrollEventThrottle={100}>
-            {[0, 0, 0, 0, 0, 0].map(() => (
-              <View
-                style={{
-                  backgroundColor: '#DDD',
-                  padding: 20,
-                  marginBottom: 10,
-                  marginHorizontal: 10,
-                  borderRadius: 15,
-                }}>
-                <Text>Event</Text>
-              </View>
-            ))}
-          </ScrollView>
+            scrollEventThrottle={100}
+            simultaneousHandlers={panGestureRef}>
+            <DayEvents date={selectedDay} />
+          </FlatList>
         </Animated.View>
       </GestureDetector>
     </View>

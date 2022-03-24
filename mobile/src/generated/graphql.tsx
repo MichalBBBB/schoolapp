@@ -17,16 +17,31 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type CalendarEvent = {
+  __typename?: 'CalendarEvent';
+  endDate?: Maybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  name: Scalars['String'];
+  startDate: Scalars['DateTime'];
+  subject?: Maybe<Subject>;
+  subjectId?: Maybe<Scalars['String']>;
+  user: User;
+  userId: Scalars['String'];
+  wholeDay: Scalars['Boolean'];
+};
+
 export type LoginResponse = UserFail | UserSucces;
 
 export type Mutation = {
   __typename?: 'Mutation';
   changeSubjectOfTask: Task;
+  createEvent: CalendarEvent;
   createSubject: Subject;
   createSubtask: Subtask;
   createTask: Task;
   deleteSubtask: Scalars['Boolean'];
   deleteTask: Scalars['Boolean'];
+  editEvent: CalendarEvent;
   editTask: Task;
   login: LoginResponse;
   register: RegisterResponse;
@@ -38,6 +53,14 @@ export type Mutation = {
 export type MutationChangeSubjectOfTaskArgs = {
   subjectId: Scalars['String'];
   taskId: Scalars['String'];
+};
+
+
+export type MutationCreateEventArgs = {
+  endDate?: InputMaybe<Scalars['DateTime']>;
+  name: Scalars['String'];
+  startDate: Scalars['DateTime'];
+  wholeDay?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -66,6 +89,15 @@ export type MutationDeleteSubtaskArgs = {
 
 export type MutationDeleteTaskArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationEditEventArgs = {
+  endDate?: InputMaybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  startDate: Scalars['DateTime'];
+  subjectId?: InputMaybe<Scalars['String']>;
+  wholeDay?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -100,6 +132,7 @@ export type MutationToggleTaskArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  getAllEvents: Array<CalendarEvent>;
   getAllSubjects: Array<Subject>;
   getAllSubtasksOfTask: Array<Subtask>;
   getAllTasks: Array<Task>;
@@ -157,6 +190,7 @@ export type User = {
   __typename?: 'User';
   createdAt: Scalars['DateTime'];
   email: Scalars['String'];
+  events: Array<CalendarEvent>;
   fullName: Scalars['String'];
   googleId?: Maybe<Scalars['String']>;
   id: Scalars['String'];
@@ -182,6 +216,8 @@ export type UserSucces = {
   accesToken: Scalars['String'];
   user: User;
 };
+
+export type CalendarEventFragment = { __typename?: 'CalendarEvent', id: string, name: string, startDate: any, endDate?: any | null | undefined, wholeDay: boolean, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined };
 
 export type SubjectFragment = { __typename?: 'Subject', id: string, name: string };
 
@@ -267,6 +303,11 @@ export type ToggleTaskMutationVariables = Exact<{
 
 export type ToggleTaskMutation = { __typename?: 'Mutation', toggleTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
 
+export type GetAllEventsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllEventsQuery = { __typename?: 'Query', getAllEvents: Array<{ __typename?: 'CalendarEvent', id: string, name: string, startDate: any, endDate?: any | null | undefined, wholeDay: boolean, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined }> };
+
 export type GetAllSubjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -294,18 +335,30 @@ export type UserExistsQueryVariables = Exact<{
 
 export type UserExistsQuery = { __typename?: 'Query', userExists: boolean };
 
+export const SubjectFragmentDoc = gql`
+    fragment Subject on Subject {
+  id
+  name
+}
+    `;
+export const CalendarEventFragmentDoc = gql`
+    fragment CalendarEvent on CalendarEvent {
+  id
+  name
+  startDate
+  endDate
+  wholeDay
+  subject {
+    ...Subject
+  }
+}
+    ${SubjectFragmentDoc}`;
 export const SubtaskFragmentDoc = gql`
     fragment Subtask on Subtask {
   name
   id
   taskId
   done
-}
-    `;
-export const SubjectFragmentDoc = gql`
-    fragment Subject on Subject {
-  id
-  name
 }
     `;
 export const TaskFragmentDoc = gql`
@@ -687,6 +740,40 @@ export function useToggleTaskMutation(baseOptions?: Apollo.MutationHookOptions<T
 export type ToggleTaskMutationHookResult = ReturnType<typeof useToggleTaskMutation>;
 export type ToggleTaskMutationResult = Apollo.MutationResult<ToggleTaskMutation>;
 export type ToggleTaskMutationOptions = Apollo.BaseMutationOptions<ToggleTaskMutation, ToggleTaskMutationVariables>;
+export const GetAllEventsDocument = gql`
+    query GetAllEvents {
+  getAllEvents {
+    ...CalendarEvent
+  }
+}
+    ${CalendarEventFragmentDoc}`;
+
+/**
+ * __useGetAllEventsQuery__
+ *
+ * To run a query within a React component, call `useGetAllEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllEventsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllEventsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllEventsQuery, GetAllEventsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllEventsQuery, GetAllEventsQueryVariables>(GetAllEventsDocument, options);
+      }
+export function useGetAllEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllEventsQuery, GetAllEventsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllEventsQuery, GetAllEventsQueryVariables>(GetAllEventsDocument, options);
+        }
+export type GetAllEventsQueryHookResult = ReturnType<typeof useGetAllEventsQuery>;
+export type GetAllEventsLazyQueryHookResult = ReturnType<typeof useGetAllEventsLazyQuery>;
+export type GetAllEventsQueryResult = Apollo.QueryResult<GetAllEventsQuery, GetAllEventsQueryVariables>;
 export const GetAllSubjectsDocument = gql`
     query GetAllSubjects {
   getAllSubjects {

@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { createConnection } from "typeorm";
+import { createConnection, getConnection } from "typeorm";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
@@ -25,6 +25,8 @@ import { Subtask } from "./entities/Subtask";
 import { Subject } from "./entities/Subject";
 import { subtaskResolver } from "./resolvers/subtaskResolver";
 import { subjectResolver } from "./resolvers/subjectResolver";
+import { CalendarEvent } from "./entities/CalendarEvent";
+import { calendarEventResolver } from "./resolvers/calendarEventResolver";
 
 const main = async () => {
   // Initialize typeorm connection
@@ -35,7 +37,7 @@ const main = async () => {
     database: "schoolapp",
     logging: true,
     synchronize: true,
-    entities: [User, Task, Subtask, Subject],
+    entities: [User, Task, Subtask, Subject, CalendarEvent],
   });
   //User.delete({});
   //Task.delete({});
@@ -92,6 +94,7 @@ const main = async () => {
         taskResolver,
         subtaskResolver,
         subjectResolver,
+        calendarEventResolver,
       ],
     }),
     plugins: [

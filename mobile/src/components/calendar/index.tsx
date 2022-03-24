@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import React, {createRef, useEffect, useState} from 'react';
-import {Dimensions, FlatList, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, View} from 'react-native';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Month from './month';
 

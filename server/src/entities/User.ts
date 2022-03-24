@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { Subject } from "../entities/Subject";
+import { CalendarEvent } from "./CalendarEvent";
 import { Task } from "./Task";
 
 @Entity()
@@ -47,6 +48,10 @@ export class User extends BaseEntity {
   @Field(() => [Subject])
   @OneToMany(() => Subject, (subject) => subject.user)
   subjects: Subject[];
+
+  @Field(() => [CalendarEvent])
+  @OneToMany(() => CalendarEvent, (calendarEvent) => calendarEvent.user)
+  events: CalendarEvent[];
 
   @CreateDateColumn()
   @Field()

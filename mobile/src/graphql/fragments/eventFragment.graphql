@@ -1,0 +1,10 @@
+fragment CalendarEvent on CalendarEvent {
+  id
+  name
+  startDate
+  endDate
+  wholeDay
+  subject {
+    ...Subject
+  }
+}

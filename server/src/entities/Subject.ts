@@ -7,6 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { CalendarEvent } from "./CalendarEvent";
 import { Task } from "./Task";
 import { User } from "./User";
 
@@ -26,6 +27,9 @@ export class Subject extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.subjects, { onDelete: "CASCADE" })
   user: User;
+
+  @OneToMany(() => CalendarEvent, (event) => event.subject, { nullable: true })
+  calendarEvents: CalendarEvent[];
 
   @Column()
   userId: string;
