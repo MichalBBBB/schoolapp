@@ -60,4 +60,23 @@ export class calendarEventResolver {
       throw new Error("You are not authorized or this event doesn't exist");
     }
   }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async deleteEvent(@Arg("id") id: string, @Ctx() { payload }: MyContext) {
+    const calendarEvent = await CalendarEvent.findOne(id);
+    // check if tasks user is the same as currenct user
+    if (calendarEvent?.userId == payload?.userId) {
+      CalendarEvent.createQueryBuilder()
+        .delete()
+        .where("id = :id", { id })
+        .execute()
+        .catch((_err) => {
+          return false;
+        });
+    } else {
+      return false;
+    }
+    return true;
+  }
 }

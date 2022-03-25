@@ -1,0 +1,15 @@
+mutation CreateEvent(
+  $startDate: DateTime!
+  $endDate: DateTime
+  $wholeDay: Boolean
+  $name: String!
+) {
+  createEvent(
+    startDate: $startDate
+    endDate: $endDate
+    wholeDay: $wholeDay
+    name: $name
+  ) {
+    ...CalendarEvent
+  }
+}

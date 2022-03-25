@@ -1,10 +1,14 @@
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useState} from 'react';
 import {Text, View} from 'react-native';
 import AddButton from '../components/addButton';
 import Calendar from '../components/calendar';
 import CalendarView from '../components/calendarView/calendarView';
+import {CalendarStackParamList} from '../routes/CalendarStack';
 
-const CalendarHomeScreen = () => {
+const CalendarHomeScreen: React.FC<
+  NativeStackScreenProps<CalendarStackParamList, 'CalendarHomeScreen'>
+> = ({navigation}) => {
   const [screenHeight, setScreenHeight] = useState(0);
   const findDimensions = (layout: any) => {
     const {x, y, width, height} = layout;
@@ -16,7 +20,11 @@ const CalendarHomeScreen = () => {
       onLayout={event => findDimensions(event.nativeEvent.layout)}>
       <CalendarView screenHeight={screenHeight} />
       <View style={{position: 'absolute', right: 0, bottom: 0, margin: 20}}>
-        <AddButton onPress={() => {}} />
+        <AddButton
+          onPress={() => {
+            navigation.navigate('AddEventScreen');
+          }}
+        />
       </View>
     </View>
   );

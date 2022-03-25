@@ -3,7 +3,13 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import BackButton from '../components/backButton';
 import {TabStackParamList} from '../Routes';
+import AddEventScreen from '../screens/AddEventScreen';
 import CalendarHomeScreen from '../screens/CalendarHomeScreen';
+
+export type CalendarStackParamList = {
+  CalendarHomeScreen: undefined;
+  AddEventScreen: undefined;
+};
 
 const CalendarStack: React.FC<
   BottomTabScreenProps<TabStackParamList, 'CalendarStack'>
@@ -22,6 +28,7 @@ const CalendarStack: React.FC<
         },
       })}>
       <Stack.Screen name="CalendarHomeScreen" component={CalendarHomeScreen} />
+      <Stack.Screen name="AddEventScreen" component={AddEventScreen} />
     </Stack.Navigator>
   );
 };

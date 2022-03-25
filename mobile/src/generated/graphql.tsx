@@ -39,6 +39,7 @@ export type Mutation = {
   createSubject: Subject;
   createSubtask: Subtask;
   createTask: Task;
+  deleteEvent: Scalars['Boolean'];
   deleteSubtask: Scalars['Boolean'];
   deleteTask: Scalars['Boolean'];
   editEvent: CalendarEvent;
@@ -79,6 +80,11 @@ export type MutationCreateTaskArgs = {
   dueDate?: InputMaybe<Scalars['DateTime']>;
   name: Scalars['String'];
   subjectId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationDeleteEventArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -225,6 +231,16 @@ export type SubtaskFragment = { __typename?: 'Subtask', name: string, id: string
 
 export type TaskFragment = { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined };
 
+export type CreateEventMutationVariables = Exact<{
+  startDate: Scalars['DateTime'];
+  endDate?: InputMaybe<Scalars['DateTime']>;
+  wholeDay?: InputMaybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+}>;
+
+
+export type CreateEventMutation = { __typename?: 'Mutation', createEvent: { __typename?: 'CalendarEvent', id: string, name: string, startDate: any, endDate?: any | null | undefined, wholeDay: boolean, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
+
 export type CreateSubjectMutationVariables = Exact<{
   name: Scalars['String'];
 }>;
@@ -248,6 +264,13 @@ export type CreateTaskMutationVariables = Exact<{
 
 
 export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
+
+export type DeleteEventMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteEventMutation = { __typename?: 'Mutation', deleteEvent: boolean };
 
 export type DeleteSubtaskMutationVariables = Exact<{
   id: Scalars['String'];
@@ -380,6 +403,47 @@ export const TaskFragmentDoc = gql`
 }
     ${SubtaskFragmentDoc}
 ${SubjectFragmentDoc}`;
+export const CreateEventDocument = gql`
+    mutation CreateEvent($startDate: DateTime!, $endDate: DateTime, $wholeDay: Boolean, $name: String!) {
+  createEvent(
+    startDate: $startDate
+    endDate: $endDate
+    wholeDay: $wholeDay
+    name: $name
+  ) {
+    ...CalendarEvent
+  }
+}
+    ${CalendarEventFragmentDoc}`;
+export type CreateEventMutationFn = Apollo.MutationFunction<CreateEventMutation, CreateEventMutationVariables>;
+
+/**
+ * __useCreateEventMutation__
+ *
+ * To run a mutation, you first call `useCreateEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createEventMutation, { data, loading, error }] = useCreateEventMutation({
+ *   variables: {
+ *      startDate: // value for 'startDate'
+ *      endDate: // value for 'endDate'
+ *      wholeDay: // value for 'wholeDay'
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useCreateEventMutation(baseOptions?: Apollo.MutationHookOptions<CreateEventMutation, CreateEventMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateEventMutation, CreateEventMutationVariables>(CreateEventDocument, options);
+      }
+export type CreateEventMutationHookResult = ReturnType<typeof useCreateEventMutation>;
+export type CreateEventMutationResult = Apollo.MutationResult<CreateEventMutation>;
+export type CreateEventMutationOptions = Apollo.BaseMutationOptions<CreateEventMutation, CreateEventMutationVariables>;
 export const CreateSubjectDocument = gql`
     mutation CreateSubject($name: String!) {
   createSubject(name: $name) {
@@ -482,6 +546,37 @@ export function useCreateTaskMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateTaskMutationHookResult = ReturnType<typeof useCreateTaskMutation>;
 export type CreateTaskMutationResult = Apollo.MutationResult<CreateTaskMutation>;
 export type CreateTaskMutationOptions = Apollo.BaseMutationOptions<CreateTaskMutation, CreateTaskMutationVariables>;
+export const DeleteEventDocument = gql`
+    mutation DeleteEvent($id: String!) {
+  deleteEvent(id: $id)
+}
+    `;
+export type DeleteEventMutationFn = Apollo.MutationFunction<DeleteEventMutation, DeleteEventMutationVariables>;
+
+/**
+ * __useDeleteEventMutation__
+ *
+ * To run a mutation, you first call `useDeleteEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteEventMutation, { data, loading, error }] = useDeleteEventMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteEventMutation(baseOptions?: Apollo.MutationHookOptions<DeleteEventMutation, DeleteEventMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteEventMutation, DeleteEventMutationVariables>(DeleteEventDocument, options);
+      }
+export type DeleteEventMutationHookResult = ReturnType<typeof useDeleteEventMutation>;
+export type DeleteEventMutationResult = Apollo.MutationResult<DeleteEventMutation>;
+export type DeleteEventMutationOptions = Apollo.BaseMutationOptions<DeleteEventMutation, DeleteEventMutationVariables>;
 export const DeleteSubtaskDocument = gql`
     mutation DeleteSubtask($id: String!) {
   deleteSubtask(id: $id)

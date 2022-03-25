@@ -1,7 +1,11 @@
 import dayjs from 'dayjs';
 import React, {useEffect} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
-import {CalendarEventFragment} from '../../generated/graphql';
+import {
+  CalendarEventFragment,
+  GetAllEventsDocument,
+  useDeleteEventMutation,
+} from '../../generated/graphql';
 import SlidingView from '../slidingView';
 
 interface EventProps {
@@ -9,6 +13,7 @@ interface EventProps {
 }
 
 const Event: React.FC<EventProps> = ({event}) => {
+  const [deleteEvent] = useDeleteEventMutation();
   const frontView = (
     <View style={styles.frontViewContainer}>
       <Text>{event.name}</Text>
@@ -21,7 +26,13 @@ const Event: React.FC<EventProps> = ({event}) => {
       <SlidingView
         frontView={frontView}
         backView={[
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity
+            onPress={() => {
+              deleteEvent({
+                variables: {id: event.id},
+                refetchQueries: [GetAllEventsDocument],
+              });
+            }}>
             <View style={styles.backViewContainer}>
               <Image
                 source={require('../../../assets/Delete.png')}
