@@ -14,7 +14,6 @@ const WeekDays: React.FC<weekDaysProps> = ({weekHeaderHeight, width}) => {
       style={{
         flexDirection: 'row',
         justifyContent: 'space-evenly',
-        backgroundColor: 'white',
         alignItems: 'center',
         zIndex: 10,
         width: width,

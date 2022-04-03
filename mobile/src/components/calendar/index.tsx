@@ -37,7 +37,6 @@ const Calendar: React.FC<calendarProps> = ({
       // if month is close to current month, data is going to be a date - the full calendar will be visible
       if (i >= pastScrollRange - 1 && i <= pastScrollRange + 1) {
         newMonth = month.subtract(pastScrollRange - i, 'month');
-        console.log(newMonth.format('YYYY M'));
       } else {
         // if month is far away from being visible, only a string of the date is added
         newMonth = month

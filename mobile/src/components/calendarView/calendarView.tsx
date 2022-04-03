@@ -116,6 +116,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
         });
       }
     })
+    .simultaneousWithExternalGesture()
     .withRef(panGestureRef);
 
   const onDayPress = (date: dayjs.Dayjs) => {
@@ -145,7 +146,9 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
 
   return (
     <View style={{flex: 1, justifyContent: 'space-between'}}>
-      <WeekDays weekHeaderHeight={weekHeaderHeight} width={calendarWidth} />
+      <View style={{backgroundColor: 'white', zIndex: 10}}>
+        <WeekDays weekHeaderHeight={weekHeaderHeight} width={calendarWidth} />
+      </View>
       {isWeekView ? (
         <View
           style={[
@@ -182,9 +185,8 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
               }
             }}
             scrollEventThrottle={100}
-            simultaneousHandlers={panGestureRef}>
-            <DayEvents date={selectedDay} />
-          </FlatList>
+            simultaneousHandlers={panGestureRef}
+          />
         </Animated.View>
       </GestureDetector>
     </View>
