@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import dayjs from 'dayjs';
-import React, {useEffect, useState} from 'react';
+import React, {createRef, useEffect, useState} from 'react';
 import {View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import Week from './week';
@@ -11,6 +11,8 @@ interface weekViewProps {
   onDayPress: (date: dayjs.Dayjs) => void;
   calendarWidth: number;
   weekHeight: number;
+  onChangeActiveWeek?: (newWeek: dayjs.Dayjs) => void | undefined;
+  scrollToDate?: dayjs.Dayjs | undefined | null;
 }
 
 const createWeek = (date: dayjs.Dayjs | string) => {
@@ -35,10 +37,42 @@ const WeekView: React.FC<weekViewProps> = ({
   onDayPress,
   calendarWidth,
   weekHeight,
+  onChangeActiveWeek,
+  scrollToDate,
 }) => {
   const [weeks, setWeeks] = useState<Array<dayjs.Dayjs | string>>([week]);
   const [index, setIndex] = useState(pastScrollRange);
   const navigation = useNavigation();
+  const flatListRef = createRef<FlatList>();
+
+  const createDateFromString = (string: string) => {
+    const date = string
+      .toString()
+      .split(' ')
+      .map(item => parseInt(item));
+    return dayjs(new Date(date[0], date[1] - 1, date[2]));
+  };
+
+  const changeVisibility = (newIndex: number) => {
+    const weeksCopy = [...weeks];
+    for (var i = 0; i < weeks.length; i++) {
+      if (
+        typeof weeksCopy[i] == 'string' &&
+        i >= newIndex - 1 &&
+        i <= newIndex + 1
+      ) {
+        weeksCopy[i] = createDateFromString(weeksCopy[i] as string);
+      } else if (
+        typeof weeksCopy[i] !== 'string' &&
+        i < newIndex - 1 &&
+        i > newIndex + 1
+      ) {
+        const stringDate = (weeksCopy[i] as dayjs.Dayjs).format('YYYY M D');
+        weeksCopy[i] = stringDate;
+      }
+    }
+    return weeksCopy;
+  };
 
   useEffect(() => {
     let weeksCopy = [];
@@ -53,8 +87,37 @@ const WeekView: React.FC<weekViewProps> = ({
       }
       weeksCopy.push(newWeek);
     }
+    console.log(weeksCopy);
     setWeeks(weeksCopy);
   }, []);
+
+  useEffect(() => {
+    console.log('useEffect');
+    if (scrollToDate) {
+      const newIndex = weeks.findIndex(value => {
+        if (typeof value == 'string') {
+          const date = createDateFromString(value);
+          if (date.isSame(scrollToDate, 'week')) {
+            return true;
+          } else {
+            return false;
+          }
+        } else {
+          if (value.isSame(scrollToDate, 'week')) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      });
+      console.log(newIndex);
+      setWeeks(changeVisibility(newIndex));
+      flatListRef.current?.scrollToIndex({
+        index: newIndex,
+        animated: false,
+      });
+    }
+  }, [scrollToDate]);
 
   const renderItem = ({item}: {item: dayjs.Dayjs | string}) => {
     return (
@@ -75,6 +138,7 @@ const WeekView: React.FC<weekViewProps> = ({
 
   return (
     <FlatList
+      ref={flatListRef}
       data={weeks}
       renderItem={renderItem}
       getItemLayout={(item, index) => ({
@@ -91,34 +155,19 @@ const WeekView: React.FC<weekViewProps> = ({
       onMomentumScrollEnd={item => {
         // change data in months on every scroll
         const newIndex = item.nativeEvent.contentOffset.x / calendarWidth;
-        const weeksCopy = [...weeks];
+
         // go through the data array and change months close to viewable to full dates to render full calendars
-        for (var i = 0; i < weeks.length; i++) {
-          if (
-            typeof weeksCopy[i] == 'string' &&
-            i >= newIndex - 1 &&
-            i <= newIndex + 1
-          ) {
-            const date = weeksCopy[i]
-              .toString()
-              .split(' ')
-              .map(item => parseInt(item));
-            weeksCopy[i] = dayjs(new Date(date[0], date[1] - 1, date[2]));
-          } else if (
-            typeof weeksCopy[i] !== 'string' &&
-            i < newIndex - 1 &&
-            i > newIndex + 1
-          ) {
-            const stringDate = (weeksCopy[i] as dayjs.Dayjs).format('YYYY M D');
-            weeksCopy[i] = stringDate;
-          }
+        const weeksCopy = changeVisibility(newIndex);
+
+        if (
+          index !== newIndex &&
+          onChangeActiveWeek &&
+          typeof weeks[newIndex] !== 'string'
+        ) {
+          onChangeActiveWeek(weeks[newIndex] as dayjs.Dayjs);
         }
         setIndex(newIndex);
         setWeeks(weeksCopy);
-        // change header title to current month
-        navigation.setOptions({
-          title: (weeksCopy[newIndex] as dayjs.Dayjs).format('MMMM'),
-        });
       }}
     />
   );

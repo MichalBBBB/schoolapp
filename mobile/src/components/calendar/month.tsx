@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import React from 'react';
+import React, {memo} from 'react';
 import {Text, View} from 'react-native';
 import Week from './week';
 
@@ -75,4 +75,4 @@ const Month: React.FC<MonthProps> = ({
   );
 };
 
-export default Month;
+export default memo(Month);

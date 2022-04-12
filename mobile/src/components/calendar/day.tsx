@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import React, {useContext} from 'react';
+import React, {memo, useContext} from 'react';
 import {TouchableOpacity, View, Text} from 'react-native';
 
 interface DayProps {
@@ -41,4 +41,4 @@ const Day: React.FC<DayProps> = ({day, selectedDay, monthNum, onPress}) => {
   );
 };
 
-export default Day;
+export default memo(Day);

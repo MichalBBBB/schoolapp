@@ -81,10 +81,6 @@ const EditDateWindow: React.FC<EditDateWindowProps> = ({
     selectedDay.format('mm'),
   );
 
-  useEffect(() => {
-    console.log(selectedDay.format('HH:mm'));
-  });
-
   const selectTimeView = (
     <View style={styles.timeContainer}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>

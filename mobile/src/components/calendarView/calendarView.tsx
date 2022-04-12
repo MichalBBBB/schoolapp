@@ -1,5 +1,11 @@
 import dayjs from 'dayjs';
-import React, {createRef, useEffect, useRef, useState} from 'react';
+import React, {
+  createRef,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import {Dimensions, Text, TouchableOpacity, View} from 'react-native';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import {useNavigation} from '@react-navigation/native';
@@ -47,6 +53,12 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
   const flatListRef = createRef<FlatList>();
   const panGestureRef = useRef<GestureType>();
   const {data} = useGetAllEventsQuery();
+  const navigation = useNavigation();
+  const [activeMonth, setActiveMonth] = useState(dayjs());
+
+  useLayoutEffect(() => {
+    navigation.setOptions({headerTitle: activeMonth.format('MMMM YYYY')});
+  });
 
   // function to find the row of given day in active month
   const findRowOfDate = (date: dayjs.Dayjs) => {
@@ -140,6 +152,9 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
         pastScrollRange={pastScrollRange}
         futureScrollRange={futureScrollRange}
         selectedDay={selectedDay}
+        onChangeActiveMonth={newMonth => {
+          setActiveMonth(newMonth);
+        }}
       />
     </Animated.View>
   );
@@ -186,6 +201,18 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
             }}
             scrollEventThrottle={100}
             simultaneousHandlers={panGestureRef}
+            ListEmptyComponent={() => (
+              <View
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                }}>
+                <Text style={{color: '#ccc', fontSize: 24, fontWeight: 'bold'}}>
+                  Nothing for this day
+                </Text>
+              </View>
+            )}
           />
         </Animated.View>
       </GestureDetector>
