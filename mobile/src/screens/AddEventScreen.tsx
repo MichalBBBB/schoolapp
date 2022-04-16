@@ -3,7 +3,6 @@ import dayjs from 'dayjs';
 import React, {useEffect, useState} from 'react';
 import {
   Dimensions,
-  Modal,
   Pressable,
   StyleSheet,
   Text,
@@ -18,6 +17,8 @@ import {
 } from '../generated/graphql';
 import ConnectedList from '../components/connectedList';
 import EditDateWindow from '../components/editDateWindow';
+import Modal from 'react-native-modal';
+import EditDateModal from '../components/editDateWindow/editDateModal';
 
 let hours: number[] = [];
 for (var i = 0; i < 24; i++) {
@@ -93,30 +94,28 @@ const AddEventScreen: React.FC<
           <Text>Submit</Text>
         </Pressable>
       </View>
-      <Modal visible={startDateModalVisible} transparent={true}>
-        <EditDateWindow
-          initialDate={startDate}
-          onClose={() => {
-            setStartDateModalVisible(false);
-          }}
-          onSubmit={date => {
-            setStartDateModalVisible(false);
-            setStartDate(date);
-          }}
-        />
-      </Modal>
-      <Modal visible={endDateModalVisible} transparent={true}>
-        <EditDateWindow
-          initialDate={endDate}
-          onClose={() => {
-            setEndDateModalVisible(false);
-          }}
-          onSubmit={date => {
-            setEndDateModalVisible(false);
-            setEndDate(date);
-          }}
-        />
-      </Modal>
+      <EditDateModal
+        isVisible={startDateModalVisible}
+        initialDate={startDate}
+        onClose={() => {
+          setStartDateModalVisible(false);
+        }}
+        onSubmit={date => {
+          setStartDateModalVisible(false);
+          setStartDate(date);
+        }}
+      />
+      <EditDateModal
+        isVisible={endDateModalVisible}
+        initialDate={endDate}
+        onClose={() => {
+          setEndDateModalVisible(false);
+        }}
+        onSubmit={date => {
+          setEndDateModalVisible(false);
+          setEndDate(date);
+        }}
+      />
     </View>
   );
 };

@@ -19,6 +19,7 @@ import {
 } from '../../generated/graphql';
 import AddButton from '../addButton';
 import EditDateWindow from '../editDateWindow';
+import EditDateModal from '../editDateWindow/editDateModal';
 import KeyboardTopView from '../keyboardTopWindow';
 import {calendarConfigWithoutTime} from '../task';
 import SubjectButton from './subjectButton';
@@ -96,20 +97,17 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({
           />
         </View>
       </KeyboardTopView>
-      <Modal visible={modalVisible} transparent={true}>
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <EditDateWindow
-            initialDate={taskDate ? taskDate : undefined}
-            onClose={() => {
-              setModalVisible(false);
-            }}
-            onSubmit={date => {
-              setTaskDate(date);
-              setModalVisible(false);
-            }}
-          />
-        </View>
-      </Modal>
+      <EditDateModal
+        isVisible={modalVisible}
+        initialDate={taskDate ? taskDate : undefined}
+        onClose={() => {
+          setModalVisible(false);
+        }}
+        onSubmit={date => {
+          setTaskDate(date);
+          setModalVisible(false);
+        }}
+      />
     </>
   );
 };

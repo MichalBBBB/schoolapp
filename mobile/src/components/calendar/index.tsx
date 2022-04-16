@@ -82,7 +82,6 @@ const Calendar: React.FC<calendarProps> = ({
   }, []);
 
   useEffect(() => {
-    console.log('useEffect');
     if (scrollToDate) {
       const newIndex = months.findIndex(value => {
         if (typeof value == 'string') {

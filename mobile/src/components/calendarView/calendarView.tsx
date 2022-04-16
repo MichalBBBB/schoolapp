@@ -1,21 +1,15 @@
 import dayjs from 'dayjs';
-import React, {
-  createRef,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
-import {Dimensions, Text, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
+import {
+  Button,
+  Dimensions,
+  Text,
+  TouchableOpacity,
+  View,
+  FlatList,
+} from 'react-native';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import {useNavigation} from '@react-navigation/native';
-import {
-  Gesture,
-  GestureDetector,
-  FlatList,
-  ScrollView,
-  GestureType,
-} from 'react-native-gesture-handler';
 import Animated, {
   interpolate,
   runOnJS,
@@ -26,7 +20,6 @@ import Animated, {
 import WeekView from '../calendar/weekView';
 import Calendar from '../calendar';
 import WeekDays from '../calendar/weekDays';
-import DayEvents from './dayEvents';
 import {useGetAllEventsQuery} from '../../generated/graphql';
 import Event from './event';
 
@@ -40,6 +33,8 @@ const futureScrollRange = 50;
 
 dayjs.extend(relativeTime);
 
+const maxCalendarZIndex = 8;
+
 interface calendarProps {
   screenHeight: number;
 }
@@ -49,15 +44,21 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
   const [isWeekView, setIsWeekView] = useState(false);
   const [isMonthView, setIsMonthView] = useState(true);
   const y = useSharedValue(0);
+  const monthViewOpacity = useSharedValue(1);
   const weekRow = useSharedValue(0);
-  const flatListRef = createRef<FlatList>();
-  const panGestureRef = useRef<GestureType>();
   const {data} = useGetAllEventsQuery();
   const navigation = useNavigation();
   const [activeMonth, setActiveMonth] = useState(dayjs());
+  const [activeWeek, setActiveWeek] = useState(dayjs());
+  const [monthString, setMonthString] = useState(dayjs().format('MMMM YYYY'));
+  const [scrollWeekToDate, setScrollWeekToDate] = useState<dayjs.Dayjs | null>(
+    null,
+  );
+  const [scrollMonthToDate, setScrollMonthToDate] =
+    useState<dayjs.Dayjs | null>(null);
 
   useLayoutEffect(() => {
-    navigation.setOptions({headerTitle: activeMonth.format('MMMM YYYY')});
+    navigation.setOptions({});
   });
 
   // function to find the row of given day in active month
@@ -74,7 +75,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
   // animated style for data of a specific day
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      height: screenHeight - (calendarHeight + weekHeaderHeight) - y.value,
+      height: screenHeight - (calendarHeight + weekHeaderHeight + 34) - y.value,
     };
   });
 
@@ -91,48 +92,19 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
           ),
         },
       ],
+      opacity: monthViewOpacity.value,
     };
   });
 
-  // pan gesture of data for a specific day
-  const panGesture = Gesture.Pan()
-    .onUpdate(e => {
-      // if full month is visible, don't allow to move down and neither too far up
-      if (
-        isMonthView &&
-        e.translationY < 0 &&
-        e.translationY > -(calendarHeight - weekHeight)
-      ) {
-        y.value = e.translationY;
-        // if only week is visible, don't allow to move up and neither too far down
-      } else if (
-        !isMonthView &&
-        e.translationY > 0 &&
-        e.translationY < calendarHeight - weekHeight
-      ) {
-        // change the offset relative to the position when only a week is visible
-        y.value = e.translationY - (calendarHeight - weekHeight);
-      }
-    })
-    .onEnd(e => {
-      // if it is closer to the week view, go to the week view
-      if (y.value < -(calendarHeight - weekHeight) / 2) {
-        y.value = withTiming(-(calendarHeight - weekHeight), undefined, () => {
-          runOnJS(setIsWeekView)(true);
-          runOnJS(setIsMonthView)(false);
-        });
-      } else {
-        y.value = withTiming(0, undefined, () => {
-          runOnJS(setIsWeekView)(false);
-          runOnJS(setIsMonthView)(true);
-        });
-      }
-    })
-    .simultaneousWithExternalGesture()
-    .withRef(panGestureRef);
+  const weekViewAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: 1 - monthViewOpacity.value,
+    };
+  });
 
   const onDayPress = (date: dayjs.Dayjs) => {
     setSelectedDay(date);
+    setActiveWeek(date);
     weekRow.value = findRowOfDate(date);
   };
 
@@ -141,7 +113,8 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
       style={[
         {
           position: 'absolute',
-          marginTop: weekHeaderHeight,
+          marginTop: weekHeaderHeight + 34,
+          zIndex: !isWeekView ? maxCalendarZIndex : 1,
         },
         calendarAnimatedStyle,
       ]}>
@@ -154,7 +127,19 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
         selectedDay={selectedDay}
         onChangeActiveMonth={newMonth => {
           setActiveMonth(newMonth);
+          let newSelectedDay;
+          if (newMonth.isSame(dayjs(), 'month')) {
+            newSelectedDay = dayjs();
+          } else if (selectedDay.isSame(newMonth, 'month')) {
+            newSelectedDay = selectedDay;
+          } else {
+            newSelectedDay = newMonth.startOf('month');
+          }
+          weekRow.value = findRowOfDate(newSelectedDay);
+          setSelectedDay(newSelectedDay);
+          setMonthString(newMonth.format('MMMM YYYY'));
         }}
+        scrollToDate={scrollMonthToDate}
       />
     </Animated.View>
   );
@@ -162,60 +147,109 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
   return (
     <View style={{flex: 1, justifyContent: 'space-between'}}>
       <View style={{backgroundColor: 'white', zIndex: 10}}>
+        <View
+          style={{
+            height: 34,
+            alignItems: 'center',
+            paddingLeft: 20,
+            flexDirection: 'row',
+            width: '100%',
+          }}>
+          <TouchableOpacity
+            onPress={() => {
+              if (isMonthView) {
+                setScrollWeekToDate(selectedDay);
+                setIsMonthView(false);
+                y.value = withTiming(-(calendarHeight - weekHeight), {}, () => {
+                  monthViewOpacity.value = 0;
+                  runOnJS(setIsWeekView)(true);
+                });
+              } else {
+                setScrollMonthToDate(selectedDay);
+                setIsWeekView(false);
+                monthViewOpacity.value = 1;
+                y.value = withTiming(0, {}, () => {
+                  runOnJS(setIsMonthView)(true);
+                });
+              }
+            }}
+            style={{
+              backgroundColor: '#ddd',
+              padding: 5,
+              borderRadius: 10,
+              marginRight: 10,
+            }}>
+            <Text>{monthString}</Text>
+          </TouchableOpacity>
+          {/* {isWeekView && (
+            <Text style={{color: '#777'}}>{selectedDay.fromNow()}</Text>
+          )} */}
+        </View>
         <WeekDays weekHeaderHeight={weekHeaderHeight} width={calendarWidth} />
       </View>
-      {isWeekView ? (
-        <View
-          style={[
-            {
-              position: 'absolute',
-              marginTop: weekHeaderHeight,
-            },
-          ]}>
-          <WeekView
-            calendarWidth={calendarWidth}
-            week={selectedDay}
-            onDayPress={onDayPress}
-            selectedDay={selectedDay}
-            weekHeight={weekHeight}
-          />
-        </View>
-      ) : (
-        monthView
-      )}
-      <GestureDetector gesture={panGesture}>
-        <Animated.View style={[animatedStyle]}>
+      <Animated.View
+        style={[
+          {
+            position: 'absolute',
+            marginTop: weekHeaderHeight + 34,
+            zIndex: isMonthView ? 1 : maxCalendarZIndex,
+          },
+          weekViewAnimatedStyle,
+        ]}>
+        <WeekView
+          calendarWidth={calendarWidth}
+          week={selectedDay}
+          onDayPress={onDayPress}
+          selectedDay={selectedDay}
+          weekHeight={weekHeight}
+          onChangeActiveWeek={newWeek => {
+            setActiveWeek(newWeek);
+            weekRow.value = findRowOfDate(newWeek);
+            let newSelectedDay;
+            if (newWeek.isSame(dayjs(), 'week')) {
+              newSelectedDay = dayjs();
+            } else if (selectedDay.isSame(newWeek, 'week')) {
+              newSelectedDay = selectedDay;
+            } else {
+              newSelectedDay = newWeek.startOf('week');
+            }
+            setSelectedDay(newSelectedDay);
+            setMonthString(newWeek.format('MMMM YYYY'));
+          }}
+          scrollToDate={scrollWeekToDate}
+        />
+      </Animated.View>
+      {monthView}
+      {data?.getAllEvents.filter(item =>
+        dayjs(item.startDate).isSame(selectedDay, 'day'),
+      ).length !== 0 ? (
+        <Animated.View style={[animatedStyle, {zIndex: 10}]}>
           <FlatList
             data={data?.getAllEvents.filter(item =>
               dayjs(item.startDate).isSame(selectedDay, 'day'),
             )}
             renderItem={({item}) => <Event event={item} />}
-            ref={flatListRef}
             scrollEnabled={isWeekView}
             style={{flex: 1, backgroundColor: 'white', paddingTop: 5}}
-            onScroll={e => {
-              // if scrolling up, disable weekView
-              if (e.nativeEvent.contentOffset.y < 0) {
-                setIsWeekView(false);
-              }
-            }}
-            scrollEventThrottle={100}
-            simultaneousHandlers={panGestureRef}
-            ListEmptyComponent={() => (
-              <View
-                style={{
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                }}>
-                <Text style={{color: '#ccc', fontSize: 24, fontWeight: 'bold'}}>
-                  Nothing for this day
-                </Text>
-              </View>
-            )}
           />
         </Animated.View>
-      </GestureDetector>
+      ) : (
+        <Animated.View
+          style={[
+            {
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+              backgroundColor: 'white',
+              zIndex: 10,
+            },
+            animatedStyle,
+          ]}>
+          <Text style={{color: '#ccc', fontSize: 24, fontWeight: 'bold'}}>
+            Nothing for this day
+          </Text>
+        </Animated.View>
+      )}
     </View>
   );
 };

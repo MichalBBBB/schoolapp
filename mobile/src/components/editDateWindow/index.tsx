@@ -15,7 +15,6 @@ import WeekDays from '../calendar/weekDays';
 import Popup from '../popup';
 
 interface EditDateWindowProps {
-  onClose: () => void;
   onSubmit: (date: dayjs.Dayjs) => void;
   initialDate?: dayjs.Dayjs | null;
 }
@@ -61,7 +60,6 @@ for (var i = 0; i < 60; i++) {
 }
 
 const EditDateWindow: React.FC<EditDateWindowProps> = ({
-  onClose,
   onSubmit,
   initialDate,
 }) => {
@@ -127,108 +125,97 @@ const EditDateWindow: React.FC<EditDateWindowProps> = ({
   return (
     <View
       style={{
-        width: '100%',
-        height: '100%',
+        backgroundColor: 'white',
+        borderRadius: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: windowWidth,
+        position: 'absolute',
+        alignSelf: 'center',
+        paddingVertical: 15,
+        top: '50%',
+        marginTop: -(height / 2),
+      }}
+      onLayout={event => {
+        findDimensions(event.nativeEvent.layout);
       }}>
-      <BackgroundPress
-        onPress={() => {
-          onClose();
-        }}
-      />
-      <View
-        style={{
-          backgroundColor: 'white',
-          borderRadius: 15,
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: windowWidth,
-          position: 'absolute',
-          alignSelf: 'center',
-          paddingVertical: 15,
-          top: '50%',
-          marginTop: -(height / 2),
-        }}
-        onLayout={event => {
-          findDimensions(event.nativeEvent.layout);
-        }}>
-        {specialDays.map((item, index) => (
-          <View
-            style={{
-              flexDirection: 'row',
-              width: '100%',
-            }}>
-            {item.map((day, index) => (
-              <View
-                style={{
-                  width: windowWidth / 2,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  flexDirection: 'row',
-                }}>
-                <TouchableOpacity
-                  style={[
-                    styles.button,
-                    {
-                      backgroundColor:
-                        selectedSpecialDay == day ? '#ddd' : undefined,
-                    },
-                  ]}
-                  onPress={() => {
-                    setSelectedSpecialDay(day);
-                    setSelectedDay(
-                      day.date
-                        .hour(selectedDay.hour())
-                        .minute(selectedDay.minute()),
-                    );
-                  }}>
-                  <Text>{day.name}</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
-        ))}
-        <WeekDays weekHeaderHeight={30} width={windowWidth - 20} />
-        <View style={{height: calendarHeight}}>
-          <Calendar
-            weekHeight={weekHeight}
-            calendarWidth={windowWidth - 20}
-            pastScrollRange={2}
-            futureScrollRange={20}
-            selectedDay={'get' in selectedDay ? selectedDay : null}
-            onChangeSelectedDay={date => {
-              setSelectedDay(
-                date.hour(selectedDay.hour()).minute(selectedDay.minute()),
-              );
-              setSelectedSpecialDay(null);
-            }}
-          />
-        </View>
-        <Pressable
-          onPress={() => setTimePopupOpen(true)}
+      {specialDays.map((item, index) => (
+        <View
           style={{
             flexDirection: 'row',
-            justifyContent: 'space-between',
             width: '100%',
-            padding: 10,
-            paddingHorizontal: 40,
           }}>
-          <Text>Time</Text>
-          <Text>{selectedDay.format('HH:mm')}</Text>
-        </Pressable>
-        <TouchableOpacity
-          onPress={() => {
-            const date: dayjs.Dayjs = selectedDay;
-            onSubmit(date);
-          }}>
-          <Text>Submit</Text>
-        </TouchableOpacity>
-        <Popup
-          onClose={() => setTimePopupOpen(false)}
-          width={windowWidth}
-          open={timePopupOpen}>
-          {selectTimeView}
-        </Popup>
+          {item.map((day, index) => (
+            <View
+              style={{
+                width: windowWidth / 2,
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'row',
+              }}>
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  {
+                    backgroundColor:
+                      selectedSpecialDay == day ? '#ddd' : undefined,
+                  },
+                ]}
+                onPress={() => {
+                  setSelectedSpecialDay(day);
+                  setSelectedDay(
+                    day.date
+                      .hour(selectedDay.hour())
+                      .minute(selectedDay.minute()),
+                  );
+                }}>
+                <Text>{day.name}</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+      ))}
+      <WeekDays weekHeaderHeight={30} width={windowWidth - 20} />
+      <View style={{height: calendarHeight}}>
+        <Calendar
+          weekHeight={weekHeight}
+          calendarWidth={windowWidth - 20}
+          pastScrollRange={2}
+          futureScrollRange={20}
+          selectedDay={'get' in selectedDay ? selectedDay : null}
+          onChangeSelectedDay={date => {
+            setSelectedDay(
+              date.hour(selectedDay.hour()).minute(selectedDay.minute()),
+            );
+            setSelectedSpecialDay(null);
+          }}
+        />
       </View>
+      <Pressable
+        onPress={() => setTimePopupOpen(true)}
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          width: '100%',
+          padding: 10,
+          paddingHorizontal: 40,
+        }}>
+        <Text>Time</Text>
+        <Text>{selectedDay.format('HH:mm')}</Text>
+      </Pressable>
+      <TouchableOpacity
+        onPress={() => {
+          const date: dayjs.Dayjs = selectedDay;
+          onSubmit(date);
+        }}>
+        <Text>Submit</Text>
+      </TouchableOpacity>
+      <Popup
+        onClose={() => setTimePopupOpen(false)}
+        width={windowWidth}
+        open={timePopupOpen}>
+        {selectTimeView}
+      </Popup>
     </View>
   );
 };

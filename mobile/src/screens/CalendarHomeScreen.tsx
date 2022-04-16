@@ -2,7 +2,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useState} from 'react';
 import {Text, View} from 'react-native';
 import AddButton from '../components/addButton';
-import CalendarView from '../components/calendarView/calendarView2';
+import CalendarView from '../components/calendarView/calendarView';
 import {CalendarStackParamList} from '../routes/CalendarStack';
 
 const CalendarHomeScreen: React.FC<
