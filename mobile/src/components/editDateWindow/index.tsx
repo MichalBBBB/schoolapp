@@ -13,6 +13,7 @@ import BackgroundPress from '../backgroundPress';
 import Calendar from '../calendar';
 import WeekDays from '../calendar/weekDays';
 import Popup from '../popup';
+import Modal from 'react-native-modal';
 
 interface EditDateWindowProps {
   onSubmit: (date: dayjs.Dayjs) => void;
@@ -210,12 +211,20 @@ const EditDateWindow: React.FC<EditDateWindowProps> = ({
         }}>
         <Text>Submit</Text>
       </TouchableOpacity>
-      <Popup
+      {/* <Popup
         onClose={() => setTimePopupOpen(false)}
         width={windowWidth}
         open={timePopupOpen}>
         {selectTimeView}
-      </Popup>
+      </Popup> */}
+      <Modal
+        isVisible={timePopupOpen}
+        backdropOpacity={0.3}
+        onBackdropPress={() => setTimePopupOpen(false)}
+        animationIn="fadeInUp"
+        animationOut="fadeOutDown">
+        {selectTimeView}
+      </Modal>
     </View>
   );
 };

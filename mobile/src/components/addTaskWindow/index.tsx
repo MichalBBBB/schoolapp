@@ -9,7 +9,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Modal,
   Button,
 } from 'react-native';
 import {
@@ -23,22 +22,26 @@ import EditDateModal from '../editDateWindow/editDateModal';
 import KeyboardTopView from '../keyboardTopWindow';
 import {calendarConfigWithoutTime} from '../task';
 import SubjectButton from './subjectButton';
+import Modal from 'react-native-modal';
+import AddSubjectModal from '../addSubjectModal';
 
 interface addTaskWindowProps {
   onClose: () => void;
-  onAddSubject: () => void;
+  visible: boolean;
 }
 
-const AddTaskWindow: React.FC<addTaskWindowProps> = ({
-  onClose,
-  onAddSubject,
-}) => {
+const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
   const headerHeight = useHeaderHeight();
   const taskInputRef = createRef<TextInput>();
   const [addTask, {error}] = useCreateTaskMutation();
   const [name, setName] = useState('');
   const [subject, setSubject] = useState<SubjectFragment | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [viewVisible, setViewVisible] = useState<
+    'main' | 'editDate' | 'addSubject'
+  >('main');
+  const [viewShouldAppear, setViewShouldAppear] = useState<
+    'main' | 'editDate' | 'addSubject'
+  >('main');
   const [taskDate, setTaskDate] = useState<dayjs.Dayjs | null>();
 
   useEffect(() => {
@@ -47,66 +50,88 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({
 
   return (
     <>
-      <KeyboardTopView
-        onClose={() => {
+      <Modal
+        isVisible={
+          visible && viewVisible == 'main' && viewShouldAppear == 'main'
+        }
+        backdropOpacity={0.3}
+        avoidKeyboard={true}
+        animationIn={'fadeInUp'}
+        animationOut={'fadeOutDown'}
+        style={{justifyContent: 'flex-end', margin: 10}}
+        onBackdropPress={() => {
           onClose();
         }}
-        visible={!modalVisible}>
-        <TextInput
-          style={{padding: 10}}
-          placeholder="Task name"
-          ref={taskInputRef}
-          onChangeText={setName}
-        />
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <SubjectButton
-            onChangeSubject={subject => {
-              setSubject(subject);
-            }}
-            onAddSubject={() => {
-              onAddSubject();
-            }}
+        onModalHide={() => {
+          setViewVisible(viewShouldAppear);
+        }}>
+        <View style={{backgroundColor: 'white', padding: 10, borderRadius: 15}}>
+          <TextInput
+            style={{padding: 10}}
+            placeholder="Task name"
+            ref={taskInputRef}
+            onChangeText={setName}
           />
-          <TouchableOpacity
-            style={{flex: 1}}
-            onPress={() => {
-              // onEditDate();
-              setModalVisible(true);
-            }}>
-            <View style={styles.button}>
-              <Text>
-                {taskDate
-                  ? taskDate.calendar(null, calendarConfigWithoutTime)
-                  : 'Select Date'}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <AddButton
-            onPress={() => {
-              console.log(taskDate);
-              addTask({
-                variables: {
-                  name,
-                  subjectId: subject ? subject.id : undefined,
-                  dueDate: taskDate,
-                },
-                refetchQueries: [GetAllTasksDocument],
-              });
-              onClose();
-            }}
-          />
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <SubjectButton
+              onChangeSubject={subject => {
+                setSubject(subject);
+              }}
+              onAddSubject={() => {
+                setViewShouldAppear('addSubject');
+              }}
+            />
+            <TouchableOpacity
+              style={{flex: 1}}
+              onPress={() => {
+                // onEditDate();
+                setViewShouldAppear('editDate');
+              }}>
+              <View style={styles.button}>
+                <Text>
+                  {taskDate
+                    ? taskDate.calendar(null, calendarConfigWithoutTime)
+                    : 'Select Date'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <AddButton
+              onPress={() => {
+                console.log(taskDate);
+                addTask({
+                  variables: {
+                    name,
+                    subjectId: subject ? subject.id : undefined,
+                    dueDate: taskDate,
+                  },
+                  refetchQueries: [GetAllTasksDocument],
+                });
+                onClose();
+              }}
+            />
+          </View>
         </View>
-      </KeyboardTopView>
+      </Modal>
       <EditDateModal
-        isVisible={modalVisible}
+        isVisible={viewVisible == 'editDate' && viewShouldAppear == 'editDate'}
         initialDate={taskDate ? taskDate : undefined}
         onClose={() => {
-          setModalVisible(false);
+          setViewShouldAppear('main');
+        }}
+        onHide={() => {
+          setViewVisible(viewShouldAppear);
         }}
         onSubmit={date => {
           setTaskDate(date);
-          setModalVisible(false);
+          setViewShouldAppear('main');
         }}
+      />
+      <AddSubjectModal
+        isVisible={
+          viewShouldAppear == 'addSubject' && viewVisible == 'addSubject'
+        }
+        onClose={() => setViewShouldAppear('main')}
+        onModalHide={() => setViewVisible(viewShouldAppear)}
       />
     </>
   );

@@ -8,6 +8,7 @@ interface EditDateModalProps {
   onSubmit: (date: dayjs.Dayjs) => void;
   initialDate?: dayjs.Dayjs | null;
   isVisible: boolean;
+  onHide?: () => void | undefined;
 }
 
 const EditDateModal: React.FC<EditDateModalProps> = ({
@@ -15,6 +16,7 @@ const EditDateModal: React.FC<EditDateModalProps> = ({
   onSubmit,
   initialDate,
   isVisible,
+  onHide,
 }) => {
   return (
     <Modal
@@ -22,7 +24,12 @@ const EditDateModal: React.FC<EditDateModalProps> = ({
       backdropOpacity={0.3}
       onBackdropPress={() => onClose()}
       animationIn="fadeInUp"
-      animationOut="fadeOutDown">
+      animationOut="fadeOutDown"
+      onModalHide={() => {
+        if (onHide) {
+          onHide();
+        }
+      }}>
       <EditDateWindow
         initialDate={initialDate}
         onSubmit={date => {
