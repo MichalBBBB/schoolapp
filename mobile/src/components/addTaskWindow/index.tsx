@@ -1,29 +1,20 @@
-import {useHeaderHeight} from '@react-navigation/elements';
 import dayjs from 'dayjs';
 import React, {createRef, useEffect, useRef, useState} from 'react';
-import {
-  KeyboardAvoidingView,
-  View,
-  TextInput,
-  TouchableWithoutFeedback,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Button,
-} from 'react-native';
+import {View, TextInput, Text, StyleSheet} from 'react-native';
 import {
   GetAllTasksDocument,
   SubjectFragment,
   useCreateTaskMutation,
 } from '../../generated/graphql';
 import AddButton from '../addButton';
-import EditDateWindow from '../editDateWindow';
 import EditDateModal from '../editDateWindow/editDateModal';
-import KeyboardTopView from '../keyboardTopWindow';
 import {calendarConfigWithoutTime} from '../task';
-import SubjectButton from './subjectButton';
-import Modal from 'react-native-modal';
 import AddSubjectModal from '../addSubjectModal';
+import {useTheme} from '@react-navigation/native';
+import {BasicModalCard} from '../basicViews/BasicModalCard';
+import {BasicTextInput} from '../basicViews/BasicTextInput';
+import {BasicButton} from '../basicViews/BasicButton';
+import SelectSubjectModal from '../selectSubject';
 
 interface addTaskWindowProps {
   onClose: () => void;
@@ -31,16 +22,15 @@ interface addTaskWindowProps {
 }
 
 const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
-  const headerHeight = useHeaderHeight();
   const taskInputRef = createRef<TextInput>();
   const [addTask, {error}] = useCreateTaskMutation();
   const [name, setName] = useState('');
   const [subject, setSubject] = useState<SubjectFragment | null>(null);
   const [viewVisible, setViewVisible] = useState<
-    'main' | 'editDate' | 'addSubject'
+    'main' | 'editDate' | 'addSubject' | 'selectSubject'
   >('main');
   const [viewShouldAppear, setViewShouldAppear] = useState<
-    'main' | 'editDate' | 'addSubject'
+    'main' | 'editDate' | 'addSubject' | 'selectSubject'
   >('main');
   const [taskDate, setTaskDate] = useState<dayjs.Dayjs | null>();
 
@@ -48,70 +38,61 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
     taskInputRef.current?.focus();
   });
 
+  const theme = useTheme();
+
   return (
     <>
-      <Modal
+      <BasicModalCard
+        alignCard="flex-end"
         isVisible={
           visible && viewVisible == 'main' && viewShouldAppear == 'main'
         }
-        backdropOpacity={0.3}
         avoidKeyboard={true}
-        animationIn={'fadeInUp'}
-        animationOut={'fadeOutDown'}
-        style={{justifyContent: 'flex-end', margin: 10}}
         onBackdropPress={() => {
           onClose();
         }}
         onModalHide={() => {
           setViewVisible(viewShouldAppear);
         }}>
-        <View style={{backgroundColor: 'white', padding: 10, borderRadius: 15}}>
-          <TextInput
-            style={{padding: 10}}
-            placeholder="Task name"
-            ref={taskInputRef}
-            onChangeText={setName}
+        <BasicTextInput
+          placeholder="Task name"
+          setRef={taskInputRef}
+          onChangeText={setName}
+        />
+        <View style={styles.bottomContainer}>
+          <BasicButton
+            onPress={() => setViewShouldAppear('selectSubject')}
+            style={styles.button}>
+            <Text>{subject?.name || 'Subject'}</Text>
+          </BasicButton>
+          <BasicButton
+            style={styles.button}
+            onPress={() => {
+              // onEditDate();
+              setViewShouldAppear('editDate');
+            }}>
+            <Text>
+              {taskDate
+                ? taskDate.calendar(null, calendarConfigWithoutTime)
+                : 'Select Date'}
+            </Text>
+          </BasicButton>
+          <AddButton
+            onPress={() => {
+              console.log(taskDate);
+              addTask({
+                variables: {
+                  name,
+                  subjectId: subject ? subject.id : undefined,
+                  dueDate: taskDate,
+                },
+                refetchQueries: [GetAllTasksDocument],
+              });
+              onClose();
+            }}
           />
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <SubjectButton
-              onChangeSubject={subject => {
-                setSubject(subject);
-              }}
-              onAddSubject={() => {
-                setViewShouldAppear('addSubject');
-              }}
-            />
-            <TouchableOpacity
-              style={{flex: 1}}
-              onPress={() => {
-                // onEditDate();
-                setViewShouldAppear('editDate');
-              }}>
-              <View style={styles.button}>
-                <Text>
-                  {taskDate
-                    ? taskDate.calendar(null, calendarConfigWithoutTime)
-                    : 'Select Date'}
-                </Text>
-              </View>
-            </TouchableOpacity>
-            <AddButton
-              onPress={() => {
-                console.log(taskDate);
-                addTask({
-                  variables: {
-                    name,
-                    subjectId: subject ? subject.id : undefined,
-                    dueDate: taskDate,
-                  },
-                  refetchQueries: [GetAllTasksDocument],
-                });
-                onClose();
-              }}
-            />
-          </View>
         </View>
-      </Modal>
+      </BasicModalCard>
       <EditDateModal
         isVisible={viewVisible == 'editDate' && viewShouldAppear == 'editDate'}
         initialDate={taskDate ? taskDate : undefined}
@@ -133,14 +114,30 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
         onClose={() => setViewShouldAppear('main')}
         onModalHide={() => setViewVisible(viewShouldAppear)}
       />
+      <SelectSubjectModal
+        isVisible={
+          viewShouldAppear == 'selectSubject' && viewVisible == 'selectSubject'
+        }
+        onClose={() => setViewShouldAppear('main')}
+        onModalHide={() => {
+          setViewVisible(viewShouldAppear);
+        }}
+        onSubmit={subject => {
+          setSubject(subject);
+          setViewShouldAppear('main');
+        }}
+        onOpenAddSubject={() => {
+          setViewShouldAppear('addSubject');
+        }}
+      />
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  bottomContainer: {flexDirection: 'row', justifyContent: 'space-between'},
   button: {
     flex: 1,
-    backgroundColor: '#EEE',
     padding: 10,
     borderRadius: 10,
     paddingHorizontal: 20,

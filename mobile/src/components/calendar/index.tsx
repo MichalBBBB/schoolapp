@@ -8,7 +8,7 @@ dayjs.extend(relativeTime);
 
 const weekDays = ['s', 'm', 't', 'w', 't', 'f', 's'];
 
-interface calendarProps {
+interface CalendarProps {
   calendarWidth: number;
   pastScrollRange: number;
   futureScrollRange: number;
@@ -19,7 +19,7 @@ interface calendarProps {
   scrollToDate?: dayjs.Dayjs | null | undefined;
 }
 
-const Calendar: React.FC<calendarProps> = ({
+const Calendar: React.FC<CalendarProps> = ({
   calendarWidth,
   pastScrollRange,
   futureScrollRange,

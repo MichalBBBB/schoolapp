@@ -9,6 +9,7 @@ import TaskStack from './routes/TaskStack';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {View} from 'react-native';
 import CalendarStack from './routes/CalendarStack';
+import {useTheme} from './contexts/ThemeContext';
 
 export type TabStackParamList = {
   HomeStack: undefined;
@@ -16,17 +17,11 @@ export type TabStackParamList = {
   CalendarStack: undefined;
 };
 
-const LighTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: 'white',
-  },
-};
-
 const Routes = () => {
   let screens;
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+
+  const [theme] = useTheme();
 
   const Tab = createBottomTabNavigator();
   screens = (
@@ -43,7 +38,7 @@ const Routes = () => {
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-      <NavigationContainer theme={LighTheme}>
+      <NavigationContainer theme={theme}>
         {isLoggedIn ? screens : <AuthStack />}
       </NavigationContainer>
     </GestureHandlerRootView>

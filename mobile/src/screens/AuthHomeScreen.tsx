@@ -1,11 +1,18 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {useTheme} from '../contexts/ThemeContext';
 import {AuthStackParamList} from '../routes/AuthStack';
 
 const AuthHomeScreen: React.FC<
   NativeStackScreenProps<AuthStackParamList, 'AuthHome'>
 > = ({navigation}) => {
+  const theme = useTheme();
+
+  useEffect(() => {
+    console.log(theme);
+  });
+
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
