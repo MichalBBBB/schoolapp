@@ -3,9 +3,9 @@ import {View, TextInput} from 'react-native';
 import {
   GetAllSubjectsDocument,
   useCreateSubjectMutation,
-} from '../generated/graphql';
-import AddButton from './addButton';
-import KeyboardTopView from './keyboardTopWindow';
+} from '../../generated/graphql';
+import AddButton from '../addButton';
+import KeyboardTopView from '../keyboardTopWindow';
 import Modal from 'react-native-modal';
 
 const AddSubjectModal: React.FC<{

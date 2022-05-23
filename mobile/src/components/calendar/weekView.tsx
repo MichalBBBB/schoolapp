@@ -1,8 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import dayjs from 'dayjs';
 import React, {createRef, useEffect, useState} from 'react';
-import {View} from 'react-native';
-import {FlatList} from 'react-native-gesture-handler';
+import {View, FlatList} from 'react-native';
 import Week from './week';
 
 interface weekViewProps {

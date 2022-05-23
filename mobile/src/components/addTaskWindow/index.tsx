@@ -9,7 +9,7 @@ import {
 import AddButton from '../addButton';
 import EditDateModal from '../editDateWindow/editDateModal';
 import {calendarConfigWithoutTime} from '../task';
-import AddSubjectModal from '../addSubjectModal';
+import AddSubjectModal from '../selectSubject/addSubjectModal';
 import {useTheme} from '@react-navigation/native';
 import {BasicModalCard} from '../basicViews/BasicModalCard';
 import {BasicTextInput} from '../basicViews/BasicTextInput';
@@ -107,13 +107,6 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
           setViewShouldAppear('main');
         }}
       />
-      <AddSubjectModal
-        isVisible={
-          viewShouldAppear == 'addSubject' && viewVisible == 'addSubject'
-        }
-        onClose={() => setViewShouldAppear('main')}
-        onModalHide={() => setViewVisible(viewShouldAppear)}
-      />
       <SelectSubjectModal
         isVisible={
           viewShouldAppear == 'selectSubject' && viewVisible == 'selectSubject'
@@ -125,9 +118,6 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
         onSubmit={subject => {
           setSubject(subject);
           setViewShouldAppear('main');
-        }}
-        onOpenAddSubject={() => {
-          setViewShouldAppear('addSubject');
         }}
       />
     </>

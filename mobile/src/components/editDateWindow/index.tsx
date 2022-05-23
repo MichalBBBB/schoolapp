@@ -142,12 +142,14 @@ const EditDateWindow: React.FC<EditDateWindowProps> = ({
       }}>
       {specialDays.map((item, index) => (
         <View
+          key={index}
           style={{
             flexDirection: 'row',
             width: '100%',
           }}>
           {item.map((day, index) => (
             <View
+              key={index}
               style={{
                 width: windowWidth / 2,
                 justifyContent: 'center',

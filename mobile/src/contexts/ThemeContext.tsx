@@ -8,13 +8,14 @@ import React, {
 } from 'react';
 import {Theme} from '../types/Theme';
 
-const LighTheme = {
+const LighTheme: Theme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
     background: 'white',
     card: 'white',
     accentBackground: '#eee',
+    textSecondary: 'grey',
   },
 };
 
