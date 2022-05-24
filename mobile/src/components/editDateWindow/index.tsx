@@ -14,6 +14,7 @@ import Calendar from '../calendar';
 import WeekDays from '../calendar/weekDays';
 import Popup from '../popup';
 import Modal from 'react-native-modal';
+import SelectTimeView from '../selectTimeView';
 
 interface EditDateWindowProps {
   onSubmit: (date: dayjs.Dayjs) => void;
@@ -40,26 +41,6 @@ const windowWidth = Dimensions.get('screen').width - 30;
 const weekHeight = 34;
 const calendarHeight = 34 * 6;
 
-let hours: string[] = [];
-for (var i = 0; i < 24; i++) {
-  let number = i;
-  if (number.toString().length == 1) {
-    hours.push('0' + i.toString());
-  } else {
-    hours.push(i.toString());
-  }
-}
-
-let minutes: string[] = [];
-for (var i = 0; i < 60; i++) {
-  let number = i;
-  if (number.toString().length == 1) {
-    minutes.push('0' + i.toString());
-  } else {
-    minutes.push(i.toString());
-  }
-}
-
 const EditDateWindow: React.FC<EditDateWindowProps> = ({
   onSubmit,
   initialDate,
@@ -75,53 +56,6 @@ const EditDateWindow: React.FC<EditDateWindowProps> = ({
     setHeight(height);
   };
   const [timePopupOpen, setTimePopupOpen] = useState(false);
-  const [selectedHour, setSelectedHour] = useState(selectedDay.format('HH'));
-  const [selectedMinute, setSelectedMinute] = useState(
-    selectedDay.format('mm'),
-  );
-
-  const selectTimeView = (
-    <View style={styles.timeContainer}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <PickerIOS
-          itemStyle={{fontSize: 15, width: 100}}
-          selectedValue={selectedHour}
-          onValueChange={value => {
-            setSelectedHour(value as string);
-          }}>
-          {hours.map(item => (
-            <Picker.Item label={item} value={item} />
-          ))}
-        </PickerIOS>
-        <Text>:</Text>
-        <PickerIOS
-          itemStyle={{fontSize: 15, width: 100}}
-          selectedValue={selectedMinute}
-          onValueChange={value => setSelectedMinute(value as string)}>
-          {minutes.map(item => (
-            <Picker.Item label={item} value={item} />
-          ))}
-        </PickerIOS>
-      </View>
-      <Pressable
-        style={{padding: 10}}
-        onPress={() => {
-          console.log(
-            'select time',
-            parseInt(selectedHour),
-            parseInt(selectedMinute),
-          );
-          const newDate = selectedDay
-            .hour(parseInt(selectedHour))
-            .minute(parseInt(selectedMinute));
-          console.log(newDate);
-          setSelectedDay(newDate);
-          setTimePopupOpen(false);
-        }}>
-        <Text>Select</Text>
-      </Pressable>
-    </View>
-  );
 
   return (
     <View
@@ -219,14 +153,20 @@ const EditDateWindow: React.FC<EditDateWindowProps> = ({
         open={timePopupOpen}>
         {selectTimeView}
       </Popup> */}
-      <Modal
+      <SelectTimeView
+        onClose={() => {
+          setTimePopupOpen(false);
+        }}
+        onSubmit={time => {
+          setSelectedDay(
+            selectedDay
+              .hour(parseInt(time.split(':')[0]))
+              .minute(parseInt(time.split(':')[1])),
+          );
+        }}
         isVisible={timePopupOpen}
-        backdropOpacity={0.3}
-        onBackdropPress={() => setTimePopupOpen(false)}
-        animationIn="fadeInUp"
-        animationOut="fadeOutDown">
-        {selectTimeView}
-      </Modal>
+        initialTime={selectedDay.format('HH:mm')}
+      />
     </View>
   );
 };
@@ -242,13 +182,6 @@ const styles = StyleSheet.create({
     color: '#666',
     marginLeft: 10,
     marginTop: 20,
-  },
-  timeContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    backgroundColor: 'white',
-    borderRadius: 15,
   },
 });
 

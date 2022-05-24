@@ -5,7 +5,7 @@ const BackButton: React.FC<{onPress: () => void}> = ({onPress}) => {
   return (
     <TouchableOpacity onPress={() => onPress()}>
       <Image
-        source={require('../../assets/Chevron.png')}
+        source={require('../../assets/Chevron-left.png')}
         style={styles.button}
       />
     </TouchableOpacity>

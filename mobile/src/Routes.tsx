@@ -10,11 +10,13 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {View} from 'react-native';
 import CalendarStack from './routes/CalendarStack';
 import {useTheme} from './contexts/ThemeContext';
+import SettingsStack from './routes/SettingsStack';
 
 export type TabStackParamList = {
   HomeStack: undefined;
   TaskStack: undefined;
   CalendarStack: undefined;
+  SettingsStack: undefined;
 };
 
 const Routes = () => {
@@ -33,6 +35,7 @@ const Routes = () => {
       <Tab.Screen name="HomeStack" component={HomeStack} />
       <Tab.Screen name="TaskStack" component={TaskStack} />
       <Tab.Screen name="CalendarStack" component={CalendarStack} />
+      <Tab.Screen name="SettingsStack" component={SettingsStack} />
     </Tab.Navigator>
   );
 
