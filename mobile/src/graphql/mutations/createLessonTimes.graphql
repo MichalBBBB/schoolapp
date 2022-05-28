@@ -1,0 +1,5 @@
+mutation CreateLessonTimes($lessonTimes: [LessonTimeInput!]!) {
+  createLessonTimes(lessonTimes: $lessonTimes) {
+    ...LessonTime
+  }
+}

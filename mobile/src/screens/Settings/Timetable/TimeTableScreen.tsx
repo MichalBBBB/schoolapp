@@ -1,6 +1,6 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React from 'react';
-import {View} from 'react-native';
+import {View, ScrollView} from 'react-native';
 import {SettingsStackParamList} from '../../../routes/SettingsStack';
 
 const TimeTableScreen: React.FC<
@@ -8,7 +8,9 @@ const TimeTableScreen: React.FC<
 > = () => {
   return (
     <View>
-      <View></View>
+      <ScrollView>
+        <ScrollView horizontal={true}></ScrollView>
+      </ScrollView>
     </View>
   );
 };

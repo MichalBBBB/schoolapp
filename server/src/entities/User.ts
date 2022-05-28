@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { Subject } from "../entities/Subject";
 import { CalendarEvent } from "./CalendarEvent";
+import { LessonTime } from "./LessonTime";
 import { Task } from "./Task";
 
 @Entity()
@@ -60,4 +61,8 @@ export class User extends BaseEntity {
   @UpdateDateColumn()
   @Field()
   updatedAt: Date;
+
+  @Field(() => [LessonTime])
+  @OneToMany(() => LessonTime, (lessonTime) => lessonTime.user)
+  lessonTimes: LessonTime[];
 }

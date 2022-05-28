@@ -27,6 +27,8 @@ import { subtaskResolver } from "./resolvers/subtaskResolver";
 import { subjectResolver } from "./resolvers/subjectResolver";
 import { CalendarEvent } from "./entities/CalendarEvent";
 import { calendarEventResolver } from "./resolvers/calendarEventResolver";
+import { LessonTime } from "./entities/LessonTime";
+import { lessonTimeResolver } from "./resolvers/lessonTimeResolver";
 
 const main = async () => {
   // Initialize typeorm connection
@@ -37,7 +39,7 @@ const main = async () => {
     database: "schoolapp",
     logging: true,
     synchronize: true,
-    entities: [User, Task, Subtask, Subject, CalendarEvent],
+    entities: [User, Task, Subtask, Subject, CalendarEvent, LessonTime],
   });
   //User.delete({});
   //Task.delete({});
@@ -95,6 +97,7 @@ const main = async () => {
         subtaskResolver,
         subjectResolver,
         calendarEventResolver,
+        lessonTimeResolver,
       ],
     }),
     plugins: [

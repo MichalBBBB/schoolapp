@@ -1,0 +1,4 @@
+fragment LessonTime on LessonTime {
+  startTime
+  endTime
+}

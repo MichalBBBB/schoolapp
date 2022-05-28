@@ -30,12 +30,25 @@ export type CalendarEvent = {
   wholeDay: Scalars['Boolean'];
 };
 
+export type LessonTime = {
+  __typename?: 'LessonTime';
+  endTime: Scalars['DateTime'];
+  id: Scalars['String'];
+  startTime: Scalars['DateTime'];
+};
+
+export type LessonTimeInput = {
+  endTime: Scalars['DateTime'];
+  startTime: Scalars['DateTime'];
+};
+
 export type LoginResponse = UserFail | UserSucces;
 
 export type Mutation = {
   __typename?: 'Mutation';
   changeSubjectOfTask: Task;
   createEvent: CalendarEvent;
+  createLessonTimes: Array<LessonTime>;
   createSubject: Subject;
   createSubtask: Subtask;
   createTask: Task;
@@ -62,6 +75,11 @@ export type MutationCreateEventArgs = {
   name: Scalars['String'];
   startDate: Scalars['DateTime'];
   wholeDay?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type MutationCreateLessonTimesArgs = {
+  lessonTimes: Array<LessonTimeInput>;
 };
 
 
@@ -139,6 +157,7 @@ export type MutationToggleTaskArgs = {
 export type Query = {
   __typename?: 'Query';
   getAllEvents: Array<CalendarEvent>;
+  getAllLessonTimes: Array<LessonTime>;
   getAllSubjects: Array<Subject>;
   getAllSubtasksOfTask: Array<Subtask>;
   getAllTasks: Array<Task>;
@@ -201,6 +220,7 @@ export type User = {
   googleId?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   imageURL?: Maybe<Scalars['String']>;
+  lessonTimes: Array<LessonTime>;
   subjects: Array<Subject>;
   tasks: Array<Task>;
   updatedAt: Scalars['DateTime'];
@@ -225,6 +245,8 @@ export type UserSucces = {
 
 export type CalendarEventFragment = { __typename?: 'CalendarEvent', id: string, name: string, startDate: any, endDate?: any | null | undefined, wholeDay: boolean, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined };
 
+export type LessonTimeFragment = { __typename?: 'LessonTime', startTime: any, endTime: any };
+
 export type SubjectFragment = { __typename?: 'Subject', id: string, name: string };
 
 export type SubtaskFragment = { __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean };
@@ -240,6 +262,13 @@ export type CreateEventMutationVariables = Exact<{
 
 
 export type CreateEventMutation = { __typename?: 'Mutation', createEvent: { __typename?: 'CalendarEvent', id: string, name: string, startDate: any, endDate?: any | null | undefined, wholeDay: boolean, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
+
+export type CreateLessonTimesMutationVariables = Exact<{
+  lessonTimes: Array<LessonTimeInput> | LessonTimeInput;
+}>;
+
+
+export type CreateLessonTimesMutation = { __typename?: 'Mutation', createLessonTimes: Array<{ __typename?: 'LessonTime', startTime: any, endTime: any }> };
 
 export type CreateSubjectMutationVariables = Exact<{
   name: Scalars['String'];
@@ -331,6 +360,11 @@ export type GetAllEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetAllEventsQuery = { __typename?: 'Query', getAllEvents: Array<{ __typename?: 'CalendarEvent', id: string, name: string, startDate: any, endDate?: any | null | undefined, wholeDay: boolean, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined }> };
 
+export type GetAllLessonTimesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllLessonTimesQuery = { __typename?: 'Query', getAllLessonTimes: Array<{ __typename?: 'LessonTime', startTime: any, endTime: any }> };
+
 export type GetAllSubjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -376,6 +410,12 @@ export const CalendarEventFragmentDoc = gql`
   }
 }
     ${SubjectFragmentDoc}`;
+export const LessonTimeFragmentDoc = gql`
+    fragment LessonTime on LessonTime {
+  startTime
+  endTime
+}
+    `;
 export const SubtaskFragmentDoc = gql`
     fragment Subtask on Subtask {
   name
@@ -444,6 +484,39 @@ export function useCreateEventMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateEventMutationHookResult = ReturnType<typeof useCreateEventMutation>;
 export type CreateEventMutationResult = Apollo.MutationResult<CreateEventMutation>;
 export type CreateEventMutationOptions = Apollo.BaseMutationOptions<CreateEventMutation, CreateEventMutationVariables>;
+export const CreateLessonTimesDocument = gql`
+    mutation CreateLessonTimes($lessonTimes: [LessonTimeInput!]!) {
+  createLessonTimes(lessonTimes: $lessonTimes) {
+    ...LessonTime
+  }
+}
+    ${LessonTimeFragmentDoc}`;
+export type CreateLessonTimesMutationFn = Apollo.MutationFunction<CreateLessonTimesMutation, CreateLessonTimesMutationVariables>;
+
+/**
+ * __useCreateLessonTimesMutation__
+ *
+ * To run a mutation, you first call `useCreateLessonTimesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateLessonTimesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createLessonTimesMutation, { data, loading, error }] = useCreateLessonTimesMutation({
+ *   variables: {
+ *      lessonTimes: // value for 'lessonTimes'
+ *   },
+ * });
+ */
+export function useCreateLessonTimesMutation(baseOptions?: Apollo.MutationHookOptions<CreateLessonTimesMutation, CreateLessonTimesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateLessonTimesMutation, CreateLessonTimesMutationVariables>(CreateLessonTimesDocument, options);
+      }
+export type CreateLessonTimesMutationHookResult = ReturnType<typeof useCreateLessonTimesMutation>;
+export type CreateLessonTimesMutationResult = Apollo.MutationResult<CreateLessonTimesMutation>;
+export type CreateLessonTimesMutationOptions = Apollo.BaseMutationOptions<CreateLessonTimesMutation, CreateLessonTimesMutationVariables>;
 export const CreateSubjectDocument = gql`
     mutation CreateSubject($name: String!) {
   createSubject(name: $name) {
@@ -869,6 +942,40 @@ export function useGetAllEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetAllEventsQueryHookResult = ReturnType<typeof useGetAllEventsQuery>;
 export type GetAllEventsLazyQueryHookResult = ReturnType<typeof useGetAllEventsLazyQuery>;
 export type GetAllEventsQueryResult = Apollo.QueryResult<GetAllEventsQuery, GetAllEventsQueryVariables>;
+export const GetAllLessonTimesDocument = gql`
+    query GetAllLessonTimes {
+  getAllLessonTimes {
+    ...LessonTime
+  }
+}
+    ${LessonTimeFragmentDoc}`;
+
+/**
+ * __useGetAllLessonTimesQuery__
+ *
+ * To run a query within a React component, call `useGetAllLessonTimesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllLessonTimesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllLessonTimesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllLessonTimesQuery(baseOptions?: Apollo.QueryHookOptions<GetAllLessonTimesQuery, GetAllLessonTimesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllLessonTimesQuery, GetAllLessonTimesQueryVariables>(GetAllLessonTimesDocument, options);
+      }
+export function useGetAllLessonTimesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllLessonTimesQuery, GetAllLessonTimesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllLessonTimesQuery, GetAllLessonTimesQueryVariables>(GetAllLessonTimesDocument, options);
+        }
+export type GetAllLessonTimesQueryHookResult = ReturnType<typeof useGetAllLessonTimesQuery>;
+export type GetAllLessonTimesLazyQueryHookResult = ReturnType<typeof useGetAllLessonTimesLazyQuery>;
+export type GetAllLessonTimesQueryResult = Apollo.QueryResult<GetAllLessonTimesQuery, GetAllLessonTimesQueryVariables>;
 export const GetAllSubjectsDocument = gql`
     query GetAllSubjects {
   getAllSubjects {

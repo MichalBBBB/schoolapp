@@ -1,0 +1,4 @@
+input LessonTimeInput {
+  startTime: DateTime
+  endTime: DateTime
+}
