@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { createConnection, getConnection } from "typeorm";
+import { createConnection } from "typeorm";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";

@@ -1,4 +1,6 @@
 fragment LessonTime on LessonTime {
+  id
   startTime
   endTime
+  lessonNumber
 }

@@ -1,8 +1,7 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import React, {useState} from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
-import {TextInput} from 'react-native-gesture-handler';
+import {Pressable, StyleSheet, Text, View, TextInput} from 'react-native';
 import {CalendarStackParamList} from '../routes/CalendarStack';
 import {
   GetAllEventsDocument,

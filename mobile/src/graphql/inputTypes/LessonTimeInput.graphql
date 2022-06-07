@@ -1,4 +1,6 @@
 input LessonTimeInput {
-  startTime: DateTime
-  endTime: DateTime
+  id: String
+  startTime: String!
+  endTime: String!
+  lessonNumber: Int!
 }

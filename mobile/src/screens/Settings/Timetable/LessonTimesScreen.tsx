@@ -15,6 +15,11 @@ import {SettingsStackParamList} from '../../../routes/SettingsStack';
 import RelativeTime from 'dayjs/plugin/relativeTime';
 import CustomParseFormat from 'dayjs/plugin/customParseFormat';
 import SelectTimeModal from '../../../components/selectTimeView/selectTimeModal';
+import {
+  GetAllLessonTimesDocument,
+  useCreateLessonTimesMutation,
+  useGetAllLessonTimesQuery,
+} from '../../../generated/graphql';
 
 export type LessonTime = {
   lessonNumber: number;
@@ -24,13 +29,14 @@ export type LessonTime = {
 dayjs.extend(CustomParseFormat);
 dayjs.extend(RelativeTime);
 
+// !!!! ids change when state is not reset on new lessonTimes !!!!
+
 const LessonTimesScreen: React.FC<
   NativeStackScreenProps<SettingsStackParamList, 'LessonTimesScreen'>
 > = ({navigation}) => {
   const [lessonTimes, setLessonTimes] = useState<LessonTime[]>([
     {lessonNumber: 0, startTime: '08:00', endTime: '08:45'},
   ]);
-  const [breakLengths, setBreakLengths] = useState<number[]>([]);
   const [theme] = useTheme();
   const [timeModalVisible, setTimeModalVisible] = useState(false);
   const [activeLesson, setActiveLesson] = useState<{
@@ -38,6 +44,36 @@ const LessonTimesScreen: React.FC<
     time: 'start' | 'end';
   } | null>(null);
   const [changingValue, setChangingValue] = useState<number | string>(0);
+  const {data} = useGetAllLessonTimesQuery();
+  const [createLessonTimes] = useCreateLessonTimesMutation();
+
+  useEffect(() => {
+    console.log('useEffect');
+    console.log(data?.getAllLessonTimes);
+    if (data?.getAllLessonTimes && data.getAllLessonTimes.length >= 1) {
+      setLessonTimes(
+        data?.getAllLessonTimes.map(item => {
+          return {
+            startTime: item.startTime,
+            endTime: item.endTime,
+            lessonNumber: item.lessonNumber,
+            id: item.id,
+          };
+        }),
+      );
+    }
+  }, []);
+
+  const saveLessonTimes = async () => {
+    console.log('save', lessonTimes);
+    const result = await createLessonTimes({
+      variables: {
+        lessonTimes,
+      },
+      refetchQueries: [GetAllLessonTimesDocument],
+    });
+    console.log(result.errors);
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -46,6 +82,7 @@ const LessonTimesScreen: React.FC<
         <Pressable
           style={{flexDirection: 'row', alignItems: 'center'}}
           onPress={() => {
+            saveLessonTimes();
             navigation.navigate('TimeTableScreen');
           }}>
           <Text>Continue</Text>
@@ -72,13 +109,23 @@ const LessonTimesScreen: React.FC<
     return time;
   };
 
+  const getBreakLength = (index: number) => {
+    return dayjs(lessonTimes[index + 1].startTime, 'HH:mm').diff(
+      dayjs(lessonTimes[index].endTime, 'HH:mm'),
+      'minute',
+    );
+  };
+
   const shift = (
     changedValue: 'lesson-start' | 'lesson-end' | 'break',
     index: number,
     newValue: number | string,
   ) => {
     if (changedValue == 'break') {
-      const oldValue = breakLengths[index];
+      const oldValue = dayjs(lessonTimes[index].endTime, 'HH:mm').diff(
+        dayjs(lessonTimes[index + 1].startTime, 'HH:mm'),
+        'minute',
+      );
       const difference = parseInt(newValue as string) - oldValue;
       setLessonTimes(
         lessonTimes.map((item, itemIndex) => {
@@ -97,29 +144,11 @@ const LessonTimesScreen: React.FC<
           }
         }),
       );
-      setBreakLengths(
-        breakLengths.map((item, itemIndex) => {
-          if (itemIndex == index) {
-            return newValue as number;
-          } else {
-            return item;
-          }
-        }),
-      );
     } else if (changedValue == 'lesson-start') {
       const oldValue = lessonTimes[index].startTime;
       const difference = dayjs(newValue, 'HH:mm').diff(
         dayjs(oldValue, 'HH:mm'),
         'minute',
-      );
-      setBreakLengths(
-        breakLengths.map((item, itemIndex) => {
-          if (itemIndex == index - 1) {
-            return item + difference;
-          } else {
-            return item;
-          }
-        }),
       );
       setLessonTimes(
         lessonTimes.map((item, itemIndex) => {
@@ -186,31 +215,46 @@ const LessonTimesScreen: React.FC<
                 styles.listItem,
                 {backgroundColor: theme.colors.accentBackground},
               ]}>
-              <Text style={styles.lessonNumber}>{item.lessonNumber + 1}.</Text>
-              <Text>From: </Text>
-              <Pressable
-                style={styles.timeContainer}
-                onPress={() => {
-                  setActiveLesson({index, time: 'start'});
-                  setTimeModalVisible(true);
-                }}>
-                <Text>{item.startTime}</Text>
-              </Pressable>
-              <Text>To: </Text>
-              <Pressable
-                style={styles.timeContainer}
-                onPress={() => {
-                  setActiveLesson({index, time: 'end'});
-                  setTimeModalVisible(true);
-                }}>
-                <Text>{item.endTime}</Text>
-              </Pressable>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Text style={styles.lessonNumber}>
+                  {item.lessonNumber + 1}.
+                </Text>
+                <Text>From: </Text>
+                <Pressable
+                  style={styles.timeContainer}
+                  onPress={() => {
+                    setActiveLesson({index, time: 'start'});
+                    setTimeModalVisible(true);
+                  }}>
+                  <Text>{item.startTime}</Text>
+                </Pressable>
+                <Text>To: </Text>
+                <Pressable
+                  style={styles.timeContainer}
+                  onPress={() => {
+                    setActiveLesson({index, time: 'end'});
+                    setTimeModalVisible(true);
+                  }}>
+                  <Text>{item.endTime}</Text>
+                </Pressable>
+              </View>
+              {index == lessonTimes.length - 1 && (
+                <Pressable
+                  onPress={() => {
+                    setLessonTimes(lessonTimes.slice(0, index));
+                  }}>
+                  <Image
+                    style={{resizeMode: 'stretch', height: 30, width: 30}}
+                    source={require('../../../../assets/Delete.png')}
+                  />
+                </Pressable>
+              )}
             </View>
             {index + 1 !== lessonTimes.length ? (
               <View style={styles.break}>
                 <TextInput
                   style={styles.breakLength}
-                  defaultValue={breakLengths[index].toString()}
+                  defaultValue={getBreakLength(index).toString()}
                   keyboardType="numeric"
                   returnKeyType="done"
                   onChangeText={value => setChangingValue(value)}
@@ -219,7 +263,7 @@ const LessonTimesScreen: React.FC<
                     setChangingValue(0);
                   }}
                   onFocus={() => {
-                    setChangingValue(breakLengths[index]);
+                    setChangingValue(getBreakLength(index));
                   }}
                   selectTextOnFocus={true}
                 />
@@ -241,7 +285,6 @@ const LessonTimesScreen: React.FC<
                         .format('HH:mm'),
                     },
                   ]);
-                  setBreakLengths([...breakLengths, 10]);
                 }}>
                 <Image
                   style={{resizeMode: 'stretch', height: 35, width: 35}}
@@ -275,6 +318,7 @@ const styles = StyleSheet.create({
   },
   listItem: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     padding: 10,
     borderRadius: 10,
     alignItems: 'center',

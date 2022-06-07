@@ -13,19 +13,23 @@ import { User } from "./User";
 export class LessonTime extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   @Field()
-  id: String;
+  id: string;
 
   @Column()
   @Field()
-  startTime: Date;
+  startTime: string;
 
   @Column()
   @Field()
-  endTime: Date;
+  endTime: string;
+
+  @Column()
+  @Field()
+  lessonNumber: number;
 
   @ManyToOne(() => User, (user) => user.lessonTimes, { onDelete: "CASCADE" })
   user: User;
 
   @Column()
-  userId: String;
+  userId: string;
 }

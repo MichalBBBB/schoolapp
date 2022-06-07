@@ -9,12 +9,9 @@ import {
   TouchableOpacity,
   Pressable,
 } from 'react-native';
-import BackgroundPress from '../backgroundPress';
 import Calendar from '../calendar';
 import WeekDays from '../calendar/weekDays';
-import Popup from '../popup';
-import Modal from 'react-native-modal';
-import SelectTimeView from '../selectTimeView';
+import SelectTimeModal from '../selectTimeView/selectTimeModal';
 
 interface EditDateWindowProps {
   onSubmit: (date: dayjs.Dayjs) => void;
@@ -153,7 +150,7 @@ const EditDateWindow: React.FC<EditDateWindowProps> = ({
         open={timePopupOpen}>
         {selectTimeView}
       </Popup> */}
-      <SelectTimeView
+      <SelectTimeModal
         onClose={() => {
           setTimePopupOpen(false);
         }}

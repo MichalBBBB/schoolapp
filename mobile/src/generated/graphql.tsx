@@ -32,14 +32,17 @@ export type CalendarEvent = {
 
 export type LessonTime = {
   __typename?: 'LessonTime';
-  endTime: Scalars['DateTime'];
+  endTime: Scalars['String'];
   id: Scalars['String'];
-  startTime: Scalars['DateTime'];
+  lessonNumber: Scalars['Float'];
+  startTime: Scalars['String'];
 };
 
 export type LessonTimeInput = {
-  endTime: Scalars['DateTime'];
-  startTime: Scalars['DateTime'];
+  endTime: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
+  lessonNumber: Scalars['Float'];
+  startTime: Scalars['String'];
 };
 
 export type LoginResponse = UserFail | UserSucces;
@@ -53,6 +56,7 @@ export type Mutation = {
   createSubtask: Subtask;
   createTask: Task;
   deleteEvent: Scalars['Boolean'];
+  deleteLessonTimes: Scalars['Boolean'];
   deleteSubtask: Scalars['Boolean'];
   deleteTask: Scalars['Boolean'];
   editEvent: CalendarEvent;
@@ -103,6 +107,11 @@ export type MutationCreateTaskArgs = {
 
 export type MutationDeleteEventArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationDeleteLessonTimesArgs = {
+  ids: Array<Scalars['String']>;
 };
 
 
@@ -245,7 +254,7 @@ export type UserSucces = {
 
 export type CalendarEventFragment = { __typename?: 'CalendarEvent', id: string, name: string, startDate: any, endDate?: any | null | undefined, wholeDay: boolean, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined };
 
-export type LessonTimeFragment = { __typename?: 'LessonTime', startTime: any, endTime: any };
+export type LessonTimeFragment = { __typename?: 'LessonTime', id: string, startTime: string, endTime: string, lessonNumber: number };
 
 export type SubjectFragment = { __typename?: 'Subject', id: string, name: string };
 
@@ -268,7 +277,7 @@ export type CreateLessonTimesMutationVariables = Exact<{
 }>;
 
 
-export type CreateLessonTimesMutation = { __typename?: 'Mutation', createLessonTimes: Array<{ __typename?: 'LessonTime', startTime: any, endTime: any }> };
+export type CreateLessonTimesMutation = { __typename?: 'Mutation', createLessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string, lessonNumber: number }> };
 
 export type CreateSubjectMutationVariables = Exact<{
   name: Scalars['String'];
@@ -363,7 +372,7 @@ export type GetAllEventsQuery = { __typename?: 'Query', getAllEvents: Array<{ __
 export type GetAllLessonTimesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllLessonTimesQuery = { __typename?: 'Query', getAllLessonTimes: Array<{ __typename?: 'LessonTime', startTime: any, endTime: any }> };
+export type GetAllLessonTimesQuery = { __typename?: 'Query', getAllLessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string, lessonNumber: number }> };
 
 export type GetAllSubjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -412,8 +421,10 @@ export const CalendarEventFragmentDoc = gql`
     ${SubjectFragmentDoc}`;
 export const LessonTimeFragmentDoc = gql`
     fragment LessonTime on LessonTime {
+  id
   startTime
   endTime
+  lessonNumber
 }
     `;
 export const SubtaskFragmentDoc = gql`

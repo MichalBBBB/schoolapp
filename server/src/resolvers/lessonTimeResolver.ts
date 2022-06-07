@@ -14,22 +14,31 @@ import {
 
 @InputType()
 class LessonTimeInput implements Partial<LessonTime> {
-  @Field()
-  startTime: Date;
+  @Field({ nullable: true })
+  id?: string;
 
   @Field()
-  endTime: Date;
+  startTime: string;
+
+  @Field()
+  endTime: string;
+
+  @Field()
+  lessonNumber: number;
 }
 
 @Resolver(LessonTime)
 export class lessonTimeResolver {
   @Query(() => [LessonTime])
   @UseMiddleware(isAuth)
-  getAllLessonTimes(@Ctx() { payload }: MyContext) {
-    return LessonTime.createQueryBuilder("lessontime")
+  async getAllLessonTimes(@Ctx() { payload }: MyContext) {
+    console.log(payload);
+    const result = await LessonTime.createQueryBuilder("lessontime")
       .select()
-      .where("lessontime.userId == :id", { id: payload?.userId })
+      .where('lessontime."userId" = :id', { id: payload?.userId })
       .getMany();
+    console.log(result);
+    return result;
   }
 
   @Mutation(() => [LessonTime])
@@ -38,14 +47,33 @@ export class lessonTimeResolver {
     @Ctx() { payload }: MyContext,
     @Arg("lessonTimes", () => [LessonTimeInput]) lessonTimes: LessonTimeInput[]
   ) {
+    console.log("mutation");
     const lessonTimesWithUser = lessonTimes.map((item) => {
       return { ...item, userId: payload?.userId };
     });
+    await LessonTime.createQueryBuilder()
+      .delete()
+      .where("userId = :id", { id: payload?.userId })
+      .execute();
     const result = await LessonTime.createQueryBuilder()
       .insert()
       .values(lessonTimesWithUser)
       .returning("*")
       .execute();
+    console.log(await LessonTime.find());
     return result.raw;
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async deleteLessonTimes(
+    @Ctx() { payload }: MyContext,
+    @Arg("ids", () => [String]) ids: string[]
+  ) {
+    await LessonTime.createQueryBuilder("lessonTime")
+      .delete()
+      .where("id in :ids", { ids })
+      .execute();
+    console.log(LessonTime.find());
   }
 }
