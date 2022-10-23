@@ -11,10 +11,10 @@ import {
   Root,
   UseMiddleware,
 } from "type-graphql";
-import { getConnection } from "typeorm";
 import { Subtask } from "../entities/Subtask";
 import { Subject } from "../entities/Subject";
 import DataLoader from "dataloader";
+import { AppDataSource } from "src/TypeORM";
 
 const subjectLoader = new DataLoader((keys) => loadSubjects(keys as [string]), {
   cache: false,
@@ -75,8 +75,7 @@ export class taskResolver {
     @Ctx() { payload }: MyContext
   ) {
     console.log(name);
-    const result = await getConnection()
-      .createQueryBuilder()
+    const result = await AppDataSource.createQueryBuilder()
       .insert()
       .into(Task)
       .values({ name, userId: payload?.userId, subjectId, dueDate: dueDate })
@@ -97,7 +96,7 @@ export class taskResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async deleteTask(@Ctx() { payload }: MyContext, @Arg("id") id: string) {
-    const task = await Task.findOne(id);
+    const task = await Task.findOne({ where: { id } });
     // check if tasks user is the same as currenct user
     if (task?.userId == payload?.userId) {
       Task.createQueryBuilder()
@@ -119,7 +118,7 @@ export class taskResolver {
     @Ctx() { payload }: MyContext,
     @Arg("id") id: string
   ): Promise<Task> {
-    const task = await Task.findOne(id);
+    const task = await Task.findOne({ where: { id } });
     // check if tasks user is the same as currenct user and task exists
     if (task?.userId === payload?.userId && task) {
       const newValue = !task.done;
@@ -165,7 +164,7 @@ export class taskResolver {
     @Arg("text", { nullable: true }) text: string,
     @Arg("id") id: string
   ) {
-    const task = await Task.findOne(id);
+    const task = await Task.findOne({ where: { id } });
     if (task?.userId === payload?.userId && task) {
       task.name = name;
       task.text = text;

@@ -27,7 +27,7 @@ export class calendarEventResolver {
     @Arg("startDate") startDate: Date,
     @Arg("endDate", { nullable: true }) endDate: Date,
     @Arg("wholeDay", { nullable: true }) wholeDay: Boolean,
-    @Arg("name") name: String,
+    @Arg("name") name: string,
     @Ctx() { payload }: MyContext
   ) {
     const result = await CalendarEvent.createQueryBuilder("calendarEvent")
@@ -45,8 +45,8 @@ export class calendarEventResolver {
     @Arg("startDate") startDate: Date,
     @Arg("endDate", { nullable: true }) endDate: Date,
     @Arg("wholeDay", { nullable: true }) wholeDay: Boolean,
-    @Arg("id") id: String,
-    @Arg("subjectId", { nullable: true }) subjectId: String
+    @Arg("id") id: string,
+    @Arg("subjectId", { nullable: true }) subjectId: string
   ) {
     const event = await CalendarEvent.findOne({ where: { id } });
     if (event?.userId === payload?.userId && event) {
@@ -64,7 +64,7 @@ export class calendarEventResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async deleteEvent(@Arg("id") id: string, @Ctx() { payload }: MyContext) {
-    const calendarEvent = await CalendarEvent.findOne(id);
+    const calendarEvent = await CalendarEvent.findOne({ where: { id } });
     // check if tasks user is the same as currenct user
     if (calendarEvent?.userId == payload?.userId) {
       CalendarEvent.createQueryBuilder()

@@ -14,11 +14,11 @@ import { User } from "./User";
 export class CalendarEvent extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   @Field()
-  id: String;
+  id: string;
 
   @Column()
   @Field()
-  name: String;
+  name: string;
 
   @Column()
   @Field()
@@ -48,5 +48,5 @@ export class CalendarEvent extends BaseEntity {
 
   @Column()
   @Field()
-  userId: String;
+  userId: string;
 }

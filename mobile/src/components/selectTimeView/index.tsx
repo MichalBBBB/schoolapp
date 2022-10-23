@@ -46,8 +46,8 @@ const SelectTimeView: React.FC<SelectTimeViewModalProps> = ({
           onValueChange={value => {
             setSelectedHour(value as string);
           }}>
-          {hours.map(item => (
-            <Picker.Item label={item} value={item} />
+          {hours.map((item, index) => (
+            <Picker.Item label={item} value={item} key={index} />
           ))}
         </PickerIOS>
         <Text>:</Text>

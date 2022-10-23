@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { createConnection } from "typeorm";
+import "reflect-metadata";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
@@ -17,30 +17,24 @@ import {
   RefreshTokenPayload,
   sendRefreshToken,
 } from "./utils/authUtils";
-import { Task } from "./entities/Task";
 import { userResolver } from "./resolvers/userResolver";
 import cookieParser from "cookie-parser";
 import { taskResolver } from "./resolvers/taskResolver";
-import { Subtask } from "./entities/Subtask";
-import { Subject } from "./entities/Subject";
 import { subtaskResolver } from "./resolvers/subtaskResolver";
 import { subjectResolver } from "./resolvers/subjectResolver";
-import { CalendarEvent } from "./entities/CalendarEvent";
 import { calendarEventResolver } from "./resolvers/calendarEventResolver";
-import { LessonTime } from "./entities/LessonTime";
 import { lessonTimeResolver } from "./resolvers/lessonTimeResolver";
+import { AppDataSource } from "./TypeORM";
 
 const main = async () => {
   // Initialize typeorm connection
-  await createConnection({
-    type: "postgres",
-    username: "postgres",
-    password: "postgres",
-    database: "schoolapp",
-    logging: true,
-    synchronize: true,
-    entities: [User, Task, Subtask, Subject, CalendarEvent, LessonTime],
-  });
+  await AppDataSource.initialize()
+    .then(() => {
+      console.log("Data source has been initialized");
+    })
+    .catch((err) => {
+      console.log("Error during Data Source initialization", err);
+    });
   //User.delete({});
   //Task.delete({});
 
@@ -66,7 +60,7 @@ const main = async () => {
         process.env.REFRESH_TOKEN_SECRET!
       ) as RefreshTokenPayload;
 
-      const user = await User.findOne({ id: payload.userId });
+      const user = await User.findOne({ where: { id: payload.userId } });
 
       if (!user) {
         return res.send({

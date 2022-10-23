@@ -62,7 +62,7 @@ const LessonTimesScreen: React.FC<
         }),
       );
     }
-  }, []);
+  }, [data]);
 
   const saveLessonTimes = async () => {
     console.log('save', lessonTimes);
@@ -242,6 +242,7 @@ const LessonTimesScreen: React.FC<
                 <Pressable
                   onPress={() => {
                     setLessonTimes(lessonTimes.slice(0, index));
+                    setActiveLesson(null);
                   }}>
                   <Image
                     style={{resizeMode: 'stretch', height: 30, width: 30}}

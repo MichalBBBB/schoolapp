@@ -14,17 +14,14 @@ import {
 
 @InputType()
 class LessonTimeInput implements Partial<LessonTime> {
-  @Field({ nullable: true })
-  id?: string;
+  @Field()
+  id: string;
 
   @Field()
   startTime: string;
 
   @Field()
   endTime: string;
-
-  @Field()
-  lessonNumber: number;
 }
 
 @Resolver(LessonTime)
@@ -41,27 +38,19 @@ export class lessonTimeResolver {
     return result;
   }
 
-  @Mutation(() => [LessonTime])
+  @Mutation(() => LessonTime)
   @UseMiddleware(isAuth)
-  async createLessonTimes(
-    @Ctx() { payload }: MyContext,
-    @Arg("lessonTimes", () => [LessonTimeInput]) lessonTimes: LessonTimeInput[]
+  async createlessonTime(
+    @Arg("startTime") startTime: string,
+    @Arg("endTime") endTime: string,
+    @Ctx() { payload }: MyContext
   ) {
-    console.log("mutation");
-    const lessonTimesWithUser = lessonTimes.map((item) => {
-      return { ...item, userId: payload?.userId };
-    });
-    await LessonTime.createQueryBuilder()
-      .delete()
-      .where("userId = :id", { id: payload?.userId })
-      .execute();
-    const result = await LessonTime.createQueryBuilder()
-      .insert()
-      .values(lessonTimesWithUser)
-      .returning("*")
-      .execute();
-    console.log(await LessonTime.find());
-    return result.raw;
+    const lessonTime = await LessonTime.create({
+      startTime,
+      endTime,
+      userId: payload?.userId,
+    }).save();
+    return lessonTime;
   }
 
   @Mutation(() => Boolean)
@@ -73,7 +62,48 @@ export class lessonTimeResolver {
     await LessonTime.createQueryBuilder("lessonTime")
       .delete()
       .where("id in :ids", { ids })
+      .andWhere("userId = :userid", { userid: payload?.userId })
       .execute();
-    console.log(LessonTime.find());
+    return true;
+  }
+
+  @Mutation(() => LessonTime)
+  @UseMiddleware(isAuth)
+  async editLessonTime(
+    @Arg("id") id: string,
+    @Arg("startTime") startTime: string,
+    @Arg("endTime") endTime: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    const lessonTime = await LessonTime.findOne({
+      where: { id, userId: payload?.userId },
+    });
+    if (lessonTime) {
+      lessonTime.startTime = startTime;
+      lessonTime.endTime = endTime;
+      await lessonTime.save();
+      return lessonTime;
+    } else {
+      throw new Error("LessonTime wasn't found");
+    }
+  }
+
+  // @Mutation(() => [LessonTime])
+  // @UseMiddleware(isAuth)
+  // async editLessonTimes(
+  //   @Arg("lessonTimes", () => [LessonTimeInput]) lessonTimes: LessonTimeInput[]
+  // ) {
+
+  // }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async deleteLessonTime(@Arg("id") id: string, @Ctx() { payload }: MyContext) {
+    await LessonTime.createQueryBuilder("lessonTime")
+      .delete()
+      .where("id = :id", { id })
+      .andWhere("userId = :userid", { userid: payload?.userId })
+      .execute();
+    return true;
   }
 }

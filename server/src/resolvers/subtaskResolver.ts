@@ -19,7 +19,7 @@ export class subtaskResolver {
     @Ctx() { payload }: MyContext,
     @Arg("id") id: string
   ): Promise<Subtask[]> {
-    const task = await Task.findOne(id);
+    const task = await Task.findOne({ where: { id } });
     //check if tasks user is same as current user
     if (task?.userId === payload?.userId) {
       const tasks = await Subtask.createQueryBuilder("subtask")
@@ -59,9 +59,9 @@ export class subtaskResolver {
     @Ctx() { payload }: MyContext,
     @Arg("id") id: string
   ): Promise<Subtask> {
-    const subtask = await Subtask.findOne(id);
+    const subtask = await Subtask.findOne({ where: { id } });
     if (subtask) {
-      const task = await Task.findOne(subtask.taskId);
+      const task = await Task.findOne({ where: { id: subtask.taskId } });
 
       if (task?.userId === payload?.userId && task) {
         const newValue = !subtask.done;
@@ -81,9 +81,9 @@ export class subtaskResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async deleteSubtask(@Ctx() { payload }: MyContext, @Arg("id") id: string) {
-    const subtask = await Subtask.findOne(id);
+    const subtask = await Subtask.findOne({ where: { id } });
     if (subtask) {
-      const task = await Task.findOne(subtask.taskId);
+      const task = await Task.findOne({ where: { id: subtask.taskId } });
       // check if task exists and tasks user is same as current user
       if (task && task.userId == payload?.userId) {
         Subtask.createQueryBuilder("subtask")

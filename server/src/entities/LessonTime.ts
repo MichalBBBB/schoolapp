@@ -23,10 +23,6 @@ export class LessonTime extends BaseEntity {
   @Field()
   endTime: string;
 
-  @Column()
-  @Field()
-  lessonNumber: number;
-
   @ManyToOne(() => User, (user) => user.lessonTimes, { onDelete: "CASCADE" })
   user: User;
 
