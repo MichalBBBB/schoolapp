@@ -13,7 +13,6 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
 };
 
@@ -34,14 +33,12 @@ export type LessonTime = {
   __typename?: 'LessonTime';
   endTime: Scalars['String'];
   id: Scalars['String'];
-  lessonNumber: Scalars['Float'];
   startTime: Scalars['String'];
 };
 
 export type LessonTimeInput = {
   endTime: Scalars['String'];
-  id?: InputMaybe<Scalars['String']>;
-  lessonNumber: Scalars['Float'];
+  id: Scalars['String'];
   startTime: Scalars['String'];
 };
 
@@ -51,15 +48,18 @@ export type Mutation = {
   __typename?: 'Mutation';
   changeSubjectOfTask: Task;
   createEvent: CalendarEvent;
-  createLessonTimes: Array<LessonTime>;
+  createLessonTime: LessonTime;
   createSubject: Subject;
   createSubtask: Subtask;
   createTask: Task;
   deleteEvent: Scalars['Boolean'];
+  deleteLessonTime: Scalars['Boolean'];
   deleteLessonTimes: Scalars['Boolean'];
   deleteSubtask: Scalars['Boolean'];
   deleteTask: Scalars['Boolean'];
   editEvent: CalendarEvent;
+  editLessonTime: LessonTime;
+  editLessonTimes: Array<LessonTime>;
   editTask: Task;
   login: LoginResponse;
   register: RegisterResponse;
@@ -82,8 +82,9 @@ export type MutationCreateEventArgs = {
 };
 
 
-export type MutationCreateLessonTimesArgs = {
-  lessonTimes: Array<LessonTimeInput>;
+export type MutationCreateLessonTimeArgs = {
+  endTime: Scalars['String'];
+  startTime: Scalars['String'];
 };
 
 
@@ -110,6 +111,11 @@ export type MutationDeleteEventArgs = {
 };
 
 
+export type MutationDeleteLessonTimeArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationDeleteLessonTimesArgs = {
   ids: Array<Scalars['String']>;
 };
@@ -131,6 +137,18 @@ export type MutationEditEventArgs = {
   startDate: Scalars['DateTime'];
   subjectId?: InputMaybe<Scalars['String']>;
   wholeDay?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type MutationEditLessonTimeArgs = {
+  endTime: Scalars['String'];
+  id: Scalars['String'];
+  startTime: Scalars['String'];
+};
+
+
+export type MutationEditLessonTimesArgs = {
+  lessonTimes: Array<LessonTimeInput>;
 };
 
 
@@ -254,7 +272,7 @@ export type UserSucces = {
 
 export type CalendarEventFragment = { __typename?: 'CalendarEvent', id: string, name: string, startDate: any, endDate?: any | null | undefined, wholeDay: boolean, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined };
 
-export type LessonTimeFragment = { __typename?: 'LessonTime', id: string, startTime: string, endTime: string, lessonNumber: number };
+export type LessonTimeFragment = { __typename?: 'LessonTime', id: string, startTime: string, endTime: string };
 
 export type SubjectFragment = { __typename?: 'Subject', id: string, name: string };
 
@@ -271,13 +289,6 @@ export type CreateEventMutationVariables = Exact<{
 
 
 export type CreateEventMutation = { __typename?: 'Mutation', createEvent: { __typename?: 'CalendarEvent', id: string, name: string, startDate: any, endDate?: any | null | undefined, wholeDay: boolean, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
-
-export type CreateLessonTimesMutationVariables = Exact<{
-  lessonTimes: Array<LessonTimeInput> | LessonTimeInput;
-}>;
-
-
-export type CreateLessonTimesMutation = { __typename?: 'Mutation', createLessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string, lessonNumber: number }> };
 
 export type CreateSubjectMutationVariables = Exact<{
   name: Scalars['String'];
@@ -333,6 +344,37 @@ export type EditTaskMutationVariables = Exact<{
 
 export type EditTaskMutation = { __typename?: 'Mutation', editTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
 
+export type CreatelessonTimeMutationVariables = Exact<{
+  endTime: Scalars['String'];
+  startTime: Scalars['String'];
+}>;
+
+
+export type CreatelessonTimeMutation = { __typename?: 'Mutation', createLessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } };
+
+export type DeleteLessonTimeMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteLessonTimeMutation = { __typename?: 'Mutation', deleteLessonTime: boolean };
+
+export type EditLessonTimeMutationVariables = Exact<{
+  endTime: Scalars['String'];
+  startTime: Scalars['String'];
+  id: Scalars['String'];
+}>;
+
+
+export type EditLessonTimeMutation = { __typename?: 'Mutation', editLessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } };
+
+export type EditLessonTimesMutationVariables = Exact<{
+  lessonTimes: Array<LessonTimeInput> | LessonTimeInput;
+}>;
+
+
+export type EditLessonTimesMutation = { __typename?: 'Mutation', editLessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string }> };
+
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
@@ -372,7 +414,7 @@ export type GetAllEventsQuery = { __typename?: 'Query', getAllEvents: Array<{ __
 export type GetAllLessonTimesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllLessonTimesQuery = { __typename?: 'Query', getAllLessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string, lessonNumber: number }> };
+export type GetAllLessonTimesQuery = { __typename?: 'Query', getAllLessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string }> };
 
 export type GetAllSubjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -424,7 +466,6 @@ export const LessonTimeFragmentDoc = gql`
   id
   startTime
   endTime
-  lessonNumber
 }
     `;
 export const SubtaskFragmentDoc = gql`
@@ -495,39 +536,6 @@ export function useCreateEventMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateEventMutationHookResult = ReturnType<typeof useCreateEventMutation>;
 export type CreateEventMutationResult = Apollo.MutationResult<CreateEventMutation>;
 export type CreateEventMutationOptions = Apollo.BaseMutationOptions<CreateEventMutation, CreateEventMutationVariables>;
-export const CreateLessonTimesDocument = gql`
-    mutation CreateLessonTimes($lessonTimes: [LessonTimeInput!]!) {
-  createLessonTimes(lessonTimes: $lessonTimes) {
-    ...LessonTime
-  }
-}
-    ${LessonTimeFragmentDoc}`;
-export type CreateLessonTimesMutationFn = Apollo.MutationFunction<CreateLessonTimesMutation, CreateLessonTimesMutationVariables>;
-
-/**
- * __useCreateLessonTimesMutation__
- *
- * To run a mutation, you first call `useCreateLessonTimesMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateLessonTimesMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createLessonTimesMutation, { data, loading, error }] = useCreateLessonTimesMutation({
- *   variables: {
- *      lessonTimes: // value for 'lessonTimes'
- *   },
- * });
- */
-export function useCreateLessonTimesMutation(baseOptions?: Apollo.MutationHookOptions<CreateLessonTimesMutation, CreateLessonTimesMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateLessonTimesMutation, CreateLessonTimesMutationVariables>(CreateLessonTimesDocument, options);
-      }
-export type CreateLessonTimesMutationHookResult = ReturnType<typeof useCreateLessonTimesMutation>;
-export type CreateLessonTimesMutationResult = Apollo.MutationResult<CreateLessonTimesMutation>;
-export type CreateLessonTimesMutationOptions = Apollo.BaseMutationOptions<CreateLessonTimesMutation, CreateLessonTimesMutationVariables>;
 export const CreateSubjectDocument = gql`
     mutation CreateSubject($name: String!) {
   createSubject(name: $name) {
@@ -758,6 +766,139 @@ export function useEditTaskMutation(baseOptions?: Apollo.MutationHookOptions<Edi
 export type EditTaskMutationHookResult = ReturnType<typeof useEditTaskMutation>;
 export type EditTaskMutationResult = Apollo.MutationResult<EditTaskMutation>;
 export type EditTaskMutationOptions = Apollo.BaseMutationOptions<EditTaskMutation, EditTaskMutationVariables>;
+export const CreatelessonTimeDocument = gql`
+    mutation CreatelessonTime($endTime: String!, $startTime: String!) {
+  createLessonTime(endTime: $endTime, startTime: $startTime) {
+    ...LessonTime
+  }
+}
+    ${LessonTimeFragmentDoc}`;
+export type CreatelessonTimeMutationFn = Apollo.MutationFunction<CreatelessonTimeMutation, CreatelessonTimeMutationVariables>;
+
+/**
+ * __useCreatelessonTimeMutation__
+ *
+ * To run a mutation, you first call `useCreatelessonTimeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatelessonTimeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createlessonTimeMutation, { data, loading, error }] = useCreatelessonTimeMutation({
+ *   variables: {
+ *      endTime: // value for 'endTime'
+ *      startTime: // value for 'startTime'
+ *   },
+ * });
+ */
+export function useCreatelessonTimeMutation(baseOptions?: Apollo.MutationHookOptions<CreatelessonTimeMutation, CreatelessonTimeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreatelessonTimeMutation, CreatelessonTimeMutationVariables>(CreatelessonTimeDocument, options);
+      }
+export type CreatelessonTimeMutationHookResult = ReturnType<typeof useCreatelessonTimeMutation>;
+export type CreatelessonTimeMutationResult = Apollo.MutationResult<CreatelessonTimeMutation>;
+export type CreatelessonTimeMutationOptions = Apollo.BaseMutationOptions<CreatelessonTimeMutation, CreatelessonTimeMutationVariables>;
+export const DeleteLessonTimeDocument = gql`
+    mutation DeleteLessonTime($id: String!) {
+  deleteLessonTime(id: $id)
+}
+    `;
+export type DeleteLessonTimeMutationFn = Apollo.MutationFunction<DeleteLessonTimeMutation, DeleteLessonTimeMutationVariables>;
+
+/**
+ * __useDeleteLessonTimeMutation__
+ *
+ * To run a mutation, you first call `useDeleteLessonTimeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteLessonTimeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteLessonTimeMutation, { data, loading, error }] = useDeleteLessonTimeMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteLessonTimeMutation(baseOptions?: Apollo.MutationHookOptions<DeleteLessonTimeMutation, DeleteLessonTimeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteLessonTimeMutation, DeleteLessonTimeMutationVariables>(DeleteLessonTimeDocument, options);
+      }
+export type DeleteLessonTimeMutationHookResult = ReturnType<typeof useDeleteLessonTimeMutation>;
+export type DeleteLessonTimeMutationResult = Apollo.MutationResult<DeleteLessonTimeMutation>;
+export type DeleteLessonTimeMutationOptions = Apollo.BaseMutationOptions<DeleteLessonTimeMutation, DeleteLessonTimeMutationVariables>;
+export const EditLessonTimeDocument = gql`
+    mutation EditLessonTime($endTime: String!, $startTime: String!, $id: String!) {
+  editLessonTime(endTime: $endTime, startTime: $startTime, id: $id) {
+    ...LessonTime
+  }
+}
+    ${LessonTimeFragmentDoc}`;
+export type EditLessonTimeMutationFn = Apollo.MutationFunction<EditLessonTimeMutation, EditLessonTimeMutationVariables>;
+
+/**
+ * __useEditLessonTimeMutation__
+ *
+ * To run a mutation, you first call `useEditLessonTimeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditLessonTimeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editLessonTimeMutation, { data, loading, error }] = useEditLessonTimeMutation({
+ *   variables: {
+ *      endTime: // value for 'endTime'
+ *      startTime: // value for 'startTime'
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useEditLessonTimeMutation(baseOptions?: Apollo.MutationHookOptions<EditLessonTimeMutation, EditLessonTimeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditLessonTimeMutation, EditLessonTimeMutationVariables>(EditLessonTimeDocument, options);
+      }
+export type EditLessonTimeMutationHookResult = ReturnType<typeof useEditLessonTimeMutation>;
+export type EditLessonTimeMutationResult = Apollo.MutationResult<EditLessonTimeMutation>;
+export type EditLessonTimeMutationOptions = Apollo.BaseMutationOptions<EditLessonTimeMutation, EditLessonTimeMutationVariables>;
+export const EditLessonTimesDocument = gql`
+    mutation EditLessonTimes($lessonTimes: [LessonTimeInput!]!) {
+  editLessonTimes(lessonTimes: $lessonTimes) {
+    ...LessonTime
+  }
+}
+    ${LessonTimeFragmentDoc}`;
+export type EditLessonTimesMutationFn = Apollo.MutationFunction<EditLessonTimesMutation, EditLessonTimesMutationVariables>;
+
+/**
+ * __useEditLessonTimesMutation__
+ *
+ * To run a mutation, you first call `useEditLessonTimesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditLessonTimesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editLessonTimesMutation, { data, loading, error }] = useEditLessonTimesMutation({
+ *   variables: {
+ *      lessonTimes: // value for 'lessonTimes'
+ *   },
+ * });
+ */
+export function useEditLessonTimesMutation(baseOptions?: Apollo.MutationHookOptions<EditLessonTimesMutation, EditLessonTimesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditLessonTimesMutation, EditLessonTimesMutationVariables>(EditLessonTimesDocument, options);
+      }
+export type EditLessonTimesMutationHookResult = ReturnType<typeof useEditLessonTimesMutation>;
+export type EditLessonTimesMutationResult = Apollo.MutationResult<EditLessonTimesMutation>;
+export type EditLessonTimesMutationOptions = Apollo.BaseMutationOptions<EditLessonTimesMutation, EditLessonTimesMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {

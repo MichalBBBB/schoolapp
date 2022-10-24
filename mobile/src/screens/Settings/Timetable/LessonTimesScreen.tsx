@@ -17,7 +17,10 @@ import CustomParseFormat from 'dayjs/plugin/customParseFormat';
 import SelectTimeModal from '../../../components/selectTimeView/selectTimeModal';
 import {
   GetAllLessonTimesDocument,
-  useCreateLessonTimesMutation,
+  LessonTimeFragment,
+  useCreatelessonTimeMutation,
+  useDeleteLessonTimeMutation,
+  useEditLessonTimesMutation,
   useGetAllLessonTimesQuery,
 } from '../../../generated/graphql';
 
@@ -34,9 +37,9 @@ dayjs.extend(RelativeTime);
 const LessonTimesScreen: React.FC<
   NativeStackScreenProps<SettingsStackParamList, 'LessonTimesScreen'>
 > = ({navigation}) => {
-  const [lessonTimes, setLessonTimes] = useState<LessonTime[]>([
-    {lessonNumber: 0, startTime: '08:00', endTime: '08:45'},
-  ]);
+  // const [lessonTimes, setLessonTimes] = useState<LessonTime[]>([
+  //   {lessonNumber: 0, startTime: '08:00', endTime: '08:45'},
+  // ]);
   const [theme] = useTheme();
   const [timeModalVisible, setTimeModalVisible] = useState(false);
   const [activeLesson, setActiveLesson] = useState<{
@@ -44,36 +47,15 @@ const LessonTimesScreen: React.FC<
     time: 'start' | 'end';
   } | null>(null);
   const [changingValue, setChangingValue] = useState<number | string>(0);
-  const {data} = useGetAllLessonTimesQuery();
-  const [createLessonTimes] = useCreateLessonTimesMutation();
+  const {data, loading: getLessonTimesLoading} = useGetAllLessonTimesQuery();
+  const [createLessonTime] = useCreatelessonTimeMutation();
+  const [editLessonTimes, {error: editLessonTimesError}] =
+    useEditLessonTimesMutation();
+  const [deleteLessonTime] = useDeleteLessonTimeMutation();
 
   useEffect(() => {
-    console.log('useEffect');
-    console.log(data?.getAllLessonTimes);
-    if (data?.getAllLessonTimes && data.getAllLessonTimes.length >= 1) {
-      setLessonTimes(
-        data?.getAllLessonTimes.map(item => {
-          return {
-            startTime: item.startTime,
-            endTime: item.endTime,
-            lessonNumber: item.lessonNumber,
-            id: item.id,
-          };
-        }),
-      );
-    }
-  }, [data]);
-
-  const saveLessonTimes = async () => {
-    console.log('save', lessonTimes);
-    const result = await createLessonTimes({
-      variables: {
-        lessonTimes,
-      },
-      refetchQueries: [GetAllLessonTimesDocument],
-    });
-    console.log(result.errors);
-  };
+    console.log(JSON.stringify(editLessonTimesError));
+  }, [editLessonTimesError]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -82,7 +64,6 @@ const LessonTimesScreen: React.FC<
         <Pressable
           style={{flexDirection: 'row', alignItems: 'center'}}
           onPress={() => {
-            saveLessonTimes();
             navigation.navigate('TimeTableScreen');
           }}>
           <Text>Continue</Text>
@@ -99,9 +80,9 @@ const LessonTimesScreen: React.FC<
     let time;
     if (activeLesson) {
       if (activeLesson.time == 'start') {
-        time = lessonTimes[activeLesson.index].startTime;
+        time = data?.getAllLessonTimes[activeLesson.index].startTime;
       } else {
-        time = lessonTimes[activeLesson.index].endTime;
+        time = data?.getAllLessonTimes[activeLesson.index].endTime;
       }
     } else {
       time = '08:00';
@@ -109,9 +90,23 @@ const LessonTimesScreen: React.FC<
     return time;
   };
 
+  const addLessonTime = (lastLessonTime: LessonTimeFragment) => {
+    createLessonTime({
+      variables: {
+        startTime: dayjs(lastLessonTime.endTime, 'HH:mm')
+          .add(10, 'minute')
+          .format('HH:mm'),
+        endTime: dayjs(lastLessonTime.endTime, 'HH:mm')
+          .add(55, 'minute')
+          .format('HH:mm'),
+      },
+      refetchQueries: [GetAllLessonTimesDocument],
+    });
+  };
+
   const getBreakLength = (index: number) => {
-    return dayjs(lessonTimes[index + 1].startTime, 'HH:mm').diff(
-      dayjs(lessonTimes[index].endTime, 'HH:mm'),
+    return dayjs(data?.getAllLessonTimes[index + 1].startTime, 'HH:mm').diff(
+      dayjs(data?.getAllLessonTimes[index].endTime, 'HH:mm'),
       'minute',
     );
   };
@@ -121,79 +116,89 @@ const LessonTimesScreen: React.FC<
     index: number,
     newValue: number | string,
   ) => {
+    if (!data) {
+      return;
+    }
     if (changedValue == 'break') {
-      const oldValue = dayjs(lessonTimes[index].endTime, 'HH:mm').diff(
-        dayjs(lessonTimes[index + 1].startTime, 'HH:mm'),
+      const oldValue = dayjs(
+        data?.getAllLessonTimes[index].endTime,
+        'HH:mm',
+      ).diff(
+        dayjs(data?.getAllLessonTimes[index + 1].startTime, 'HH:mm'),
         'minute',
       );
       const difference = parseInt(newValue as string) - oldValue;
-      setLessonTimes(
-        lessonTimes.map((item, itemIndex) => {
-          if (itemIndex > index) {
-            return {
-              ...item,
-              startTime: dayjs(item.startTime, 'HH:mm')
-                .add(difference, 'minute')
-                .format('HH:mm'),
-              endTime: dayjs(item.endTime, 'HH:mm')
-                .add(difference, 'minute')
-                .format('HH:mm'),
-            };
-          } else {
-            return item;
-          }
-        }),
-      );
+      editLessonTimes({
+        variables: {
+          lessonTimes:
+            data?.getAllLessonTimes.slice(index).map((item, itemIndex) => {
+              return {
+                id: item.id,
+                startTime: dayjs(item.startTime, 'HH:mm')
+                  .add(difference, 'minute')
+                  .format('HH:mm'),
+                endTime: dayjs(item.endTime, 'HH:mm')
+                  .add(difference, 'minute')
+                  .format('HH:mm'),
+              };
+            }) || [],
+        },
+      });
     } else if (changedValue == 'lesson-start') {
-      const oldValue = lessonTimes[index].startTime;
+      const oldValue = data?.getAllLessonTimes[index].startTime;
       const difference = dayjs(newValue, 'HH:mm').diff(
         dayjs(oldValue, 'HH:mm'),
         'minute',
       );
-      setLessonTimes(
-        lessonTimes.map((item, itemIndex) => {
-          if (itemIndex == index) {
-            return {
-              ...item,
-              startTime: newValue as string,
-            };
-          } else {
-            return item;
-          }
-        }),
-      );
+      editLessonTimes({
+        variables: {
+          lessonTimes: {
+            startTime: newValue as string,
+            id: data.getAllLessonTimes[index].id,
+            endTime: data.getAllLessonTimes[index].endTime,
+          },
+        },
+      });
     } else if (changedValue == 'lesson-end') {
-      const oldValue = lessonTimes[index].endTime;
+      const oldValue = data.getAllLessonTimes[index].endTime;
       const difference = dayjs(newValue, 'HH:mm').diff(
         dayjs(oldValue, 'HH:mm'),
         'minute',
       );
-      setLessonTimes(
-        lessonTimes.map((item, itemIndex) => {
-          if (itemIndex > index) {
-            return {
-              ...item,
-              endTime: dayjs(item.endTime, 'HH:mm')
-                .add(difference, 'minute')
-                .format('HH:mm'),
-              startTime: dayjs(item.startTime, 'HH:mm')
-                .add(difference, 'minute')
-                .format('HH:mm'),
-            };
-          } else if (itemIndex == index) {
-            return {
-              ...item,
-              endTime: dayjs(item.endTime, 'HH:mm')
-                .add(difference, 'minute')
-                .format('HH:mm'),
-            };
-          } else {
-            return item;
-          }
-        }),
-      );
+      editLessonTimes({
+        variables: {
+          lessonTimes: data.getAllLessonTimes
+            .slice(index)
+            .map((item, itemIndex) => {
+              if (itemIndex == index) {
+                return {
+                  startTime: item.startTime,
+                  id: item.id,
+                  endTime: dayjs(item.endTime, 'HH:mm')
+                    .add(difference, 'minute')
+                    .format('HH:mm'),
+                };
+              } else {
+                return {
+                  id: item.id,
+                  endTime: dayjs(item.endTime, 'HH:mm')
+                    .add(difference, 'minute')
+                    .format('HH:mm'),
+                  startTime: dayjs(item.startTime, 'HH:mm')
+                    .add(difference, 'minute')
+                    .format('HH:mm'),
+                };
+              }
+            }),
+        },
+        refetchQueries: [GetAllLessonTimesDocument],
+      });
     }
   };
+
+  if (!data && getLessonTimesLoading) {
+    return <Text>Loading...</Text>;
+  }
 
   return (
     <>
@@ -207,7 +212,25 @@ const LessonTimesScreen: React.FC<
           </View>
         )}
         style={styles.container}
-        data={lessonTimes}
+        data={data?.getAllLessonTimes.map((item, index) => {
+          return {...item, lessonNumber: index + 1};
+        })}
+        ListEmptyComponent={() => (
+          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+            <Pressable
+              style={styles.addFirstLessonButton}
+              onPress={() => {
+                createLessonTime({
+                  variables: {startTime: '08:00', endTime: '08:45'},
+                  refetchQueries: [GetAllLessonTimesDocument],
+                });
+              }}>
+              <Text style={styles.addFirstLessonButtonText}>
+                Add first lesson
+              </Text>
+            </Pressable>
+          </View>
+        )}
         renderItem={({item, index}) => (
           <View style={styles.listItemContainer} key={index}>
             <View
@@ -238,10 +261,13 @@ const LessonTimesScreen: React.FC<
                   <Text>{item.endTime}</Text>
                 </Pressable>
               </View>
-              {index == lessonTimes.length - 1 && (
+              {index == (data?.getAllLessonTimes.length || 1) - 1 && (
                 <Pressable
                   onPress={() => {
-                    setLessonTimes(lessonTimes.slice(0, index));
+                    deleteLessonTime({
+                      variables: {id: item.id},
+                      refetchQueries: [GetAllLessonTimesDocument],
+                    });
                     setActiveLesson(null);
                   }}>
                   <Image
@@ -251,7 +277,7 @@ const LessonTimesScreen: React.FC<
                 </Pressable>
               )}
             </View>
-            {index + 1 !== lessonTimes.length ? (
+            {index + 1 !== data?.getAllLessonTimes.length ? (
               <View style={styles.break}>
                 <TextInput
                   style={styles.breakLength}
@@ -274,18 +300,7 @@ const LessonTimesScreen: React.FC<
               <Pressable
                 style={styles.addButton}
                 onPress={() => {
-                  setLessonTimes([
-                    ...lessonTimes,
-                    {
-                      lessonNumber: lessonTimes.length,
-                      startTime: dayjs(item.endTime, 'HH:mm')
-                        .add(10, 'minute')
-                        .format('HH:mm'),
-                      endTime: dayjs(item.endTime, 'HH:mm')
-                        .add(55, 'minute')
-                        .format('HH:mm'),
-                    },
-                  ]);
+                  addLessonTime(item);
                 }}>
                 <Image
                   style={{resizeMode: 'stretch', height: 35, width: 35}}
@@ -365,6 +380,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
     marginBottom: 5,
+  },
+  addFirstLessonButton: {
+    borderRadius: 10,
+    backgroundColor: 'black',
+    color: 'white',
+    padding: 10,
+  },
+  addFirstLessonButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
