@@ -14,7 +14,7 @@ import {
 import { Subtask } from "../entities/Subtask";
 import { Subject } from "../entities/Subject";
 import DataLoader from "dataloader";
-import { AppDataSource } from "src/TypeORM";
+import { AppDataSource } from "../TypeORM";
 
 const subjectLoader = new DataLoader((keys) => loadSubjects(keys as [string]), {
   cache: false,

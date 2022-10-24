@@ -4,10 +4,6 @@ import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { __prod__ } from "./utils/constants";
-import {
-  ApolloServerPluginLandingPageDisabled,
-  ApolloServerPluginLandingPageGraphQLPlayground,
-} from "apollo-server-core";
 import { HelloResolver } from "./resolvers/hello";
 import { verify } from "jsonwebtoken";
 import { User } from "./entities/User";
@@ -94,11 +90,6 @@ const main = async () => {
         lessonTimeResolver,
       ],
     }),
-    plugins: [
-      __prod__
-        ? ApolloServerPluginLandingPageDisabled()
-        : ApolloServerPluginLandingPageGraphQLPlayground(),
-    ],
     context: ({ req, res }) => ({ req, res }),
   });
 

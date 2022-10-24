@@ -11,6 +11,7 @@ import {
   Resolver,
   UseMiddleware,
 } from "type-graphql";
+import { AppDataSource } from "../TypeORM";
 
 @InputType()
 class LessonTimeInput implements Partial<LessonTime> {
@@ -33,6 +34,7 @@ export class lessonTimeResolver {
     const result = await LessonTime.createQueryBuilder("lessontime")
       .select()
       .where('lessontime."userId" = :id', { id: payload?.userId })
+      .orderBy('"startTime"')
       .getMany();
     console.log(result);
     return result;
@@ -40,7 +42,7 @@ export class lessonTimeResolver {
 
   @Mutation(() => LessonTime)
   @UseMiddleware(isAuth)
-  async createlessonTime(
+  async createLessonTime(
     @Arg("startTime") startTime: string,
     @Arg("endTime") endTime: string,
     @Ctx() { payload }: MyContext
@@ -88,13 +90,25 @@ export class lessonTimeResolver {
     }
   }
 
-  // @Mutation(() => [LessonTime])
-  // @UseMiddleware(isAuth)
-  // async editLessonTimes(
-  //   @Arg("lessonTimes", () => [LessonTimeInput]) lessonTimes: LessonTimeInput[]
-  // ) {
-
-  // }
+  @Mutation(() => [LessonTime])
+  @UseMiddleware(isAuth)
+  async editLessonTimes(
+    @Arg("lessonTimes", () => [LessonTimeInput]) lessonTimes: LessonTimeInput[],
+    @Ctx() { payload }: MyContext
+  ) {
+    console.log("here");
+    await AppDataSource.transaction(async (transactionEntityManager) => {
+      lessonTimes.forEach((item) => {
+        transactionEntityManager.update(
+          LessonTime,
+          { id: item.id, userId: payload?.userId },
+          { startTime: item.startTime, endTime: item.endTime }
+        );
+      });
+    });
+    console.log("here");
+    return LessonTime.find({ where: { userId: payload?.userId } });
+  }
 
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
