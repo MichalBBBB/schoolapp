@@ -1,14 +1,20 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React from 'react';
-import {View, ScrollView, Text, StyleSheet} from 'react-native';
+import React, {useState} from 'react';
+import {View, ScrollView, Text, StyleSheet, Pressable} from 'react-native';
 import {
+  Cell,
   Col,
   Row,
   Rows,
   Table,
   TableWrapper,
 } from 'react-native-table-component';
+import {BasicButton} from '../../../components/basicViews/BasicButton';
+import SelectSubjectModal from '../../../components/selectSubject';
 import {
+  GetAllLessonsDocument,
+  LessonFragment,
+  useCreateLessonMutation,
   useGetAllLessonsQuery,
   useGetAllLessonTimesQuery,
 } from '../../../generated/graphql';
@@ -18,52 +24,138 @@ import {WEEK_DAYS} from '../../../types/weekDays';
 const TimeTableScreen: React.FC<
   NativeStackScreenProps<SettingsStackParamList, 'TimeTableScreen'>
 > = () => {
+  const [subjectModalIsVisible, setSubjectModalIsVisible] = useState(false);
+  const [activeWeekDay, setActiveWeekDay] = useState<string | null>(null);
+  const [activeLessonTimeId, setActiveLessonTimeId] = useState<string | null>(
+    null,
+  );
   const {data, loading: lessonsLoading} = useGetAllLessonsQuery();
   const {data: lessonTimes} = useGetAllLessonTimesQuery();
+  const [createLesson] = useCreateLessonMutation();
   if (lessonsLoading) {
     return <Text>Loading...</Text>;
   }
+  const lessonNumbers = [
+    '',
+    ...(lessonTimes?.getAllLessonTimes.map(
+      (item, index) => index + 1,
+    ) as number[]),
+  ];
+  const weekDays = Object.keys(WEEK_DAYS);
+  const widthArr = [40, ...Array(lessonNumbers.length - 1).fill(100)];
+  const tableData:
+    | Array<Array<LessonFragment | undefined> | undefined>
+    | undefined = weekDays.map((weekDay, weekDayIndex) => {
+    return lessonTimes?.getAllLessonTimes.map(lessonTime => {
+      const lesson = data?.getAllLessons.find(item => {
+        if (
+          item.lessonTime.id == lessonTime.id &&
+          item.dayOfTheWeek == weekDay
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+      return lesson;
+    });
+  });
   return (
     <View style={styles.container}>
       <ScrollView horizontal={true}>
-        <Table borderStyle={{borderWidth: 1}} style={{width: 500}}>
-          <Row
-            data={['', ...Object.keys(WEEK_DAYS)]}
-            style={styles.head}
-            flexArr={[1, 2, 1, 1, 1, 1, 1, 1]}
-          />
-          <ScrollView>
-            <TableWrapper style={styles.wrapper}>
-              <Col
-                heightArr={[28, 28]}
-                style={styles.title}
-                data={lessonTimes?.getAllLessonTimes.map((item, index) => {
-                  return index + 1;
-                })}
-              />
-
-              <Rows
-                flexArr={[2, 1, 1, 1, 1, 1, 1]}
-                style={styles.row}
-                data={Array(lessonTimes?.getAllLessonTimes.length).fill(
-                  Array(7).fill('a'),
-                )}
-              />
-            </TableWrapper>
+        <View>
+          <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
+            <Row
+              data={lessonNumbers}
+              widthArr={widthArr}
+              style={styles.header}
+              textStyle={styles.text}
+            />
+          </Table>
+          <ScrollView style={styles.dataWrapper}>
+            <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
+              <TableWrapper style={styles.wrapper}>
+                <Col data={weekDays} width={40} heightArr={Array(7).fill(80)} />
+                <TableWrapper>
+                  {tableData.map((row, rowIndex) => (
+                    <TableWrapper key={rowIndex} style={styles.row}>
+                      {row?.map((item, itemIndex) => (
+                        <Cell
+                          style={styles.cell}
+                          key={itemIndex}
+                          data={
+                            item ? (
+                              <View
+                                style={{
+                                  flexDirection: 'row',
+                                  justifyContent: 'center',
+                                }}>
+                                <View style={styles.lesson}>
+                                  <Text>{item.subject.name}</Text>
+                                </View>
+                              </View>
+                            ) : (
+                              <View
+                                style={{
+                                  flexDirection: 'row',
+                                  justifyContent: 'center',
+                                }}>
+                                <BasicButton
+                                  onPress={() => {
+                                    setActiveLessonTimeId(
+                                      lessonTimes?.getAllLessonTimes[itemIndex]
+                                        .id || null,
+                                    );
+                                    setActiveWeekDay(weekDays[rowIndex]);
+                                    setSubjectModalIsVisible(true);
+                                  }}
+                                  padding={10}>
+                                  <Text>Add</Text>
+                                </BasicButton>
+                              </View>
+                            )
+                          }
+                        />
+                      ))}
+                    </TableWrapper>
+                  ))}
+                </TableWrapper>
+              </TableWrapper>
+            </Table>
           </ScrollView>
-        </Table>
+        </View>
       </ScrollView>
+      <SelectSubjectModal
+        isVisible={subjectModalIsVisible}
+        onClose={() => setSubjectModalIsVisible(false)}
+        onSubmit={subject => {
+          console.log(subject, activeLessonTimeId, activeWeekDay);
+          createLesson({
+            variables: {
+              lessonTimeId: activeLessonTimeId!,
+              dayOfTheWeek: activeWeekDay!,
+              subjectId: subject.id,
+            },
+            refetchQueries: [GetAllLessonsDocument],
+          });
+          setSubjectModalIsVisible(false);
+          setActiveLessonTimeId(null);
+          setActiveWeekDay(null);
+        }}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff'},
-  head: {height: 40, backgroundColor: '#f1f8ff'},
+  header: {height: 50, backgroundColor: '#fff'},
+  text: {textAlign: 'center', fontWeight: '100'},
+  dataWrapper: {marginTop: -1},
+  row: {backgroundColor: '#fff', flexDirection: 'row', height: 80},
+  cell: {width: 100},
   wrapper: {flexDirection: 'row'},
-  title: {flex: 1, backgroundColor: '#f6f8fa'},
-  row: {height: 28},
-  text: {textAlign: 'center'},
+  lesson: {backgroundColor: '#7c9ab8', padding: 10, borderRadius: 10},
 });
 
 export default TimeTableScreen;

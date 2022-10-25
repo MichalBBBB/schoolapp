@@ -16,23 +16,32 @@ export class lessonResolver {
   @Query(() => [Lesson])
   @UseMiddleware(isAuth)
   getAllLessons(@Ctx() { payload }: MyContext) {
-    return Lesson.find({ where: { userId: payload?.userId } });
+    return Lesson.find({
+      where: { userId: payload?.userId },
+      relations: { subject: true, lessonTime: true },
+    });
   }
 
   @Mutation(() => Lesson)
   @UseMiddleware(isAuth)
-  createLesson(
+  async createLesson(
     @Ctx() { payload }: MyContext,
     @Arg("subjectId") subjectId: string,
     @Arg("lessonTimeId") lessonTimeId: string,
     @Arg("dayOfTheWeek") dayOfTheWeek: string
   ) {
-    return Lesson.create({
+    const lesson = await Lesson.create({
       subjectId,
       lessonTimeId,
       dayOfTheWeek: dayOfTheWeek as WEEK_DAYS,
       userId: payload?.userId,
     }).save();
+    const lessonWithRelations = await Lesson.findOne({
+      where: { id: lesson.id },
+      relations: { subject: true, lessonTime: true },
+    });
+    console.log(lessonWithRelations);
+    return lessonWithRelations;
   }
 
   @Mutation(() => Boolean)

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, FlatList, TouchableOpacity, Text, Pressable} from 'react-native';
-import {Subject, useGetAllSubjectsQuery} from '../../generated/graphql';
+import {SubjectFragment, useGetAllSubjectsQuery} from '../../generated/graphql';
 import {BasicButton} from '../basicViews/BasicButton';
 import {BasicModalCard} from '../basicViews/BasicModalCard';
 import AddSubjectModal from './addSubjectModal';
@@ -8,7 +8,7 @@ import AddSubjectModal from './addSubjectModal';
 interface SelectSubjectProps {
   isVisible: boolean;
   onClose: () => void;
-  onSubmit: (subject: Subject) => void;
+  onSubmit: (subject: SubjectFragment) => void;
   onModalHide?: (() => void) | undefined;
 }
 
