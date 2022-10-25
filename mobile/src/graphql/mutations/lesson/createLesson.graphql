@@ -1,0 +1,13 @@
+mutation CreateLesson(
+  $dayOfTheWeek: String!
+  $lessonTimeId: String!
+  $subjectId: String!
+) {
+  createLesson(
+    dayOfTheWeek: $dayOfTheWeek
+    lessonTimeId: $lessonTimeId
+    subjectId: $subjectId
+  ) {
+    ...Lesson
+  }
+}

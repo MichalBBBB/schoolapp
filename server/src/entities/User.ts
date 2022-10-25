@@ -6,10 +6,12 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from "typeorm";
 import { Subject } from "../entities/Subject";
 import { CalendarEvent } from "./CalendarEvent";
+import { Lesson } from "./Lesson";
 import { LessonTime } from "./LessonTime";
 import { Task } from "./Task";
 
@@ -65,4 +67,8 @@ export class User extends BaseEntity {
   @Field(() => [LessonTime])
   @OneToMany(() => LessonTime, (lessonTime) => lessonTime.user)
   lessonTimes: LessonTime[];
+
+  @Field(() => [Lesson])
+  @OneToMany(() => Lesson, (lesson) => lesson.user)
+  lessons: Relation<Lesson>[];
 }

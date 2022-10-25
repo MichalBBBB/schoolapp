@@ -121,17 +121,15 @@ const LessonTimesScreen: React.FC<
     }
     if (changedValue == 'break') {
       const oldValue = dayjs(
-        data?.getAllLessonTimes[index].endTime,
+        data?.getAllLessonTimes[index + 1].startTime,
         'HH:mm',
-      ).diff(
-        dayjs(data?.getAllLessonTimes[index + 1].startTime, 'HH:mm'),
-        'minute',
-      );
+      ).diff(dayjs(data?.getAllLessonTimes[index].endTime, 'HH:mm'), 'minute');
       const difference = parseInt(newValue as string) - oldValue;
+      console.log(difference, oldValue, newValue);
       editLessonTimes({
         variables: {
           lessonTimes:
-            data?.getAllLessonTimes.slice(index).map((item, itemIndex) => {
+            data?.getAllLessonTimes.slice(index + 1).map((item, itemIndex) => {
               return {
                 id: item.id,
                 startTime: dayjs(item.startTime, 'HH:mm')
@@ -165,31 +163,34 @@ const LessonTimesScreen: React.FC<
         dayjs(oldValue, 'HH:mm'),
         'minute',
       );
+      const lessonTimeInputs = data.getAllLessonTimes
+        .slice(index, undefined)
+        .map((item, itemIndex) => {
+          console.log(index, itemIndex, item);
+          if (itemIndex == 0) {
+            return {
+              startTime: item.startTime,
+              id: item.id,
+              endTime: dayjs(item.endTime, 'HH:mm')
+                .add(difference, 'minute')
+                .format('HH:mm'),
+            };
+          } else {
+            return {
+              id: item.id,
+              endTime: dayjs(item.endTime, 'HH:mm')
+                .add(difference, 'minute')
+                .format('HH:mm'),
+              startTime: dayjs(item.startTime, 'HH:mm')
+                .add(difference, 'minute')
+                .format('HH:mm'),
+            };
+          }
+        });
+      console.log(lessonTimeInputs);
       editLessonTimes({
         variables: {
-          lessonTimes: data.getAllLessonTimes
-            .slice(index)
-            .map((item, itemIndex) => {
-              if (itemIndex == index) {
-                return {
-                  startTime: item.startTime,
-                  id: item.id,
-                  endTime: dayjs(item.endTime, 'HH:mm')
-                    .add(difference, 'minute')
-                    .format('HH:mm'),
-                };
-              } else {
-                return {
-                  id: item.id,
-                  endTime: dayjs(item.endTime, 'HH:mm')
-                    .add(difference, 'minute')
-                    .format('HH:mm'),
-                  startTime: dayjs(item.startTime, 'HH:mm')
-                    .add(difference, 'minute')
-                    .format('HH:mm'),
-                };
-              }
-            }),
+          lessonTimes: lessonTimeInputs,
         },
         refetchQueries: [GetAllLessonTimesDocument],
       });
@@ -213,7 +214,7 @@ const LessonTimesScreen: React.FC<
         )}
         style={styles.container}
         data={data?.getAllLessonTimes.map((item, index) => {
-          return {...item, lessonNumber: index + 1};
+          return {...item, lessonNumber: index};
         })}
         ListEmptyComponent={() => (
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>

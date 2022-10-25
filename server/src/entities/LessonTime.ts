@@ -4,8 +4,11 @@ import {
   Column,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
+  Relation,
 } from "typeorm";
+import { Lesson } from "./Lesson";
 import { User } from "./User";
 
 @Entity()
@@ -28,4 +31,7 @@ export class LessonTime extends BaseEntity {
 
   @Column()
   userId: string;
+
+  @OneToMany(() => Lesson, (lesson) => lesson.lessonTime)
+  lessons: Relation<Lesson>[];
 }

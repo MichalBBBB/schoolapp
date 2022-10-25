@@ -5,6 +5,7 @@ import { LessonTime } from "./entities/LessonTime";
 import { Subtask } from "./entities/Subtask";
 import { Task } from "./entities/Task";
 import { User } from "./entities/User";
+import { Lesson } from "./entities/Lesson";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -13,5 +14,5 @@ export const AppDataSource = new DataSource({
   database: "schoolapp",
   logging: true,
   synchronize: true,
-  entities: [User, Task, Subtask, Subject, CalendarEvent, LessonTime],
+  entities: [User, Task, Subtask, Subject, CalendarEvent, LessonTime, Lesson],
 });

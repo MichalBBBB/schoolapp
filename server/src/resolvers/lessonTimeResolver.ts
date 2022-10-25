@@ -36,7 +36,6 @@ export class lessonTimeResolver {
       .where('lessontime."userId" = :id', { id: payload?.userId })
       .orderBy('"startTime"')
       .getMany();
-    console.log(result);
     return result;
   }
 
@@ -106,7 +105,6 @@ export class lessonTimeResolver {
         );
       });
     });
-    console.log("here");
     return LessonTime.find({ where: { userId: payload?.userId } });
   }
 

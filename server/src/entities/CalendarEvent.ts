@@ -40,7 +40,7 @@ export class CalendarEvent extends BaseEntity {
     nullable: true,
   })
   @Field(() => Subject, { nullable: true })
-  subject: Subject;
+  subject?: Subject;
 
   @ManyToOne(() => User, (user) => user.events)
   @Field(() => User)

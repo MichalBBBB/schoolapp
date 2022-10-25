@@ -6,8 +6,10 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Relation,
 } from "typeorm";
 import { CalendarEvent } from "./CalendarEvent";
+import { Lesson } from "./Lesson";
 import { Task } from "./Task";
 import { User } from "./User";
 
@@ -33,4 +35,8 @@ export class Subject extends BaseEntity {
 
   @Column()
   userId: string;
+
+  @OneToMany(() => Lesson, (lesson) => lesson.subject)
+  @Field(() => [Lesson])
+  lessons: Relation<Lesson>[];
 }

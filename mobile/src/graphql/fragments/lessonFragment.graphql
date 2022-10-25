@@ -1,0 +1,10 @@
+fragment Lesson on Lesson {
+  id
+  dayOfTheWeek
+  subject {
+    ...Subject
+  }
+  lessonTime {
+    ...LessonTime
+  }
+}

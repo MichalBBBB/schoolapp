@@ -1,0 +1,5 @@
+query GetAllLessons {
+  getAllLessons {
+    ...Lesson
+  }
+}
