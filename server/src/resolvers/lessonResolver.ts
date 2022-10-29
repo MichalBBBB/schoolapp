@@ -57,4 +57,19 @@ export class lessonResolver {
       throw new Error("lesson wasn't found");
     }
   }
+
+  @Mutation(() => Lesson)
+  @UseMiddleware(isAuth)
+  async editLesson(
+    @Arg("subjectId") subjectId: string,
+    @Arg("id") id: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    await Lesson.update({ id, userId: payload?.userId }, { subjectId });
+    const lesson = Lesson.findOne({
+      where: { id, userId: payload?.userId },
+      relations: { subject: true, lessonTime: true },
+    });
+    return lesson;
+  }
 }

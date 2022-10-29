@@ -8,7 +8,7 @@ import AddSubjectModal from './addSubjectModal';
 interface SelectSubjectProps {
   isVisible: boolean;
   onClose: () => void;
-  onSubmit: (subject: SubjectFragment) => void;
+  onSubmit: (subject: SubjectFragment | null) => void;
   onModalHide?: (() => void) | undefined;
 }
 
@@ -44,7 +44,7 @@ const SelectSubjectModal: React.FC<SelectSubjectProps> = ({
             onModalHide();
           }
         }}>
-        <View>
+        <View style={{alignItems: 'center'}}>
           <FlatList
             contentContainerStyle={{alignItems: 'center'}}
             data={data?.getAllSubjects}
@@ -58,6 +58,13 @@ const SelectSubjectModal: React.FC<SelectSubjectProps> = ({
               </Pressable>
             )}
           />
+          <Pressable
+            style={{marginBottom: 10}}
+            onPress={() => {
+              onSubmit(null);
+            }}>
+            <Text>None</Text>
+          </Pressable>
           <BasicButton
             padding={10}
             onPress={() => {

@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, ScrollView, Text, StyleSheet, Pressable} from 'react-native';
 import {
   Cell,
@@ -15,6 +15,8 @@ import {
   GetAllLessonsDocument,
   LessonFragment,
   useCreateLessonMutation,
+  useDeleteLessonMutation,
+  useEditLessonMutation,
   useGetAllLessonsQuery,
   useGetAllLessonTimesQuery,
 } from '../../../generated/graphql';
@@ -32,9 +34,9 @@ const TimeTableScreen: React.FC<
   const {data, loading: lessonsLoading} = useGetAllLessonsQuery();
   const {data: lessonTimes} = useGetAllLessonTimesQuery();
   const [createLesson] = useCreateLessonMutation();
-  if (lessonsLoading) {
-    return <Text>Loading...</Text>;
-  }
+  const [editLesson] = useEditLessonMutation();
+  const [deleteLesson] = useDeleteLessonMutation();
+
   const lessonNumbers = [
     '',
     ...(lessonTimes?.getAllLessonTimes.map(
@@ -60,6 +62,10 @@ const TimeTableScreen: React.FC<
       return lesson;
     });
   });
+
+  if (lessonsLoading) {
+    return <Text>Loading...</Text>;
+  }
   return (
     <View style={styles.container}>
       <ScrollView horizontal={true}>
@@ -90,9 +96,18 @@ const TimeTableScreen: React.FC<
                                   flexDirection: 'row',
                                   justifyContent: 'center',
                                 }}>
-                                <View style={styles.lesson}>
+                                <Pressable
+                                  style={styles.lesson}
+                                  onPress={() => {
+                                    setActiveLessonTimeId(
+                                      lessonTimes?.getAllLessonTimes[itemIndex]
+                                        .id || null,
+                                    );
+                                    setActiveWeekDay(weekDays[rowIndex]);
+                                    setSubjectModalIsVisible(true);
+                                  }}>
                                   <Text>{item.subject.name}</Text>
-                                </View>
+                                </Pressable>
                               </View>
                             ) : (
                               <View
@@ -130,14 +145,35 @@ const TimeTableScreen: React.FC<
         onClose={() => setSubjectModalIsVisible(false)}
         onSubmit={subject => {
           console.log(subject, activeLessonTimeId, activeWeekDay);
-          createLesson({
-            variables: {
-              lessonTimeId: activeLessonTimeId!,
-              dayOfTheWeek: activeWeekDay!,
-              subjectId: subject.id,
-            },
-            refetchQueries: [GetAllLessonsDocument],
+          const existingLesson = data?.getAllLessons.find(lesson => {
+            return (
+              lesson.dayOfTheWeek == activeWeekDay &&
+              lesson.lessonTime.id == activeLessonTimeId
+            );
           });
+          if (existingLesson) {
+            if (subject == null) {
+              deleteLesson({
+                variables: {id: existingLesson.id},
+                refetchQueries: [GetAllLessonsDocument],
+              });
+            } else {
+              editLesson({
+                variables: {subjectId: subject.id, id: existingLesson.id},
+                refetchQueries: [GetAllLessonsDocument],
+              });
+            }
+          } else if (subject) {
+            createLesson({
+              variables: {
+                lessonTimeId: activeLessonTimeId!,
+                dayOfTheWeek: activeWeekDay!,
+                subjectId: subject.id,
+              },
+              refetchQueries: [GetAllLessonsDocument],
+            });
+          }
+
           setSubjectModalIsVisible(false);
           setActiveLessonTimeId(null);
           setActiveWeekDay(null);
