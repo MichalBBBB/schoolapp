@@ -6,6 +6,7 @@ import {CalendarStackParamList} from '../routes/CalendarStack';
 import {
   GetAllEventsDocument,
   Subject,
+  SubjectFragment,
   useCreateEventMutation,
 } from '../generated/graphql';
 import ConnectedList from '../components/connectedList';
@@ -36,7 +37,7 @@ const AddEventScreen: React.FC<
   const [endDateModalVisible, setEndDateModalVisible] = useState(false);
   const [subjectModalVisible, setSubjectModalVisible] = useState(false);
   const [createEvent] = useCreateEventMutation();
-  const [subject, setSubject] = useState<Subject | null>(null);
+  const [subject, setSubject] = useState<SubjectFragment | null>(null);
 
   return (
     <View style={styles.container}>

@@ -9,13 +9,10 @@ import {
 import AddButton from '../addButton';
 import EditDateModal from '../editDateWindow/editDateModal';
 import {calendarConfigWithoutTime} from '../task';
-import AddSubjectModal from '../selectSubject/addSubjectModal';
-import {useTheme} from '@react-navigation/native';
 import {BasicModalCard} from '../basicViews/BasicModalCard';
 import {BasicTextInput} from '../basicViews/BasicTextInput';
 import {BasicButton} from '../basicViews/BasicButton';
 import SelectSubjectModal from '../selectSubject';
-import {sub} from 'react-native-reanimated';
 
 interface addTaskWindowProps {
   onClose: () => void;
@@ -39,6 +36,13 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
     taskInputRef.current?.focus();
   });
 
+  const closeWindow = () => {
+    setName('');
+    setSubject(null);
+    setTaskDate(null);
+    onClose();
+  };
+
   return (
     <>
       <BasicModalCard
@@ -48,7 +52,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
         }
         avoidKeyboard={true}
         onBackdropPress={() => {
-          onClose();
+          closeWindow();
         }}
         onModalHide={() => {
           setViewVisible(viewShouldAppear);
@@ -56,6 +60,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
         <BasicTextInput
           placeholder="Task name"
           setRef={taskInputRef}
+          value={name}
           onChangeText={setName}
         />
         <View style={styles.bottomContainer}>
@@ -87,7 +92,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
                 },
                 refetchQueries: [GetAllTasksDocument],
               });
-              onClose();
+              closeWindow();
             }}
           />
         </View>

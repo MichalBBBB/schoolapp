@@ -1,10 +1,6 @@
 import dayjs from 'dayjs';
-import weekday from 'dayjs/plugin/weekday';
 import {LessonFragment, SubjectFragment} from '../generated/graphql';
 import {WEEK_DAYS, WEEK_DAY_NUMBERS} from '../types/weekDays';
-
-dayjs.extend(weekday);
-dayjs.locale('sk');
 export const closestLesson = (
   lessons: LessonFragment[],
   subject: SubjectFragment,

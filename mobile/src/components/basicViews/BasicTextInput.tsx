@@ -11,6 +11,7 @@ interface BasicTextInputProps {
   color?: string | undefined;
   placeholder?: string | undefined;
   setRef?: RefObject<TextInput> | undefined;
+  value?: string;
 }
 
 export const BasicTextInput: React.FC<BasicTextInputProps> = ({
@@ -22,6 +23,7 @@ export const BasicTextInput: React.FC<BasicTextInputProps> = ({
   color,
   placeholder,
   setRef,
+  value,
 }) => {
   const [theme] = useTheme();
   return (
@@ -40,6 +42,7 @@ export const BasicTextInput: React.FC<BasicTextInputProps> = ({
       defaultValue={defaultValue}
       placeholder={placeholder}
       ref={setRef}
+      value={value}
     />
   );
 };

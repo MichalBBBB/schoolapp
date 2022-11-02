@@ -57,12 +57,7 @@ const EditDateWindow: React.FC<EditDateWindowProps> = ({
   const {data: lessons} = useGetAllLessonsQuery();
 
   useEffect(() => {
-    console.log(subject, specialDays);
     if (subject) {
-      console.log(
-        'closest lesson',
-        closestLesson(lessons?.getAllLessons || [], subject),
-      );
       setSpecialDays([
         specialDays[0],
         [
@@ -75,10 +70,6 @@ const EditDateWindow: React.FC<EditDateWindowProps> = ({
       ]);
     }
   }, [subject]);
-
-  useEffect(() => {
-    console.log(specialDays);
-  });
 
   return (
     <View

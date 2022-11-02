@@ -9,7 +9,7 @@ export const createMatrix = (year: number, month: number) => {
   const date = dayjs(new Date(year, month, 1));
 
   // get the day of the week of the first day of the month (0 - 6)
-  const firstDay = date.startOf('month').get('day');
+  const firstDay = date.startOf('month').weekday();
 
   // get the first day of the first week
   let day = date.subtract(firstDay, 'day');
