@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   Pressable,
 } from 'react-native';
+import {SubjectFragment, useGetAllLessonsQuery} from '../../generated/graphql';
+import {closestLesson} from '../../utils/closestLesson';
 import Calendar from '../calendar';
 import WeekDays from '../calendar/weekDays';
 import SelectTimeModal from '../selectTimeView/selectTimeModal';
@@ -16,6 +18,7 @@ import SelectTimeModal from '../selectTimeView/selectTimeModal';
 interface EditDateWindowProps {
   onSubmit: (date: dayjs.Dayjs) => void;
   initialDate?: dayjs.Dayjs | null;
+  subject?: SubjectFragment | undefined | null;
 }
 
 type SpecialDate = {
@@ -28,10 +31,7 @@ const specialDates: SpecialDate[][] = [
     {name: 'Today', date: dayjs()},
     {name: 'Tommorow', date: dayjs().add(1, 'day')},
   ],
-  [
-    {name: 'Next week', date: dayjs().add(1, 'week')},
-    {name: 'otherOption', date: dayjs()},
-  ],
+  [{name: 'Next week', date: dayjs().add(1, 'week')}],
 ];
 
 const windowWidth = Dimensions.get('screen').width - 30;
@@ -41,6 +41,7 @@ const calendarHeight = 34 * 6;
 const EditDateWindow: React.FC<EditDateWindowProps> = ({
   onSubmit,
   initialDate,
+  subject,
 }) => {
   const [selectedDay, setSelectedDay] = useState<dayjs.Dayjs>(
     initialDate || dayjs(),
@@ -53,6 +54,31 @@ const EditDateWindow: React.FC<EditDateWindowProps> = ({
     setHeight(height);
   };
   const [timePopupOpen, setTimePopupOpen] = useState(false);
+  const {data: lessons} = useGetAllLessonsQuery();
+
+  useEffect(() => {
+    console.log(subject, specialDays);
+    if (subject) {
+      console.log(
+        'closest lesson',
+        closestLesson(lessons?.getAllLessons || [], subject),
+      );
+      setSpecialDays([
+        specialDays[0],
+        [
+          specialDays[1][0],
+          {
+            name: `Next ${subject.name}`,
+            date: dayjs(closestLesson(lessons?.getAllLessons || [], subject)),
+          },
+        ],
+      ]);
+    }
+  }, [subject]);
+
+  useEffect(() => {
+    console.log(specialDays);
+  });
 
   return (
     <View

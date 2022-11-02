@@ -17,3 +17,13 @@ export const WEEK_DAY_NUMBERS = {
   SAT: 5,
   SUN: 6,
 };
+
+export const WEEK_DAY_TITLES = [
+  "MON",
+  "TUE",
+  "WED",
+  "THU",
+  "FRI",
+  "SAT",
+  "SUN",
+];

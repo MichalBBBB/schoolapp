@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import React, {useState} from 'react';
 import Modal from 'react-native-modal';
 import EditDateWindow from '.';
+import {SubjectFragment} from '../../generated/graphql';
 
 interface EditDateModalProps {
   onClose: () => void;
@@ -9,6 +10,7 @@ interface EditDateModalProps {
   initialDate?: dayjs.Dayjs | null;
   isVisible: boolean;
   onHide?: () => void | undefined;
+  subject?: SubjectFragment | undefined | null;
 }
 
 const EditDateModal: React.FC<EditDateModalProps> = ({
@@ -17,6 +19,7 @@ const EditDateModal: React.FC<EditDateModalProps> = ({
   initialDate,
   isVisible,
   onHide,
+  subject,
 }) => {
   return (
     <Modal
@@ -32,6 +35,7 @@ const EditDateModal: React.FC<EditDateModalProps> = ({
       }}>
       <EditDateWindow
         initialDate={initialDate}
+        subject={subject}
         onSubmit={date => {
           onSubmit(date);
         }}

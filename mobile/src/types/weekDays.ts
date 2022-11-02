@@ -1,11 +1,11 @@
 export enum WEEK_DAYS {
-  MON = "MON",
-  TUE = "TUE",
-  WED = "WED",
-  THU = "THU",
-  FRI = "FRI",
-  SAT = "SAT",
-  SUN = "SUN",
+  MON = 'MON',
+  TUE = 'TUE',
+  WED = 'WED',
+  THU = 'THU',
+  FRI = 'FRI',
+  SAT = 'SAT',
+  SUN = 'SUN',
 }
 
 export const WEEK_DAY_NUMBERS = {

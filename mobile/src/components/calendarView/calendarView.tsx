@@ -20,8 +20,13 @@ import Animated, {
 import WeekView from '../calendar/weekView';
 import Calendar from '../calendar';
 import WeekDays from '../calendar/weekDays';
-import {useGetAllEventsQuery} from '../../generated/graphql';
+import {
+  useGetAllEventsQuery,
+  useGetAllLessonsQuery,
+} from '../../generated/graphql';
 import Event from './event';
+import {WEEK_DAY_NUMBERS} from '../../types/weekDays';
+import {BasicCard} from '../basicViews/BasicCard';
 
 // constants
 export const calendarWidth = Dimensions.get('screen').width;
@@ -47,6 +52,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
   const monthViewOpacity = useSharedValue(1);
   const weekRow = useSharedValue(0);
   const {data} = useGetAllEventsQuery();
+  const {data: lessons} = useGetAllLessonsQuery();
   const navigation = useNavigation();
   const [activeMonth, setActiveMonth] = useState(dayjs());
   const [activeWeek, setActiveWeek] = useState(dayjs());
@@ -222,8 +228,36 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
       {monthView}
       {data?.getAllEvents.filter(item =>
         dayjs(item.startDate).isSame(selectedDay, 'day'),
-      ).length !== 0 ? (
+      ).length !== 0 ||
+      lessons?.getAllLessons.filter(item => {
+        return (
+          selectedDay.day() ==
+          (WEEK_DAY_NUMBERS[
+            item.dayOfTheWeek as keyof typeof WEEK_DAY_NUMBERS
+          ] as number)
+        );
+      }).length !== 0 ? (
         <Animated.View style={[animatedStyle, {zIndex: 10}]}>
+          {/* <FlatList
+            data={lessons?.getAllLessons.filter(item => {
+              return (
+                selectedDay.day() ==
+                (WEEK_DAY_NUMBERS[
+                  item.dayOfTheWeek as keyof typeof WEEK_DAY_NUMBERS
+                ] as number)
+              );
+            })}
+            renderItem={({item, index}) => (
+              <BasicCard>
+                <Text>{item.subject.name}</Text>
+                <Text>
+                  {item.lessonTime.startTime} - {item.lessonTime.endTime}
+                </Text>
+              </BasicCard>
+            )}
+            scrollEnabled={false}
+            style={{flex: 1, backgroundColor: 'white', paddingTop: 5}}
+          /> */}
           <FlatList
             data={data?.getAllEvents.filter(item =>
               dayjs(item.startDate).isSame(selectedDay, 'day'),

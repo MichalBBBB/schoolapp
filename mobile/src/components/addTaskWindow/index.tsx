@@ -15,6 +15,7 @@ import {BasicModalCard} from '../basicViews/BasicModalCard';
 import {BasicTextInput} from '../basicViews/BasicTextInput';
 import {BasicButton} from '../basicViews/BasicButton';
 import SelectSubjectModal from '../selectSubject';
+import {sub} from 'react-native-reanimated';
 
 interface addTaskWindowProps {
   onClose: () => void;
@@ -37,8 +38,6 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
   useEffect(() => {
     taskInputRef.current?.focus();
   });
-
-  const theme = useTheme();
 
   return (
     <>
@@ -96,6 +95,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
       <EditDateModal
         isVisible={viewVisible == 'editDate' && viewShouldAppear == 'editDate'}
         initialDate={taskDate ? taskDate : undefined}
+        subject={subject}
         onClose={() => {
           setViewShouldAppear('main');
         }}
