@@ -50,6 +50,16 @@ const AddEventScreen: React.FC<
       </ConnectedList>
       <ConnectedList bottomMargin={10}>
         <Pressable
+          style={styles.listItem}
+          onPress={() => {
+            setSubjectModalVisible(true);
+          }}>
+          <PrimaryText>Subject</PrimaryText>
+          <PrimaryText>{subject ? subject.name : 'None'}</PrimaryText>
+        </Pressable>
+      </ConnectedList>
+      <ConnectedList bottomMargin={10}>
+        <Pressable
           style={styles.dateListItem}
           onPress={() => {
             setStartDateModalVisible(true);
@@ -74,16 +84,7 @@ const AddEventScreen: React.FC<
           </View>
         </Pressable>
       </ConnectedList>
-      <ConnectedList bottomMargin={10}>
-        <Pressable
-          style={styles.listItem}
-          onPress={() => {
-            setSubjectModalVisible(true);
-          }}>
-          <PrimaryText>Subject</PrimaryText>
-          <PrimaryText>{subject ? subject.name : 'None'}</PrimaryText>
-        </Pressable>
-      </ConnectedList>
+
       <View style={styles.buttonContainer}>
         <BasicButton
           style={styles.button}
@@ -93,6 +94,7 @@ const AddEventScreen: React.FC<
                 startDate: startDate.toISOString(),
                 name: name,
                 endDate: endDate.toISOString(),
+                subjectId: subject?.id,
               },
               refetchQueries: [GetAllEventsDocument],
             });
@@ -111,6 +113,7 @@ const AddEventScreen: React.FC<
           setStartDateModalVisible(false);
           setStartDate(date);
         }}
+        subject={subject}
       />
       <EditDateModal
         isVisible={endDateModalVisible}

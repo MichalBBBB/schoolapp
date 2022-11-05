@@ -14,7 +14,7 @@ export type SettingsStackParamList = {
 };
 
 const SettingsStack: React.FC<
-  BottomTabScreenProps<TabStackParamList, 'TaskStack'>
+  BottomTabScreenProps<TabStackParamList, 'SettingsStack'>
 > = () => {
   const Stack = createNativeStackNavigator<SettingsStackParamList>();
   return (

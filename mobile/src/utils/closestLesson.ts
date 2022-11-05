@@ -12,12 +12,18 @@ export const closestLesson = (
       'minute',
     );
   });
+  console.log(
+    subject.name,
+    subjectLessons[0],
+    getDateOfClosestInstanceOfLesson(subjectLessons[0]),
+  );
   return getDateOfClosestInstanceOfLesson(subjectLessons[0]);
 };
 
 const getDateOfClosestInstanceOfLesson = (lesson: LessonFragment) => {
   const weekDayNumber =
     WEEK_DAY_NUMBERS[lesson.dayOfTheWeek as keyof typeof WEEK_DAY_NUMBERS];
+  console.log(weekDayNumber, lesson.dayOfTheWeek);
   if (
     weekDayNumber < dayjs().weekday() ||
     (weekDayNumber == dayjs().weekday() &&

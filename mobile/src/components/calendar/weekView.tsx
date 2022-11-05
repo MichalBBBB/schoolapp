@@ -91,7 +91,6 @@ const WeekView: React.FC<weekViewProps> = ({
   }, []);
 
   useEffect(() => {
-    console.log('useEffect');
     if (scrollToDate) {
       const newIndex = weeks.findIndex(value => {
         if (typeof value == 'string') {
@@ -125,7 +124,6 @@ const WeekView: React.FC<weekViewProps> = ({
           week={createWeek(item)}
           selectedDay={selectedDay}
           onDayPress={date => {
-            console.log('weekview');
             onDayPress(date);
           }}
           calendarWidth={calendarWidth}

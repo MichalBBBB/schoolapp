@@ -3,12 +3,14 @@ mutation CreateEvent(
   $endDate: DateTime
   $wholeDay: Boolean
   $name: String!
+  $subjectId: String
 ) {
   createEvent(
     startDate: $startDate
     endDate: $endDate
     wholeDay: $wholeDay
     name: $name
+    subjectId: $subjectId
   ) {
     ...CalendarEvent
   }

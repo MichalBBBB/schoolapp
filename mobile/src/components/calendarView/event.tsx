@@ -50,7 +50,8 @@ const Event: React.FC<EventProps> = ({event}) => {
 
 const styles = StyleSheet.create({
   container: {
-    margin: 10,
+    margin: 5,
+    marginHorizontal: 10,
     borderRadius: 10,
     overflow: 'hidden',
   },

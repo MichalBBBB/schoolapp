@@ -25,7 +25,7 @@ const Routes = () => {
 
   const [theme] = useTheme();
 
-  const Tab = createBottomTabNavigator();
+  const Tab = createBottomTabNavigator<TabStackParamList>();
   screens = (
     <Tab.Navigator
       screenOptions={{

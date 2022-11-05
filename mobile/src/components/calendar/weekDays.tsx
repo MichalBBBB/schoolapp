@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text} from 'react-native';
 
-const weekDays = ['s', 'm', 't', 'w', 't', 'f', 's'];
+const weekDays = ['m', 't', 'w', 't', 'f', 's', 's'];
 
 interface weekDaysProps {
   weekHeaderHeight: number;

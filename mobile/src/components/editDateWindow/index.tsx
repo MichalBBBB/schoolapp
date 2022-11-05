@@ -115,9 +115,9 @@ const EditDateWindow: React.FC<EditDateWindowProps> = ({
                 onPress={() => {
                   setSelectedSpecialDay(day);
                   setSelectedDay(
-                    day.date
-                      .hour(selectedDay.hour())
-                      .minute(selectedDay.minute()),
+                    day.date,
+                    // .hour(selectedDay.hour())
+                    // .minute(selectedDay.minute()),
                   );
                 }}>
                 <Text>{day.name}</Text>

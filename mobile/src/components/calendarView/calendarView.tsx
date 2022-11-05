@@ -27,6 +27,7 @@ import {
 import Event from './event';
 import {WEEK_DAY_NUMBERS} from '../../types/weekDays';
 import {BasicCard} from '../basicViews/BasicCard';
+import DayEvents from './dayEvents';
 
 // constants
 export const calendarWidth = Dimensions.get('screen').width;
@@ -258,14 +259,15 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
             scrollEnabled={false}
             style={{flex: 1, backgroundColor: 'white', paddingTop: 5}}
           /> */}
-          <FlatList
+          {/* <FlatList
             data={data?.getAllEvents.filter(item =>
               dayjs(item.startDate).isSame(selectedDay, 'day'),
             )}
             renderItem={({item}) => <Event event={item} />}
             scrollEnabled={isWeekView}
             style={{flex: 1, backgroundColor: 'white', paddingTop: 5}}
-          />
+          /> */}
+          <DayEvents date={selectedDay} scrollEnabled={isWeekView} />
         </Animated.View>
       ) : (
         <Animated.View

@@ -15,10 +15,10 @@ export class calendarEventResolver {
   @Query(() => [CalendarEvent])
   @UseMiddleware(isAuth)
   getAllEvents(@Ctx() { payload }: MyContext) {
-    return CalendarEvent.createQueryBuilder("calendarevent")
-      .select()
-      .where('calendarEvent."userId" = :id', { id: payload?.userId })
-      .getMany();
+    return CalendarEvent.find({
+      where: { userId: payload?.userId },
+      relations: { subject: true },
+    });
   }
 
   @Mutation(() => CalendarEvent)
@@ -28,11 +28,19 @@ export class calendarEventResolver {
     @Arg("endDate", { nullable: true }) endDate: Date,
     @Arg("wholeDay", { nullable: true }) wholeDay: Boolean,
     @Arg("name") name: string,
-    @Ctx() { payload }: MyContext
+    @Ctx() { payload }: MyContext,
+    @Arg("subjectId", { nullable: true }) subjectId?: string
   ) {
     const result = await CalendarEvent.createQueryBuilder("calendarEvent")
       .insert()
-      .values({ startDate, endDate, wholeDay, name, userId: payload?.userId })
+      .values({
+        startDate,
+        endDate,
+        wholeDay,
+        name,
+        userId: payload?.userId,
+        subjectId,
+      })
       .returning("*")
       .execute();
     return result.raw[0];

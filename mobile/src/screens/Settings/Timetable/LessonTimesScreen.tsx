@@ -53,10 +53,6 @@ const LessonTimesScreen: React.FC<
     useEditLessonTimesMutation();
   const [deleteLessonTime] = useDeleteLessonTimeMutation();
 
-  useEffect(() => {
-    console.log(JSON.stringify(editLessonTimesError));
-  }, [editLessonTimesError]);
-
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: '',

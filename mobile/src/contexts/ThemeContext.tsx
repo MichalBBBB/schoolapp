@@ -8,7 +8,9 @@ import React, {
 } from 'react';
 import {Theme} from '../types/Theme';
 
-const LighTheme: Theme = {
+type MyTheme = Theme & {colors: {cardView: string}};
+
+const LighTheme: MyTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
@@ -16,13 +18,13 @@ const LighTheme: Theme = {
     card: 'white',
     accentBackground: '#eee',
     textSecondary: 'grey',
+    cardView: 'eee',
   },
 };
 
-const ThemeContext = createContext<[Theme, Dispatch<SetStateAction<Theme>>]>([
-  LighTheme,
-  () => {},
-]);
+const ThemeContext = createContext<
+  [MyTheme, Dispatch<SetStateAction<MyTheme>>]
+>([LighTheme, () => {}]);
 
 export const useTheme = () => {
   const value = useContext(ThemeContext);
@@ -30,7 +32,7 @@ export const useTheme = () => {
 };
 
 export const ThemeProvider: React.FC<{}> = ({children}) => {
-  const [theme, setTheme] = useState<Theme>(LighTheme);
+  const [theme, setTheme] = useState<MyTheme>(LighTheme);
   return (
     <ThemeContext.Provider value={[theme, setTheme]}>
       {children}

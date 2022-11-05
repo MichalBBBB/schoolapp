@@ -92,6 +92,7 @@ export type MutationCreateEventArgs = {
   endDate?: InputMaybe<Scalars['DateTime']>;
   name: Scalars['String'];
   startDate: Scalars['DateTime'];
+  subjectId?: InputMaybe<Scalars['String']>;
   wholeDay?: InputMaybe<Scalars['Boolean']>;
 };
 
@@ -322,6 +323,7 @@ export type CreateEventMutationVariables = Exact<{
   endDate?: InputMaybe<Scalars['DateTime']>;
   wholeDay?: InputMaybe<Scalars['Boolean']>;
   name: Scalars['String'];
+  subjectId?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -575,12 +577,13 @@ export const TaskFragmentDoc = gql`
     ${SubtaskFragmentDoc}
 ${SubjectFragmentDoc}`;
 export const CreateEventDocument = gql`
-    mutation CreateEvent($startDate: DateTime!, $endDate: DateTime, $wholeDay: Boolean, $name: String!) {
+    mutation CreateEvent($startDate: DateTime!, $endDate: DateTime, $wholeDay: Boolean, $name: String!, $subjectId: String) {
   createEvent(
     startDate: $startDate
     endDate: $endDate
     wholeDay: $wholeDay
     name: $name
+    subjectId: $subjectId
   ) {
     ...CalendarEvent
   }
@@ -605,6 +608,7 @@ export type CreateEventMutationFn = Apollo.MutationFunction<CreateEventMutation,
  *      endDate: // value for 'endDate'
  *      wholeDay: // value for 'wholeDay'
  *      name: // value for 'name'
+ *      subjectId: // value for 'subjectId'
  *   },
  * });
  */
