@@ -162,17 +162,21 @@ export class taskResolver {
     @Ctx() { payload }: MyContext,
     @Arg("name") name: string,
     @Arg("text", { nullable: true }) text: string,
-    @Arg("id") id: string
+    @Arg("id") id: string,
+    @Arg("dueDate", { nullable: true }) dueDate?: Date,
+    @Arg("doDate", { nullable: true }) doDate?: Date
   ) {
     const task = await Task.findOne({ where: { id } });
     if (task?.userId === payload?.userId && task) {
       task.name = name;
       task.text = text;
+      task.doDate = doDate;
+      task.dueDate = dueDate;
       task.save();
       return task;
     } else {
       throw new Error(
-        "your are not authorized for this action or task doesn't exist"
+        "your are not authorized for this action or the task doesn't exist"
       );
     }
   }

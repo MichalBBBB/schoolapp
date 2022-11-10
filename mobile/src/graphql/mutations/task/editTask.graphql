@@ -1,0 +1,17 @@
+mutation EditTask(
+  $id: String!
+  $name: String!
+  $text: String
+  $dueDate: DateTime
+  $doDate: DateTime
+) {
+  editTask(
+    id: $id
+    name: $name
+    text: $text
+    dueDate: $dueDate
+    doDate: $doDate
+  ) {
+    ...Task
+  }
+}

@@ -12,14 +12,17 @@ import {useEvent} from 'react-native-reanimated';
 import {
   CalendarEventFragment,
   LessonFragment,
+  TaskFragment,
   useGetAllEventsQuery,
   useGetAllLessonsQuery,
+  useGetAllTasksQuery,
 } from '../../generated/graphql';
 import {BasicCard} from '../basicViews/BasicCard';
 import Event from './event';
 import weekday from 'dayjs/plugin/weekday';
 import {WEEK_DAY_NUMBERS} from '../../types/weekDays';
 import {Lesson} from './lesson';
+import Task from '../task';
 
 interface DayEventsProps {
   date: dayjs.Dayjs;
@@ -29,6 +32,7 @@ interface DayEventsProps {
 const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
   const {data} = useGetAllEventsQuery();
   const {data: lessons} = useGetAllLessonsQuery();
+  const {data: tasks} = useGetAllTasksQuery();
 
   const lessonsThisDay =
     lessons?.getAllLessons
@@ -46,7 +50,7 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
 
   const sections: {
     title: string;
-    data: LessonFragment[] | CalendarEventFragment[];
+    data: LessonFragment[] | CalendarEventFragment[] | TaskFragment[];
   }[] = [
     {
       title: 'Lessons',
@@ -78,60 +82,50 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
             }
           }) || [],
     },
+    {
+      title: 'Tasks',
+      data:
+        tasks?.getAllTasks.filter(item => {
+          return dayjs(item.doDate).isSame(dayjs(date), 'date');
+        }) || [],
+    },
   ];
 
-  const MySectionList = SectionList<LessonFragment | CalendarEventFragment>;
+  const MySectionList = SectionList<
+    LessonFragment | CalendarEventFragment | TaskFragment
+  >;
 
   return (
-    <>
-      {/* <FlatList
-        data={lessons?.getAllLessons.filter(item => {
+    <MySectionList
+      style={{flex: 1, backgroundColor: 'white', paddingTop: 5}}
+      sections={sections}
+      renderSectionHeader={({section: {title}}) => (
+        <Text style={styles.sectionTitle}>{title}</Text>
+      )}
+      renderItem={({item, index}) => {
+        if (item.__typename == 'Lesson') {
           return (
-            date.day() ==
-            (WEEK_DAY_NUMBERS[
-              item.dayOfTheWeek as keyof typeof WEEK_DAY_NUMBERS
-            ] as number)
+            <Lesson
+              lesson={item}
+              event={data?.getAllEvents.find(event => {
+                return (
+                  event.subject?.id == item.subject.id &&
+                  dayjs(event.startDate).format('HH:mm') ==
+                    item.lessonTime.startTime
+                );
+              })}
+            />
           );
-        })}
-        renderItem={({item, index}) => (
-          <BasicCard>
-            <Text>{item.subject.name}</Text>
-            <Text>
-              {item.lessonTime.startTime} - {item.lessonTime.endTime}
-            </Text>
-          </BasicCard>
-        )}
-        scrollEnabled={false}
-      /> */}
-      <MySectionList
-        style={{flex: 1, backgroundColor: 'white', paddingTop: 5}}
-        sections={sections}
-        renderSectionHeader={({section: {title}}) => (
-          <Text style={styles.sectionTitle}>{title}</Text>
-        )}
-        renderItem={({item, index}) => {
-          if (item.__typename == 'Lesson') {
-            return (
-              <Lesson
-                lesson={item}
-                event={data?.getAllEvents.find(event => {
-                  return (
-                    event.subject?.id == item.subject.id &&
-                    dayjs(event.startDate).format('HH:mm') ==
-                      item.lessonTime.startTime
-                  );
-                })}
-              />
-            );
-          } else {
-            return <Event event={item as CalendarEventFragment} />;
-          }
-        }}
-        renderSectionFooter={() => <View style={styles.sectionFooter}></View>}
-        scrollEnabled={scrollEnabled}
-        disableVirtualization={true}
-      />
-    </>
+        } else if (item.__typename == 'CalendarEvent') {
+          return <Event event={item} />;
+        } else {
+          return <Task task={item as TaskFragment} />;
+        }
+      }}
+      renderSectionFooter={() => <View style={styles.sectionFooter}></View>}
+      scrollEnabled={scrollEnabled}
+      disableVirtualization={true}
+    />
   );
 };
 

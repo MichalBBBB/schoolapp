@@ -21,6 +21,7 @@ export const closestLesson = (
 };
 
 const getDateOfClosestInstanceOfLesson = (lesson: LessonFragment) => {
+  console.log(lesson);
   const weekDayNumber =
     WEEK_DAY_NUMBERS[lesson.dayOfTheWeek as keyof typeof WEEK_DAY_NUMBERS];
   console.log(weekDayNumber, lesson.dayOfTheWeek);

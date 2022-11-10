@@ -186,6 +186,8 @@ export type MutationEditLessonTimesArgs = {
 
 
 export type MutationEditTaskArgs = {
+  doDate?: InputMaybe<Scalars['DateTime']>;
+  dueDate?: InputMaybe<Scalars['DateTime']>;
   id: Scalars['String'];
   name: Scalars['String'];
   text?: InputMaybe<Scalars['String']>;
@@ -260,6 +262,7 @@ export type Subtask = {
 export type Task = {
   __typename?: 'Task';
   createdAt: Scalars['DateTime'];
+  doDate?: Maybe<Scalars['DateTime']>;
   done: Scalars['Boolean'];
   dueDate?: Maybe<Scalars['DateTime']>;
   id: Scalars['String'];
@@ -316,7 +319,7 @@ export type SubjectFragment = { __typename?: 'Subject', id: string, name: string
 
 export type SubtaskFragment = { __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean };
 
-export type TaskFragment = { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined };
+export type TaskFragment = { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, doDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined };
 
 export type CreateEventMutationVariables = Exact<{
   startDate: Scalars['DateTime'];
@@ -329,59 +332,12 @@ export type CreateEventMutationVariables = Exact<{
 
 export type CreateEventMutation = { __typename?: 'Mutation', createEvent: { __typename?: 'CalendarEvent', id: string, name: string, startDate: any, endDate?: any | null | undefined, wholeDay: boolean, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
 
-export type CreateSubjectMutationVariables = Exact<{
-  name: Scalars['String'];
-}>;
-
-
-export type CreateSubjectMutation = { __typename?: 'Mutation', createSubject: { __typename?: 'Subject', id: string, name: string } };
-
-export type CreateSubtaskMutationVariables = Exact<{
-  taskId: Scalars['String'];
-  name: Scalars['String'];
-}>;
-
-
-export type CreateSubtaskMutation = { __typename?: 'Mutation', createSubtask: { __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean } };
-
-export type CreateTaskMutationVariables = Exact<{
-  name: Scalars['String'];
-  subjectId?: InputMaybe<Scalars['String']>;
-  dueDate?: InputMaybe<Scalars['DateTime']>;
-}>;
-
-
-export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
-
 export type DeleteEventMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
 export type DeleteEventMutation = { __typename?: 'Mutation', deleteEvent: boolean };
-
-export type DeleteSubtaskMutationVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type DeleteSubtaskMutation = { __typename?: 'Mutation', deleteSubtask: boolean };
-
-export type DeleteTaskMutationVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type DeleteTaskMutation = { __typename?: 'Mutation', deleteTask: boolean };
-
-export type EditTaskMutationVariables = Exact<{
-  id: Scalars['String'];
-  name: Scalars['String'];
-  text?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type EditTaskMutation = { __typename?: 'Mutation', editTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
 
 export type CreateLessonMutationVariables = Exact<{
   dayOfTheWeek: Scalars['String'];
@@ -438,6 +394,69 @@ export type EditLessonTimesMutationVariables = Exact<{
 
 export type EditLessonTimesMutation = { __typename?: 'Mutation', editLessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string }> };
 
+export type CreateSubjectMutationVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type CreateSubjectMutation = { __typename?: 'Mutation', createSubject: { __typename?: 'Subject', id: string, name: string } };
+
+export type CreateSubtaskMutationVariables = Exact<{
+  taskId: Scalars['String'];
+  name: Scalars['String'];
+}>;
+
+
+export type CreateSubtaskMutation = { __typename?: 'Mutation', createSubtask: { __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean } };
+
+export type CreateTaskMutationVariables = Exact<{
+  name: Scalars['String'];
+  subjectId?: InputMaybe<Scalars['String']>;
+  dueDate?: InputMaybe<Scalars['DateTime']>;
+}>;
+
+
+export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, doDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
+
+export type DeleteSubtaskMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteSubtaskMutation = { __typename?: 'Mutation', deleteSubtask: boolean };
+
+export type DeleteTaskMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteTaskMutation = { __typename?: 'Mutation', deleteTask: boolean };
+
+export type EditTaskMutationVariables = Exact<{
+  id: Scalars['String'];
+  name: Scalars['String'];
+  text?: InputMaybe<Scalars['String']>;
+  dueDate?: InputMaybe<Scalars['DateTime']>;
+  doDate?: InputMaybe<Scalars['DateTime']>;
+}>;
+
+
+export type EditTaskMutation = { __typename?: 'Mutation', editTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, doDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
+
+export type ToggleSubtaskMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type ToggleSubtaskMutation = { __typename?: 'Mutation', toggleSubtask: { __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean } };
+
+export type ToggleTaskMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type ToggleTaskMutation = { __typename?: 'Mutation', toggleTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, doDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
+
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
@@ -454,20 +473,6 @@ export type RegisterMutationVariables = Exact<{
 
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null | undefined, message: string }> } | { __typename?: 'UserSucces', accesToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
-
-export type ToggleSubtaskMutationVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type ToggleSubtaskMutation = { __typename?: 'Mutation', toggleSubtask: { __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean } };
-
-export type ToggleTaskMutationVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type ToggleTaskMutation = { __typename?: 'Mutation', toggleTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
 
 export type GetAllEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -492,7 +497,7 @@ export type GetAllSubjectsQuery = { __typename?: 'Query', getAllSubjects: Array<
 export type GetAllTasksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllTasksQuery = { __typename?: 'Query', getAllTasks: Array<{ __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined }> };
+export type GetAllTasksQuery = { __typename?: 'Query', getAllTasks: Array<{ __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, doDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined }> };
 
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -573,6 +578,7 @@ export const TaskFragmentDoc = gql`
   }
   text
   dueDate
+  doDate
 }
     ${SubtaskFragmentDoc}
 ${SubjectFragmentDoc}`;
@@ -619,108 +625,6 @@ export function useCreateEventMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateEventMutationHookResult = ReturnType<typeof useCreateEventMutation>;
 export type CreateEventMutationResult = Apollo.MutationResult<CreateEventMutation>;
 export type CreateEventMutationOptions = Apollo.BaseMutationOptions<CreateEventMutation, CreateEventMutationVariables>;
-export const CreateSubjectDocument = gql`
-    mutation CreateSubject($name: String!) {
-  createSubject(name: $name) {
-    ...Subject
-  }
-}
-    ${SubjectFragmentDoc}`;
-export type CreateSubjectMutationFn = Apollo.MutationFunction<CreateSubjectMutation, CreateSubjectMutationVariables>;
-
-/**
- * __useCreateSubjectMutation__
- *
- * To run a mutation, you first call `useCreateSubjectMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateSubjectMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createSubjectMutation, { data, loading, error }] = useCreateSubjectMutation({
- *   variables: {
- *      name: // value for 'name'
- *   },
- * });
- */
-export function useCreateSubjectMutation(baseOptions?: Apollo.MutationHookOptions<CreateSubjectMutation, CreateSubjectMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateSubjectMutation, CreateSubjectMutationVariables>(CreateSubjectDocument, options);
-      }
-export type CreateSubjectMutationHookResult = ReturnType<typeof useCreateSubjectMutation>;
-export type CreateSubjectMutationResult = Apollo.MutationResult<CreateSubjectMutation>;
-export type CreateSubjectMutationOptions = Apollo.BaseMutationOptions<CreateSubjectMutation, CreateSubjectMutationVariables>;
-export const CreateSubtaskDocument = gql`
-    mutation CreateSubtask($taskId: String!, $name: String!) {
-  createSubtask(taskId: $taskId, name: $name) {
-    ...Subtask
-  }
-}
-    ${SubtaskFragmentDoc}`;
-export type CreateSubtaskMutationFn = Apollo.MutationFunction<CreateSubtaskMutation, CreateSubtaskMutationVariables>;
-
-/**
- * __useCreateSubtaskMutation__
- *
- * To run a mutation, you first call `useCreateSubtaskMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateSubtaskMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createSubtaskMutation, { data, loading, error }] = useCreateSubtaskMutation({
- *   variables: {
- *      taskId: // value for 'taskId'
- *      name: // value for 'name'
- *   },
- * });
- */
-export function useCreateSubtaskMutation(baseOptions?: Apollo.MutationHookOptions<CreateSubtaskMutation, CreateSubtaskMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateSubtaskMutation, CreateSubtaskMutationVariables>(CreateSubtaskDocument, options);
-      }
-export type CreateSubtaskMutationHookResult = ReturnType<typeof useCreateSubtaskMutation>;
-export type CreateSubtaskMutationResult = Apollo.MutationResult<CreateSubtaskMutation>;
-export type CreateSubtaskMutationOptions = Apollo.BaseMutationOptions<CreateSubtaskMutation, CreateSubtaskMutationVariables>;
-export const CreateTaskDocument = gql`
-    mutation CreateTask($name: String!, $subjectId: String, $dueDate: DateTime) {
-  createTask(name: $name, subjectId: $subjectId, dueDate: $dueDate) {
-    ...Task
-  }
-}
-    ${TaskFragmentDoc}`;
-export type CreateTaskMutationFn = Apollo.MutationFunction<CreateTaskMutation, CreateTaskMutationVariables>;
-
-/**
- * __useCreateTaskMutation__
- *
- * To run a mutation, you first call `useCreateTaskMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateTaskMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createTaskMutation, { data, loading, error }] = useCreateTaskMutation({
- *   variables: {
- *      name: // value for 'name'
- *      subjectId: // value for 'subjectId'
- *      dueDate: // value for 'dueDate'
- *   },
- * });
- */
-export function useCreateTaskMutation(baseOptions?: Apollo.MutationHookOptions<CreateTaskMutation, CreateTaskMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateTaskMutation, CreateTaskMutationVariables>(CreateTaskDocument, options);
-      }
-export type CreateTaskMutationHookResult = ReturnType<typeof useCreateTaskMutation>;
-export type CreateTaskMutationResult = Apollo.MutationResult<CreateTaskMutation>;
-export type CreateTaskMutationOptions = Apollo.BaseMutationOptions<CreateTaskMutation, CreateTaskMutationVariables>;
 export const DeleteEventDocument = gql`
     mutation DeleteEvent($id: String!) {
   deleteEvent(id: $id)
@@ -752,103 +656,6 @@ export function useDeleteEventMutation(baseOptions?: Apollo.MutationHookOptions<
 export type DeleteEventMutationHookResult = ReturnType<typeof useDeleteEventMutation>;
 export type DeleteEventMutationResult = Apollo.MutationResult<DeleteEventMutation>;
 export type DeleteEventMutationOptions = Apollo.BaseMutationOptions<DeleteEventMutation, DeleteEventMutationVariables>;
-export const DeleteSubtaskDocument = gql`
-    mutation DeleteSubtask($id: String!) {
-  deleteSubtask(id: $id)
-}
-    `;
-export type DeleteSubtaskMutationFn = Apollo.MutationFunction<DeleteSubtaskMutation, DeleteSubtaskMutationVariables>;
-
-/**
- * __useDeleteSubtaskMutation__
- *
- * To run a mutation, you first call `useDeleteSubtaskMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteSubtaskMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteSubtaskMutation, { data, loading, error }] = useDeleteSubtaskMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDeleteSubtaskMutation(baseOptions?: Apollo.MutationHookOptions<DeleteSubtaskMutation, DeleteSubtaskMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteSubtaskMutation, DeleteSubtaskMutationVariables>(DeleteSubtaskDocument, options);
-      }
-export type DeleteSubtaskMutationHookResult = ReturnType<typeof useDeleteSubtaskMutation>;
-export type DeleteSubtaskMutationResult = Apollo.MutationResult<DeleteSubtaskMutation>;
-export type DeleteSubtaskMutationOptions = Apollo.BaseMutationOptions<DeleteSubtaskMutation, DeleteSubtaskMutationVariables>;
-export const DeleteTaskDocument = gql`
-    mutation DeleteTask($id: String!) {
-  deleteTask(id: $id)
-}
-    `;
-export type DeleteTaskMutationFn = Apollo.MutationFunction<DeleteTaskMutation, DeleteTaskMutationVariables>;
-
-/**
- * __useDeleteTaskMutation__
- *
- * To run a mutation, you first call `useDeleteTaskMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteTaskMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteTaskMutation, { data, loading, error }] = useDeleteTaskMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDeleteTaskMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTaskMutation, DeleteTaskMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteTaskMutation, DeleteTaskMutationVariables>(DeleteTaskDocument, options);
-      }
-export type DeleteTaskMutationHookResult = ReturnType<typeof useDeleteTaskMutation>;
-export type DeleteTaskMutationResult = Apollo.MutationResult<DeleteTaskMutation>;
-export type DeleteTaskMutationOptions = Apollo.BaseMutationOptions<DeleteTaskMutation, DeleteTaskMutationVariables>;
-export const EditTaskDocument = gql`
-    mutation EditTask($id: String!, $name: String!, $text: String) {
-  editTask(id: $id, name: $name, text: $text) {
-    ...Task
-  }
-}
-    ${TaskFragmentDoc}`;
-export type EditTaskMutationFn = Apollo.MutationFunction<EditTaskMutation, EditTaskMutationVariables>;
-
-/**
- * __useEditTaskMutation__
- *
- * To run a mutation, you first call `useEditTaskMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useEditTaskMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [editTaskMutation, { data, loading, error }] = useEditTaskMutation({
- *   variables: {
- *      id: // value for 'id'
- *      name: // value for 'name'
- *      text: // value for 'text'
- *   },
- * });
- */
-export function useEditTaskMutation(baseOptions?: Apollo.MutationHookOptions<EditTaskMutation, EditTaskMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<EditTaskMutation, EditTaskMutationVariables>(EditTaskDocument, options);
-      }
-export type EditTaskMutationHookResult = ReturnType<typeof useEditTaskMutation>;
-export type EditTaskMutationResult = Apollo.MutationResult<EditTaskMutation>;
-export type EditTaskMutationOptions = Apollo.BaseMutationOptions<EditTaskMutation, EditTaskMutationVariables>;
 export const CreateLessonDocument = gql`
     mutation CreateLesson($dayOfTheWeek: String!, $lessonTimeId: String!, $subjectId: String!) {
   createLesson(
@@ -1086,6 +893,273 @@ export function useEditLessonTimesMutation(baseOptions?: Apollo.MutationHookOpti
 export type EditLessonTimesMutationHookResult = ReturnType<typeof useEditLessonTimesMutation>;
 export type EditLessonTimesMutationResult = Apollo.MutationResult<EditLessonTimesMutation>;
 export type EditLessonTimesMutationOptions = Apollo.BaseMutationOptions<EditLessonTimesMutation, EditLessonTimesMutationVariables>;
+export const CreateSubjectDocument = gql`
+    mutation CreateSubject($name: String!) {
+  createSubject(name: $name) {
+    ...Subject
+  }
+}
+    ${SubjectFragmentDoc}`;
+export type CreateSubjectMutationFn = Apollo.MutationFunction<CreateSubjectMutation, CreateSubjectMutationVariables>;
+
+/**
+ * __useCreateSubjectMutation__
+ *
+ * To run a mutation, you first call `useCreateSubjectMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateSubjectMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createSubjectMutation, { data, loading, error }] = useCreateSubjectMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useCreateSubjectMutation(baseOptions?: Apollo.MutationHookOptions<CreateSubjectMutation, CreateSubjectMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateSubjectMutation, CreateSubjectMutationVariables>(CreateSubjectDocument, options);
+      }
+export type CreateSubjectMutationHookResult = ReturnType<typeof useCreateSubjectMutation>;
+export type CreateSubjectMutationResult = Apollo.MutationResult<CreateSubjectMutation>;
+export type CreateSubjectMutationOptions = Apollo.BaseMutationOptions<CreateSubjectMutation, CreateSubjectMutationVariables>;
+export const CreateSubtaskDocument = gql`
+    mutation CreateSubtask($taskId: String!, $name: String!) {
+  createSubtask(taskId: $taskId, name: $name) {
+    ...Subtask
+  }
+}
+    ${SubtaskFragmentDoc}`;
+export type CreateSubtaskMutationFn = Apollo.MutationFunction<CreateSubtaskMutation, CreateSubtaskMutationVariables>;
+
+/**
+ * __useCreateSubtaskMutation__
+ *
+ * To run a mutation, you first call `useCreateSubtaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateSubtaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createSubtaskMutation, { data, loading, error }] = useCreateSubtaskMutation({
+ *   variables: {
+ *      taskId: // value for 'taskId'
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useCreateSubtaskMutation(baseOptions?: Apollo.MutationHookOptions<CreateSubtaskMutation, CreateSubtaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateSubtaskMutation, CreateSubtaskMutationVariables>(CreateSubtaskDocument, options);
+      }
+export type CreateSubtaskMutationHookResult = ReturnType<typeof useCreateSubtaskMutation>;
+export type CreateSubtaskMutationResult = Apollo.MutationResult<CreateSubtaskMutation>;
+export type CreateSubtaskMutationOptions = Apollo.BaseMutationOptions<CreateSubtaskMutation, CreateSubtaskMutationVariables>;
+export const CreateTaskDocument = gql`
+    mutation CreateTask($name: String!, $subjectId: String, $dueDate: DateTime) {
+  createTask(name: $name, subjectId: $subjectId, dueDate: $dueDate) {
+    ...Task
+  }
+}
+    ${TaskFragmentDoc}`;
+export type CreateTaskMutationFn = Apollo.MutationFunction<CreateTaskMutation, CreateTaskMutationVariables>;
+
+/**
+ * __useCreateTaskMutation__
+ *
+ * To run a mutation, you first call `useCreateTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTaskMutation, { data, loading, error }] = useCreateTaskMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      subjectId: // value for 'subjectId'
+ *      dueDate: // value for 'dueDate'
+ *   },
+ * });
+ */
+export function useCreateTaskMutation(baseOptions?: Apollo.MutationHookOptions<CreateTaskMutation, CreateTaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTaskMutation, CreateTaskMutationVariables>(CreateTaskDocument, options);
+      }
+export type CreateTaskMutationHookResult = ReturnType<typeof useCreateTaskMutation>;
+export type CreateTaskMutationResult = Apollo.MutationResult<CreateTaskMutation>;
+export type CreateTaskMutationOptions = Apollo.BaseMutationOptions<CreateTaskMutation, CreateTaskMutationVariables>;
+export const DeleteSubtaskDocument = gql`
+    mutation DeleteSubtask($id: String!) {
+  deleteSubtask(id: $id)
+}
+    `;
+export type DeleteSubtaskMutationFn = Apollo.MutationFunction<DeleteSubtaskMutation, DeleteSubtaskMutationVariables>;
+
+/**
+ * __useDeleteSubtaskMutation__
+ *
+ * To run a mutation, you first call `useDeleteSubtaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteSubtaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteSubtaskMutation, { data, loading, error }] = useDeleteSubtaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteSubtaskMutation(baseOptions?: Apollo.MutationHookOptions<DeleteSubtaskMutation, DeleteSubtaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteSubtaskMutation, DeleteSubtaskMutationVariables>(DeleteSubtaskDocument, options);
+      }
+export type DeleteSubtaskMutationHookResult = ReturnType<typeof useDeleteSubtaskMutation>;
+export type DeleteSubtaskMutationResult = Apollo.MutationResult<DeleteSubtaskMutation>;
+export type DeleteSubtaskMutationOptions = Apollo.BaseMutationOptions<DeleteSubtaskMutation, DeleteSubtaskMutationVariables>;
+export const DeleteTaskDocument = gql`
+    mutation DeleteTask($id: String!) {
+  deleteTask(id: $id)
+}
+    `;
+export type DeleteTaskMutationFn = Apollo.MutationFunction<DeleteTaskMutation, DeleteTaskMutationVariables>;
+
+/**
+ * __useDeleteTaskMutation__
+ *
+ * To run a mutation, you first call `useDeleteTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTaskMutation, { data, loading, error }] = useDeleteTaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteTaskMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTaskMutation, DeleteTaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteTaskMutation, DeleteTaskMutationVariables>(DeleteTaskDocument, options);
+      }
+export type DeleteTaskMutationHookResult = ReturnType<typeof useDeleteTaskMutation>;
+export type DeleteTaskMutationResult = Apollo.MutationResult<DeleteTaskMutation>;
+export type DeleteTaskMutationOptions = Apollo.BaseMutationOptions<DeleteTaskMutation, DeleteTaskMutationVariables>;
+export const EditTaskDocument = gql`
+    mutation EditTask($id: String!, $name: String!, $text: String, $dueDate: DateTime, $doDate: DateTime) {
+  editTask(id: $id, name: $name, text: $text, dueDate: $dueDate, doDate: $doDate) {
+    ...Task
+  }
+}
+    ${TaskFragmentDoc}`;
+export type EditTaskMutationFn = Apollo.MutationFunction<EditTaskMutation, EditTaskMutationVariables>;
+
+/**
+ * __useEditTaskMutation__
+ *
+ * To run a mutation, you first call `useEditTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editTaskMutation, { data, loading, error }] = useEditTaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      text: // value for 'text'
+ *      dueDate: // value for 'dueDate'
+ *      doDate: // value for 'doDate'
+ *   },
+ * });
+ */
+export function useEditTaskMutation(baseOptions?: Apollo.MutationHookOptions<EditTaskMutation, EditTaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditTaskMutation, EditTaskMutationVariables>(EditTaskDocument, options);
+      }
+export type EditTaskMutationHookResult = ReturnType<typeof useEditTaskMutation>;
+export type EditTaskMutationResult = Apollo.MutationResult<EditTaskMutation>;
+export type EditTaskMutationOptions = Apollo.BaseMutationOptions<EditTaskMutation, EditTaskMutationVariables>;
+export const ToggleSubtaskDocument = gql`
+    mutation ToggleSubtask($id: String!) {
+  toggleSubtask(id: $id) {
+    ...Subtask
+  }
+}
+    ${SubtaskFragmentDoc}`;
+export type ToggleSubtaskMutationFn = Apollo.MutationFunction<ToggleSubtaskMutation, ToggleSubtaskMutationVariables>;
+
+/**
+ * __useToggleSubtaskMutation__
+ *
+ * To run a mutation, you first call `useToggleSubtaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleSubtaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleSubtaskMutation, { data, loading, error }] = useToggleSubtaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useToggleSubtaskMutation(baseOptions?: Apollo.MutationHookOptions<ToggleSubtaskMutation, ToggleSubtaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ToggleSubtaskMutation, ToggleSubtaskMutationVariables>(ToggleSubtaskDocument, options);
+      }
+export type ToggleSubtaskMutationHookResult = ReturnType<typeof useToggleSubtaskMutation>;
+export type ToggleSubtaskMutationResult = Apollo.MutationResult<ToggleSubtaskMutation>;
+export type ToggleSubtaskMutationOptions = Apollo.BaseMutationOptions<ToggleSubtaskMutation, ToggleSubtaskMutationVariables>;
+export const ToggleTaskDocument = gql`
+    mutation ToggleTask($id: String!) {
+  toggleTask(id: $id) {
+    ...Task
+  }
+}
+    ${TaskFragmentDoc}`;
+export type ToggleTaskMutationFn = Apollo.MutationFunction<ToggleTaskMutation, ToggleTaskMutationVariables>;
+
+/**
+ * __useToggleTaskMutation__
+ *
+ * To run a mutation, you first call `useToggleTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleTaskMutation, { data, loading, error }] = useToggleTaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useToggleTaskMutation(baseOptions?: Apollo.MutationHookOptions<ToggleTaskMutation, ToggleTaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ToggleTaskMutation, ToggleTaskMutationVariables>(ToggleTaskDocument, options);
+      }
+export type ToggleTaskMutationHookResult = ReturnType<typeof useToggleTaskMutation>;
+export type ToggleTaskMutationResult = Apollo.MutationResult<ToggleTaskMutation>;
+export type ToggleTaskMutationOptions = Apollo.BaseMutationOptions<ToggleTaskMutation, ToggleTaskMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
@@ -1181,72 +1255,6 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
-export const ToggleSubtaskDocument = gql`
-    mutation ToggleSubtask($id: String!) {
-  toggleSubtask(id: $id) {
-    ...Subtask
-  }
-}
-    ${SubtaskFragmentDoc}`;
-export type ToggleSubtaskMutationFn = Apollo.MutationFunction<ToggleSubtaskMutation, ToggleSubtaskMutationVariables>;
-
-/**
- * __useToggleSubtaskMutation__
- *
- * To run a mutation, you first call `useToggleSubtaskMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useToggleSubtaskMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [toggleSubtaskMutation, { data, loading, error }] = useToggleSubtaskMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useToggleSubtaskMutation(baseOptions?: Apollo.MutationHookOptions<ToggleSubtaskMutation, ToggleSubtaskMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ToggleSubtaskMutation, ToggleSubtaskMutationVariables>(ToggleSubtaskDocument, options);
-      }
-export type ToggleSubtaskMutationHookResult = ReturnType<typeof useToggleSubtaskMutation>;
-export type ToggleSubtaskMutationResult = Apollo.MutationResult<ToggleSubtaskMutation>;
-export type ToggleSubtaskMutationOptions = Apollo.BaseMutationOptions<ToggleSubtaskMutation, ToggleSubtaskMutationVariables>;
-export const ToggleTaskDocument = gql`
-    mutation ToggleTask($id: String!) {
-  toggleTask(id: $id) {
-    ...Task
-  }
-}
-    ${TaskFragmentDoc}`;
-export type ToggleTaskMutationFn = Apollo.MutationFunction<ToggleTaskMutation, ToggleTaskMutationVariables>;
-
-/**
- * __useToggleTaskMutation__
- *
- * To run a mutation, you first call `useToggleTaskMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useToggleTaskMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [toggleTaskMutation, { data, loading, error }] = useToggleTaskMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useToggleTaskMutation(baseOptions?: Apollo.MutationHookOptions<ToggleTaskMutation, ToggleTaskMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ToggleTaskMutation, ToggleTaskMutationVariables>(ToggleTaskDocument, options);
-      }
-export type ToggleTaskMutationHookResult = ReturnType<typeof useToggleTaskMutation>;
-export type ToggleTaskMutationResult = Apollo.MutationResult<ToggleTaskMutation>;
-export type ToggleTaskMutationOptions = Apollo.BaseMutationOptions<ToggleTaskMutation, ToggleTaskMutationVariables>;
 export const GetAllEventsDocument = gql`
     query GetAllEvents {
   getAllEvents {

@@ -57,6 +57,7 @@ const EditDateWindow: React.FC<EditDateWindowProps> = ({
   const {data: lessons} = useGetAllLessonsQuery();
 
   useEffect(() => {
+    console.log(subject);
     if (subject) {
       setSpecialDays([
         specialDays[0],
@@ -172,6 +173,7 @@ const EditDateWindow: React.FC<EditDateWindowProps> = ({
           setTimePopupOpen(false);
         }}
         onSubmit={time => {
+          setTimePopupOpen(false);
           setSelectedDay(
             selectedDay
               .hour(parseInt(time.split(':')[0]))

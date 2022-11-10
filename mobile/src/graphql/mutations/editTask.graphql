@@ -1,5 +1,0 @@
-mutation EditTask($id: String!, $name: String!, $text: String) {
-  editTask(id: $id, name: $name, text: $text) {
-    ...Task
-  }
-}

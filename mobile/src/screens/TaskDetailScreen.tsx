@@ -1,4 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import dayjs from 'dayjs';
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {
   Button,
@@ -11,7 +12,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import BackButton from '../components/backButton';
+import {BasicButton} from '../components/basicViews/BasicButton';
+import EditDateModal from '../components/editDateWindow/editDateModal';
 import Subtask from '../components/subtask';
+import {calendarConfigWithoutTime} from '../components/task';
 import {useEditTaskMutation, useGetAllTasksQuery} from '../generated/graphql';
 import {TaskStackParamList} from '../routes/TaskStack';
 
@@ -24,8 +28,18 @@ const TaskDetailScreen: React.FC<
   )!;
   const [name, setName] = useState(task.name);
   const [text, setText] = useState(task.text);
+  const [dueDate, setDueDate] = useState<dayjs.Dayjs | null>(
+    task.dueDate ? dayjs(task.dueDate) : null,
+  );
+  const [doDate, setDoDate] = useState<dayjs.Dayjs | null>(
+    task.doDate ? dayjs(task.doDate) : null,
+  );
   const [edited, setEdited] = useState(false);
   const [editTask] = useEditTaskMutation();
+  const [editDueDateModalIsVisible, setEditDueDateModalIsVisible] =
+    useState(false);
+  const [editDoDateModalIsVisible, setEditDoDateModalIsVisible] =
+    useState(false);
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -49,6 +63,8 @@ const TaskDetailScreen: React.FC<
                 id: task.id,
                 name,
                 text,
+                dueDate: task.dueDate,
+                doDate: task.doDate,
               },
             });
             navigation.goBack();
@@ -59,30 +75,111 @@ const TaskDetailScreen: React.FC<
   });
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        onChangeText={text => {
-          setEdited(true);
-          setName(text);
+    <>
+      <View style={styles.container}>
+        <View style={styles.actionContainer}>
+          <BasicButton
+            onPress={() => {
+              setEditDueDateModalIsVisible(true);
+            }}
+            padding={8}
+            borderRadius={10}
+            style={styles.action}>
+            <Text>
+              {task.dueDate
+                ? `Due: ${dayjs(task.dueDate).calendar(
+                    null,
+                    calendarConfigWithoutTime,
+                  )}`
+                : 'Due date'}
+            </Text>
+          </BasicButton>
+          <BasicButton
+            onPress={() => {
+              setEditDoDateModalIsVisible(true);
+            }}
+            padding={8}
+            borderRadius={10}>
+            <Text>
+              {task.doDate
+                ? `Do: ${dayjs(task.doDate).calendar(
+                    null,
+                    calendarConfigWithoutTime,
+                  )}`
+                : 'Schedule'}
+            </Text>
+          </BasicButton>
+        </View>
+        <TextInput
+          onChangeText={text => {
+            setEdited(true);
+            setName(text);
+          }}
+          defaultValue={task.name}
+          style={styles.name}
+        />
+        <TextInput
+          multiline={true}
+          onChangeText={setText}
+          defaultValue={task.text || ''}
+        />
+        <FlatList
+          data={task.subtasks}
+          renderItem={({item, index}) => <Subtask subtask={item} />}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+        />
+      </View>
+      <EditDateModal
+        subject={task.subject}
+        onClose={() => {
+          setEditDueDateModalIsVisible(false);
         }}
-        defaultValue={task.name}
-        style={styles.name}
+        onSubmit={date => {
+          setDueDate(date);
+          editTask({
+            variables: {
+              id: task.id,
+              name,
+              text,
+              dueDate: date.toDate(),
+              doDate: task.doDate,
+            },
+          });
+          setEditDueDateModalIsVisible(false);
+        }}
+        isVisible={editDueDateModalIsVisible}
       />
-      <TextInput
-        multiline={true}
-        onChangeText={setText}
-        defaultValue={task.text || ''}
+      <EditDateModal
+        onClose={() => {
+          setEditDoDateModalIsVisible(false);
+        }}
+        onSubmit={date => {
+          setDoDate(date);
+          setEditDoDateModalIsVisible(false);
+          editTask({
+            variables: {
+              id: task.id,
+              name,
+              text,
+              dueDate: task.dueDate,
+              doDate: date.toDate(),
+            },
+          });
+        }}
+        isVisible={editDoDateModalIsVisible}
       />
-      <FlatList
-        data={task.subtasks}
-        renderItem={({item, index}) => <Subtask subtask={item} />}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-      />
-    </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
+  action: {
+    marginRight: 5,
+  },
+  actionContainer: {
+    flexDirection: 'row',
+    marginBottom: 5,
+  },
   task: {
     padding: 10,
   },
@@ -97,6 +194,7 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 10,
+    paddingHorizontal: 20,
   },
   plusButton: {
     resizeMode: 'stretch',

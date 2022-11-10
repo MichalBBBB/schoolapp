@@ -13,4 +13,5 @@ fragment Task on Task {
   }
   text
   dueDate
+  doDate
 }
