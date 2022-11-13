@@ -40,3 +40,16 @@ const getDateOfClosestInstanceOfLesson = (lesson: LessonFragment) => {
       .toDate();
   }
 };
+
+export const getCurrentLesson = (lessons: LessonFragment[]) => {
+  const currentLesson = lessons.find(item => {
+    const weekDayNumber =
+      WEEK_DAY_NUMBERS[item.dayOfTheWeek as keyof typeof WEEK_DAY_NUMBERS];
+    return (
+      weekDayNumber == dayjs().weekday() &&
+      dayjs().isBefore(dayjs(item.lessonTime.endTime, 'HH:mm')) &&
+      dayjs().isAfter(dayjs(item.lessonTime.startTime, 'HH:mm'))
+    );
+  });
+  return currentLesson;
+};

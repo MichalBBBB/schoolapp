@@ -10,7 +10,7 @@ import {
   Pressable,
 } from 'react-native';
 import {SubjectFragment, useGetAllLessonsQuery} from '../../generated/graphql';
-import {closestLesson} from '../../utils/closestLesson';
+import {closestLesson} from '../../utils/lessonUtils';
 import Calendar from '../calendar';
 import WeekDays from '../calendar/weekDays';
 import SelectTimeModal from '../selectTimeView/selectTimeModal';

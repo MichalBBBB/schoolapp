@@ -5,6 +5,7 @@ import {
   GetAllTasksDocument,
   SubjectFragment,
   useCreateTaskMutation,
+  useGetAllLessonsQuery,
 } from '../../generated/graphql';
 import AddButton from '../addButton';
 import EditDateModal from '../editDateWindow/editDateModal';
@@ -13,6 +14,7 @@ import {BasicModalCard} from '../basicViews/BasicModalCard';
 import {BasicTextInput} from '../basicViews/BasicTextInput';
 import {BasicButton} from '../basicViews/BasicButton';
 import SelectSubjectModal from '../selectSubject';
+import {getCurrentLesson} from '../../utils/lessonUtils';
 
 interface addTaskWindowProps {
   onClose: () => void;
@@ -31,10 +33,17 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
     'main' | 'editDate' | 'addSubject' | 'selectSubject'
   >('main');
   const [taskDate, setTaskDate] = useState<dayjs.Dayjs | null>();
+  const {data: lessons} = useGetAllLessonsQuery();
 
   useEffect(() => {
     taskInputRef.current?.focus();
-  });
+  }, []);
+
+  useEffect(() => {
+    if (lessons?.getAllLessons) {
+      setSubject(getCurrentLesson(lessons.getAllLessons)?.subject || null);
+    }
+  }, [lessons, visible]);
 
   const closeWindow = () => {
     setName('');
