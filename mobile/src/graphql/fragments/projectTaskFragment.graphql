@@ -1,0 +1,8 @@
+fragment ProjectTask on ProjectTask {
+  name
+  dueDate
+  doDate
+  publicUsers {
+    ...PublicUser
+  }
+}

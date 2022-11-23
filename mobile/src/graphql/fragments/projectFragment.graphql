@@ -1,0 +1,10 @@
+fragment Project on Project {
+  name
+  id
+  tasks {
+    ...ProjectTask
+  }
+  members {
+    ...PublicUser
+  }
+}

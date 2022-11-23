@@ -13,7 +13,22 @@ import { Subject } from "../entities/Subject";
 import { CalendarEvent } from "./CalendarEvent";
 import { Lesson } from "./Lesson";
 import { LessonTime } from "./LessonTime";
+import { Project } from "./Project";
+import { ProjectTask } from "./ProjectTask";
 import { Task } from "./Task";
+import { UserProject } from "./UserProject";
+
+@ObjectType()
+export class PublicUser {
+  @Field()
+  id: string;
+
+  @Field()
+  email: string;
+
+  @Field()
+  name: string;
+}
 
 @Entity()
 @ObjectType()
@@ -48,6 +63,10 @@ export class User extends BaseEntity {
   @OneToMany(() => Task, (task) => task.user)
   tasks: Task[];
 
+  @Field(() => [Task])
+  @OneToMany(() => Task, (task) => task.user)
+  projectTasks: ProjectTask[];
+
   @Field(() => [Subject])
   @OneToMany(() => Subject, (subject) => subject.user)
   subjects: Subject[];
@@ -71,4 +90,12 @@ export class User extends BaseEntity {
   @Field(() => [Lesson])
   @OneToMany(() => Lesson, (lesson) => lesson.user)
   lessons: Relation<Lesson>[];
+
+  @OneToMany(() => UserProject, (userProject) => userProject.user)
+  @Field(() => [UserProject])
+  userProjects: Relation<UserProject>[];
+
+  @OneToMany(() => Project, (project) => project.owner)
+  @Field(() => [Project])
+  ownedProjects: Relation<Project>[];
 }

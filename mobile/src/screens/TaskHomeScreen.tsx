@@ -9,6 +9,7 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import AddButton from '../components/addButton';
 import AddSubjectModal from '../components/selectSubject/addSubjectModal';
@@ -23,6 +24,30 @@ const TaskHomeScreen: React.FC<
 > = ({navigation}) => {
   const {data} = useGetAllTasksQuery();
   const [addTaskOpen, setAddTaskOpen] = useState(false);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable
+          style={{flexDirection: 'row', alignItems: 'center'}}
+          onPress={() => navigation.navigate('NewProjectScreen')}>
+          <Text>New Project</Text>
+        </Pressable>
+      ),
+      headerLeft: () => (
+        <Pressable
+          style={{flexDirection: 'row', alignItems: 'center'}}
+          onPress={() => {
+            navigation.navigate('NotificationScreen');
+          }}>
+          <Image
+            source={require('../../assets/Mail.png')}
+            style={{height: 25, width: 25, resizeMode: 'stretch'}}
+          />
+        </Pressable>
+      ),
+    });
+  });
   return (
     <View style={{flex: 1}}>
       <FlatList

@@ -22,6 +22,7 @@ import { calendarEventResolver } from "./resolvers/calendarEventResolver";
 import { lessonTimeResolver } from "./resolvers/lessonTimeResolver";
 import { AppDataSource } from "./TypeORM";
 import { lessonResolver } from "./resolvers/lessonResolver";
+import { projectResolver } from "./resolvers/projectResolver";
 
 const main = async () => {
   // Initialize typeorm connection
@@ -90,6 +91,7 @@ const main = async () => {
         calendarEventResolver,
         lessonTimeResolver,
         lessonResolver,
+        projectResolver,
       ],
     }),
     context: ({ req, res }) => ({ req, res }),

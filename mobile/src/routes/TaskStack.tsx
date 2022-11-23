@@ -7,6 +7,8 @@ import {TaskFragment} from '../generated/graphql';
 import {TabStackParamList} from '../Routes';
 import AddSubtaskScreen from '../screens/AddSubtaskScreen';
 import AddTaskScreen from '../screens/AddTaskScreen';
+import {NewProjectScreen} from '../screens/NewProjectScreen';
+import {NotificationScreen} from '../screens/NotificationScreen';
 import TaskDetailScreen from '../screens/TaskDetailScreen';
 import TaskHomeScreen from '../screens/TaskHomeScreen';
 
@@ -15,6 +17,8 @@ export type TaskStackParamList = {
   AddTaskScreen: undefined;
   TaskDetailScreen: {task: TaskFragment};
   AddSubtaskScreen: {taskId: string};
+  NewProjectScreen: undefined;
+  NotificationScreen: undefined;
 };
 
 const TaskStack: React.FC<
@@ -41,6 +45,8 @@ const TaskStack: React.FC<
         options={({route}) => ({title: route.params.task.name})}
       />
       <Stack.Screen name="AddSubtaskScreen" component={AddSubtaskScreen} />
+      <Stack.Screen name="NewProjectScreen" component={NewProjectScreen} />
+      <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
     </Stack.Navigator>
   );
 };

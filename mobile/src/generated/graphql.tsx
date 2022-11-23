@@ -29,6 +29,13 @@ export type CalendarEvent = {
   wholeDay: Scalars['Boolean'];
 };
 
+export type Invite = {
+  __typename?: 'Invite';
+  ownerName: Scalars['String'];
+  projectId: Scalars['String'];
+  projectName: Scalars['String'];
+};
+
 export type Lesson = {
   __typename?: 'Lesson';
   dayOfTheWeek: Scalars['String'];
@@ -57,10 +64,13 @@ export type LoginResponse = UserFail | UserSucces;
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addMembersToProject: Project;
+  addProjectTask: ProjectTask;
   changeSubjectOfTask: Task;
   createEvent: CalendarEvent;
   createLesson: Lesson;
   createLessonTime: LessonTime;
+  createProject: Project;
   createSubject: Subject;
   createSubtask: Subtask;
   createTask: Task;
@@ -79,6 +89,19 @@ export type Mutation = {
   register: RegisterResponse;
   toggleSubtask: Subtask;
   toggleTask: Task;
+};
+
+
+export type MutationAddMembersToProjectArgs = {
+  memberEmails: Array<Scalars['String']>;
+  projectId: Scalars['String'];
+};
+
+
+export type MutationAddProjectTaskArgs = {
+  dueDate: Scalars['DateTime'];
+  name: Scalars['String'];
+  projectId: Scalars['String'];
 };
 
 
@@ -107,6 +130,12 @@ export type MutationCreateLessonArgs = {
 export type MutationCreateLessonTimeArgs = {
   endTime: Scalars['String'];
   startTime: Scalars['String'];
+};
+
+
+export type MutationCreateProjectArgs = {
+  memberEmails: Array<Scalars['String']>;
+  name: Scalars['String'];
 };
 
 
@@ -216,6 +245,38 @@ export type MutationToggleTaskArgs = {
   id: Scalars['String'];
 };
 
+export type Project = {
+  __typename?: 'Project';
+  id: Scalars['String'];
+  members: Array<PublicUser>;
+  name: Scalars['String'];
+  owner: User;
+  ownerId: Scalars['String'];
+  tasks: Array<ProjectTask>;
+  userProjects: Array<UserProject>;
+};
+
+export type ProjectTask = {
+  __typename?: 'ProjectTask';
+  createdAt: Scalars['DateTime'];
+  doDate?: Maybe<Scalars['DateTime']>;
+  done: Scalars['Boolean'];
+  dueDate?: Maybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  name: Scalars['String'];
+  projectId: Scalars['String'];
+  publicUsers: Array<PublicUser>;
+  text?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+};
+
+export type PublicUser = {
+  __typename?: 'PublicUser';
+  email: Scalars['String'];
+  id: Scalars['String'];
+  name: Scalars['String'];
+};
+
 export type Query = {
   __typename?: 'Query';
   getAllEvents: Array<CalendarEvent>;
@@ -224,6 +285,8 @@ export type Query = {
   getAllSubjects: Array<Subject>;
   getAllSubtasksOfTask: Array<Subtask>;
   getAllTasks: Array<Task>;
+  getInvites: Array<Invite>;
+  getProjects: Array<Project>;
   getTasksOfUser: Array<Task>;
   hello: Scalars['String'];
   me: User;
@@ -287,9 +350,12 @@ export type User = {
   imageURL?: Maybe<Scalars['String']>;
   lessonTimes: Array<LessonTime>;
   lessons: Array<Lesson>;
+  ownedProjects: Array<Project>;
+  projectTasks: Array<Task>;
   subjects: Array<Subject>;
   tasks: Array<Task>;
   updatedAt: Scalars['DateTime'];
+  userProjects: Array<UserProject>;
 };
 
 export type UserError = {
@@ -303,6 +369,15 @@ export type UserFail = {
   errors: Array<UserError>;
 };
 
+export type UserProject = {
+  __typename?: 'UserProject';
+  accepted: Scalars['Boolean'];
+  project: Project;
+  projectId: Scalars['String'];
+  user: User;
+  userId: Scalars['String'];
+};
+
 export type UserSucces = {
   __typename?: 'UserSucces';
   accesToken: Scalars['String'];
@@ -311,9 +386,17 @@ export type UserSucces = {
 
 export type CalendarEventFragment = { __typename?: 'CalendarEvent', id: string, name: string, startDate: any, endDate?: any | null | undefined, wholeDay: boolean, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined };
 
+export type InviteFragment = { __typename?: 'Invite', ownerName: string, projectName: string, projectId: string };
+
 export type LessonFragment = { __typename?: 'Lesson', id: string, dayOfTheWeek: string, subject: { __typename?: 'Subject', id: string, name: string }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } };
 
 export type LessonTimeFragment = { __typename?: 'LessonTime', id: string, startTime: string, endTime: string };
+
+export type ProjectFragment = { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> };
+
+export type ProjectTaskFragment = { __typename?: 'ProjectTask', name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> };
+
+export type PublicUserFragment = { __typename?: 'PublicUser', name: string, email: string, id: string };
 
 export type SubjectFragment = { __typename?: 'Subject', id: string, name: string };
 
@@ -393,6 +476,31 @@ export type EditLessonTimesMutationVariables = Exact<{
 
 
 export type EditLessonTimesMutation = { __typename?: 'Mutation', editLessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string }> };
+
+export type AddMembersToProjectMutationVariables = Exact<{
+  projectId: Scalars['String'];
+  memberEmails: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type AddMembersToProjectMutation = { __typename?: 'Mutation', addMembersToProject: { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
+
+export type CreateProjectMutationVariables = Exact<{
+  name: Scalars['String'];
+  memberEmails: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type CreateProjectMutation = { __typename?: 'Mutation', createProject: { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
+
+export type AddProjectTaskMutationVariables = Exact<{
+  name: Scalars['String'];
+  dueDate: Scalars['DateTime'];
+  projectId: Scalars['String'];
+}>;
+
+
+export type AddProjectTaskMutation = { __typename?: 'Mutation', addProjectTask: { __typename?: 'ProjectTask', name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
 
 export type CreateSubjectMutationVariables = Exact<{
   name: Scalars['String'];
@@ -499,6 +607,16 @@ export type GetAllTasksQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetAllTasksQuery = { __typename?: 'Query', getAllTasks: Array<{ __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, doDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined }> };
 
+export type GetInvitesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetInvitesQuery = { __typename?: 'Query', getInvites: Array<{ __typename?: 'Invite', ownerName: string, projectName: string, projectId: string }> };
+
+export type GetProjectsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetProjectsQuery = { __typename?: 'Query', getProjects: Array<{ __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }> };
+
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -534,6 +652,13 @@ export const CalendarEventFragmentDoc = gql`
   }
 }
     ${SubjectFragmentDoc}`;
+export const InviteFragmentDoc = gql`
+    fragment Invite on Invite {
+  ownerName
+  projectName
+  projectId
+}
+    `;
 export const LessonTimeFragmentDoc = gql`
     fragment LessonTime on LessonTime {
   id
@@ -554,6 +679,36 @@ export const LessonFragmentDoc = gql`
 }
     ${SubjectFragmentDoc}
 ${LessonTimeFragmentDoc}`;
+export const PublicUserFragmentDoc = gql`
+    fragment PublicUser on PublicUser {
+  name
+  email
+  id
+}
+    `;
+export const ProjectTaskFragmentDoc = gql`
+    fragment ProjectTask on ProjectTask {
+  name
+  dueDate
+  doDate
+  publicUsers {
+    ...PublicUser
+  }
+}
+    ${PublicUserFragmentDoc}`;
+export const ProjectFragmentDoc = gql`
+    fragment Project on Project {
+  name
+  id
+  tasks {
+    ...ProjectTask
+  }
+  members {
+    ...PublicUser
+  }
+}
+    ${ProjectTaskFragmentDoc}
+${PublicUserFragmentDoc}`;
 export const SubtaskFragmentDoc = gql`
     fragment Subtask on Subtask {
   name
@@ -893,6 +1048,109 @@ export function useEditLessonTimesMutation(baseOptions?: Apollo.MutationHookOpti
 export type EditLessonTimesMutationHookResult = ReturnType<typeof useEditLessonTimesMutation>;
 export type EditLessonTimesMutationResult = Apollo.MutationResult<EditLessonTimesMutation>;
 export type EditLessonTimesMutationOptions = Apollo.BaseMutationOptions<EditLessonTimesMutation, EditLessonTimesMutationVariables>;
+export const AddMembersToProjectDocument = gql`
+    mutation AddMembersToProject($projectId: String!, $memberEmails: [String!]!) {
+  addMembersToProject(projectId: $projectId, memberEmails: $memberEmails) {
+    ...Project
+  }
+}
+    ${ProjectFragmentDoc}`;
+export type AddMembersToProjectMutationFn = Apollo.MutationFunction<AddMembersToProjectMutation, AddMembersToProjectMutationVariables>;
+
+/**
+ * __useAddMembersToProjectMutation__
+ *
+ * To run a mutation, you first call `useAddMembersToProjectMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddMembersToProjectMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addMembersToProjectMutation, { data, loading, error }] = useAddMembersToProjectMutation({
+ *   variables: {
+ *      projectId: // value for 'projectId'
+ *      memberEmails: // value for 'memberEmails'
+ *   },
+ * });
+ */
+export function useAddMembersToProjectMutation(baseOptions?: Apollo.MutationHookOptions<AddMembersToProjectMutation, AddMembersToProjectMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddMembersToProjectMutation, AddMembersToProjectMutationVariables>(AddMembersToProjectDocument, options);
+      }
+export type AddMembersToProjectMutationHookResult = ReturnType<typeof useAddMembersToProjectMutation>;
+export type AddMembersToProjectMutationResult = Apollo.MutationResult<AddMembersToProjectMutation>;
+export type AddMembersToProjectMutationOptions = Apollo.BaseMutationOptions<AddMembersToProjectMutation, AddMembersToProjectMutationVariables>;
+export const CreateProjectDocument = gql`
+    mutation CreateProject($name: String!, $memberEmails: [String!]!) {
+  createProject(name: $name, memberEmails: $memberEmails) {
+    ...Project
+  }
+}
+    ${ProjectFragmentDoc}`;
+export type CreateProjectMutationFn = Apollo.MutationFunction<CreateProjectMutation, CreateProjectMutationVariables>;
+
+/**
+ * __useCreateProjectMutation__
+ *
+ * To run a mutation, you first call `useCreateProjectMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateProjectMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createProjectMutation, { data, loading, error }] = useCreateProjectMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      memberEmails: // value for 'memberEmails'
+ *   },
+ * });
+ */
+export function useCreateProjectMutation(baseOptions?: Apollo.MutationHookOptions<CreateProjectMutation, CreateProjectMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CreateProjectDocument, options);
+      }
+export type CreateProjectMutationHookResult = ReturnType<typeof useCreateProjectMutation>;
+export type CreateProjectMutationResult = Apollo.MutationResult<CreateProjectMutation>;
+export type CreateProjectMutationOptions = Apollo.BaseMutationOptions<CreateProjectMutation, CreateProjectMutationVariables>;
+export const AddProjectTaskDocument = gql`
+    mutation AddProjectTask($name: String!, $dueDate: DateTime!, $projectId: String!) {
+  addProjectTask(name: $name, dueDate: $dueDate, projectId: $projectId) {
+    ...ProjectTask
+  }
+}
+    ${ProjectTaskFragmentDoc}`;
+export type AddProjectTaskMutationFn = Apollo.MutationFunction<AddProjectTaskMutation, AddProjectTaskMutationVariables>;
+
+/**
+ * __useAddProjectTaskMutation__
+ *
+ * To run a mutation, you first call `useAddProjectTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddProjectTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addProjectTaskMutation, { data, loading, error }] = useAddProjectTaskMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      dueDate: // value for 'dueDate'
+ *      projectId: // value for 'projectId'
+ *   },
+ * });
+ */
+export function useAddProjectTaskMutation(baseOptions?: Apollo.MutationHookOptions<AddProjectTaskMutation, AddProjectTaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddProjectTaskMutation, AddProjectTaskMutationVariables>(AddProjectTaskDocument, options);
+      }
+export type AddProjectTaskMutationHookResult = ReturnType<typeof useAddProjectTaskMutation>;
+export type AddProjectTaskMutationResult = Apollo.MutationResult<AddProjectTaskMutation>;
+export type AddProjectTaskMutationOptions = Apollo.BaseMutationOptions<AddProjectTaskMutation, AddProjectTaskMutationVariables>;
 export const CreateSubjectDocument = gql`
     mutation CreateSubject($name: String!) {
   createSubject(name: $name) {
@@ -1425,6 +1683,74 @@ export function useGetAllTasksLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetAllTasksQueryHookResult = ReturnType<typeof useGetAllTasksQuery>;
 export type GetAllTasksLazyQueryHookResult = ReturnType<typeof useGetAllTasksLazyQuery>;
 export type GetAllTasksQueryResult = Apollo.QueryResult<GetAllTasksQuery, GetAllTasksQueryVariables>;
+export const GetInvitesDocument = gql`
+    query GetInvites {
+  getInvites {
+    ...Invite
+  }
+}
+    ${InviteFragmentDoc}`;
+
+/**
+ * __useGetInvitesQuery__
+ *
+ * To run a query within a React component, call `useGetInvitesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetInvitesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetInvitesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetInvitesQuery(baseOptions?: Apollo.QueryHookOptions<GetInvitesQuery, GetInvitesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetInvitesQuery, GetInvitesQueryVariables>(GetInvitesDocument, options);
+      }
+export function useGetInvitesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetInvitesQuery, GetInvitesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetInvitesQuery, GetInvitesQueryVariables>(GetInvitesDocument, options);
+        }
+export type GetInvitesQueryHookResult = ReturnType<typeof useGetInvitesQuery>;
+export type GetInvitesLazyQueryHookResult = ReturnType<typeof useGetInvitesLazyQuery>;
+export type GetInvitesQueryResult = Apollo.QueryResult<GetInvitesQuery, GetInvitesQueryVariables>;
+export const GetProjectsDocument = gql`
+    query GetProjects {
+  getProjects {
+    ...Project
+  }
+}
+    ${ProjectFragmentDoc}`;
+
+/**
+ * __useGetProjectsQuery__
+ *
+ * To run a query within a React component, call `useGetProjectsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProjectsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProjectsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetProjectsQuery(baseOptions?: Apollo.QueryHookOptions<GetProjectsQuery, GetProjectsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetProjectsQuery, GetProjectsQueryVariables>(GetProjectsDocument, options);
+      }
+export function useGetProjectsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProjectsQuery, GetProjectsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetProjectsQuery, GetProjectsQueryVariables>(GetProjectsDocument, options);
+        }
+export type GetProjectsQueryHookResult = ReturnType<typeof useGetProjectsQuery>;
+export type GetProjectsLazyQueryHookResult = ReturnType<typeof useGetProjectsLazyQuery>;
+export type GetProjectsQueryResult = Apollo.QueryResult<GetProjectsQuery, GetProjectsQueryVariables>;
 export const HelloDocument = gql`
     query Hello {
   hello

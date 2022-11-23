@@ -56,6 +56,8 @@ const EmailLoginScreen = () => {
         onChangeText={setEmail}
         placeholder="Email"
         keyboardType="email-address"
+        textContentType="emailAddress"
+        autoCapitalize="none"
       />
       {UserExistsResult && !UserExistsResult.userExists && (
         <TextInput

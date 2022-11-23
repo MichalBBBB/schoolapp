@@ -5,18 +5,16 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from "typeorm";
-import { Subject } from "./Subject";
-import { Subtask } from "./Subtask";
-import { User } from "./User";
+import { Project } from "./Project";
+import { PublicUser, User } from "./User";
 
 @Entity()
 @ObjectType()
-export class Task extends BaseEntity {
+export class ProjectTask extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   @Field()
   id: string;
@@ -37,31 +35,17 @@ export class Task extends BaseEntity {
   @Field({ nullable: true })
   doDate?: Date;
 
-  @ManyToOne(() => User, (user) => user.tasks, {
+  @ManyToOne(() => User, (user) => user.projectTasks, {
     onDelete: "CASCADE",
   })
-  @Field(() => User)
-  user: Relation<User>;
+  users: Relation<User>[];
 
-  @Column()
-  @Field()
-  userId: string;
+  @Field(() => [PublicUser])
+  publicUsers: PublicUser[];
 
   @Column({ default: false })
   @Field()
   done: boolean;
-
-  @OneToMany(() => Subtask, (subtask) => subtask.task)
-  @Field(() => [Subtask])
-  subtasks: Relation<Subtask>[];
-
-  @ManyToOne(() => Subject, (subject) => subject.tasks, { nullable: true })
-  @Field(() => Subject, { nullable: true })
-  subject: Relation<Subject>;
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  subjectId: string;
 
   @CreateDateColumn()
   @Field()
@@ -70,4 +54,11 @@ export class Task extends BaseEntity {
   @UpdateDateColumn()
   @Field()
   updatedAt: Date;
+
+  @ManyToOne(() => Project, (project) => project.tasks)
+  project: Relation<Project>;
+
+  @Field()
+  @Column()
+  projectId: string;
 }

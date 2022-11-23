@@ -1,0 +1,5 @@
+fragment Invite on Invite {
+  ownerName
+  projectName
+  projectId
+}
