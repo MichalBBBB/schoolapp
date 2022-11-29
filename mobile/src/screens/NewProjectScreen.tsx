@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {StyleSheet, Text} from 'react-native';
 import {TaskStackParamList} from '../routes/TaskStack';
@@ -6,6 +6,10 @@ import ConnectedList from '../components/connectedList';
 import {View, TextInput} from 'react-native';
 import {useState} from 'react';
 import {BasicButton} from '../components/basicViews/BasicButton';
+import {
+  GetProjectsDocument,
+  useCreateProjectMutation,
+} from '../generated/graphql';
 
 export const NewProjectScreen: React.FC<
   NativeStackScreenProps<TaskStackParamList, 'NewProjectScreen'>
@@ -13,6 +17,11 @@ export const NewProjectScreen: React.FC<
   const [name, setName] = useState('');
   const [members, setMembers] = useState<string[]>([]);
   const [email, setEmail] = useState('');
+  const [createProject, {error}] = useCreateProjectMutation();
+
+  useEffect(() => {
+    console.log(JSON.stringify(error));
+  }, [error]);
   return (
     <View style={styles.container}>
       <ConnectedList bottomMargin={10}>
@@ -61,12 +70,29 @@ export const NewProjectScreen: React.FC<
           </View>
         ))}
       </ConnectedList>
+      <View style={styles.addButtonContainer}>
+        <BasicButton
+          padding={10}
+          backgroundColor="black"
+          onPress={() => {
+            createProject({
+              variables: {name: name, memberEmails: members},
+              refetchQueries: [GetProjectsDocument],
+            });
+          }}>
+          <Text style={{color: 'white', fontWeight: 'bold'}}>Add Project</Text>
+        </BasicButton>
+      </View>
     </View>
   );
 };
 const styles = StyleSheet.create({
   horizontalContainer: {
     flexDirection: 'row',
+  },
+  addButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   emailContainer: {
     flexDirection: 'row',

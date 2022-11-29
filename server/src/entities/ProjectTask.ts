@@ -55,7 +55,7 @@ export class ProjectTask extends BaseEntity {
   @Field()
   updatedAt: Date;
 
-  @ManyToOne(() => Project, (project) => project.tasks)
+  @ManyToOne(() => Project, (project) => project.tasks, { onDelete: "CASCADE" })
   project: Relation<Project>;
 
   @Field()

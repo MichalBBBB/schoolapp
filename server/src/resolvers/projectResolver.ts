@@ -41,8 +41,8 @@ const loadMembers: (keys: string[]) => Promise<PublicUser[][]> = async (
 ) => {
   const result = await UserProject.createQueryBuilder("userProject")
     .select()
-    .where('"userProject".projectId IN (:...ids)', { ids: keys })
-    .leftJoinAndSelect('"userProject".user', "user")
+    .where("userProject.projectId IN (:...ids)", { ids: keys })
+    .leftJoinAndSelect("userProject.user", "user")
     .getMany();
   // mapping loaded subtasks to task ids
   return keys.map((key) =>
@@ -61,6 +61,12 @@ const loadMembers: (keys: string[]) => Promise<PublicUser[][]> = async (
 
 @Resolver(Project)
 export class projectResolver {
+  // !!! Remove !!!
+  @Query(() => [Project])
+  async getAllProjects() {
+    console.log(await UserProject.find());
+    return Project.find({ relations: { userProjects: true } });
+  }
   @FieldResolver()
   async members(@Root() root: Project) {
     return membersLoader.load(root.id);
@@ -72,14 +78,13 @@ export class projectResolver {
     const projects = await Project.createQueryBuilder("project")
       .select()
       .leftJoin(
-        'project."userProject"',
+        "project.userProjects",
         "userProject",
         '"userProject"."userId" = :id',
         { id: payload?.userId }
       )
-      .leftJoinAndSelect("project.tasks", '"ProjectTask"')
+      .leftJoinAndSelect("project.tasks", "projectTask")
       .getMany();
-    console.log(projects);
     return projects;
   }
 
@@ -99,18 +104,43 @@ export class projectResolver {
         const user = await transactionEntityManager.findOne(User, {
           where: { email: item },
         });
+        console.log(user);
         if (user) {
-          transactionEntityManager.create(UserProject, {
-            projectId: project.id,
-            userId: user?.id,
-          });
+          await transactionEntityManager
+            .create(UserProject, {
+              projectId: project.id,
+              userId: user?.id,
+              accepted: false,
+            })
+            .save();
         }
       });
-      transactionEntityManager.create(UserProject, {
-        projectId: project.id,
-        userId: payload?.userId,
-      });
+      await transactionEntityManager
+        .create(UserProject, {
+          projectId: project.id,
+          userId: payload?.userId,
+          accepted: true,
+        })
+        .save();
     });
+    return Project.findOne({
+      where: { id: project.id },
+      relations: { tasks: true },
+    });
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async deleteProject(@Arg("id") id: string, @Ctx() { payload }: MyContext) {
+    const project = await Project.findOne({
+      where: { id, ownerId: payload?.userId },
+    });
+    if (project) {
+      await project.remove();
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @Mutation(() => ProjectTask)
@@ -135,10 +165,13 @@ export class projectResolver {
           where: { email: item },
         });
         if (user) {
-          transactionEntityManager.create(UserProject, {
-            projectId: projectId,
-            userId: user?.id,
-          });
+          transactionEntityManager
+            .create(UserProject, {
+              projectId: projectId,
+              userId: user?.id,
+              accepted: false,
+            })
+            .save();
         }
       });
     });

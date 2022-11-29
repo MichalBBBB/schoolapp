@@ -45,10 +45,10 @@ const loadSubtasks = async (keys: [string]) => {
 
 @Resolver(Task)
 export class taskResolver {
-  // !!!! Delete this !!!!
   @Query(() => [Task])
-  getAllTasks() {
-    return Task.find();
+  @UseMiddleware(isAuth)
+  getAllTasks(@Ctx() { payload }: MyContext) {
+    return Task.find({ where: { userId: payload?.userId } });
   }
 
   @FieldResolver()
@@ -82,15 +82,6 @@ export class taskResolver {
       .returning("*")
       .execute();
     return result.raw[0];
-  }
-
-  @Query(() => [Task])
-  @UseMiddleware(isAuth)
-  getTasksOfUser(@Ctx() { payload }: MyContext) {
-    return Task.createQueryBuilder("task")
-      .select()
-      .where("task.userId = :userId", { userId: payload?.userId })
-      .getMany();
   }
 
   @Mutation(() => Boolean)

@@ -75,6 +75,12 @@ const LoginUnion = createUnionType({
 
 @Resolver(User)
 export class userResolver {
+  // !!!! Remove !!!!
+  @Query(() => [User])
+  getAllUsers() {
+    return User.find();
+  }
+
   @Query(() => User)
   @UseMiddleware(isAuth)
   me(@Ctx() { payload }: MyContext) {

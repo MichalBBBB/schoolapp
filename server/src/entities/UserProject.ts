@@ -21,11 +21,13 @@ export class UserProject extends BaseEntity {
   @PrimaryColumn()
   projectId: string;
 
-  @ManyToOne(() => Project, (project) => project.userProjects)
+  @ManyToOne(() => Project, (project) => project.userProjects, {
+    onDelete: "CASCADE",
+  })
   @Field(() => Project)
   project: Relation<Project>;
 
-  @ManyToOne(() => User, (user) => user.userProjects)
+  @ManyToOne(() => User, (user) => user.userProjects, { onDelete: "CASCADE" })
   @Field(() => User)
   user: Relation<User>;
 

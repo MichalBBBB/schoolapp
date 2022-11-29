@@ -11,12 +11,14 @@ import {View} from 'react-native';
 import CalendarStack from './routes/CalendarStack';
 import {useTheme} from './contexts/ThemeContext';
 import SettingsStack from './routes/SettingsStack';
+import ProjectStack from './routes/ProjectStack';
 
 export type TabStackParamList = {
   HomeStack: undefined;
   TaskStack: undefined;
   CalendarStack: undefined;
   SettingsStack: undefined;
+  ProjectStack: undefined;
 };
 
 const Routes = () => {
@@ -36,6 +38,7 @@ const Routes = () => {
       <Tab.Screen name="TaskStack" component={TaskStack} />
       <Tab.Screen name="CalendarStack" component={CalendarStack} />
       <Tab.Screen name="SettingsStack" component={SettingsStack} />
+      <Tab.Screen name="ProjectStack" component={ProjectStack} />
     </Tab.Navigator>
   );
 
