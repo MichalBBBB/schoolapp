@@ -1,0 +1,3 @@
+mutation DeclineProjectInvite($id: String!) {
+  declineProjectInvite(id: $id)
+}

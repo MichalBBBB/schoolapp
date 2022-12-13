@@ -3,10 +3,12 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import BackButton from '../components/backButton';
 import {TabStackParamList} from '../Routes';
-import ProjectScreen from '../screens/ProjectScreen';
+import ProjectDetailScreen from '../screens/ProjectDetailScreen';
+import ProjectHomeScreen from '../screens/ProjectHomeScreen';
 
 export type ProjectStackParamList = {
   ProjectHomeScreen: undefined;
+  ProjectDetailScreen: {projectId: string};
 };
 
 const ProjectStack: React.FC<
@@ -25,7 +27,11 @@ const ProjectStack: React.FC<
           }
         },
       })}>
-      <Stack.Screen name="ProjectHomeScreen" component={ProjectScreen} />
+      <Stack.Screen name="ProjectHomeScreen" component={ProjectHomeScreen} />
+      <Stack.Screen
+        name="ProjectDetailScreen"
+        component={ProjectDetailScreen}
+      />
     </Stack.Navigator>
   );
 };

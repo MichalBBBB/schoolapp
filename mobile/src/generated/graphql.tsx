@@ -64,6 +64,7 @@ export type LoginResponse = UserFail | UserSucces;
 
 export type Mutation = {
   __typename?: 'Mutation';
+  acceptProjectInvite: Project;
   addMembersToProject: Project;
   addProjectTask: ProjectTask;
   changeSubjectOfTask: Task;
@@ -74,6 +75,7 @@ export type Mutation = {
   createSubject: Subject;
   createSubtask: Subtask;
   createTask: Task;
+  declineProjectInvite: Scalars['Boolean'];
   deleteEvent: Scalars['Boolean'];
   deleteLesson: Scalars['Boolean'];
   deleteLessonTime: Scalars['Boolean'];
@@ -93,6 +95,11 @@ export type Mutation = {
 };
 
 
+export type MutationAcceptProjectInviteArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationAddMembersToProjectArgs = {
   memberEmails: Array<Scalars['String']>;
   projectId: Scalars['String'];
@@ -100,7 +107,7 @@ export type MutationAddMembersToProjectArgs = {
 
 
 export type MutationAddProjectTaskArgs = {
-  dueDate: Scalars['DateTime'];
+  dueDate?: InputMaybe<Scalars['DateTime']>;
   name: Scalars['String'];
   projectId: Scalars['String'];
 };
@@ -155,6 +162,11 @@ export type MutationCreateTaskArgs = {
   dueDate?: InputMaybe<Scalars['DateTime']>;
   name: Scalars['String'];
   subjectId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationDeclineProjectInviteArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -295,7 +307,6 @@ export type Query = {
   getAllUsers: Array<User>;
   getInvites: Array<Invite>;
   getProjects: Array<Project>;
-  getTasksOfUser: Array<Task>;
   hello: Scalars['String'];
   me: User;
   userExists: Scalars['Boolean'];
@@ -485,6 +496,13 @@ export type EditLessonTimesMutationVariables = Exact<{
 
 export type EditLessonTimesMutation = { __typename?: 'Mutation', editLessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string }> };
 
+export type AcceptProjectInviteMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type AcceptProjectInviteMutation = { __typename?: 'Mutation', acceptProjectInvite: { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
+
 export type AddMembersToProjectMutationVariables = Exact<{
   projectId: Scalars['String'];
   memberEmails: Array<Scalars['String']> | Scalars['String'];
@@ -501,6 +519,13 @@ export type CreateProjectMutationVariables = Exact<{
 
 export type CreateProjectMutation = { __typename?: 'Mutation', createProject: { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
 
+export type DeclineProjectInviteMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeclineProjectInviteMutation = { __typename?: 'Mutation', declineProjectInvite: boolean };
+
 export type DeleteProjectMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -510,7 +535,7 @@ export type DeleteProjectMutation = { __typename?: 'Mutation', deleteProject: bo
 
 export type AddProjectTaskMutationVariables = Exact<{
   name: Scalars['String'];
-  dueDate: Scalars['DateTime'];
+  dueDate?: InputMaybe<Scalars['DateTime']>;
   projectId: Scalars['String'];
 }>;
 
@@ -1063,6 +1088,39 @@ export function useEditLessonTimesMutation(baseOptions?: Apollo.MutationHookOpti
 export type EditLessonTimesMutationHookResult = ReturnType<typeof useEditLessonTimesMutation>;
 export type EditLessonTimesMutationResult = Apollo.MutationResult<EditLessonTimesMutation>;
 export type EditLessonTimesMutationOptions = Apollo.BaseMutationOptions<EditLessonTimesMutation, EditLessonTimesMutationVariables>;
+export const AcceptProjectInviteDocument = gql`
+    mutation AcceptProjectInvite($id: String!) {
+  acceptProjectInvite(id: $id) {
+    ...Project
+  }
+}
+    ${ProjectFragmentDoc}`;
+export type AcceptProjectInviteMutationFn = Apollo.MutationFunction<AcceptProjectInviteMutation, AcceptProjectInviteMutationVariables>;
+
+/**
+ * __useAcceptProjectInviteMutation__
+ *
+ * To run a mutation, you first call `useAcceptProjectInviteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAcceptProjectInviteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [acceptProjectInviteMutation, { data, loading, error }] = useAcceptProjectInviteMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useAcceptProjectInviteMutation(baseOptions?: Apollo.MutationHookOptions<AcceptProjectInviteMutation, AcceptProjectInviteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AcceptProjectInviteMutation, AcceptProjectInviteMutationVariables>(AcceptProjectInviteDocument, options);
+      }
+export type AcceptProjectInviteMutationHookResult = ReturnType<typeof useAcceptProjectInviteMutation>;
+export type AcceptProjectInviteMutationResult = Apollo.MutationResult<AcceptProjectInviteMutation>;
+export type AcceptProjectInviteMutationOptions = Apollo.BaseMutationOptions<AcceptProjectInviteMutation, AcceptProjectInviteMutationVariables>;
 export const AddMembersToProjectDocument = gql`
     mutation AddMembersToProject($projectId: String!, $memberEmails: [String!]!) {
   addMembersToProject(projectId: $projectId, memberEmails: $memberEmails) {
@@ -1131,6 +1189,37 @@ export function useCreateProjectMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateProjectMutationHookResult = ReturnType<typeof useCreateProjectMutation>;
 export type CreateProjectMutationResult = Apollo.MutationResult<CreateProjectMutation>;
 export type CreateProjectMutationOptions = Apollo.BaseMutationOptions<CreateProjectMutation, CreateProjectMutationVariables>;
+export const DeclineProjectInviteDocument = gql`
+    mutation DeclineProjectInvite($id: String!) {
+  declineProjectInvite(id: $id)
+}
+    `;
+export type DeclineProjectInviteMutationFn = Apollo.MutationFunction<DeclineProjectInviteMutation, DeclineProjectInviteMutationVariables>;
+
+/**
+ * __useDeclineProjectInviteMutation__
+ *
+ * To run a mutation, you first call `useDeclineProjectInviteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeclineProjectInviteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [declineProjectInviteMutation, { data, loading, error }] = useDeclineProjectInviteMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeclineProjectInviteMutation(baseOptions?: Apollo.MutationHookOptions<DeclineProjectInviteMutation, DeclineProjectInviteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeclineProjectInviteMutation, DeclineProjectInviteMutationVariables>(DeclineProjectInviteDocument, options);
+      }
+export type DeclineProjectInviteMutationHookResult = ReturnType<typeof useDeclineProjectInviteMutation>;
+export type DeclineProjectInviteMutationResult = Apollo.MutationResult<DeclineProjectInviteMutation>;
+export type DeclineProjectInviteMutationOptions = Apollo.BaseMutationOptions<DeclineProjectInviteMutation, DeclineProjectInviteMutationVariables>;
 export const DeleteProjectDocument = gql`
     mutation DeleteProject($id: String!) {
   deleteProject(id: $id)
@@ -1163,7 +1252,7 @@ export type DeleteProjectMutationHookResult = ReturnType<typeof useDeleteProject
 export type DeleteProjectMutationResult = Apollo.MutationResult<DeleteProjectMutation>;
 export type DeleteProjectMutationOptions = Apollo.BaseMutationOptions<DeleteProjectMutation, DeleteProjectMutationVariables>;
 export const AddProjectTaskDocument = gql`
-    mutation AddProjectTask($name: String!, $dueDate: DateTime!, $projectId: String!) {
+    mutation AddProjectTask($name: String!, $dueDate: DateTime, $projectId: String!) {
   addProjectTask(name: $name, dueDate: $dueDate, projectId: $projectId) {
     ...ProjectTask
   }

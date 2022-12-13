@@ -12,11 +12,17 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import BackButton from '../components/backButton';
+import BasicInputWindow from '../components/basicInputWindow';
 import {BasicButton} from '../components/basicViews/BasicButton';
 import EditDateModal from '../components/editDateWindow/editDateModal';
 import Subtask from '../components/subtask';
 import {calendarConfigWithoutTime} from '../components/task';
-import {useEditTaskMutation, useGetAllTasksQuery} from '../generated/graphql';
+import {
+  GetAllTasksDocument,
+  useCreateSubtaskMutation,
+  useEditTaskMutation,
+  useGetAllTasksQuery,
+} from '../generated/graphql';
 import {TaskStackParamList} from '../routes/TaskStack';
 
 const TaskDetailScreen: React.FC<
@@ -26,6 +32,7 @@ const TaskDetailScreen: React.FC<
   const task = Tasks?.getAllTasks.find(
     item => item.id == route.params.task.id,
   )!;
+  const [addSubtask] = useCreateSubtaskMutation();
   const [name, setName] = useState(task.name);
   const [text, setText] = useState(task.text);
   const [dueDate, setDueDate] = useState<dayjs.Dayjs | null>(
@@ -40,14 +47,14 @@ const TaskDetailScreen: React.FC<
     useState(false);
   const [editDoDateModalIsVisible, setEditDoDateModalIsVisible] =
     useState(false);
+  const [addSubtaskModalIsVisible, setAddSubtaskModalIsVisible] =
+    useState(false);
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('AddSubtaskScreen', {
-              taskId: task.id,
-            });
+            setAddSubtaskModalIsVisible(true);
           }}>
           <Image
             source={require('../../assets/Plus.png')}
@@ -167,6 +174,18 @@ const TaskDetailScreen: React.FC<
           });
         }}
         isVisible={editDoDateModalIsVisible}
+      />
+      <BasicInputWindow
+        visible={addSubtaskModalIsVisible}
+        onClose={() => {
+          setAddSubtaskModalIsVisible(false);
+        }}
+        onSubmit={() => {
+          addSubtask({
+            variables: {name, taskId: task.id},
+            refetchQueries: [GetAllTasksDocument],
+          });
+        }}
       />
     </>
   );

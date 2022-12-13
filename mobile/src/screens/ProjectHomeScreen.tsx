@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useEffect} from 'react';
 import {FlatList, Pressable, Text, View} from 'react-native';
@@ -10,9 +11,9 @@ import {
 } from '../generated/graphql';
 import {ProjectStackParamList} from '../routes/ProjectStack';
 
-const ProjectScreen: React.FC<
+const ProjectHomeScreen: React.FC<
   NativeStackScreenProps<ProjectStackParamList, 'ProjectHomeScreen'>
-> = () => {
+> = ({navigation}) => {
   const {data, error} = useGetProjectsQuery();
   const [deleteProject, {error: deleteError}] = useDeleteProjectMutation();
   useEffect(() => {
@@ -24,7 +25,12 @@ const ProjectScreen: React.FC<
         data={data?.getProjects}
         renderItem={({item}) => (
           <View style={{margin: 5}}>
-            <Pressable>
+            <Pressable
+              onPress={() => {
+                navigation.navigate('ProjectDetailScreen', {
+                  projectId: item.id,
+                });
+              }}>
               <BasicCard backgroundColor="#eee">
                 <View
                   style={{
@@ -51,4 +57,4 @@ const ProjectScreen: React.FC<
   );
 };
 
-export default ProjectScreen;
+export default ProjectHomeScreen;

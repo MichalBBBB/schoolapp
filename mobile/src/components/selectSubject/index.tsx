@@ -1,9 +1,14 @@
 import React, {useState} from 'react';
 import {View, FlatList, TouchableOpacity, Text, Pressable} from 'react-native';
-import {SubjectFragment, useGetAllSubjectsQuery} from '../../generated/graphql';
+import {
+  GetAllSubjectsDocument,
+  SubjectFragment,
+  useCreateSubjectMutation,
+  useGetAllSubjectsQuery,
+} from '../../generated/graphql';
+import BasicInputWindow from '../basicInputWindow';
 import {BasicButton} from '../basicViews/BasicButton';
 import {BasicModalCard} from '../basicViews/BasicModalCard';
-import AddSubjectModal from './addSubjectModal';
 
 interface SelectSubjectProps {
   isVisible: boolean;
@@ -19,6 +24,7 @@ const SelectSubjectModal: React.FC<SelectSubjectProps> = ({
   onModalHide,
 }) => {
   const {data} = useGetAllSubjectsQuery();
+  const [addSubject] = useCreateSubjectMutation();
   const [viewVisible, setViewVisible] = useState<
     'SelectSubject' | 'AddSubject'
   >('SelectSubject');
@@ -74,8 +80,14 @@ const SelectSubjectModal: React.FC<SelectSubjectProps> = ({
           </BasicButton>
         </View>
       </BasicModalCard>
-      <AddSubjectModal
-        isVisible={
+      <BasicInputWindow
+        onSubmit={text => {
+          addSubject({
+            variables: {name: text},
+            refetchQueries: [GetAllSubjectsDocument],
+          });
+        }}
+        visible={
           viewVisible == 'AddSubject' && viewShouldAppear == 'AddSubject'
         }
         onClose={() => {

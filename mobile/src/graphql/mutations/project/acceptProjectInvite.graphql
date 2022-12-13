@@ -1,0 +1,5 @@
+mutation AcceptProjectInvite($id: String!) {
+  acceptProjectInvite(id: $id) {
+    ...Project
+  }
+}
