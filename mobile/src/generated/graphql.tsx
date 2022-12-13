@@ -81,6 +81,7 @@ export type Mutation = {
   deleteLessonTime: Scalars['Boolean'];
   deleteLessonTimes: Scalars['Boolean'];
   deleteProject: Scalars['Boolean'];
+  deleteProjectTask: Scalars['Boolean'];
   deleteSubtask: Scalars['Boolean'];
   deleteTask: Scalars['Boolean'];
   editEvent: CalendarEvent;
@@ -90,6 +91,7 @@ export type Mutation = {
   editTask: Task;
   login: LoginResponse;
   register: RegisterResponse;
+  toggleProjectTask: ProjectTask;
   toggleSubtask: Subtask;
   toggleTask: Task;
 };
@@ -195,6 +197,11 @@ export type MutationDeleteProjectArgs = {
 };
 
 
+export type MutationDeleteProjectTaskArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationDeleteSubtaskArgs = {
   id: Scalars['String'];
 };
@@ -251,6 +258,11 @@ export type MutationRegisterArgs = {
   email: Scalars['String'];
   name: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type MutationToggleProjectTaskArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -411,9 +423,9 @@ export type LessonFragment = { __typename?: 'Lesson', id: string, dayOfTheWeek: 
 
 export type LessonTimeFragment = { __typename?: 'LessonTime', id: string, startTime: string, endTime: string };
 
-export type ProjectFragment = { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> };
+export type ProjectFragment = { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> };
 
-export type ProjectTaskFragment = { __typename?: 'ProjectTask', name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> };
+export type ProjectTaskFragment = { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> };
 
 export type PublicUserFragment = { __typename?: 'PublicUser', name: string, email: string, id: string };
 
@@ -501,7 +513,7 @@ export type AcceptProjectInviteMutationVariables = Exact<{
 }>;
 
 
-export type AcceptProjectInviteMutation = { __typename?: 'Mutation', acceptProjectInvite: { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
+export type AcceptProjectInviteMutation = { __typename?: 'Mutation', acceptProjectInvite: { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
 
 export type AddMembersToProjectMutationVariables = Exact<{
   projectId: Scalars['String'];
@@ -509,7 +521,7 @@ export type AddMembersToProjectMutationVariables = Exact<{
 }>;
 
 
-export type AddMembersToProjectMutation = { __typename?: 'Mutation', addMembersToProject: { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
+export type AddMembersToProjectMutation = { __typename?: 'Mutation', addMembersToProject: { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
 
 export type CreateProjectMutationVariables = Exact<{
   name: Scalars['String'];
@@ -517,7 +529,7 @@ export type CreateProjectMutationVariables = Exact<{
 }>;
 
 
-export type CreateProjectMutation = { __typename?: 'Mutation', createProject: { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
+export type CreateProjectMutation = { __typename?: 'Mutation', createProject: { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
 
 export type DeclineProjectInviteMutationVariables = Exact<{
   id: Scalars['String'];
@@ -540,7 +552,21 @@ export type AddProjectTaskMutationVariables = Exact<{
 }>;
 
 
-export type AddProjectTaskMutation = { __typename?: 'Mutation', addProjectTask: { __typename?: 'ProjectTask', name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
+export type AddProjectTaskMutation = { __typename?: 'Mutation', addProjectTask: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
+
+export type DeleteProjectTaskMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteProjectTaskMutation = { __typename?: 'Mutation', deleteProjectTask: boolean };
+
+export type ToggleProjectTaskMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type ToggleProjectTaskMutation = { __typename?: 'Mutation', toggleProjectTask: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
 
 export type CreateSubjectMutationVariables = Exact<{
   name: Scalars['String'];
@@ -655,7 +681,7 @@ export type GetInvitesQuery = { __typename?: 'Query', getInvites: Array<{ __type
 export type GetProjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProjectsQuery = { __typename?: 'Query', getProjects: Array<{ __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }> };
+export type GetProjectsQuery = { __typename?: 'Query', getProjects: Array<{ __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }> };
 
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -728,9 +754,11 @@ export const PublicUserFragmentDoc = gql`
     `;
 export const ProjectTaskFragmentDoc = gql`
     fragment ProjectTask on ProjectTask {
+  id
   name
   dueDate
   doDate
+  done
   publicUsers {
     ...PublicUser
   }
@@ -1286,6 +1314,70 @@ export function useAddProjectTaskMutation(baseOptions?: Apollo.MutationHookOptio
 export type AddProjectTaskMutationHookResult = ReturnType<typeof useAddProjectTaskMutation>;
 export type AddProjectTaskMutationResult = Apollo.MutationResult<AddProjectTaskMutation>;
 export type AddProjectTaskMutationOptions = Apollo.BaseMutationOptions<AddProjectTaskMutation, AddProjectTaskMutationVariables>;
+export const DeleteProjectTaskDocument = gql`
+    mutation DeleteProjectTask($id: String!) {
+  deleteProjectTask(id: $id)
+}
+    `;
+export type DeleteProjectTaskMutationFn = Apollo.MutationFunction<DeleteProjectTaskMutation, DeleteProjectTaskMutationVariables>;
+
+/**
+ * __useDeleteProjectTaskMutation__
+ *
+ * To run a mutation, you first call `useDeleteProjectTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteProjectTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteProjectTaskMutation, { data, loading, error }] = useDeleteProjectTaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteProjectTaskMutation(baseOptions?: Apollo.MutationHookOptions<DeleteProjectTaskMutation, DeleteProjectTaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteProjectTaskMutation, DeleteProjectTaskMutationVariables>(DeleteProjectTaskDocument, options);
+      }
+export type DeleteProjectTaskMutationHookResult = ReturnType<typeof useDeleteProjectTaskMutation>;
+export type DeleteProjectTaskMutationResult = Apollo.MutationResult<DeleteProjectTaskMutation>;
+export type DeleteProjectTaskMutationOptions = Apollo.BaseMutationOptions<DeleteProjectTaskMutation, DeleteProjectTaskMutationVariables>;
+export const ToggleProjectTaskDocument = gql`
+    mutation ToggleProjectTask($id: String!) {
+  toggleProjectTask(id: $id) {
+    ...ProjectTask
+  }
+}
+    ${ProjectTaskFragmentDoc}`;
+export type ToggleProjectTaskMutationFn = Apollo.MutationFunction<ToggleProjectTaskMutation, ToggleProjectTaskMutationVariables>;
+
+/**
+ * __useToggleProjectTaskMutation__
+ *
+ * To run a mutation, you first call `useToggleProjectTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleProjectTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleProjectTaskMutation, { data, loading, error }] = useToggleProjectTaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useToggleProjectTaskMutation(baseOptions?: Apollo.MutationHookOptions<ToggleProjectTaskMutation, ToggleProjectTaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ToggleProjectTaskMutation, ToggleProjectTaskMutationVariables>(ToggleProjectTaskDocument, options);
+      }
+export type ToggleProjectTaskMutationHookResult = ReturnType<typeof useToggleProjectTaskMutation>;
+export type ToggleProjectTaskMutationResult = Apollo.MutationResult<ToggleProjectTaskMutation>;
+export type ToggleProjectTaskMutationOptions = Apollo.BaseMutationOptions<ToggleProjectTaskMutation, ToggleProjectTaskMutationVariables>;
 export const CreateSubjectDocument = gql`
     mutation CreateSubject($name: String!) {
   createSubject(name: $name) {

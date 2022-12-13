@@ -1,7 +1,9 @@
 fragment ProjectTask on ProjectTask {
+  id
   name
   dueDate
   doDate
+  done
   publicUsers {
     ...PublicUser
   }

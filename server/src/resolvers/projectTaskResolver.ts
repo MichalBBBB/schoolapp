@@ -1,5 +1,16 @@
-import { FieldResolver, Resolver, Root } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  FieldResolver,
+  Mutation,
+  Resolver,
+  Root,
+  UseMiddleware,
+} from "type-graphql";
 import { ProjectTask } from "../entities/ProjectTask";
+import { isAuth } from "../middleware/isAuth";
+import { isUserInProject } from "../utils/isUserInProject";
+import { MyContext } from "../utils/MyContext";
 
 @Resolver(ProjectTask)
 export class projectTaskResolver {
@@ -10,7 +21,6 @@ export class projectTaskResolver {
       where: { id: root.id },
       relations: { users: true },
     });
-    console.log(fetchedProjectTask);
     return fetchedProjectTask?.users.map((item) => {
       return {
         name: item.fullName,
@@ -18,5 +28,52 @@ export class projectTaskResolver {
         id: item.id,
       };
     });
+  }
+
+  @Mutation(() => ProjectTask)
+  @UseMiddleware(isAuth)
+  async addProjectTask(
+    @Arg("name") name: string,
+    @Arg("projectId") projectId: string,
+    @Arg("dueDate", { nullable: true }) dueDate?: Date
+  ) {
+    return ProjectTask.create({ projectId: projectId, name, dueDate }).save();
+  }
+
+  @Mutation(() => ProjectTask)
+  @UseMiddleware(isAuth)
+  async toggleProjectTask(
+    @Arg("id") id: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    const projectTask = await ProjectTask.findOne({ where: { id } });
+    if (
+      projectTask &&
+      (await isUserInProject(projectTask.projectId, payload?.userId || ""))
+    ) {
+      projectTask.done = !projectTask.done;
+      await projectTask.save();
+      return projectTask;
+    } else {
+      throw new Error("task wasn't found");
+    }
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async deleteProjectTask(
+    @Arg("id") id: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    const projectTask = await ProjectTask.findOne({ where: { id } });
+    if (
+      projectTask &&
+      (await isUserInProject(projectTask.projectId, payload?.userId || ""))
+    ) {
+      await projectTask.remove();
+      return true;
+    } else {
+      return false;
+    }
   }
 }

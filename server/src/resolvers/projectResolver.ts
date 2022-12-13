@@ -12,7 +12,6 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { Project } from "../entities/Project";
-import { ProjectTask } from "../entities/ProjectTask";
 import { PublicUser, User } from "../entities/User";
 import { UserProject } from "../entities/UserProject";
 import { isAuth } from "../middleware/isAuth";
@@ -143,16 +142,6 @@ export class projectResolver {
     } else {
       return false;
     }
-  }
-
-  @Mutation(() => ProjectTask)
-  @UseMiddleware(isAuth)
-  async addProjectTask(
-    @Arg("name") name: string,
-    @Arg("projectId") projectId: string,
-    @Arg("dueDate", { nullable: true }) dueDate?: Date
-  ) {
-    return ProjectTask.create({ projectId: projectId, name, dueDate }).save();
   }
 
   @Mutation(() => Project)

@@ -111,7 +111,8 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
                 return (
                   event.subject?.id == item.subject.id &&
                   dayjs(event.startDate).format('HH:mm') ==
-                    item.lessonTime.startTime
+                    item.lessonTime.startTime &&
+                  dayjs(event.startDate).isSame(date, 'day')
                 );
               })}
             />

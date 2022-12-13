@@ -1,0 +1,5 @@
+mutation ToggleProjectTask($id: String!) {
+  toggleProjectTask(id: $id) {
+    ...ProjectTask
+  }
+}

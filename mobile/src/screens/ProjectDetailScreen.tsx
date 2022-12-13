@@ -9,6 +9,8 @@ import {
   View,
 } from 'react-native';
 import BasicInputWindow from '../components/basicInputWindow';
+import ProjectTask from '../components/projectTask';
+import Subtask from '../components/subtask';
 import {
   GetProjectsDocument,
   useAddProjectTaskMutation,
@@ -61,11 +63,7 @@ const ProjectDetailScreen: React.FC<
         <Text style={styles.title}>{project?.name}</Text>
         <FlatList
           data={project?.tasks}
-          renderItem={({item}) => (
-            <View>
-              <Text>{item.name}</Text>
-            </View>
-          )}
+          renderItem={({item}) => <ProjectTask projectTask={item} />}
         />
       </View>
       <BasicInputWindow
