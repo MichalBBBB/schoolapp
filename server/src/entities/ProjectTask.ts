@@ -4,6 +4,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
@@ -35,7 +37,8 @@ export class ProjectTask extends BaseEntity {
   @Field({ nullable: true })
   doDate?: Date;
 
-  @ManyToOne(() => User, (user) => user.projectTasks, {
+  @JoinTable()
+  @ManyToMany(() => User, (user) => user.projectTasks, {
     onDelete: "CASCADE",
   })
   users: Relation<User>[];

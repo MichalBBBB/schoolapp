@@ -85,6 +85,8 @@ export class projectResolver {
       )
       .leftJoinAndSelect("project.tasks", "projectTask")
       .getMany();
+    console.log(projects);
+    console.log(await Project.find({ relations: { tasks: true } }));
     return projects;
   }
 
@@ -147,10 +149,10 @@ export class projectResolver {
   @UseMiddleware(isAuth)
   async addProjectTask(
     @Arg("name") name: string,
-    @Arg("dueDate") dueDate: Date,
-    @Arg("projectId") projectId: string
+    @Arg("projectId") projectId: string,
+    @Arg("dueDate", { nullable: true }) dueDate?: Date
   ) {
-    return ProjectTask.create({ projectId: projectId, name, dueDate });
+    return ProjectTask.create({ projectId: projectId, name, dueDate }).save();
   }
 
   @Mutation(() => Project)
@@ -175,6 +177,41 @@ export class projectResolver {
         }
       });
     });
+  }
+
+  @Mutation(() => Project)
+  @UseMiddleware(isAuth)
+  async acceptProjectInvite(
+    @Arg("id") id: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    const userProject = await UserProject.findOne({
+      where: { userId: payload?.userId, projectId: id },
+    });
+    if (userProject) {
+      userProject.accepted = true;
+      userProject.save();
+      return Project.findOne({ where: { id }, relations: { tasks: true } });
+    } else {
+      throw new Error("You weren't invited to this project");
+    }
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async declineProjectInvite(
+    @Arg("id") id: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    const userProject = await UserProject.findOne({
+      where: { userId: payload?.userId, projectId: id },
+    });
+    if (userProject) {
+      userProject.remove();
+      return true;
+    } else {
+      throw new Error("You weren't invited to this project");
+    }
   }
 
   @Query(() => [Invite])

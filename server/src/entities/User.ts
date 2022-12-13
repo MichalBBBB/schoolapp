@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
@@ -64,7 +65,7 @@ export class User extends BaseEntity {
   tasks: Task[];
 
   @Field(() => [Task])
-  @OneToMany(() => Task, (task) => task.user)
+  @ManyToMany(() => Task, (task) => task.user)
   projectTasks: ProjectTask[];
 
   @Field(() => [Subject])
