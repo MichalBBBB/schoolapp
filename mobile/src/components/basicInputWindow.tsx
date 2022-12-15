@@ -9,6 +9,7 @@ interface addTaskWindowProps {
   onClose?: () => void;
   onSubmit?: (text: string) => void;
   onModalHide?: () => void;
+  placeholder?: string;
 }
 
 const BasicInputWindow: React.FC<addTaskWindowProps> = ({
@@ -16,6 +17,7 @@ const BasicInputWindow: React.FC<addTaskWindowProps> = ({
   visible,
   onSubmit,
   onModalHide,
+  placeholder,
 }) => {
   const textInputRef = createRef<TextInput>();
   const [text, setText] = useState('');
@@ -53,7 +55,7 @@ const BasicInputWindow: React.FC<addTaskWindowProps> = ({
           }}>
           <TextInput
             style={{padding: 10, flex: 1}}
-            placeholder="Subject name"
+            placeholder={placeholder || 'Name'}
             onChangeText={setText}
             ref={textInputRef}
           />

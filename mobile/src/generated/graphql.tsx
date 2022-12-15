@@ -67,6 +67,7 @@ export type Mutation = {
   acceptProjectInvite: Project;
   addMembersToProject: Project;
   addProjectTask: ProjectTask;
+  assignMember: ProjectTask;
   changeSubjectOfTask: Task;
   createEvent: CalendarEvent;
   createLesson: Lesson;
@@ -91,6 +92,7 @@ export type Mutation = {
   editTask: Task;
   login: LoginResponse;
   register: RegisterResponse;
+  removeAssignedMember: ProjectTask;
   toggleProjectTask: ProjectTask;
   toggleSubtask: Subtask;
   toggleTask: Task;
@@ -112,6 +114,12 @@ export type MutationAddProjectTaskArgs = {
   dueDate?: InputMaybe<Scalars['DateTime']>;
   name: Scalars['String'];
   projectId: Scalars['String'];
+};
+
+
+export type MutationAssignMemberArgs = {
+  taskId: Scalars['String'];
+  userId: Scalars['String'];
 };
 
 
@@ -258,6 +266,12 @@ export type MutationRegisterArgs = {
   email: Scalars['String'];
   name: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type MutationRemoveAssignedMemberArgs = {
+  taskId: Scalars['String'];
+  userId: Scalars['String'];
 };
 
 
@@ -554,12 +568,28 @@ export type AddProjectTaskMutationVariables = Exact<{
 
 export type AddProjectTaskMutation = { __typename?: 'Mutation', addProjectTask: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
 
+export type AssignMemberMutationVariables = Exact<{
+  userId: Scalars['String'];
+  taskId: Scalars['String'];
+}>;
+
+
+export type AssignMemberMutation = { __typename?: 'Mutation', assignMember: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
+
 export type DeleteProjectTaskMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
 export type DeleteProjectTaskMutation = { __typename?: 'Mutation', deleteProjectTask: boolean };
+
+export type RemoveAssignedMemberMutationVariables = Exact<{
+  userId: Scalars['String'];
+  taskId: Scalars['String'];
+}>;
+
+
+export type RemoveAssignedMemberMutation = { __typename?: 'Mutation', removeAssignedMember: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
 
 export type ToggleProjectTaskMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1314,6 +1344,40 @@ export function useAddProjectTaskMutation(baseOptions?: Apollo.MutationHookOptio
 export type AddProjectTaskMutationHookResult = ReturnType<typeof useAddProjectTaskMutation>;
 export type AddProjectTaskMutationResult = Apollo.MutationResult<AddProjectTaskMutation>;
 export type AddProjectTaskMutationOptions = Apollo.BaseMutationOptions<AddProjectTaskMutation, AddProjectTaskMutationVariables>;
+export const AssignMemberDocument = gql`
+    mutation AssignMember($userId: String!, $taskId: String!) {
+  assignMember(userId: $userId, taskId: $taskId) {
+    ...ProjectTask
+  }
+}
+    ${ProjectTaskFragmentDoc}`;
+export type AssignMemberMutationFn = Apollo.MutationFunction<AssignMemberMutation, AssignMemberMutationVariables>;
+
+/**
+ * __useAssignMemberMutation__
+ *
+ * To run a mutation, you first call `useAssignMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAssignMemberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [assignMemberMutation, { data, loading, error }] = useAssignMemberMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      taskId: // value for 'taskId'
+ *   },
+ * });
+ */
+export function useAssignMemberMutation(baseOptions?: Apollo.MutationHookOptions<AssignMemberMutation, AssignMemberMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AssignMemberMutation, AssignMemberMutationVariables>(AssignMemberDocument, options);
+      }
+export type AssignMemberMutationHookResult = ReturnType<typeof useAssignMemberMutation>;
+export type AssignMemberMutationResult = Apollo.MutationResult<AssignMemberMutation>;
+export type AssignMemberMutationOptions = Apollo.BaseMutationOptions<AssignMemberMutation, AssignMemberMutationVariables>;
 export const DeleteProjectTaskDocument = gql`
     mutation DeleteProjectTask($id: String!) {
   deleteProjectTask(id: $id)
@@ -1345,6 +1409,40 @@ export function useDeleteProjectTaskMutation(baseOptions?: Apollo.MutationHookOp
 export type DeleteProjectTaskMutationHookResult = ReturnType<typeof useDeleteProjectTaskMutation>;
 export type DeleteProjectTaskMutationResult = Apollo.MutationResult<DeleteProjectTaskMutation>;
 export type DeleteProjectTaskMutationOptions = Apollo.BaseMutationOptions<DeleteProjectTaskMutation, DeleteProjectTaskMutationVariables>;
+export const RemoveAssignedMemberDocument = gql`
+    mutation RemoveAssignedMember($userId: String!, $taskId: String!) {
+  removeAssignedMember(userId: $userId, taskId: $taskId) {
+    ...ProjectTask
+  }
+}
+    ${ProjectTaskFragmentDoc}`;
+export type RemoveAssignedMemberMutationFn = Apollo.MutationFunction<RemoveAssignedMemberMutation, RemoveAssignedMemberMutationVariables>;
+
+/**
+ * __useRemoveAssignedMemberMutation__
+ *
+ * To run a mutation, you first call `useRemoveAssignedMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveAssignedMemberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeAssignedMemberMutation, { data, loading, error }] = useRemoveAssignedMemberMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      taskId: // value for 'taskId'
+ *   },
+ * });
+ */
+export function useRemoveAssignedMemberMutation(baseOptions?: Apollo.MutationHookOptions<RemoveAssignedMemberMutation, RemoveAssignedMemberMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveAssignedMemberMutation, RemoveAssignedMemberMutationVariables>(RemoveAssignedMemberDocument, options);
+      }
+export type RemoveAssignedMemberMutationHookResult = ReturnType<typeof useRemoveAssignedMemberMutation>;
+export type RemoveAssignedMemberMutationResult = Apollo.MutationResult<RemoveAssignedMemberMutation>;
+export type RemoveAssignedMemberMutationOptions = Apollo.BaseMutationOptions<RemoveAssignedMemberMutation, RemoveAssignedMemberMutationVariables>;
 export const ToggleProjectTaskDocument = gql`
     mutation ToggleProjectTask($id: String!) {
   toggleProjectTask(id: $id) {

@@ -1,16 +1,25 @@
 import React, {useRef} from 'react';
-import {Image, Text, View, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  Image,
+  Text,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Pressable,
+} from 'react-native';
 import {
   GetProjectsDocument,
   ProjectTaskFragment,
   useDeleteProjectTaskMutation,
   useToggleProjectTaskMutation,
 } from '../generated/graphql';
+import {BasicButton} from './basicViews/BasicButton';
 import SlidingView from './slidingView';
 
-const ProjectTask: React.FC<{projectTask: ProjectTaskFragment}> = ({
-  projectTask,
-}) => {
+const ProjectTask: React.FC<{
+  projectTask: ProjectTaskFragment;
+  onUsersPress: () => void;
+}> = ({projectTask, onUsersPress}) => {
   const [deleteProjectTask] = useDeleteProjectTaskMutation();
   const [toggleProjectTask] = useToggleProjectTaskMutation();
 
@@ -47,28 +56,41 @@ const ProjectTask: React.FC<{projectTask: ProjectTaskFragment}> = ({
         frontView={
           <View
             style={{
-              padding: 10,
-              backgroundColor: 'white',
               flexDirection: 'row',
+              justifyContent: 'space-between',
               alignItems: 'center',
             }}>
-            <TouchableOpacity
-              onPress={() => {
-                toggleProjectTask({
-                  variables: {id: projectTask.id},
-                  refetchQueries: [GetProjectsDocument],
-                });
+            <View
+              style={{
+                padding: 10,
+                backgroundColor: 'white',
+                flexDirection: 'row',
+                alignItems: 'center',
               }}>
-              <Image
-                source={
-                  projectTask.done
-                    ? require('../../assets/Checkmark.png')
-                    : require('../../assets/Circle.png')
-                }
-                style={styles.checkMark}
-              />
-            </TouchableOpacity>
-            <Text>{projectTask.name}</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  toggleProjectTask({
+                    variables: {id: projectTask.id},
+                    refetchQueries: [GetProjectsDocument],
+                  });
+                }}>
+                <Image
+                  source={
+                    projectTask.done
+                      ? require('../../assets/Checkmark.png')
+                      : require('../../assets/Circle.png')
+                  }
+                  style={styles.checkMark}
+                />
+              </TouchableOpacity>
+              <Text>{projectTask.name}</Text>
+            </View>
+            <Pressable
+              onPress={() => {
+                onUsersPress();
+              }}>
+              <Text>Add users</Text>
+            </Pressable>
           </View>
         }
         backView={[back]}

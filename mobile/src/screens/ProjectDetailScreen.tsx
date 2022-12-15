@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {AssignMembersWindow} from '../components/assignMembersWindow';
 import BasicInputWindow from '../components/basicInputWindow';
 import ProjectTask from '../components/projectTask';
-import Subtask from '../components/subtask';
 import {
   GetProjectsDocument,
   useAddProjectTaskMutation,
@@ -26,12 +26,10 @@ const ProjectDetailScreen: React.FC<
     item => item.id == route.params.projectId,
   );
   const [addTaskModalIsVisible, setAddTaskModalIsVisible] = useState(false);
+  const [assignMembersWindowVisible, setAssignMembersWindowVisible] =
+    useState(false);
   const [addProjectTask, {error}] = useAddProjectTaskMutation();
-
-  useEffect(() => {
-    console.log(JSON.stringify(error));
-    console.log(project?.tasks);
-  }, [error, project]);
+  const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -63,10 +61,18 @@ const ProjectDetailScreen: React.FC<
         <Text style={styles.title}>{project?.name}</Text>
         <FlatList
           data={project?.tasks}
-          renderItem={({item}) => <ProjectTask projectTask={item} />}
+          renderItem={({item}) => (
+            <ProjectTask
+              projectTask={item}
+              onUsersPress={() => {
+                setActiveTaskId(item.id);
+              }}
+            />
+          )}
         />
       </View>
       <BasicInputWindow
+        placeholder="Task name"
         visible={addTaskModalIsVisible}
         onClose={() => {
           setAddTaskModalIsVisible(false);
@@ -78,13 +84,22 @@ const ProjectDetailScreen: React.FC<
           });
         }}
       />
+      <AssignMembersWindow
+        isVisible={Boolean(activeTaskId)}
+        taskId={activeTaskId}
+        onClose={() => {
+          setActiveTaskId(null);
+        }}
+        project={project}
+      />
     </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    margin: 5,
+    margin: 10,
+    marginHorizontal: 20,
   },
   title: {
     fontSize: 24,

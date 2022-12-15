@@ -1,0 +1,5 @@
+mutation RemoveAssignedMember($userId: String!, $taskId: String!) {
+  removeAssignedMember(userId: $userId, taskId: $taskId) {
+    ...ProjectTask
+  }
+}

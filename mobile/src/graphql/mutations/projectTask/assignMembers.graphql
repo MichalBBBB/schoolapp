@@ -1,0 +1,5 @@
+mutation AssignMember($userId: String!, $taskId: String!) {
+  assignMember(userId: $userId, taskId: $taskId) {
+    ...ProjectTask
+  }
+}

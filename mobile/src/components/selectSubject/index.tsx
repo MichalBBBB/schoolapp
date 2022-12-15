@@ -81,6 +81,7 @@ const SelectSubjectModal: React.FC<SelectSubjectProps> = ({
         </View>
       </BasicModalCard>
       <BasicInputWindow
+        placeholder="Subject name"
         onSubmit={text => {
           addSubject({
             variables: {name: text},

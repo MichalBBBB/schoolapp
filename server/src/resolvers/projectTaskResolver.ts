@@ -8,6 +8,7 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { ProjectTask } from "../entities/ProjectTask";
+import { User } from "../entities/User";
 import { isAuth } from "../middleware/isAuth";
 import { isUserInProject } from "../utils/isUserInProject";
 import { MyContext } from "../utils/MyContext";
@@ -74,6 +75,60 @@ export class projectTaskResolver {
       return true;
     } else {
       return false;
+    }
+  }
+
+  @Mutation(() => ProjectTask)
+  @UseMiddleware(isAuth)
+  async assignMember(
+    @Arg("userId") userId: string,
+    @Arg("taskId") taskId: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    const projectTask = await ProjectTask.findOne({ where: { id: taskId } });
+    const user = await User.findOne({ where: { id: userId } });
+    if (projectTask && user) {
+      if (
+        (await isUserInProject(projectTask.projectId, userId)) &&
+        (await isUserInProject(projectTask.projectId, payload?.userId || ""))
+      ) {
+        await ProjectTask.createQueryBuilder()
+          .relation("users")
+          .of(projectTask)
+          .add(user);
+        return projectTask;
+      } else {
+        throw new Error("user is not a member of the project");
+      }
+    } else {
+      throw new Error("task or user wasn't found");
+    }
+  }
+
+  @Mutation(() => ProjectTask)
+  @UseMiddleware(isAuth)
+  async removeAssignedMember(
+    @Arg("userId") userId: string,
+    @Arg("taskId") taskId: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    const projectTask = await ProjectTask.findOne({ where: { id: taskId } });
+    const user = await User.findOne({ where: { id: userId } });
+    if (projectTask) {
+      if (
+        (await isUserInProject(projectTask.projectId, userId)) &&
+        (await isUserInProject(projectTask.projectId, payload?.userId || ""))
+      ) {
+        await ProjectTask.createQueryBuilder()
+          .relation("users")
+          .of(projectTask)
+          .remove(user);
+        return projectTask;
+      } else {
+        throw new Error("user is not a member of the project");
+      }
+    } else {
+      throw new Error("task or user wasn't found");
     }
   }
 }
