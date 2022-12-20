@@ -43,11 +43,9 @@ const Routes = () => {
   );
 
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
-      <NavigationContainer theme={theme}>
-        {isLoggedIn ? screens : <AuthStack />}
-      </NavigationContainer>
-    </GestureHandlerRootView>
+    <NavigationContainer theme={theme}>
+      {isLoggedIn ? screens : <AuthStack />}
+    </NavigationContainer>
   );
 };
 

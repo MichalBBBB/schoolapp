@@ -8,6 +8,8 @@ import {ThemeProvider} from './contexts/ThemeContext';
 import dayjs from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
 import 'dayjs/locale/sk';
+import {PortalHost, PortalProvider} from '@gorhom/portal';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 const apolloClient = createApolloClient();
 export const isLoggedInVar = makeVar(false);
@@ -25,7 +27,12 @@ const App = () => {
   return (
     <ApolloProvider client={apolloClient}>
       <ThemeProvider>
-        <Routes />
+        <GestureHandlerRootView style={{flex: 1}}>
+          <PortalProvider>
+            <PortalHost name="menu" />
+            <Routes />
+          </PortalProvider>
+        </GestureHandlerRootView>
       </ThemeProvider>
     </ApolloProvider>
   );

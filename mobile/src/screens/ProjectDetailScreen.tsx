@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import {AssignMembersWindow} from '../components/assignMembersWindow';
 import BasicInputWindow from '../components/basicInputWindow';
+import {Menu} from '../components/menu';
+import {MenuItem} from '../components/menu/MenuItem';
 import ProjectTask from '../components/projectTask';
 import {
   GetProjectsDocument,
@@ -34,15 +36,30 @@ const ProjectDetailScreen: React.FC<
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity
-          onPress={() => {
-            setAddTaskModalIsVisible(true);
-          }}>
-          <Image
-            source={require('../../assets/Plus.png')}
-            style={styles.plusButton}
+        <Menu
+          trigger={
+            <Image
+              source={require('../../assets/Options.png')}
+              style={styles.options}
+            />
+          }>
+          <MenuItem
+            text={'Title'}
+            onPress={() => console.log('option pressed')}
           />
-        </TouchableOpacity>
+          <MenuItem
+            text={'Recently Added'}
+            onPress={() => console.log('option pressed')}
+          />
+          <MenuItem
+            text={'Recently Played'}
+            onPress={() => console.log('option pressed')}
+          />
+          <MenuItem
+            text={'Playlist type'}
+            onPress={() => console.log('option pressed')}
+          />
+        </Menu>
       ),
     });
   });
@@ -58,7 +75,18 @@ const ProjectDetailScreen: React.FC<
   return (
     <>
       <View style={styles.container}>
-        <Text style={styles.title}>{project?.name}</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>{project?.name}</Text>
+          <TouchableOpacity
+            onPress={() => {
+              setAddTaskModalIsVisible(true);
+            }}>
+            <Image
+              source={require('../../assets/Plus.png')}
+              style={styles.plusButton}
+            />
+          </TouchableOpacity>
+        </View>
         <FlatList
           data={project?.tasks}
           renderItem={({item}) => (
@@ -97,6 +125,11 @@ const ProjectDetailScreen: React.FC<
 };
 
 const styles = StyleSheet.create({
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   container: {
     margin: 10,
     marginHorizontal: 20,
@@ -109,6 +142,11 @@ const styles = StyleSheet.create({
     resizeMode: 'stretch',
     height: 30,
     width: 30,
+  },
+  options: {
+    resizeMode: 'stretch',
+    height: 20,
+    width: 20,
   },
 });
 

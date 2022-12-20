@@ -12,7 +12,6 @@ import {
   Pressable,
 } from 'react-native';
 import AddButton from '../components/addButton';
-import AddSubjectModal from '../components/selectSubject/addSubjectModal';
 import AddTaskWindow from '../components/addTaskWindow';
 import EditDateWindow from '../components/editDateWindow';
 import Task from '../components/task';
