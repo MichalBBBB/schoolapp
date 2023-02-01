@@ -146,28 +146,45 @@ export class projectResolver {
 
   @Mutation(() => Project)
   @UseMiddleware(isAuth)
-  async addMembersToProject(
+  async addMemberToProject(
     @Arg("projectId") projectId: string,
-    @Arg("memberEmails", () => [String]) memberEmails: string[]
+    @Arg("memberEmail") memberEmail: string,
+    @Ctx() { payload }: MyContext
   ) {
-    await AppDataSource.transaction(async (transactionEntityManager) => {
-      memberEmails.forEach(async (item) => {
-        const user = await transactionEntityManager.findOne(User, {
-          where: { email: item },
-        });
-        if (user) {
-          transactionEntityManager
-            .create(UserProject, {
-              projectId: projectId,
-              userId: user?.id,
-              accepted: false,
-            })
-            .save();
-        }
-      });
+    const project = await Project.findOne({ where: { id: projectId } });
+    const user = await User.findOne({ where: { email: memberEmail } });
+    if (project?.ownerId == payload?.userId && user) {
+      await UserProject.create({
+        userId: user.id,
+        projectId,
+        accepted: false,
+      }).save();
+    }
+    return Project.findOne({
+      where: { id: projectId },
+      relations: { tasks: true },
     });
   }
 
+  @Mutation(() => Project)
+  @UseMiddleware(isAuth)
+  async removeMemberFromProject(
+    @Arg("projectId") projectId: string,
+    @Arg("memberId") memberId: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    const userProject = await UserProject.findOne({
+      where: { userId: memberId, projectId },
+    });
+    const project = await Project.findOne({ where: { id: projectId } });
+    if (memberId == payload?.userId || payload?.userId == project?.ownerId) {
+      await userProject?.remove();
+    }
+    return Project.findOne({
+      where: { id: projectId },
+      relations: { tasks: true },
+    });
+  }
   @Mutation(() => Project)
   @UseMiddleware(isAuth)
   async acceptProjectInvite(
@@ -210,13 +227,22 @@ export class projectResolver {
       where: { userId: payload?.userId, accepted: false },
       relations: { project: true, user: true },
     });
-    const invites: Invite[] = userProjects.map((item) => {
-      return {
-        projectId: item.project.id,
-        projectName: item.project.name,
-        ownerName: item.user.fullName,
-      };
-    });
+    const invites: Invite[] = await Promise.all(
+      userProjects.map(async (item) => {
+        const owner = await User.findOne({
+          where: { id: item.project.ownerId },
+        });
+        if (owner) {
+          return {
+            projectId: item.project.id,
+            projectName: item.project.name,
+            ownerName: owner.fullName,
+          };
+        } else {
+          throw new Error("project owner hasn't been found");
+        }
+      })
+    );
     return invites;
   }
 }

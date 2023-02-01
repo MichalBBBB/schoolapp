@@ -1,0 +1,5 @@
+mutation removeMemberFromProject($projectId: String!, $memberId: String!) {
+  removeMemberFromProject(projectId: $projectId, memberId: $memberId) {
+    ...Project
+  }
+}

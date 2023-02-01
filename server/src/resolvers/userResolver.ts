@@ -20,7 +20,6 @@ import {
 } from "../utils/authUtils";
 import { MyContext } from "../utils/MyContext";
 import { validateRegister } from "../utils/validateRegister";
-import { getConnection } from "typeorm";
 import { isAuth } from "../middleware/isAuth";
 import { Task } from "../entities/Task";
 import { Subject } from "../entities/Subject";
@@ -154,15 +153,11 @@ export class userResolver {
     let user;
 
     try {
-      const result = await getConnection()
-        .createQueryBuilder()
-        .insert()
-        .into(User)
-        .values({ email, password: hashedPassword, fullName: name })
-        .returning("*")
-        .execute();
-
-      user = result.raw[0];
+      user = await User.create({
+        email,
+        password: hashedPassword,
+        fullName: name,
+      }).save();
     } catch (err) {
       // Catch postgres error about broken unique contstraint on email
       if (err.code === "23505") {
@@ -176,12 +171,16 @@ export class userResolver {
         };
       }
     }
-    // Send refresh token cookie
-    sendRefreshToken(res, createRefreshToken(user));
-    return {
-      user,
-      accesToken: createAccesToken(user),
-    };
+    if (user) {
+      // Send refresh token cookie
+      sendRefreshToken(res, createRefreshToken(user));
+      return {
+        user,
+        accesToken: createAccesToken(user),
+      };
+    } else {
+      throw new Error("an error occured");
+    }
   }
 
   @Query(() => Boolean)

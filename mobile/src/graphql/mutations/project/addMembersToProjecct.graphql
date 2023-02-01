@@ -1,5 +1,0 @@
-mutation AddMembersToProject($projectId: String!, $memberEmails: [String!]!) {
-  addMembersToProject(projectId: $projectId, memberEmails: $memberEmails) {
-    ...Project
-  }
-}

@@ -1,5 +1,5 @@
 import React, {Dispatch, RefObject, SetStateAction} from 'react';
-import {TextInput} from 'react-native';
+import {TextInput, TextStyle} from 'react-native';
 import {useTheme} from '../../contexts/ThemeContext';
 
 interface BasicTextInputProps {
@@ -12,6 +12,7 @@ interface BasicTextInputProps {
   placeholder?: string | undefined;
   setRef?: RefObject<TextInput> | undefined;
   value?: string;
+  style?: TextStyle;
 }
 
 export const BasicTextInput: React.FC<BasicTextInputProps> = ({
@@ -24,16 +25,20 @@ export const BasicTextInput: React.FC<BasicTextInputProps> = ({
   placeholder,
   setRef,
   value,
+  style,
 }) => {
   const [theme] = useTheme();
   return (
     <TextInput
-      style={{
-        backgroundColor: backgroundColor || theme.colors.background,
-        borderRadius,
-        padding,
-        color: color || theme.colors.text,
-      }}
+      style={[
+        {
+          backgroundColor: backgroundColor || theme.colors.background,
+          borderRadius,
+          padding,
+          color: color || theme.colors.text,
+        },
+        style,
+      ]}
       onChangeText={text => {
         if (onChangeText) {
           onChangeText(text);

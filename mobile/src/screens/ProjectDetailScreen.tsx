@@ -28,8 +28,6 @@ const ProjectDetailScreen: React.FC<
     item => item.id == route.params.projectId,
   );
   const [addTaskModalIsVisible, setAddTaskModalIsVisible] = useState(false);
-  const [assignMembersWindowVisible, setAssignMembersWindowVisible] =
-    useState(false);
   const [addProjectTask, {error}] = useAddProjectTaskMutation();
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
 
@@ -44,20 +42,12 @@ const ProjectDetailScreen: React.FC<
             />
           }>
           <MenuItem
-            text={'Title'}
-            onPress={() => console.log('option pressed')}
-          />
-          <MenuItem
-            text={'Recently Added'}
-            onPress={() => console.log('option pressed')}
-          />
-          <MenuItem
-            text={'Recently Played'}
-            onPress={() => console.log('option pressed')}
-          />
-          <MenuItem
-            text={'Playlist type'}
-            onPress={() => console.log('option pressed')}
+            text={'Members'}
+            onPress={() =>
+              navigation.navigate('ProjectMembersScreen', {
+                projectId: route.params.projectId,
+              })
+            }
           />
         </Menu>
       ),
