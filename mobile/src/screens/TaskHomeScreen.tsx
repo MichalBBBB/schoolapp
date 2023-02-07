@@ -50,7 +50,9 @@ const TaskHomeScreen: React.FC<
   return (
     <View style={{flex: 1}}>
       <FlatList
-        data={data?.getAllTasks}
+        data={data?.getAllTasks.filter(item => {
+          return item.done == false;
+        })}
         renderItem={({item, index}) => <Task task={item} />}
         //ItemSeparatorComponent={() => <View style={styles.separator} />}
       />

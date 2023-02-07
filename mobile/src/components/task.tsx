@@ -1,7 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   StyleSheet,
@@ -39,13 +39,21 @@ const Task: React.FC<{
   const [deleteTask] = useDeleteTaskMutation();
   const navigation = useNavigation<TaskNavigationProp>();
   const [toggleTask] = useToggleTaskMutation();
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    setDone(task.done);
+  }, [task]);
 
   const deleteTaskFunc = async () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     await deleteTask({
       variables: {id: task.id},
       update: cache => {
-        const normalizedId = cache.identify({id: task.id, __typename: 'Task'});
+        const normalizedId = cache.identify({
+          id: task.id,
+          __typename: 'Task',
+        });
         cache.evict({id: normalizedId});
       },
     });
@@ -85,11 +93,17 @@ const Task: React.FC<{
             <View style={styles.container}>
               <TouchableOpacity
                 onPress={() => {
-                  toggleTask({variables: {id: task.id}});
+                  setDone(!done);
+                  LayoutAnimation.configureNext(
+                    LayoutAnimation.Presets.easeInEaseOut,
+                  );
+                  setTimeout(() => {
+                    toggleTask({variables: {id: task.id}});
+                  }, 400);
                 }}>
                 <Image
                   source={
-                    task.done
+                    done
                       ? require('../../assets/Checkmark.png')
                       : require('../../assets/Circle.png')
                   }
