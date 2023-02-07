@@ -33,6 +33,7 @@ const AddEventScreen: React.FC<
   const [name, setName] = useState('');
   const [startDate, setStartDate] = useState(dayjs());
   const [endDate, setEndDate] = useState(dayjs().add(1, 'hour'));
+  const [endDateHasBeenChanged, setEndDateHasBeenChanged] = useState(false);
   const [startDateModalVisible, setStartDateModalVisible] = useState(false);
   const [endDateModalVisible, setEndDateModalVisible] = useState(false);
   const [subjectModalVisible, setSubjectModalVisible] = useState(false);
@@ -112,6 +113,9 @@ const AddEventScreen: React.FC<
         onSubmit={date => {
           setStartDateModalVisible(false);
           setStartDate(date);
+          if (!endDateHasBeenChanged) {
+            setEndDate(date.add(1, 'hour'));
+          }
         }}
         subject={subject}
       />
@@ -123,6 +127,9 @@ const AddEventScreen: React.FC<
         }}
         onSubmit={date => {
           setEndDateModalVisible(false);
+          if (!endDate.isSame(date)) {
+            setEndDateHasBeenChanged(true);
+          }
           setEndDate(date);
         }}
       />

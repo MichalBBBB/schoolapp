@@ -170,6 +170,7 @@ export type MutationCreateSubtaskArgs = {
 
 
 export type MutationCreateTaskArgs = {
+  doDate?: InputMaybe<Scalars['DateTime']>;
   dueDate?: InputMaybe<Scalars['DateTime']>;
   name: Scalars['String'];
   subjectId?: InputMaybe<Scalars['String']>;
@@ -632,6 +633,7 @@ export type CreateTaskMutationVariables = Exact<{
   name: Scalars['String'];
   subjectId?: InputMaybe<Scalars['String']>;
   dueDate?: InputMaybe<Scalars['DateTime']>;
+  doDate?: InputMaybe<Scalars['DateTime']>;
 }>;
 
 
@@ -1593,8 +1595,13 @@ export type CreateSubtaskMutationHookResult = ReturnType<typeof useCreateSubtask
 export type CreateSubtaskMutationResult = Apollo.MutationResult<CreateSubtaskMutation>;
 export type CreateSubtaskMutationOptions = Apollo.BaseMutationOptions<CreateSubtaskMutation, CreateSubtaskMutationVariables>;
 export const CreateTaskDocument = gql`
-    mutation CreateTask($name: String!, $subjectId: String, $dueDate: DateTime) {
-  createTask(name: $name, subjectId: $subjectId, dueDate: $dueDate) {
+    mutation CreateTask($name: String!, $subjectId: String, $dueDate: DateTime, $doDate: DateTime) {
+  createTask(
+    name: $name
+    subjectId: $subjectId
+    dueDate: $dueDate
+    doDate: $doDate
+  ) {
     ...Task
   }
 }
@@ -1617,6 +1624,7 @@ export type CreateTaskMutationFn = Apollo.MutationFunction<CreateTaskMutation, C
  *      name: // value for 'name'
  *      subjectId: // value for 'subjectId'
  *      dueDate: // value for 'dueDate'
+ *      doDate: // value for 'doDate'
  *   },
  * });
  */

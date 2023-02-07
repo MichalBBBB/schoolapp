@@ -69,16 +69,23 @@ export class taskResolver {
   @Mutation(() => Task)
   @UseMiddleware(isAuth)
   async createTask(
+    @Ctx() { payload }: MyContext,
     @Arg("name") name: string,
-    @Arg("subjectId", { nullable: true }) subjectId: string,
-    @Arg("dueDate", { nullable: true }) dueDate: Date,
-    @Ctx() { payload }: MyContext
+    @Arg("subjectId", { nullable: true }) subjectId?: string,
+    @Arg("dueDate", { nullable: true }) dueDate?: Date,
+    @Arg("doDate", { nullable: true }) doDate?: Date
   ) {
     console.log(name);
     const result = await AppDataSource.createQueryBuilder()
       .insert()
       .into(Task)
-      .values({ name, userId: payload?.userId, subjectId, dueDate: dueDate })
+      .values({
+        name,
+        userId: payload?.userId,
+        subjectId,
+        dueDate: dueDate,
+        doDate,
+      })
       .returning("*")
       .execute();
     return result.raw[0];
