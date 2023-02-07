@@ -40,6 +40,7 @@ const LessonTimesScreen: React.FC<
   // const [lessonTimes, setLessonTimes] = useState<LessonTime[]>([
   //   {lessonNumber: 0, startTime: '08:00', endTime: '08:45'},
   // ]);
+  const [defaultLessonLength, setDefaultLessonLength] = useState(45);
   const [theme] = useTheme();
   const [timeModalVisible, setTimeModalVisible] = useState(false);
   const [activeLesson, setActiveLesson] = useState<{
@@ -93,7 +94,7 @@ const LessonTimesScreen: React.FC<
           .add(10, 'minute')
           .format('HH:mm'),
         endTime: dayjs(lastLessonTime.endTime, 'HH:mm')
-          .add(55, 'minute')
+          .add(10 + defaultLessonLength, 'minute')
           .format('HH:mm'),
       },
       refetchQueries: [GetAllLessonTimesDocument],
@@ -154,6 +155,15 @@ const LessonTimesScreen: React.FC<
         },
       });
     } else if (changedValue == 'lesson-end') {
+      if (index == 0 && data.getAllLessonTimes.length == 1) {
+        console.log('here');
+        setDefaultLessonLength(
+          dayjs(newValue, 'HH:mm').diff(
+            dayjs(data.getAllLessonTimes[index].startTime, 'HH:mm'),
+            'minute',
+          ),
+        );
+      }
       const oldValue = data.getAllLessonTimes[index].endTime;
       const difference = dayjs(newValue, 'HH:mm').diff(
         dayjs(oldValue, 'HH:mm'),
