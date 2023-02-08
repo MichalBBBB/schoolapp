@@ -11,19 +11,19 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import BackButton from '../components/backButton';
-import BasicInputWindow from '../components/basicInputWindow';
-import {BasicButton} from '../components/basicViews/BasicButton';
-import EditDateModal from '../components/editDateWindow/editDateModal';
-import Subtask from '../components/subtask';
-import {calendarConfigWithoutTime} from '../components/task';
+import BackButton from '../../components/backButton';
+import BasicInputWindow from '../../components/basicInputWindow';
+import {BasicButton} from '../../components/basicViews/BasicButton';
+import EditDateModal from '../../components/editDateWindow/editDateModal';
+import Subtask from '../../components/subtask';
+import {calendarConfigWithoutTime} from '../../components/task';
 import {
   GetAllTasksDocument,
   useCreateSubtaskMutation,
   useEditTaskMutation,
   useGetAllTasksQuery,
-} from '../generated/graphql';
-import {TaskStackParamList} from '../routes/TaskStack';
+} from '../../generated/graphql';
+import {TaskStackParamList} from '../../routes/TaskStack';
 
 const TaskDetailScreen: React.FC<
   NativeStackScreenProps<TaskStackParamList, 'TaskDetailScreen'>

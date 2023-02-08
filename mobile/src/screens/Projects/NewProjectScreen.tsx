@@ -1,15 +1,15 @@
 import React, {useEffect} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {StyleSheet, Text} from 'react-native';
-import {TaskStackParamList} from '../routes/TaskStack';
-import ConnectedList from '../components/connectedList';
+import {TaskStackParamList} from '../../routes/TaskStack';
+import ConnectedList from '../../components/connectedList';
 import {View, TextInput} from 'react-native';
 import {useState} from 'react';
-import {BasicButton} from '../components/basicViews/BasicButton';
+import {BasicButton} from '../../components/basicViews/BasicButton';
 import {
   GetProjectsDocument,
   useCreateProjectMutation,
-} from '../generated/graphql';
+} from '../../generated/graphql';
 
 export const NewProjectScreen: React.FC<
   NativeStackScreenProps<TaskStackParamList, 'NewProjectScreen'>

@@ -3,8 +3,8 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import BackButton from '../components/backButton';
 import {TabStackParamList} from '../Routes';
-import AddEventScreen from '../screens/AddEventScreen';
-import CalendarHomeScreen from '../screens/CalendarHomeScreen';
+import AddEventScreen from '../screens/Calendar/AddEventScreen';
+import CalendarHomeScreen from '../screens/Calendar/CalendarHomeScreen';
 
 export type CalendarStackParamList = {
   CalendarHomeScreen: undefined;

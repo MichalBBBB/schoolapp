@@ -1,16 +1,16 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useEffect} from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
-import {BasicButton} from '../components/basicViews/BasicButton';
-import {BasicCard} from '../components/basicViews/BasicCard';
+import {BasicButton} from '../../components/basicViews/BasicButton';
+import {BasicCard} from '../../components/basicViews/BasicCard';
 import {
   GetInvitesDocument,
   GetProjectsDocument,
   useAcceptProjectInviteMutation,
   useDeclineProjectInviteMutation,
   useGetInvitesQuery,
-} from '../generated/graphql';
-import {TaskStackParamList} from '../routes/TaskStack';
+} from '../../generated/graphql';
+import {TaskStackParamList} from '../../routes/TaskStack';
 
 export const NotificationScreen: React.FC<
   NativeStackScreenProps<TaskStackParamList, 'NotificationScreen'>

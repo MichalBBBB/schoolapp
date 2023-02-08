@@ -6,15 +6,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {isLoggedInVar} from '../App';
+import {isLoggedInVar} from '../../App';
 import {
   useLoginMutation,
   useRegisterMutation,
   UserError,
   useUserExistsLazyQuery,
   useUserExistsQuery,
-} from '../generated/graphql';
-import {getAccessToken, setAccessToken} from '../utils/AccessToken';
+} from '../../generated/graphql';
+import {getAccessToken, setAccessToken} from '../../utils/AccessToken';
 const EmailLoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

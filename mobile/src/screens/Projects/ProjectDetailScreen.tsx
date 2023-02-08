@@ -8,17 +8,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {AssignMembersWindow} from '../components/assignMembersWindow';
-import BasicInputWindow from '../components/basicInputWindow';
-import {Menu} from '../components/menu';
-import {MenuItem} from '../components/menu/MenuItem';
-import ProjectTask from '../components/projectTask';
+import {AssignMembersWindow} from '../../components/assignMembersWindow';
+import BasicInputWindow from '../../components/basicInputWindow';
+import {Menu} from '../../components/menu';
+import {MenuItem} from '../../components/menu/MenuItem';
+import ProjectTask from '../../components/projectTask';
 import {
   GetProjectsDocument,
   useAddProjectTaskMutation,
   useGetProjectsQuery,
-} from '../generated/graphql';
-import {ProjectStackParamList} from '../routes/ProjectStack';
+} from '../../generated/graphql';
+import {ProjectStackParamList} from '../../routes/ProjectStack';
 
 const ProjectDetailScreen: React.FC<
   NativeStackScreenProps<ProjectStackParamList, 'ProjectDetailScreen'>

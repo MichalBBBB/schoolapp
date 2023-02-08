@@ -11,8 +11,8 @@ import {
   GetAllTasksDocument,
   useCreateSubtaskMutation,
   useCreateTaskMutation,
-} from '../generated/graphql';
-import {TaskStackParamList} from '../routes/TaskStack';
+} from '../../generated/graphql';
+import {TaskStackParamList} from '../../routes/TaskStack';
 
 const AddSubtaskScreen: React.FC<
   NativeStackScreenProps<TaskStackParamList, 'AddSubtaskScreen'>

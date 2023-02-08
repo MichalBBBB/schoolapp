@@ -3,13 +3,13 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useEffect} from 'react';
 import {FlatList, Pressable, Text, View} from 'react-native';
 import {BaseButton} from 'react-native-gesture-handler';
-import {BasicCard} from '../components/basicViews/BasicCard';
+import {BasicCard} from '../../components/basicViews/BasicCard';
 import {
   GetProjectsDocument,
   useDeleteProjectMutation,
   useGetProjectsQuery,
-} from '../generated/graphql';
-import {ProjectStackParamList} from '../routes/ProjectStack';
+} from '../../generated/graphql';
+import {ProjectStackParamList} from '../../routes/ProjectStack';
 
 const ProjectHomeScreen: React.FC<
   NativeStackScreenProps<ProjectStackParamList, 'ProjectHomeScreen'>

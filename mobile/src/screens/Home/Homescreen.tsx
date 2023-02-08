@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text} from 'react-native';
-import {useMeQuery} from '../generated/graphql';
+import {useMeQuery} from '../../generated/graphql';
 const HomeScreen = () => {
   const {data, error, loading} = useMeQuery();
   return (

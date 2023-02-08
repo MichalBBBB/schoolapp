@@ -11,12 +11,12 @@ import {
   TouchableOpacity,
   Pressable,
 } from 'react-native';
-import AddButton from '../components/addButton';
-import AddTaskWindow from '../components/addTaskWindow';
-import EditDateWindow from '../components/editDateWindow';
-import Task from '../components/task';
-import {useGetAllTasksQuery} from '../generated/graphql';
-import {TaskStackParamList} from '../routes/TaskStack';
+import AddButton from '../../components/addButton';
+import AddTaskWindow from '../../components/addTaskWindow';
+import EditDateWindow from '../../components/editDateWindow';
+import Task from '../../components/task';
+import {useGetAllTasksQuery} from '../../generated/graphql';
+import {TaskStackParamList} from '../../routes/TaskStack';
 
 const TaskHomeScreen: React.FC<
   NativeStackScreenProps<TaskStackParamList, 'TaskHomeScreen'>

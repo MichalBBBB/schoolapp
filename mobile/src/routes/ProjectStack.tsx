@@ -3,9 +3,9 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import BackButton from '../components/backButton';
 import {TabStackParamList} from '../Routes';
-import ProjectDetailScreen from '../screens/ProjectDetailScreen';
-import ProjectHomeScreen from '../screens/ProjectHomeScreen';
-import {ProjectMembersScreen} from '../screens/ProjectMembersScreen';
+import ProjectDetailScreen from '../screens/Projects/ProjectDetailScreen';
+import ProjectHomeScreen from '../screens/Projects/ProjectHomeScreen';
+import {ProjectMembersScreen} from '../screens/Projects/ProjectMembersScreen';
 
 export type ProjectStackParamList = {
   ProjectHomeScreen: undefined;

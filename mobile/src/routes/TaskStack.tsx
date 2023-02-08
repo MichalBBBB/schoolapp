@@ -5,16 +5,14 @@ import {Image, TouchableOpacity} from 'react-native';
 import BackButton from '../components/backButton';
 import {TaskFragment} from '../generated/graphql';
 import {TabStackParamList} from '../Routes';
-import AddSubtaskScreen from '../screens/AddSubtaskScreen';
-import AddTaskScreen from '../screens/AddTaskScreen';
-import {NewProjectScreen} from '../screens/NewProjectScreen';
-import {NotificationScreen} from '../screens/NotificationScreen';
-import TaskDetailScreen from '../screens/TaskDetailScreen';
-import TaskHomeScreen from '../screens/TaskHomeScreen';
+import AddSubtaskScreen from '../screens/Tasks/AddSubtaskScreen';
+import {NewProjectScreen} from '../screens/Projects/NewProjectScreen';
+import {NotificationScreen} from '../screens/Tasks/NotificationScreen';
+import TaskDetailScreen from '../screens/Tasks/TaskDetailScreen';
+import TaskHomeScreen from '../screens/Tasks/TaskHomeScreen';
 
 export type TaskStackParamList = {
   TaskHomeScreen: undefined;
-  AddTaskScreen: undefined;
   TaskDetailScreen: {task: TaskFragment};
   AddSubtaskScreen: {taskId: string};
   NewProjectScreen: undefined;
@@ -38,7 +36,6 @@ const TaskStack: React.FC<
         },
       })}>
       <Stack.Screen name="TaskHomeScreen" component={TaskHomeScreen} />
-      <Stack.Screen name="AddTaskScreen" component={AddTaskScreen} />
       <Stack.Screen
         name="TaskDetailScreen"
         component={TaskDetailScreen}

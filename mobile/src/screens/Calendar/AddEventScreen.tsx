@@ -2,18 +2,18 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import React, {useState} from 'react';
 import {Pressable, StyleSheet, Text, View, TextInput} from 'react-native';
-import {CalendarStackParamList} from '../routes/CalendarStack';
+import {CalendarStackParamList} from '../../routes/CalendarStack';
 import {
   GetAllEventsDocument,
   Subject,
   SubjectFragment,
   useCreateEventMutation,
-} from '../generated/graphql';
-import ConnectedList from '../components/connectedList';
-import EditDateModal from '../components/editDateWindow/editDateModal';
-import {BasicButton} from '../components/basicViews/BasicButton';
-import {PrimaryText} from '../components/basicViews/PrimaryText';
-import SelectSubjectModal from '../components/selectSubject';
+} from '../../generated/graphql';
+import ConnectedList from '../../components/connectedList';
+import EditDateModal from '../../components/editDateWindow/editDateModal';
+import {BasicButton} from '../../components/basicViews/BasicButton';
+import {PrimaryText} from '../../components/basicViews/PrimaryText';
+import SelectSubjectModal from '../../components/selectSubject';
 
 let hours: number[] = [];
 for (var i = 0; i < 24; i++) {

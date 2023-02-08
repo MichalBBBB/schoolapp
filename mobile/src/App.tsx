@@ -2,7 +2,7 @@ import {ApolloProvider, makeVar} from '@apollo/client';
 import React from 'react';
 import {Platform, Text, UIManager, View} from 'react-native';
 import Routes from './Routes';
-import HomeScreen from './screens/Homescreen';
+import HomeScreen from './screens/Home/Homescreen';
 import {createApolloClient} from './utils/createApolloClient';
 import {ThemeProvider} from './contexts/ThemeContext';
 import dayjs from 'dayjs';

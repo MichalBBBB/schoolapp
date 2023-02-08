@@ -2,11 +2,11 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useEffect} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {authorize} from 'react-native-app-auth';
-import {isLoggedInVar} from '../App';
-import {useTheme} from '../contexts/ThemeContext';
-import {useGoogleSignInMutation} from '../generated/graphql';
-import {AuthStackParamList} from '../routes/AuthStack';
-import {setAccessToken} from '../utils/AccessToken';
+import {isLoggedInVar} from '../../App';
+import {useTheme} from '../../contexts/ThemeContext';
+import {useGoogleSignInMutation} from '../../generated/graphql';
+import {AuthStackParamList} from '../../routes/AuthStack';
+import {setAccessToken} from '../../utils/AccessToken';
 
 const config = {
   issuer: 'https://accounts.google.com',

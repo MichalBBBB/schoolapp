@@ -115,6 +115,12 @@ export class userResolver {
     return User.find();
   }
 
+  @Mutation(() => Boolean)
+  deleteAllGoogleUsers(@Arg("id") id: string) {
+    User.delete({ id });
+    return true;
+  }
+
   @Query(() => User)
   @UseMiddleware(isAuth)
   me(@Ctx() { payload }: MyContext) {
@@ -222,7 +228,7 @@ export class userResolver {
   async googleSignIn(
     @Arg("idToken") idToken: string,
     @Ctx() { res }: MyContext
-  ) {
+  ): Promise<UserSucces> {
     const response = await verify(idToken);
     let user;
     user = await User.findOne({ where: { email: response.email } });

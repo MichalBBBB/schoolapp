@@ -1,11 +1,11 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import {Text, View} from 'react-native';
-import AuthHomeScreen from '../screens/AuthHomeScreen';
-import EmailLoginScreen from '../screens/EmailLoginScreen';
+import AuthHomeScreen from '../screens/Auth/AuthHomeScreen';
+import EmailLoginScreen from '../screens/Auth/EmailLoginScreen';
 
 const AuthStack = () => {
-  const Stack = createNativeStackNavigator();
+  const Stack = createNativeStackNavigator<AuthStackParamList>();
   return (
     <Stack.Navigator>
       <Stack.Screen name="AuthHome" component={AuthHomeScreen} />
@@ -16,7 +16,6 @@ const AuthStack = () => {
 export type AuthStackParamList = {
   AuthHome: undefined;
   Login: undefined;
-  Register: undefined;
 };
 
 export default AuthStack;

@@ -1,14 +1,14 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useState} from 'react';
 import {FlatList, Image, Pressable, StyleSheet, Text, View} from 'react-native';
-import {AddProjectMemberWindow} from '../components/addProjectMemberWindow';
-import {BasicButton} from '../components/basicViews/BasicButton';
+import {AddProjectMemberWindow} from '../../components/addProjectMemberWindow';
+import {BasicButton} from '../../components/basicViews/BasicButton';
 import {
   useAddMemberToProjectMutation,
   useGetProjectsQuery,
   useRemoveMemberFromProjectMutation,
-} from '../generated/graphql';
-import {ProjectStackParamList} from '../routes/ProjectStack';
+} from '../../generated/graphql';
+import {ProjectStackParamList} from '../../routes/ProjectStack';
 
 export const ProjectMembersScreen: React.FC<
   NativeStackScreenProps<ProjectStackParamList, 'ProjectMembersScreen'>
