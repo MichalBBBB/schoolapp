@@ -8,14 +8,14 @@ import {setContext} from '@apollo/client/link/context';
 import {TokenRefreshLink} from 'apollo-link-token-refresh';
 import jwtDecode from 'jwt-decode';
 import {isLoggedInVar} from '../App';
-import {getAccesToken, setAccesToken} from './AccesToken';
+import {getAccessToken, setAccessToken} from './AccessToken';
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:5002/graphql',
 });
 
 const authLink = setContext((_, {headers}) => {
-  const token = getAccesToken();
+  const token = getAccessToken();
 
   return {
     headers: {
@@ -28,7 +28,7 @@ const authLink = setContext((_, {headers}) => {
 const refreshLink = new TokenRefreshLink({
   accessTokenField: 'accesToken',
   isTokenValidOrUndefined: () => {
-    const token = getAccesToken();
+    const token = getAccessToken();
     if (!token) {
       return true;
     }
@@ -51,7 +51,7 @@ const refreshLink = new TokenRefreshLink({
     });
   },
   handleFetch: accesToken => {
-    setAccesToken(accesToken);
+    setAccessToken(accesToken);
   },
   handleError: err => {
     console.warn('Your refresh token is invalid. Try to relogin');

@@ -90,6 +90,7 @@ export type Mutation = {
   editLessonTime: LessonTime;
   editLessonTimes: Array<LessonTime>;
   editTask: Task;
+  googleSignIn: UserSucces;
   login: LoginResponse;
   register: RegisterResponse;
   removeAssignedMember: ProjectTask;
@@ -255,6 +256,11 @@ export type MutationEditTaskArgs = {
   id: Scalars['String'];
   name: Scalars['String'];
   text?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationGoogleSignInArgs = {
+  idToken: Scalars['String'];
 };
 
 
@@ -433,7 +439,7 @@ export type UserProject = {
 
 export type UserSucces = {
   __typename?: 'UserSucces';
-  accesToken: Scalars['String'];
+  accessToken: Scalars['String'];
   user: User;
 };
 
@@ -678,13 +684,20 @@ export type ToggleTaskMutationVariables = Exact<{
 
 export type ToggleTaskMutation = { __typename?: 'Mutation', toggleTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, doDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
 
+export type GoogleSignInMutationVariables = Exact<{
+  idToken: Scalars['String'];
+}>;
+
+
+export type GoogleSignInMutation = { __typename?: 'Mutation', googleSignIn: { __typename?: 'UserSucces', accessToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
+
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null | undefined, message: string }> } | { __typename?: 'UserSucces', accesToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null | undefined, message: string }> } | { __typename?: 'UserSucces', accessToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
 
 export type RegisterMutationVariables = Exact<{
   email: Scalars['String'];
@@ -693,7 +706,7 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null | undefined, message: string }> } | { __typename?: 'UserSucces', accesToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null | undefined, message: string }> } | { __typename?: 'UserSucces', accessToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
 
 export type GetAllEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -738,7 +751,7 @@ export type HelloQuery = { __typename?: 'Query', hello: string };
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, fullName: string, createdAt: any, updatedAt: any, tasks: Array<{ __typename?: 'Task', id: string, name: string, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined, subtasks: Array<{ __typename?: 'Subtask', id: string, name: string }> }>, subjects: Array<{ __typename?: 'Subject', id: string, name: string }> } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, imageURL?: string | null | undefined, fullName: string, createdAt: any, updatedAt: any, tasks: Array<{ __typename?: 'Task', id: string, name: string, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined, subtasks: Array<{ __typename?: 'Subtask', id: string, name: string }> }>, subjects: Array<{ __typename?: 'Subject', id: string, name: string }> } };
 
 export type UserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -1800,11 +1813,49 @@ export function useToggleTaskMutation(baseOptions?: Apollo.MutationHookOptions<T
 export type ToggleTaskMutationHookResult = ReturnType<typeof useToggleTaskMutation>;
 export type ToggleTaskMutationResult = Apollo.MutationResult<ToggleTaskMutation>;
 export type ToggleTaskMutationOptions = Apollo.BaseMutationOptions<ToggleTaskMutation, ToggleTaskMutationVariables>;
+export const GoogleSignInDocument = gql`
+    mutation GoogleSignIn($idToken: String!) {
+  googleSignIn(idToken: $idToken) {
+    user {
+      id
+      email
+      fullName
+    }
+    accessToken
+  }
+}
+    `;
+export type GoogleSignInMutationFn = Apollo.MutationFunction<GoogleSignInMutation, GoogleSignInMutationVariables>;
+
+/**
+ * __useGoogleSignInMutation__
+ *
+ * To run a mutation, you first call `useGoogleSignInMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGoogleSignInMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [googleSignInMutation, { data, loading, error }] = useGoogleSignInMutation({
+ *   variables: {
+ *      idToken: // value for 'idToken'
+ *   },
+ * });
+ */
+export function useGoogleSignInMutation(baseOptions?: Apollo.MutationHookOptions<GoogleSignInMutation, GoogleSignInMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GoogleSignInMutation, GoogleSignInMutationVariables>(GoogleSignInDocument, options);
+      }
+export type GoogleSignInMutationHookResult = ReturnType<typeof useGoogleSignInMutation>;
+export type GoogleSignInMutationResult = Apollo.MutationResult<GoogleSignInMutation>;
+export type GoogleSignInMutationOptions = Apollo.BaseMutationOptions<GoogleSignInMutation, GoogleSignInMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
     ... on UserSucces {
-      accesToken
+      accessToken
       user {
         id
         email
@@ -1851,7 +1902,7 @@ export const RegisterDocument = gql`
     mutation Register($email: String!, $password: String!, $name: String!) {
   register(email: $email, password: $password, name: $name) {
     ... on UserSucces {
-      accesToken
+      accessToken
       user {
         id
         email
@@ -2170,6 +2221,7 @@ export const MeDocument = gql`
   me {
     id
     email
+    imageURL
     tasks {
       id
       name

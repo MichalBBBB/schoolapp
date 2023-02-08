@@ -1,6 +1,13 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React from 'react';
-import {View, ScrollView, StyleSheet, Text, Pressable} from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  Pressable,
+  Image,
+} from 'react-native';
 import {SecondaryText} from '../../components/basicViews/SecondaryText';
 import ConnectedList from '../../components/connectedList';
 import {useMeQuery} from '../../generated/graphql';
@@ -13,14 +20,22 @@ const SettingsHomeScreen: React.FC<
 
   const profile = (
     <View style={styles.profileContainer}>
-      <View
-        style={{
-          backgroundColor: '#ccc',
-          width: 80,
-          height: 80,
-          borderRadius: 40,
-          marginRight: 20,
-        }}></View>
+      {me?.me.imageURL ? (
+        <Image
+          source={{uri: me?.me.imageURL}}
+          style={{width: 80, height: 80, marginRight: 20, borderRadius: 40}}
+        />
+      ) : (
+        <View
+          style={{
+            backgroundColor: '#ccc',
+            width: 80,
+            height: 80,
+            borderRadius: 40,
+            marginRight: 20,
+          }}></View>
+      )}
+
       <View style={styles.nameContainer}>
         <Text style={styles.name}>{me?.me.fullName}</Text>
         <SecondaryText>Change your profile info</SecondaryText>

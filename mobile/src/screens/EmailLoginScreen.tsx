@@ -14,7 +14,7 @@ import {
   useUserExistsLazyQuery,
   useUserExistsQuery,
 } from '../generated/graphql';
-import {getAccesToken, setAccesToken} from '../utils/AccesToken';
+import {getAccessToken, setAccessToken} from '../utils/AccessToken';
 const EmailLoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,7 +29,7 @@ const EmailLoginScreen = () => {
     const response = await loginMutation({variables: {password, email}});
     console.log('login', response);
     if (response.data?.login.__typename === 'UserSucces') {
-      setAccesToken(response.data.login.accesToken);
+      setAccessToken(response.data.login.accessToken);
       isLoggedInVar(true);
     } else if (response.data?.login.__typename === 'UserFail') {
       setErrors(response.data?.login.errors);
@@ -42,7 +42,7 @@ const EmailLoginScreen = () => {
     });
     console.log('register', response);
     if (response.data?.register.__typename === 'UserSucces') {
-      setAccesToken(response.data.register.accesToken);
+      setAccessToken(response.data.register.accessToken);
       isLoggedInVar(true);
     } else if (response.data?.register.__typename === 'UserFail') {
       setErrors(response.data.register.errors);

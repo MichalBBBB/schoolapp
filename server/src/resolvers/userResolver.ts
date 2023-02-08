@@ -23,6 +23,41 @@ import { validateRegister } from "../utils/validateRegister";
 import { isAuth } from "../middleware/isAuth";
 import { Task } from "../entities/Task";
 import { Subject } from "../entities/Subject";
+import { OAuth2Client } from "google-auth-library";
+
+const client = new OAuth2Client({
+  clientId: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+});
+
+const verify = async (
+  idToken: string
+): Promise<{
+  name: string | undefined;
+  userId: string | undefined;
+  email: string | undefined;
+  pictureURL: string | undefined;
+}> => {
+  const response = await client.verifyIdToken({
+    idToken,
+    audience:
+      "1073547053227-8unebat1npl554u7sficsagpmpdkb08j.apps.googleusercontent.com",
+  });
+  const payload = response.getPayload();
+  if (!payload) {
+    throw new Error("an error occured");
+  }
+  const name = payload.name;
+  const email = payload.email;
+  const userId = payload.sub;
+  const pictureURL = payload.picture;
+  return {
+    name,
+    email,
+    userId,
+    pictureURL,
+  };
+};
 
 @ObjectType()
 export class UserError {
@@ -45,7 +80,7 @@ class UserSucces {
   user: User;
 
   @Field()
-  accesToken: string;
+  accessToken: string;
 }
 
 const RegisterUnion = createUnionType({
@@ -129,7 +164,7 @@ export class userResolver {
 
     return {
       user: user,
-      accesToken: createAccesToken(user),
+      accessToken: createAccesToken(user),
     };
   }
 
@@ -176,7 +211,34 @@ export class userResolver {
       sendRefreshToken(res, createRefreshToken(user));
       return {
         user,
-        accesToken: createAccesToken(user),
+        accessToken: createAccesToken(user),
+      };
+    } else {
+      throw new Error("an error occured");
+    }
+  }
+
+  @Mutation(() => UserSucces)
+  async googleSignIn(
+    @Arg("idToken") idToken: string,
+    @Ctx() { res }: MyContext
+  ) {
+    const response = await verify(idToken);
+    let user;
+    user = await User.findOne({ where: { email: response.email } });
+    if (!user) {
+      user = await User.create({
+        email: response.email,
+        fullName: response.name,
+        googleId: response.userId,
+        imageURL: response.pictureURL,
+      }).save();
+    }
+    if (user) {
+      sendRefreshToken(res, createRefreshToken(user));
+      return {
+        user,
+        accessToken: createAccesToken(user),
       };
     } else {
       throw new Error("an error occured");
