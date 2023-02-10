@@ -9,7 +9,9 @@ import {
   useCreateTaskMutation,
   useDeleteEventMutation,
 } from '../../generated/graphql';
-import EditDateModal from '../editDateWindow/editDateModal';
+import {BasicCard} from '../basicViews/BasicCard';
+import {BasicText} from '../basicViews/BasicText';
+import EditDateModal from '../editDateWindow';
 import {Menu} from '../menu';
 import {MenuItem} from '../menu/MenuItem';
 import SlidingView from '../slidingView';
@@ -24,16 +26,16 @@ export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
   const [addTask] = useCreateTaskMutation();
   return (
     <>
-      <View style={styles.container}>
+      <BasicCard backgroundColor="accentBackground" style={styles.container}>
         <View style={styles.horizontalContainer}>
-          <Text>{lesson.subject.name}</Text>
-          <Text>
+          <BasicText>{lesson.subject.name}</BasicText>
+          <BasicText color="textSecondary">
             {dayjs(lesson.lessonTime.startTime, 'HH:mm').format('HH:mm')}
-          </Text>
+          </BasicText>
         </View>
         {event && (
           <View style={styles.eventContainer}>
-            <Text>{event.name}</Text>
+            <BasicText>{event.name}</BasicText>
             <Menu
               trigger={
                 <Image
@@ -50,7 +52,7 @@ export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
             </Menu>
           </View>
         )}
-      </View>
+      </BasicCard>
       <EditDateModal
         isVisible={studyTimeModalVisible}
         onClose={() => {
@@ -79,7 +81,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     borderRadius: 10,
     overflow: 'hidden',
-    backgroundColor: '#eee',
     padding: 10,
   },
   image: {

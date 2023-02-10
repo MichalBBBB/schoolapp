@@ -28,6 +28,8 @@ import Event from './event';
 import {WEEK_DAY_NUMBERS} from '../../types/weekDays';
 import {BasicCard} from '../basicViews/BasicCard';
 import DayEvents from './dayEvents';
+import {BasicButton} from '../basicViews/BasicButton';
+import {BasicText} from '../basicViews/BasicText';
 
 // constants
 export const calendarWidth = Dimensions.get('screen').width;
@@ -46,17 +48,16 @@ interface calendarProps {
 }
 
 const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
+  const {data: lessons} = useGetAllLessonsQuery();
+  const {data} = useGetAllEventsQuery();
+
   const [selectedDay, setSelectedDay] = useState(dayjs());
   const [isWeekView, setIsWeekView] = useState(false);
   const [isMonthView, setIsMonthView] = useState(true);
   const y = useSharedValue(0);
   const monthViewOpacity = useSharedValue(1);
   const weekRow = useSharedValue(0);
-  const {data} = useGetAllEventsQuery();
-  const {data: lessons} = useGetAllLessonsQuery();
   const navigation = useNavigation();
-  const [activeMonth, setActiveMonth] = useState(dayjs());
-  const [activeWeek, setActiveWeek] = useState(dayjs());
   const [monthString, setMonthString] = useState(dayjs().format('MMMM YYYY'));
   const [scrollWeekToDate, setScrollWeekToDate] = useState<dayjs.Dayjs | null>(
     null,
@@ -79,8 +80,8 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
     weekRow.value = findRowOfDate(selectedDay);
   }, []);
 
-  // animated style for data of a specific day
-  const animatedStyle = useAnimatedStyle(() => {
+  // animated style for day events
+  const dayEventsAnimatedStyle = useAnimatedStyle(() => {
     return {
       height: screenHeight - (calendarHeight + weekHeaderHeight + 34) - y.value,
     };
@@ -111,7 +112,6 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
 
   const onDayPress = (date: dayjs.Dayjs) => {
     setSelectedDay(date);
-    setActiveWeek(date);
     weekRow.value = findRowOfDate(date);
   };
 
@@ -133,7 +133,6 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
         futureScrollRange={futureScrollRange}
         selectedDay={selectedDay}
         onChangeActiveMonth={newMonth => {
-          setActiveMonth(newMonth);
           let newSelectedDay;
           if (newMonth.isSame(dayjs(), 'month')) {
             newSelectedDay = dayjs();
@@ -162,7 +161,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
             flexDirection: 'row',
             width: '100%',
           }}>
-          <TouchableOpacity
+          <BasicButton
             onPress={() => {
               if (isMonthView) {
                 setScrollWeekToDate(selectedDay);
@@ -180,17 +179,10 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
                 });
               }
             }}
-            style={{
-              backgroundColor: '#ddd',
-              padding: 5,
-              borderRadius: 10,
-              marginRight: 10,
-            }}>
-            <Text>{monthString}</Text>
-          </TouchableOpacity>
-          {/* {isWeekView && (
-            <Text style={{color: '#777'}}>{selectedDay.fromNow()}</Text>
-          )} */}
+            backgroundColor="accentBackground"
+            spacing="s">
+            <BasicText>{monthString}</BasicText>
+          </BasicButton>
         </View>
         <WeekDays weekHeaderHeight={weekHeaderHeight} width={calendarWidth} />
       </View>
@@ -210,7 +202,6 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
           selectedDay={selectedDay}
           weekHeight={weekHeight}
           onChangeActiveWeek={newWeek => {
-            setActiveWeek(newWeek);
             weekRow.value = findRowOfDate(newWeek);
             let newSelectedDay;
             if (newWeek.isSame(dayjs(), 'week')) {
@@ -238,35 +229,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
           ] as number)
         );
       }).length !== 0 ? (
-        <Animated.View style={[animatedStyle, {zIndex: 10}]}>
-          {/* <FlatList
-            data={lessons?.getAllLessons.filter(item => {
-              return (
-                selectedDay.day() ==
-                (WEEK_DAY_NUMBERS[
-                  item.dayOfTheWeek as keyof typeof WEEK_DAY_NUMBERS
-                ] as number)
-              );
-            })}
-            renderItem={({item, index}) => (
-              <BasicCard>
-                <Text>{item.subject.name}</Text>
-                <Text>
-                  {item.lessonTime.startTime} - {item.lessonTime.endTime}
-                </Text>
-              </BasicCard>
-            )}
-            scrollEnabled={false}
-            style={{flex: 1, backgroundColor: 'white', paddingTop: 5}}
-          /> */}
-          {/* <FlatList
-            data={data?.getAllEvents.filter(item =>
-              dayjs(item.startDate).isSame(selectedDay, 'day'),
-            )}
-            renderItem={({item}) => <Event event={item} />}
-            scrollEnabled={isWeekView}
-            style={{flex: 1, backgroundColor: 'white', paddingTop: 5}}
-          /> */}
+        <Animated.View style={[dayEventsAnimatedStyle, {zIndex: 10}]}>
           <DayEvents date={selectedDay} scrollEnabled={isWeekView} />
         </Animated.View>
       ) : (
@@ -279,11 +242,11 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
               backgroundColor: 'white',
               zIndex: 10,
             },
-            animatedStyle,
+            dayEventsAnimatedStyle,
           ]}>
-          <Text style={{color: '#ccc', fontSize: 24, fontWeight: 'bold'}}>
+          <BasicText textVariant="heading" color="textSecondary">
             Nothing for this day
-          </Text>
+          </BasicText>
         </Animated.View>
       )}
     </View>

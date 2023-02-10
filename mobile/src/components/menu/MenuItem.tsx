@@ -1,5 +1,7 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text} from 'react-native';
+import {BasicButton} from '../basicViews/BasicButton';
+import {BasicText} from '../basicViews/BasicText';
 
 interface MenuItemProps {
   text: string;
@@ -15,6 +17,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({
   const styles = StyleSheet.create({
     body: {
       padding: 10,
+      alignItems: 'flex-start',
     },
   });
 
@@ -27,9 +30,12 @@ export const MenuItem: React.FC<MenuItemProps> = ({
 
   return (
     <>
-      <Pressable onPress={handleOnPress} style={styles.body}>
-        <Text numberOfLines={1}>{text}</Text>
-      </Pressable>
+      <BasicButton
+        variant="unstyled"
+        onPress={handleOnPress}
+        style={styles.body}>
+        <BasicText numberOfLines={1}>{text}</BasicText>
+      </BasicButton>
     </>
   );
 };

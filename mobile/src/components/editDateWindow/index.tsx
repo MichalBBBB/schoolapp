@@ -11,6 +11,9 @@ import {
 } from 'react-native';
 import {SubjectFragment, useGetAllLessonsQuery} from '../../generated/graphql';
 import {closestLesson} from '../../utils/lessonUtils';
+import {BasicButton} from '../basicViews/BasicButton';
+import {BasicModalCard} from '../basicViews/BasicModalCard';
+import {BasicText} from '../basicViews/BasicText';
 import Calendar from '../calendar';
 import WeekDays from '../calendar/weekDays';
 import SelectTimeModal from '../selectTimeView/selectTimeModal';
@@ -19,6 +22,9 @@ interface EditDateWindowProps {
   onSubmit: (date: dayjs.Dayjs) => void;
   initialDate?: dayjs.Dayjs | null;
   subject?: SubjectFragment | undefined | null;
+  onClose: () => void;
+  isVisible: boolean;
+  onHide?: () => void | undefined;
 }
 
 type SpecialDate = {
@@ -38,26 +44,26 @@ const windowWidth = Dimensions.get('screen').width - 30;
 const weekHeight = 34;
 const calendarHeight = 34 * 6;
 
-const EditDateWindow: React.FC<EditDateWindowProps> = ({
+const EditDateModal: React.FC<EditDateWindowProps> = ({
   onSubmit,
   initialDate,
   subject,
+  onClose,
+  isVisible,
+  onHide,
 }) => {
+  const {data: lessons} = useGetAllLessonsQuery();
+
   const [selectedDay, setSelectedDay] = useState<dayjs.Dayjs>(
     initialDate || dayjs(),
   );
   const [selectedSpecialDay, setSelectedSpecialDay] =
     useState<SpecialDate | null>(null);
-  const [height, setHeight] = useState(0);
   const [specialDays, setSpecialDays] = useState<SpecialDate[][]>(specialDates);
-  const findDimensions = ({height}: {height: number}) => {
-    setHeight(height);
-  };
   const [timePopupOpen, setTimePopupOpen] = useState(false);
-  const {data: lessons} = useGetAllLessonsQuery();
 
   useEffect(() => {
-    console.log(subject);
+    // if there is a subject specified, add next lesson as special date
     if (subject) {
       setSpecialDays([
         specialDays[0],
@@ -73,29 +79,19 @@ const EditDateWindow: React.FC<EditDateWindowProps> = ({
   }, [subject]);
 
   return (
-    <View
-      style={{
-        backgroundColor: 'white',
-        borderRadius: 15,
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: windowWidth,
-        position: 'absolute',
-        alignSelf: 'center',
-        paddingVertical: 15,
-        top: '50%',
-        marginTop: -(height / 2),
+    <BasicModalCard
+      alignCard="center"
+      isVisible={isVisible}
+      onBackdropPress={() => {
+        onClose();
       }}
-      onLayout={event => {
-        findDimensions(event.nativeEvent.layout);
+      onModalHide={() => {
+        if (onHide) {
+          onHide();
+        }
       }}>
       {specialDays.map((item, index) => (
-        <View
-          key={index}
-          style={{
-            flexDirection: 'row',
-            width: '100%',
-          }}>
+        <View key={index} style={styles.specialDatesContainer}>
           {item.map((day, index) => (
             <View
               key={index}
@@ -105,24 +101,15 @@ const EditDateWindow: React.FC<EditDateWindowProps> = ({
                 alignItems: 'center',
                 flexDirection: 'row',
               }}>
-              <TouchableOpacity
-                style={[
-                  styles.button,
-                  {
-                    backgroundColor:
-                      selectedSpecialDay == day ? '#ddd' : undefined,
-                  },
-                ]}
+              <BasicButton
+                variant={selectedSpecialDay == day ? 'filled' : 'unstyled'}
+                backgroundColor={'accentBackground'}
                 onPress={() => {
                   setSelectedSpecialDay(day);
-                  setSelectedDay(
-                    day.date,
-                    // .hour(selectedDay.hour())
-                    // .minute(selectedDay.minute()),
-                  );
+                  setSelectedDay(day.date);
                 }}>
-                <Text>{day.name}</Text>
-              </TouchableOpacity>
+                <BasicText>{day.name}</BasicText>
+              </BasicButton>
             </View>
           ))}
         </View>
@@ -143,31 +130,29 @@ const EditDateWindow: React.FC<EditDateWindowProps> = ({
           }}
         />
       </View>
-      <Pressable
+      <BasicButton
+        variant="unstyled"
         onPress={() => setTimePopupOpen(true)}
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
           width: '100%',
-          padding: 10,
-          paddingHorizontal: 40,
+          paddingHorizontal: 30,
         }}>
-        <Text>Time</Text>
-        <Text>{selectedDay.format('HH:mm')}</Text>
-      </Pressable>
-      <TouchableOpacity
-        onPress={() => {
-          const date: dayjs.Dayjs = selectedDay;
-          onSubmit(date);
-        }}>
-        <Text>Submit</Text>
-      </TouchableOpacity>
-      {/* <Popup
-        onClose={() => setTimePopupOpen(false)}
-        width={windowWidth}
-        open={timePopupOpen}>
-        {selectTimeView}
-      </Popup> */}
+        <BasicText>Time</BasicText>
+        <BasicText>{selectedDay.format('HH:mm')}</BasicText>
+      </BasicButton>
+      <View style={styles.submitButtonContainer}>
+        <BasicButton
+          onPress={() => {
+            const date: dayjs.Dayjs = selectedDay;
+            onSubmit(date);
+          }}>
+          <BasicText color="background" style={{fontWeight: 'bold'}}>
+            Submit
+          </BasicText>
+        </BasicButton>
+      </View>
       <SelectTimeModal
         onClose={() => {
           setTimePopupOpen(false);
@@ -183,22 +168,23 @@ const EditDateWindow: React.FC<EditDateWindowProps> = ({
         isVisible={timePopupOpen}
         initialTime={selectedDay.format('HH:mm')}
       />
-    </View>
+    </BasicModalCard>
   );
 };
 
 const styles = StyleSheet.create({
-  button: {
-    padding: 10,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   text: {
     color: '#666',
     marginLeft: 10,
     marginTop: 20,
   },
+  submitButtonContainer: {
+    alignItems: 'center',
+  },
+  specialDatesContainer: {
+    flexDirection: 'row',
+    width: '100%',
+  },
 });
 
-export default EditDateWindow;
+export default EditDateModal;

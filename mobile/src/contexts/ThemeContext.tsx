@@ -18,7 +18,7 @@ const LighTheme: MyTheme = {
     card: 'white',
     accentBackground: '#eee',
     textSecondary: 'grey',
-    cardView: 'eee',
+    cardView: '#eee',
     accent: 'black',
   },
   spacing: {
@@ -31,6 +31,7 @@ const LighTheme: MyTheme = {
   textVariants: {
     heading: {
       fontSize: 20,
+      fontWeight: 'bold',
     },
     subHeading: {},
     body: {},

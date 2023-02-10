@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, Text} from 'react-native';
+import {BasicText} from '../basicViews/BasicText';
 
 const weekDays = ['m', 't', 'w', 't', 'f', 's', 's'];
 
@@ -27,7 +28,7 @@ const WeekDays: React.FC<weekDaysProps> = ({weekHeaderHeight, width}) => {
             justifyContent: 'center',
           }}
           key={index}>
-          <Text style={{color: 'grey'}}>{item}</Text>
+          <BasicText color="textSecondary">{item}</BasicText>
         </View>
       ))}
     </View>

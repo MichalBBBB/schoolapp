@@ -1,14 +1,6 @@
 import dayjs from 'dayjs';
-import React, {useEffect} from 'react';
-import {
-  View,
-  FlatList,
-  Text,
-  SectionList,
-  ScrollView,
-  StyleSheet,
-} from 'react-native';
-import {useEvent} from 'react-native-reanimated';
+import React from 'react';
+import {View, Text, SectionList, StyleSheet} from 'react-native';
 import {
   CalendarEventFragment,
   LessonFragment,
@@ -17,9 +9,7 @@ import {
   useGetAllLessonsQuery,
   useGetAllTasksQuery,
 } from '../../generated/graphql';
-import {BasicCard} from '../basicViews/BasicCard';
 import Event from './event';
-import weekday from 'dayjs/plugin/weekday';
 import {WEEK_DAY_NUMBERS} from '../../types/weekDays';
 import {Lesson} from './lesson';
 import Task from '../task';
@@ -62,6 +52,7 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
         data?.getAllEvents
           .filter(item => dayjs(item.startDate).isSame(date, 'day'))
           .filter(item => {
+            //checks whether event is part of a lesson, if it is, it not displayed here
             if (item.subject) {
               const lessonsOfSubject = lessonsThisDay.filter(lesson => {
                 return lesson.subject.id == item.subject?.id;
@@ -97,7 +88,7 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
 
   return (
     <MySectionList
-      style={{flex: 1, backgroundColor: 'white', paddingTop: 5}}
+      style={styles.sectionList}
       sections={sections}
       renderSectionHeader={({section: {title}}) => (
         <Text style={styles.sectionTitle}>{title}</Text>
@@ -137,6 +128,11 @@ const styles = StyleSheet.create({
   },
   sectionFooter: {
     height: 15,
+  },
+  sectionList: {
+    flex: 1,
+    backgroundColor: 'white',
+    paddingTop: 5,
   },
 });
 

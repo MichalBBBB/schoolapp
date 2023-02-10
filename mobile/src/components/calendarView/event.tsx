@@ -1,11 +1,12 @@
 import dayjs from 'dayjs';
-import React, {useEffect} from 'react';
+import React from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import {
   CalendarEventFragment,
   GetAllEventsDocument,
   useDeleteEventMutation,
 } from '../../generated/graphql';
+import {BasicText} from '../basicViews/BasicText';
 import SlidingView from '../slidingView';
 
 interface EventProps {
@@ -16,8 +17,10 @@ const Event: React.FC<EventProps> = ({event}) => {
   const [deleteEvent] = useDeleteEventMutation();
   const frontView = (
     <View style={styles.frontViewContainer}>
-      <Text>{event.name}</Text>
-      <Text>{dayjs(event.startDate).format('HH:mm')}</Text>
+      <BasicText>{event.name}</BasicText>
+      <BasicText color="textSecondary">
+        {dayjs(event.startDate).format('HH:mm')}
+      </BasicText>
     </View>
   );
 

@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Pressable,
 } from 'react-native';
+import {BaseButton} from 'react-native-gesture-handler';
 import {
   GetProjectsDocument,
   ProjectTaskFragment,
@@ -14,6 +15,7 @@ import {
   useToggleProjectTaskMutation,
 } from '../generated/graphql';
 import {BasicButton} from './basicViews/BasicButton';
+import {BasicText} from './basicViews/BasicText';
 import SlidingView from './slidingView';
 
 const ProjectTask: React.FC<{
@@ -54,20 +56,11 @@ const ProjectTask: React.FC<{
     <View>
       <SlidingView
         frontView={
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-            <View
-              style={{
-                padding: 10,
-                backgroundColor: 'white',
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <TouchableOpacity
+          <View style={styles.container}>
+            <View style={styles.leftContainer}>
+              <BasicButton
+                variant="unstyled"
+                spacing="none"
                 onPress={() => {
                   toggleProjectTask({
                     variables: {id: projectTask.id},
@@ -82,15 +75,16 @@ const ProjectTask: React.FC<{
                   }
                   style={styles.checkMark}
                 />
-              </TouchableOpacity>
-              <Text>{projectTask.name}</Text>
+              </BasicButton>
+              <BasicText>{projectTask.name}</BasicText>
             </View>
-            <Pressable
+            <BasicButton
+              variant="unstyled"
               onPress={() => {
                 onUsersPress();
               }}>
-              <Text>Add users</Text>
-            </Pressable>
+              <BasicText color="textSecondary">Add users</BasicText>
+            </BasicButton>
           </View>
         }
         backView={[back]}
@@ -107,6 +101,17 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     marginRight: 10,
+  },
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  leftContainer: {
+    padding: 10,
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 

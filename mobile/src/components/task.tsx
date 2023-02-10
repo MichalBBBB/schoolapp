@@ -140,7 +140,6 @@ const styles = StyleSheet.create({
   subject: {
     color: 'grey',
   },
-  name: {},
   checkMark: {
     resizeMode: 'stretch',
     width: 25,

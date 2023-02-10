@@ -1,5 +1,5 @@
 import React, {forwardRef} from 'react';
-import {Text, TextStyle} from 'react-native';
+import {Text, TextProps, TextStyle} from 'react-native';
 import {useTheme} from '../../contexts/ThemeContext';
 import type {
   ColorsObject,
@@ -7,7 +7,7 @@ import type {
   TextVariantsObject,
 } from '../../types/Theme';
 
-interface BasicTextProps {
+interface BasicTextProps extends TextProps {
   children: string;
   spacing?: keyof SpacingObject;
   textVariant?: keyof TextVariantsObject;

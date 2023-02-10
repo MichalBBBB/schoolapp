@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import React, {memo} from 'react';
 import {Text, View} from 'react-native';
+import {BasicText} from '../basicViews/BasicText';
 import Week from './week';
 
 // ctreate table of days in 6 weeks
@@ -51,7 +52,7 @@ const Month: React.FC<MonthProps> = ({
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <Text>{month}</Text>
+        <BasicText>{month}</BasicText>
       </View>
     );
   }

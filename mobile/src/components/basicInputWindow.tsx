@@ -53,8 +53,8 @@ const BasicInputWindow: React.FC<addTaskWindowProps> = ({
           style={{
             flexDirection: 'row',
           }}>
-          <TextInput
-            style={{padding: 10, flex: 1}}
+          <BasicTextInput
+            style={{flex: 1, marginRight: 5}}
             placeholder={placeholder || 'Name'}
             onChangeText={setText}
             ref={textInputRef}

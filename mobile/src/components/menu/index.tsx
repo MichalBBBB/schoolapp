@@ -15,7 +15,6 @@ import {
 import {Portal} from '@gorhom/portal';
 import useKeyboardHeight, {isIOS} from '../../utils/keyboardHeight';
 import Animated, {BounceIn} from 'react-native-reanimated';
-import {MenuEnteringAnimation} from '../../utils/menuAnimation';
 
 const {width: layoutWidth, height: layoutHeight} = Dimensions.get('window');
 
@@ -69,7 +68,7 @@ export const Menu: React.FC<MenuProps> = ({trigger, children}) => {
             width: 0,
             height: 0,
           },
-          shadowOpacity: 0.35,
+          shadowOpacity: 1,
           shadowRadius: 100,
         },
         android: {

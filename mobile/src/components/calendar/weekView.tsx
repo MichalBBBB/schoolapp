@@ -41,7 +41,6 @@ const WeekView: React.FC<weekViewProps> = ({
 }) => {
   const [weeks, setWeeks] = useState<Array<dayjs.Dayjs | string>>([week]);
   const [index, setIndex] = useState(pastScrollRange);
-  const navigation = useNavigation();
   const flatListRef = createRef<FlatList>();
 
   const createDateFromString = (string: string) => {
@@ -77,11 +76,11 @@ const WeekView: React.FC<weekViewProps> = ({
     let weeksCopy = [];
     for (var i = 0; i < pastScrollRange + futureScrollRange + 1; i++) {
       let newWeek;
-      // if month is close to current month, data is going to be a date - the full calendar will be visible
+      // if week is close to current week, data is going to be a date - the full calendar will be visible
       if (i >= pastScrollRange - 1 && i <= pastScrollRange + 1) {
         newWeek = week.subtract(pastScrollRange - i, 'week');
       } else {
-        // if month is far away from being visible, only a string of the date is added
+        // if week is far away from being visible, only a string of the date is added
         newWeek = week.subtract(pastScrollRange - i, 'week').format('YYYY M D');
       }
       weeksCopy.push(newWeek);

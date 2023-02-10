@@ -8,13 +8,14 @@ import {
   useGetAllLessonsQuery,
 } from '../../generated/graphql';
 import AddButton from '../addButton';
-import EditDateModal from '../editDateWindow/editDateModal';
+import EditDateModal from '../editDateWindow';
 import {calendarConfigWithoutTime} from '../task';
 import {BasicModalCard} from '../basicViews/BasicModalCard';
 import {BasicTextInput} from '../basicViews/BasicTextInput';
 import {BasicButton} from '../basicViews/BasicButton';
 import SelectSubjectModal from '../selectSubject';
 import {getCurrentLesson} from '../../utils/lessonUtils';
+import {BasicText} from '../basicViews/BasicText';
 
 interface addTaskWindowProps {
   onClose: () => void;
@@ -43,6 +44,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
   }, [visible]);
 
   useEffect(() => {
+    // automatically set subject to current lesson
     if (lessons?.getAllLessons) {
       setSubject(getCurrentLesson(lessons.getAllLessons)?.subject || null);
     }
@@ -70,6 +72,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
           setViewVisible(viewShouldAppear);
         }}>
         <BasicTextInput
+          variant="unstyled"
           placeholder="Task name"
           ref={taskInputRef}
           value={name}
@@ -77,21 +80,22 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
         />
         <View style={styles.bottomContainer}>
           <BasicButton
+            backgroundColor="accentBackground"
             onPress={() => setViewShouldAppear('selectSubject')}
             style={styles.button}>
-            <Text>{subject?.name || 'Subject'}</Text>
+            <BasicText>{subject?.name || 'Subject'}</BasicText>
           </BasicButton>
           <BasicButton
+            backgroundColor="accentBackground"
             style={styles.button}
             onPress={() => {
-              // onEditDate();
               setViewShouldAppear('editDate');
             }}>
-            <Text>
+            <BasicText>
               {taskDate
                 ? taskDate.calendar(null, calendarConfigWithoutTime)
                 : 'Select Date'}
-            </Text>
+            </BasicText>
           </BasicButton>
           <AddButton
             onPress={() => {
@@ -145,12 +149,8 @@ const styles = StyleSheet.create({
   bottomContainer: {flexDirection: 'row', justifyContent: 'space-between'},
   button: {
     flex: 1,
-    padding: 10,
-    borderRadius: 10,
     paddingHorizontal: 20,
     marginRight: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
 

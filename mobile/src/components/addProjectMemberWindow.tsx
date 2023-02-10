@@ -3,6 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import {useAddMemberToProjectMutation} from '../generated/graphql';
 import {BasicButton} from './basicViews/BasicButton';
 import {BasicModalCard} from './basicViews/BasicModalCard';
+import {BasicText} from './basicViews/BasicText';
 import {BasicTextInput} from './basicViews/BasicTextInput';
 
 interface AddProjectMemberWindowProps {
@@ -26,19 +27,17 @@ export const AddProjectMemberWindow: React.FC<AddProjectMemberWindowProps> = ({
       <View style={styles.container}>
         <BasicTextInput
           onChangeText={setEmail}
-          padding={10}
-          backgroundColor="#eee"
-          borderRadius={10}
+          spacing="s"
           placeholder="Email"
           style={{width: 250, marginBottom: 10}}
         />
         <BasicButton
-          padding={10}
+          spacing="s"
           onPress={() => {
             addMember({variables: {projectId, memberEmail: email}});
             onClose();
           }}>
-          <Text>Invite</Text>
+          <BasicText color="background">Invite</BasicText>
         </BasicButton>
       </View>
     </BasicModalCard>

@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import React, {memo} from 'react';
-import {Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
+import {BasicText} from '../basicViews/BasicText';
 import Day from './day';
 
 interface WeekProps {
@@ -23,16 +24,12 @@ const Week: React.FC<WeekProps> = ({
   if (typeof week == 'string') {
     return (
       <View style={{width: calendarWidth, height: weekHeight}}>
-        <Text>{week}</Text>
+        <BasicText>{week}</BasicText>
       </View>
     );
   }
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-      }}>
+    <View style={styles.container}>
       {week.map((day, index) => (
         <Day
           key={index}
@@ -45,5 +42,12 @@ const Week: React.FC<WeekProps> = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
+});
 
 export default memo(Week);

@@ -6,8 +6,6 @@ import Month from './month';
 
 dayjs.extend(relativeTime);
 
-const weekDays = ['s', 'm', 't', 'w', 't', 'f', 's'];
-
 interface CalendarProps {
   calendarWidth: number;
   pastScrollRange: number;
@@ -33,6 +31,7 @@ const Calendar: React.FC<CalendarProps> = ({
   const [months, setMonths] = useState<Array<dayjs.Dayjs | string>>([]);
   const [index, setIndex] = useState(pastScrollRange);
 
+  // months that are not rendered are stored as string instead of date
   const createDateFromString = (string: string) => {
     const date = string
       .toString()
@@ -41,6 +40,8 @@ const Calendar: React.FC<CalendarProps> = ({
     return dayjs(new Date(date[0], date[1] - 1));
   };
 
+  // when moved to another month, the months that are rendered need to be changed
+  // always one after and one before are rendered fully, other ones are just one text
   const changeVisibility = (newIndex: number) => {
     const monthsCopy = [...months];
     for (var i = 0; i < months.length; i++) {
@@ -99,7 +100,6 @@ const Calendar: React.FC<CalendarProps> = ({
           }
         }
       });
-      console.log(newIndex);
       setMonths(changeVisibility(newIndex));
       flatListRef.current?.scrollToIndex({
         index: newIndex,
@@ -121,7 +121,6 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   const renderItem = ({item}: {item: dayjs.Dayjs | string}) => {
-    // console.log(item);
     return (
       <View style={{width: calendarWidth}}>
         <Month
@@ -142,6 +141,7 @@ const Calendar: React.FC<CalendarProps> = ({
       style={{width: calendarWidth}}
       data={months}
       renderItem={renderItem}
+      // makes rendering faster
       getItemLayout={(item, index) => ({
         length: calendarWidth,
         offset: calendarWidth * index,
@@ -149,6 +149,7 @@ const Calendar: React.FC<CalendarProps> = ({
       })}
       horizontal={true}
       initialScrollIndex={pastScrollRange}
+      // very important
       snapToOffsets={months.map((item, index) => index * calendarWidth)}
       decelerationRate={'fast'}
       removeClippedSubviews={true}
@@ -170,6 +171,7 @@ const Calendar: React.FC<CalendarProps> = ({
         setMonths(monthsCopy);
       }}
       ref={flatListRef}
+      // rerender when indes changes
       extraData={index}
     />
   );

@@ -6,6 +6,7 @@ import {
   useToggleSubtaskMutation,
 } from '../generated/graphql';
 import {TaskNavigationProp} from '../utils/types';
+import {BasicText} from './basicViews/BasicText';
 import SlidingView from './slidingView';
 
 const Subtask: React.FC<{subtask: SubtaskFragment}> = ({subtask}) => {
@@ -71,7 +72,7 @@ const Subtask: React.FC<{subtask: SubtaskFragment}> = ({subtask}) => {
                 style={styles.checkMark}
               />
             </TouchableOpacity>
-            <Text>{subtask.name}</Text>
+            <BasicText>{subtask.name}</BasicText>
           </View>
         }
         backView={[back]}

@@ -10,7 +10,7 @@ import {
   useCreateEventMutation,
 } from '../../generated/graphql';
 import ConnectedList from '../../components/connectedList';
-import EditDateModal from '../../components/editDateWindow/editDateModal';
+import EditDateModal from '../../components/editDateWindow';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import SelectSubjectModal from '../../components/selectSubject';
 import {BasicText} from '../../components/basicViews/BasicText';

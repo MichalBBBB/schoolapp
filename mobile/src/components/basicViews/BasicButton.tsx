@@ -13,12 +13,14 @@ import {ColorsObject, SpacingObject} from '../../types/Theme';
 interface BasicButtonProps extends PressableProps {
   spacing?: keyof SpacingObject;
   borderRadius?: number;
-  style?: ViewStyle;
+  style?: ViewStyle | ViewStyle[];
   variant?: 'filled' | 'outlined' | 'unstyled';
+  backgroundColor?: keyof ColorsObject;
 }
 
 export const BasicButton = forwardRef<View, BasicButtonProps>((props, ref) => {
   const {
+    backgroundColor = 'accent',
     children,
     onPress,
     borderRadius = 15,
@@ -34,7 +36,7 @@ export const BasicButton = forwardRef<View, BasicButtonProps>((props, ref) => {
       style={[
         {
           backgroundColor:
-            variant == 'filled' ? theme.colors['accent'] : undefined,
+            variant == 'filled' ? theme.colors[backgroundColor] : undefined,
           borderRadius,
           padding: theme.spacing[spacing],
         },

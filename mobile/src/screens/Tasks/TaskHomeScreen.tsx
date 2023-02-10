@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import AddButton from '../../components/addButton';
 import AddTaskWindow from '../../components/addTaskWindow';
-import EditDateWindow from '../../components/editDateWindow';
+import EditDateModal from '../../components/editDateWindow';
 import Task from '../../components/task';
 import {useGetAllTasksQuery} from '../../generated/graphql';
 import {TaskStackParamList} from '../../routes/TaskStack';

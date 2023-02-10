@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import React, {memo, useContext} from 'react';
 import {TouchableOpacity, View, Text} from 'react-native';
+import {BasicText} from '../basicViews/BasicText';
 
 interface DayProps {
   day: dayjs.Dayjs;
@@ -26,16 +27,16 @@ const Day: React.FC<DayProps> = ({day, selectedDay, monthNum, onPress}) => {
           backgroundColor: isSelected ? '#ddd' : undefined,
           marginVertical: 2,
         }}>
-        <Text
-          style={{
-            color: !monthNum
-              ? 'black'
+        <BasicText
+          color={
+            !monthNum
+              ? 'text'
               : day.get('month') + 1 == monthNum
-              ? 'black'
-              : 'grey',
-          }}>
-          {day.get('date')}
-        </Text>
+              ? 'text'
+              : 'textSecondary'
+          }>
+          {day.get('date').toString()}
+        </BasicText>
       </View>
     </TouchableOpacity>
   );

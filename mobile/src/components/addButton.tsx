@@ -1,5 +1,6 @@
 import React from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
+import {BasicText} from './basicViews/BasicText';
 
 interface addButtonProps {
   onPress?: () => void;
@@ -18,7 +19,9 @@ const AddButton: React.FC<addButtonProps> = ({onPress}) => {
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-        <Text style={{color: 'white', fontWeight: 'bold'}}>Add</Text>
+        <BasicText color="background" style={{fontWeight: 'bold'}}>
+          Add
+        </BasicText>
       </View>
     </TouchableOpacity>
   );

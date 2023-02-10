@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
+import {BasicCard} from './basicViews/BasicCard';
 
 interface ConnectedListProps {
   bottomMargin?: number | undefined;
@@ -10,17 +11,13 @@ const ConnectedList: React.FC<ConnectedListProps> = ({
   children,
 }) => {
   return (
-    <View style={[styles.container, {marginBottom: bottomMargin}]}>
+    <BasicCard
+      spacing="none"
+      backgroundColor="accentBackground"
+      style={{marginBottom: bottomMargin}}>
       {children}
-    </View>
+    </BasicCard>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    borderRadius: 10,
-    backgroundColor: '#eee',
-  },
-});
 
 export default ConnectedList;

@@ -14,7 +14,7 @@ import {
 import BackButton from '../../components/backButton';
 import BasicInputWindow from '../../components/basicInputWindow';
 import {BasicButton} from '../../components/basicViews/BasicButton';
-import EditDateModal from '../../components/editDateWindow/editDateModal';
+import EditDateModal from '../../components/editDateWindow';
 import Subtask from '../../components/subtask';
 import {calendarConfigWithoutTime} from '../../components/task';
 import {
@@ -89,7 +89,7 @@ const TaskDetailScreen: React.FC<
             onPress={() => {
               setEditDueDateModalIsVisible(true);
             }}
-            padding={8}
+            spacing="s"
             borderRadius={10}
             style={styles.action}>
             <Text>
@@ -105,7 +105,7 @@ const TaskDetailScreen: React.FC<
             onPress={() => {
               setEditDoDateModalIsVisible(true);
             }}
-            padding={8}
+            spacing="s"
             borderRadius={10}>
             <Text>
               {task.doDate

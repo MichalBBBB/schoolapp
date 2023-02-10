@@ -5,7 +5,9 @@ import {
   useAssignMemberMutation,
   useRemoveAssignedMemberMutation,
 } from '../generated/graphql';
+import {BasicButton} from './basicViews/BasicButton';
 import {BasicModalCard} from './basicViews/BasicModalCard';
+import {BasicText} from './basicViews/BasicText';
 
 interface AssignMembersWindow {
   isVisible: boolean;
@@ -41,19 +43,15 @@ export const AssignMembersWindow: React.FC<AssignMembersWindow> = ({
         onClose();
       }}>
       <View>
-        <Text style={{fontSize: 20, fontWeight: 'bold'}}>Assigned people</Text>
+        <BasicText textVariant="heading">Assigned people</BasicText>
         <View style={{padding: 10}}>
           {task?.publicUsers && task.publicUsers.length > 0 ? (
             task?.publicUsers.map((item, index) => (
-              <View
-                key={index}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}>
-                <Text>{item.name}</Text>
-                <Pressable
+              <View key={index} style={styles.userContainer}>
+                <BasicText>{item.name}</BasicText>
+                <BasicButton
+                  spacing="none"
+                  variant="unstyled"
                   onPress={() => {
                     removeAssignedMember({
                       variables: {userId: item.id, taskId: taskId!},
@@ -63,11 +61,11 @@ export const AssignMembersWindow: React.FC<AssignMembersWindow> = ({
                     source={require('../../assets/Delete.png')}
                     style={styles.plusButton}
                   />
-                </Pressable>
+                </BasicButton>
               </View>
             ))
           ) : (
-            <Text>No users assigned</Text>
+            <BasicText>No users assigned</BasicText>
           )}
         </View>
         <View style={{paddingHorizontal: 10, marginBottom: 10}}>
@@ -94,8 +92,10 @@ export const AssignMembersWindow: React.FC<AssignMembersWindow> = ({
                 justifyContent: 'space-between',
                 paddingHorizontal: 10,
               }}>
-              <Text>{item.name}</Text>
-              <Pressable
+              <BasicText>{item.name}</BasicText>
+              <BasicButton
+                variant="unstyled"
+                spacing="none"
                 onPress={() => {
                   assignMember({variables: {userId: item.id, taskId: taskId!}});
                 }}>
@@ -103,7 +103,7 @@ export const AssignMembersWindow: React.FC<AssignMembersWindow> = ({
                   source={require('../../assets/Plus.png')}
                   style={styles.plusButton}
                 />
-              </Pressable>
+              </BasicButton>
             </View>
           )}
         />
@@ -118,5 +118,10 @@ const styles = StyleSheet.create({
     height: 25,
     width: 25,
     tintColor: '#ccc',
+  },
+  userContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 });

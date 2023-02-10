@@ -9,6 +9,7 @@ import {
 import BasicInputWindow from '../basicInputWindow';
 import {BasicButton} from '../basicViews/BasicButton';
 import {BasicModalCard} from '../basicViews/BasicModalCard';
+import {BasicText} from '../basicViews/BasicText';
 
 interface SelectSubjectProps {
   isVisible: boolean;
@@ -55,28 +56,32 @@ const SelectSubjectModal: React.FC<SelectSubjectProps> = ({
             contentContainerStyle={{alignItems: 'center'}}
             data={data?.getAllSubjects}
             renderItem={({item}) => (
-              <Pressable
+              <BasicButton
+                spacing="none"
+                variant="unstyled"
                 style={{marginBottom: 10}}
                 onPress={() => {
                   onSubmit(item);
                 }}>
                 <Text>{item.name}</Text>
-              </Pressable>
+              </BasicButton>
             )}
           />
-          <Pressable
+          <BasicButton
+            variant="unstyled"
+            spacing="none"
             style={{marginBottom: 10}}
             onPress={() => {
               onSubmit(null);
             }}>
-            <Text>None</Text>
-          </Pressable>
+            <BasicText>None</BasicText>
+          </BasicButton>
           <BasicButton
-            padding={10}
+            spacing="s"
             onPress={() => {
               setViewShouldAppear('AddSubject');
             }}>
-            <Text>Add</Text>
+            <BasicText color="background">Add</BasicText>
           </BasicButton>
         </View>
       </BasicModalCard>
