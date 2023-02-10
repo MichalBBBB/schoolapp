@@ -8,7 +8,7 @@ import {
   Pressable,
   Image,
 } from 'react-native';
-import {SecondaryText} from '../../components/basicViews/SecondaryText';
+import {BasicText} from '../../components/basicViews/BasicText';
 import ConnectedList from '../../components/connectedList';
 import {useMeQuery} from '../../generated/graphql';
 import {SettingsStackParamList} from '../../routes/SettingsStack';
@@ -38,7 +38,9 @@ const SettingsHomeScreen: React.FC<
 
       <View style={styles.nameContainer}>
         <Text style={styles.name}>{me?.me.fullName}</Text>
-        <SecondaryText>Change your profile info</SecondaryText>
+        <BasicText textVariant="subText" color="textSecondary">
+          Change your profile info
+        </BasicText>
       </View>
     </View>
   );

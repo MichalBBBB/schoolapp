@@ -49,7 +49,7 @@ export const ProjectMembersScreen: React.FC<
                   });
                 }}>
                 <Image
-                  source={require('../../assets/Delete.png')}
+                  source={require('../../../assets/Delete.png')}
                   style={styles.deleteButton}
                 />
               </Pressable>

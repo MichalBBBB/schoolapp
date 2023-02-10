@@ -1,16 +1,40 @@
-import React from 'react';
-import {Text} from 'react-native';
+import React, {forwardRef} from 'react';
+import {Text, TextStyle} from 'react-native';
+import {useTheme} from '../../contexts/ThemeContext';
+import type {
+  ColorsObject,
+  SpacingObject,
+  TextVariantsObject,
+} from '../../types/Theme';
 
 interface BasicTextProps {
-  text: string;
-  color: string | undefined;
-  fontFamily: string | undefined;
+  children: string;
+  spacing?: keyof SpacingObject;
+  textVariant?: keyof TextVariantsObject;
+  color?: keyof ColorsObject;
+  style?: TextStyle;
 }
 
-export const BasicText: React.FC<BasicTextProps> = ({
-  text,
-  color,
-  fontFamily,
-}) => {
-  return <Text style={{color, fontFamily}}>{text}</Text>;
-};
+export const BasicText = forwardRef<Text, BasicTextProps>((props, ref) => {
+  const {
+    children,
+    spacing = 'none',
+    textVariant = 'body',
+    color = 'primary',
+    style,
+  } = props;
+  const [theme] = useTheme();
+  return (
+    <Text
+      style={[
+        {
+          padding: theme.spacing[spacing],
+          color: theme.colors[color],
+          ...theme.textVariants[textVariant],
+        },
+        style,
+      ]}>
+      {children}
+    </Text>
+  );
+});

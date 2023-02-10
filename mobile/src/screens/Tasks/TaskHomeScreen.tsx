@@ -40,7 +40,7 @@ const TaskHomeScreen: React.FC<
             navigation.navigate('NotificationScreen');
           }}>
           <Image
-            source={require('../../assets/Mail.png')}
+            source={require('../../../assets/Mail.png')}
             style={{height: 25, width: 25, resizeMode: 'stretch'}}
           />
         </Pressable>

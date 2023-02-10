@@ -1,53 +1,44 @@
-import React, {Dispatch, RefObject, SetStateAction} from 'react';
-import {TextInput, TextStyle} from 'react-native';
+import React, {Dispatch, forwardRef, RefObject, SetStateAction} from 'react';
+import {
+  KeyboardTypeOptions,
+  TextInput,
+  TextInputProps,
+  TextStyle,
+} from 'react-native';
 import {useTheme} from '../../contexts/ThemeContext';
+import {ColorsObject, SpacingObject} from '../../types/Theme';
 
-interface BasicTextInputProps {
-  backgroundColor?: string | undefined;
-  borderRadius?: number | undefined;
-  defaultValue?: string | undefined;
-  onChangeText?: ((text: string) => void) | Dispatch<SetStateAction<string>>;
-  padding?: number | undefined;
-  color?: string | undefined;
-  placeholder?: string | undefined;
-  setRef?: RefObject<TextInput> | undefined;
-  value?: string;
-  style?: TextStyle;
+interface BasicTextInputProps extends TextInputProps {
+  spacing?: keyof SpacingObject;
+  color?: keyof ColorsObject;
+  variant?: 'filled' | 'unstyled';
 }
 
-export const BasicTextInput: React.FC<BasicTextInputProps> = ({
-  backgroundColor,
-  borderRadius,
-  defaultValue,
-  onChangeText,
-  padding = 10,
-  color,
-  placeholder,
-  setRef,
-  value,
-  style,
-}) => {
-  const [theme] = useTheme();
-  return (
-    <TextInput
-      style={[
-        {
-          backgroundColor: backgroundColor || theme.colors.background,
-          borderRadius,
-          padding,
-          color: color || theme.colors.text,
-        },
-        style,
-      ]}
-      onChangeText={text => {
-        if (onChangeText) {
-          onChangeText(text);
-        }
-      }}
-      defaultValue={defaultValue}
-      placeholder={placeholder}
-      ref={setRef}
-      value={value}
-    />
-  );
-};
+export const BasicTextInput = forwardRef<TextInput, BasicTextInputProps>(
+  (props, ref) => {
+    const [theme] = useTheme();
+    const {
+      color = 'primary',
+      spacing = 's',
+      variant = 'filled',
+      style,
+      ...restProps
+    } = props;
+    return (
+      <TextInput
+        ref={ref}
+        style={[
+          {
+            backgroundColor:
+              variant == 'filled' ? theme.colors.accentBackground : undefined,
+            borderRadius: variant == 'filled' ? 15 : undefined,
+            padding: theme.spacing[spacing],
+            color: theme.colors[color],
+          },
+          style,
+        ]}
+        {...restProps}
+      />
+    );
+  },
+);

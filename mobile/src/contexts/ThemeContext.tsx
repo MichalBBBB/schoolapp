@@ -6,19 +6,35 @@ import React, {
   useContext,
   useState,
 } from 'react';
-import {Theme} from '../types/Theme';
-
-type MyTheme = Theme & {colors: {cardView: string}};
+import {TextStyle} from 'react-native';
+import {MyTheme} from '../types/Theme';
 
 const LighTheme: MyTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
+    primary: 'black',
     background: 'white',
     card: 'white',
     accentBackground: '#eee',
     textSecondary: 'grey',
     cardView: 'eee',
+    accent: 'black',
+  },
+  spacing: {
+    none: 0,
+    s: 8,
+    m: 16,
+    l: 24,
+    xl: 40,
+  },
+  textVariants: {
+    heading: {
+      fontSize: 20,
+    },
+    subHeading: {},
+    body: {},
+    subText: {},
   },
 };
 

@@ -22,8 +22,10 @@ interface addTaskWindowProps {
 }
 
 const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
-  const taskInputRef = createRef<TextInput>();
   const [addTask, {error}] = useCreateTaskMutation();
+  const {data: lessons} = useGetAllLessonsQuery();
+
+  const taskInputRef = createRef<TextInput>();
   const [name, setName] = useState('');
   const [subject, setSubject] = useState<SubjectFragment | null>(null);
   const [viewVisible, setViewVisible] = useState<
@@ -33,11 +35,12 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
     'main' | 'editDate' | 'addSubject' | 'selectSubject'
   >('main');
   const [taskDate, setTaskDate] = useState<dayjs.Dayjs | null>();
-  const {data: lessons} = useGetAllLessonsQuery();
 
   useEffect(() => {
-    taskInputRef.current?.focus();
-  }, []);
+    if (visible) {
+      taskInputRef.current?.focus();
+    }
+  }, [visible]);
 
   useEffect(() => {
     if (lessons?.getAllLessons) {
@@ -68,7 +71,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
         }}>
         <BasicTextInput
           placeholder="Task name"
-          setRef={taskInputRef}
+          ref={taskInputRef}
           value={name}
           onChangeText={setName}
         />

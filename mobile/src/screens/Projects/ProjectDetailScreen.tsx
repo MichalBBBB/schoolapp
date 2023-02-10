@@ -37,7 +37,7 @@ const ProjectDetailScreen: React.FC<
         <Menu
           trigger={
             <Image
-              source={require('../../assets/Options.png')}
+              source={require('../../../assets/Options.png')}
               style={styles.options}
             />
           }>
@@ -72,7 +72,7 @@ const ProjectDetailScreen: React.FC<
               setAddTaskModalIsVisible(true);
             }}>
             <Image
-              source={require('../../assets/Plus.png')}
+              source={require('../../../assets/Plus.png')}
               style={styles.plusButton}
             />
           </TouchableOpacity>

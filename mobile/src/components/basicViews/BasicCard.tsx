@@ -1,28 +1,36 @@
-import React from 'react';
-import {View} from 'react-native';
+import React, {forwardRef} from 'react';
+import {View, ViewProps} from 'react-native';
 import {useTheme} from '../../contexts/ThemeContext';
+import {ColorsObject, SpacingObject} from '../../types/Theme';
 
-interface BasicCardProps {
-  backgroundColor?: string | undefined;
-  borderRadius?: number | undefined;
-  padding?: number | undefined;
+export interface BasicCardProps extends ViewProps {
+  backgroundColor?: keyof ColorsObject;
+  borderRadius?: number;
+  spacing?: keyof SpacingObject;
 }
 
-export const BasicCard: React.FC<BasicCardProps> = ({
-  backgroundColor,
-  borderRadius = 15,
-  children,
-  padding = 10,
-}) => {
+export const BasicCard = forwardRef<View, BasicCardProps>((props, ref) => {
+  const {
+    backgroundColor = 'cardView',
+    borderRadius = 15,
+    children,
+    spacing = 's',
+    style,
+    ...restProps
+  } = props;
   const [theme] = useTheme();
   return (
     <View
-      style={{
-        backgroundColor: backgroundColor || theme.colors.card,
-        borderRadius,
-        padding,
-      }}>
+      style={[
+        {
+          backgroundColor: theme.colors[backgroundColor],
+          borderRadius,
+          padding: theme.spacing[spacing],
+        },
+        style,
+      ]}
+      {...restProps}>
       {children}
     </View>
   );
-};
+});

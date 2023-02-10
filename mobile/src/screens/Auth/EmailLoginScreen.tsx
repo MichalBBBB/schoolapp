@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import {isLoggedInVar} from '../../App';
+import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
 import {
   useLoginMutation,
   useRegisterMutation,
@@ -51,7 +52,7 @@ const EmailLoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <TextInput
+      <BasicTextInput
         style={styles.inputField}
         onChangeText={setEmail}
         placeholder="Email"
@@ -60,14 +61,14 @@ const EmailLoginScreen = () => {
         autoCapitalize="none"
       />
       {UserExistsResult && !UserExistsResult.userExists && (
-        <TextInput
+        <BasicTextInput
           style={styles.inputField}
           onChangeText={setFullName}
           placeholder="Full Name"
         />
       )}
       {UserExistsResult && (
-        <TextInput
+        <BasicTextInput
           style={styles.inputField}
           onChangeText={setPassword}
           placeholder="Password"
@@ -75,7 +76,7 @@ const EmailLoginScreen = () => {
         />
       )}
       {UserExistsResult && !UserExistsResult.userExists && (
-        <TextInput
+        <BasicTextInput
           style={styles.inputField}
           onChangeText={setPasswordControl}
           placeholder="Repeat password"

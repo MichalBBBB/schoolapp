@@ -12,8 +12,8 @@ import {
 import ConnectedList from '../../components/connectedList';
 import EditDateModal from '../../components/editDateWindow/editDateModal';
 import {BasicButton} from '../../components/basicViews/BasicButton';
-import {PrimaryText} from '../../components/basicViews/PrimaryText';
 import SelectSubjectModal from '../../components/selectSubject';
+import {BasicText} from '../../components/basicViews/BasicText';
 
 let hours: number[] = [];
 for (var i = 0; i < 24; i++) {
@@ -55,8 +55,8 @@ const AddEventScreen: React.FC<
           onPress={() => {
             setSubjectModalVisible(true);
           }}>
-          <PrimaryText>Subject</PrimaryText>
-          <PrimaryText>{subject ? subject.name : 'None'}</PrimaryText>
+          <BasicText>Subject</BasicText>
+          <BasicText>{subject ? subject.name : 'None'}</BasicText>
         </Pressable>
       </ConnectedList>
       <ConnectedList bottomMargin={10}>
@@ -65,7 +65,7 @@ const AddEventScreen: React.FC<
           onPress={() => {
             setStartDateModalVisible(true);
           }}>
-          <PrimaryText>Start</PrimaryText>
+          <BasicText>Start</BasicText>
           <View style={styles.dateAndTimeContainer}>
             <Text style={{marginRight: 5}}>
               {startDate.format('DD/MM/YYYY')}
@@ -78,7 +78,7 @@ const AddEventScreen: React.FC<
           onPress={() => {
             setEndDateModalVisible(true);
           }}>
-          <PrimaryText>End</PrimaryText>
+          <BasicText>End</BasicText>
           <View style={styles.dateAndTimeContainer}>
             <Text style={{marginRight: 5}}>{endDate.format('DD/MM/YYYY')}</Text>
             <Text>{endDate.format('HH:mm')}</Text>

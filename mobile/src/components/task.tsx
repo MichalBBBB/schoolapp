@@ -19,8 +19,7 @@ import {
 import {TaskNavigationProp} from '../utils/types';
 import SlidingView from './slidingView';
 import calendar from 'dayjs/plugin/calendar';
-import {SecondaryText} from './basicViews/SecondaryText';
-import {PrimaryText} from './basicViews/PrimaryText';
+import {BasicText} from './basicViews/BasicText';
 
 dayjs.extend(calendar);
 
@@ -111,18 +110,20 @@ const Task: React.FC<{
                 />
               </TouchableOpacity>
               <View style={{flex: 1}}>
-                <PrimaryText>{task.name}</PrimaryText>
+                <BasicText>{task.name}</BasicText>
                 {task.subject?.name && (
-                  <SecondaryText>{task.subject?.name}</SecondaryText>
+                  <BasicText textVariant="subText" color="textSecondary">
+                    {task.subject?.name}
+                  </BasicText>
                 )}
               </View>
               {task.dueDate && (
-                <SecondaryText>
+                <BasicText textVariant="subText" color="textSecondary">
                   {dayjs(task.dueDate).calendar(
                     null,
                     calendarConfigWithoutTime,
                   )}
-                </SecondaryText>
+                </BasicText>
               )}
             </View>
           </TouchableOpacity>

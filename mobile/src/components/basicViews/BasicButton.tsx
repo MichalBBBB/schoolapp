@@ -1,32 +1,42 @@
-import React from 'react';
-import {Pressable, StyleSheet, ViewStyle} from 'react-native';
+import React, {forwardRef} from 'react';
+import {
+  Pressable,
+  PressableProps,
+  StyleSheet,
+  View,
+  ViewProps,
+  ViewStyle,
+} from 'react-native';
 import {useTheme} from '../../contexts/ThemeContext';
+import {ColorsObject, SpacingObject} from '../../types/Theme';
 
-interface BasicButtonProps {
-  onPress: () => void | undefined;
-  backgroundColor?: string | undefined;
-  borderRadius?: number | undefined;
-  padding?: number | undefined;
-  style?: ViewStyle | undefined;
+interface BasicButtonProps extends PressableProps {
+  spacing?: keyof SpacingObject;
+  borderRadius?: number;
+  style?: ViewStyle;
+  variant?: 'filled' | 'outlined' | 'unstyled';
 }
 
-export const BasicButton: React.FC<BasicButtonProps> = ({
-  children,
-  onPress,
-  backgroundColor,
-  borderRadius = 15,
-  padding,
-  style,
-}) => {
+export const BasicButton = forwardRef<View, BasicButtonProps>((props, ref) => {
+  const {
+    children,
+    onPress,
+    borderRadius = 15,
+    spacing = 's',
+    variant = 'filled',
+    style,
+  } = props;
   const [theme] = useTheme();
   return (
     <Pressable
+      ref={ref}
       onPress={onPress}
       style={[
         {
-          backgroundColor: backgroundColor || theme.colors.accentBackground,
+          backgroundColor:
+            variant == 'filled' ? theme.colors['accent'] : undefined,
           borderRadius,
-          padding,
+          padding: theme.spacing[spacing],
         },
         styles.button,
         style,
@@ -34,7 +44,7 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
       {children}
     </Pressable>
   );
-};
+});
 
 const styles = StyleSheet.create({
   button: {

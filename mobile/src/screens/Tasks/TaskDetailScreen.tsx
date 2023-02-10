@@ -57,7 +57,7 @@ const TaskDetailScreen: React.FC<
             setAddSubtaskModalIsVisible(true);
           }}>
           <Image
-            source={require('../../assets/Plus.png')}
+            source={require('../../../assets/Plus.png')}
             style={styles.plusButton}
           />
         </TouchableOpacity>
