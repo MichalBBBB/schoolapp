@@ -9,11 +9,12 @@ import {
   SubjectFragment,
   useCreateEventMutation,
 } from '../../generated/graphql';
-import ConnectedList from '../../components/connectedList';
 import EditDateModal from '../../components/editDateWindow';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import SelectSubjectModal from '../../components/selectSubject';
 import {BasicText} from '../../components/basicViews/BasicText';
+import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
+import {BasicCard} from '../../components/basicViews/BasicCard';
 
 let hours: number[] = [];
 for (var i = 0; i < 24; i++) {
@@ -30,6 +31,8 @@ console.log(dayjs().hour());
 const AddEventScreen: React.FC<
   NativeStackScreenProps<CalendarStackParamList, 'AddEventScreen'>
 > = ({navigation}) => {
+  const [createEvent] = useCreateEventMutation();
+
   const [name, setName] = useState('');
   const [startDate, setStartDate] = useState(dayjs());
   const [endDate, setEndDate] = useState(dayjs().add(1, 'hour'));
@@ -37,19 +40,17 @@ const AddEventScreen: React.FC<
   const [startDateModalVisible, setStartDateModalVisible] = useState(false);
   const [endDateModalVisible, setEndDateModalVisible] = useState(false);
   const [subjectModalVisible, setSubjectModalVisible] = useState(false);
-  const [createEvent] = useCreateEventMutation();
   const [subject, setSubject] = useState<SubjectFragment | null>(null);
 
   return (
     <View style={styles.container}>
-      <ConnectedList bottomMargin={10}>
-        <TextInput
-          style={styles.nameInput}
-          placeholder="Name"
-          onChangeText={setName}
-        />
-      </ConnectedList>
-      <ConnectedList bottomMargin={10}>
+      <BasicTextInput
+        spacing="m"
+        placeholder="Name"
+        onChangeText={setName}
+        marginBottom={10}
+      />
+      <BasicCard spacing="m" marginBottom={10}>
         <Pressable
           style={styles.listItem}
           onPress={() => {
@@ -58,37 +59,51 @@ const AddEventScreen: React.FC<
           <BasicText>Subject</BasicText>
           <BasicText>{subject ? subject.name : 'None'}</BasicText>
         </Pressable>
-      </ConnectedList>
-      <ConnectedList bottomMargin={10}>
-        <Pressable
-          style={styles.dateListItem}
-          onPress={() => {
-            setStartDateModalVisible(true);
-          }}>
-          <BasicText>Start</BasicText>
-          <View style={styles.dateAndTimeContainer}>
-            <Text style={{marginRight: 5}}>
-              {startDate.format('DD/MM/YYYY')}
-            </Text>
-            <Text>{startDate.format('HH:mm')}</Text>
-          </View>
-        </Pressable>
-        <Pressable
-          style={styles.dateListItem}
-          onPress={() => {
-            setEndDateModalVisible(true);
-          }}>
-          <BasicText>End</BasicText>
-          <View style={styles.dateAndTimeContainer}>
-            <Text style={{marginRight: 5}}>{endDate.format('DD/MM/YYYY')}</Text>
-            <Text>{endDate.format('HH:mm')}</Text>
-          </View>
-        </Pressable>
-      </ConnectedList>
+      </BasicCard>
+      <BasicCard gap={5} marginBottom={10}>
+        <View style={styles.dateListItem}>
+          <BasicText style={{marginLeft: 4}}>Start</BasicText>
+          <BasicButton
+            onPress={() => {
+              setStartDateModalVisible(true);
+            }}
+            backgroundColor="lightBorder"
+            borderWidth={1}
+            variant="outlined"
+            spacing="s"
+            borderRadius={10}>
+            <View style={styles.dateAndTimeContainer}>
+              <BasicText style={{marginRight: 5}}>
+                {startDate.format('DD/MM/YYYY')}
+              </BasicText>
+              <BasicText>{startDate.format('HH:mm')}</BasicText>
+            </View>
+          </BasicButton>
+        </View>
+        <View style={styles.dateListItem}>
+          <BasicText style={{marginLeft: 4}}>End</BasicText>
+          <BasicButton
+            onPress={() => {
+              setEndDateModalVisible(true);
+            }}
+            backgroundColor="lightBorder"
+            borderWidth={1}
+            variant="outlined"
+            spacing="s"
+            borderRadius={10}>
+            <View style={styles.dateAndTimeContainer}>
+              <BasicText style={{marginRight: 5}}>
+                {endDate.format('DD/MM/YYYY')}
+              </BasicText>
+              <BasicText>{endDate.format('HH:mm')}</BasicText>
+            </View>
+          </BasicButton>
+        </View>
+      </BasicCard>
 
       <View style={styles.buttonContainer}>
         <BasicButton
-          style={styles.button}
+          spacing="m"
           onPress={() => {
             createEvent({
               variables: {
@@ -101,7 +116,9 @@ const AddEventScreen: React.FC<
             });
             navigation.goBack();
           }}>
-          <Text>Submit</Text>
+          <BasicText color="textContrast" textVariant="button">
+            Submit
+          </BasicText>
         </BasicButton>
       </View>
       <EditDateModal
@@ -148,18 +165,8 @@ const AddEventScreen: React.FC<
 };
 
 const styles = StyleSheet.create({
-  nameInput: {
-    backgroundColor: '#eee',
-    padding: 10,
-    borderRadius: 10,
-  },
   container: {
     padding: 20,
-  },
-  text: {
-    color: '#666',
-    marginLeft: 10,
-    marginTop: 20,
   },
   timeContainer: {
     flexDirection: 'row',
@@ -169,11 +176,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     alignItems: 'center',
-  },
-  button: {
-    padding: 10,
-    borderRadius: 10,
-    backgroundColor: '#eee',
   },
   dateTimeButton: {
     borderWidth: 1,
@@ -185,19 +187,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
   },
   dateAndTimeContainer: {
     flexDirection: 'row',
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 5,
-    borderColor: '#aaa',
   },
   dateAndTime: {},
   listItem: {
-    padding: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

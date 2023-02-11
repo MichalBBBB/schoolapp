@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import AddButton from '../../components/addButton';
 import AddTaskWindow from '../../components/addTaskWindow';
+import {BasicText} from '../../components/basicViews/BasicText';
 import EditDateModal from '../../components/editDateWindow';
 import Task from '../../components/task';
 import {useGetAllTasksQuery} from '../../generated/graphql';
@@ -30,7 +31,7 @@ const TaskHomeScreen: React.FC<
         <Pressable
           style={{flexDirection: 'row', alignItems: 'center'}}
           onPress={() => navigation.navigate('NewProjectScreen')}>
-          <Text>New Project</Text>
+          <BasicText>New Project</BasicText>
         </Pressable>
       ),
       headerLeft: () => (
@@ -72,21 +73,5 @@ const TaskHomeScreen: React.FC<
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  task: {
-    padding: 10,
-  },
-  separator: {
-    height: 1,
-    backgroundColor: '#eee',
-    marginHorizontal: 10,
-  },
-  plusButton: {
-    resizeMode: 'stretch',
-    height: 30,
-    width: 30,
-  },
-});
 
 export default TaskHomeScreen;

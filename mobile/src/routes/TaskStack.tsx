@@ -4,7 +4,6 @@ import React from 'react';
 import BackButton from '../components/backButton';
 import {TaskFragment} from '../generated/graphql';
 import {TabStackParamList} from '../Routes';
-import AddSubtaskScreen from '../screens/Tasks/AddSubtaskScreen';
 import {NewProjectScreen} from '../screens/Projects/NewProjectScreen';
 import {NotificationScreen} from '../screens/Tasks/NotificationScreen';
 import TaskDetailScreen from '../screens/Tasks/TaskDetailScreen';
@@ -40,7 +39,6 @@ const TaskStack: React.FC<
         component={TaskDetailScreen}
         options={({route}) => ({title: route.params.task.name})}
       />
-      <Stack.Screen name="AddSubtaskScreen" component={AddSubtaskScreen} />
       <Stack.Screen name="NewProjectScreen" component={NewProjectScreen} />
       <Stack.Screen
         name="NotificationScreen"

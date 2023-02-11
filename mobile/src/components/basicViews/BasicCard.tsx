@@ -7,18 +7,33 @@ export interface BasicCardProps extends ViewProps {
   backgroundColor?: keyof ColorsObject;
   borderRadius?: number;
   spacing?: keyof SpacingObject;
+  marginBottom?: number;
+  gap?: number;
 }
 
 export const BasicCard = forwardRef<View, BasicCardProps>((props, ref) => {
   const {
-    backgroundColor = 'background',
+    backgroundColor = 'accentBackground',
     borderRadius = 15,
     children,
     spacing = 's',
     style,
+    marginBottom,
+    gap,
     ...restProps
   } = props;
   const [theme] = useTheme();
+
+  const content = Array.isArray(children)
+    ? children.map((item, index) => {
+        if (index !== children.length - 1) {
+          return <View style={{marginBottom}}>{item}</View>;
+        } else {
+          return item;
+        }
+      })
+    : children;
+
   return (
     <View
       style={[
@@ -26,11 +41,12 @@ export const BasicCard = forwardRef<View, BasicCardProps>((props, ref) => {
           backgroundColor: theme.colors[backgroundColor],
           borderRadius,
           padding: theme.spacing[spacing],
+          marginBottom,
         },
         style,
       ]}
       {...restProps}>
-      {children}
+      {content}
     </View>
   );
 });

@@ -3,6 +3,7 @@ import React, {useEffect} from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicCard} from '../../components/basicViews/BasicCard';
+import {BasicText} from '../../components/basicViews/BasicText';
 import {
   GetInvitesDocument,
   GetProjectsDocument,
@@ -24,7 +25,7 @@ export const NotificationScreen: React.FC<
         data={data?.getInvites}
         renderItem={({item}) => (
           <View style={{margin: 5}}>
-            <BasicCard backgroundColor="#eee">
+            <BasicCard backgroundColor="accentBackground">
               <Text style={{marginBottom: 5, fontSize: 16}}>
                 {`${item.ownerName} has invited you to join the project ${item.projectName}`}
               </Text>
@@ -36,10 +37,10 @@ export const NotificationScreen: React.FC<
                       refetchQueries: [GetInvitesDocument, GetProjectsDocument],
                     });
                   }}
-                  padding={10}
-                  backgroundColor="white"
+                  spacing="m"
+                  backgroundColor="background"
                   style={{marginRight: 5}}>
-                  <Text>Accept</Text>
+                  <BasicText>Accept</BasicText>
                 </BasicButton>
                 <BasicButton
                   onPress={() => {
@@ -48,9 +49,9 @@ export const NotificationScreen: React.FC<
                       refetchQueries: [GetInvitesDocument],
                     });
                   }}
-                  padding={10}
-                  backgroundColor="white">
-                  <Text>Decline</Text>
+                  spacing="m"
+                  backgroundColor="background">
+                  <BasicText>Decline</BasicText>
                 </BasicButton>
               </View>
             </BasicCard>

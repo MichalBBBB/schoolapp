@@ -63,8 +63,9 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
   const [timePopupOpen, setTimePopupOpen] = useState(false);
 
   useEffect(() => {
-    // if there is a subject specified, add next lesson as special date
-    if (subject) {
+    // if there is a subject specified and the subject has assigned lessons,
+    // add next lesson as special date
+    if (subject && closestLesson(lessons?.getAllLessons || [], subject)) {
       setSpecialDays([
         specialDays[0],
         [

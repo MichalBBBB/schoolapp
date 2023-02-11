@@ -23,6 +23,10 @@ import {
   useEditLessonTimesMutation,
   useGetAllLessonTimesQuery,
 } from '../../../generated/graphql';
+import {BasicText} from '../../../components/basicViews/BasicText';
+import {BasicButton} from '../../../components/basicViews/BasicButton';
+import {BasicCard} from '../../../components/basicViews/BasicCard';
+import {BasicTextInput} from '../../../components/basicViews/BasicTextInput';
 
 export type LessonTime = {
   lessonNumber: number;
@@ -32,14 +36,15 @@ export type LessonTime = {
 dayjs.extend(CustomParseFormat);
 dayjs.extend(RelativeTime);
 
-// !!!! ids change when state is not reset on new lessonTimes !!!!
-
 const LessonTimesScreen: React.FC<
   NativeStackScreenProps<SettingsStackParamList, 'LessonTimesScreen'>
 > = ({navigation}) => {
-  // const [lessonTimes, setLessonTimes] = useState<LessonTime[]>([
-  //   {lessonNumber: 0, startTime: '08:00', endTime: '08:45'},
-  // ]);
+  const {data, loading: getLessonTimesLoading} = useGetAllLessonTimesQuery();
+  const [createLessonTime] = useCreatelessonTimeMutation();
+  const [editLessonTimes, {error: editLessonTimesError}] =
+    useEditLessonTimesMutation();
+  const [deleteLessonTime] = useDeleteLessonTimeMutation();
+
   const [defaultLessonLength, setDefaultLessonLength] = useState(45);
   const [theme] = useTheme();
   const [timeModalVisible, setTimeModalVisible] = useState(false);
@@ -48,11 +53,6 @@ const LessonTimesScreen: React.FC<
     time: 'start' | 'end';
   } | null>(null);
   const [changingValue, setChangingValue] = useState<number | string>(0);
-  const {data, loading: getLessonTimesLoading} = useGetAllLessonTimesQuery();
-  const [createLessonTime] = useCreatelessonTimeMutation();
-  const [editLessonTimes, {error: editLessonTimesError}] =
-    useEditLessonTimesMutation();
-  const [deleteLessonTime] = useDeleteLessonTimeMutation();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -140,11 +140,6 @@ const LessonTimesScreen: React.FC<
         },
       });
     } else if (changedValue == 'lesson-start') {
-      const oldValue = data?.getAllLessonTimes[index].startTime;
-      const difference = dayjs(newValue, 'HH:mm').diff(
-        dayjs(oldValue, 'HH:mm'),
-        'minute',
-      );
       editLessonTimes({
         variables: {
           lessonTimes: {
@@ -156,7 +151,6 @@ const LessonTimesScreen: React.FC<
       });
     } else if (changedValue == 'lesson-end') {
       if (index == 0 && data.getAllLessonTimes.length == 1) {
-        console.log('here');
         setDefaultLessonLength(
           dayjs(newValue, 'HH:mm').diff(
             dayjs(data.getAllLessonTimes[index].startTime, 'HH:mm'),
@@ -193,7 +187,6 @@ const LessonTimesScreen: React.FC<
             };
           }
         });
-      console.log(lessonTimeInputs);
       editLessonTimes({
         variables: {
           lessonTimes: lessonTimeInputs,
@@ -212,10 +205,12 @@ const LessonTimesScreen: React.FC<
       <FlatList
         ListHeaderComponent={() => (
           <View style={styles.listHeaderContainer}>
-            <Text style={styles.listHeader}>Enter times of your lessons</Text>
-            <Text style={[{color: theme.colors.textSecondary}]}>
+            <BasicText textVariant="heading" style={{marginBottom: 5}}>
+              Enter times of your lessons
+            </BasicText>
+            <BasicText color="textSecondary" textVariant="subText">
               You can edit this later
-            </Text>
+            </BasicText>
           </View>
         )}
         style={styles.container}
@@ -224,49 +219,52 @@ const LessonTimesScreen: React.FC<
         })}
         ListEmptyComponent={() => (
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-            <Pressable
-              style={styles.addFirstLessonButton}
+            <BasicButton
+              spacing="m"
               onPress={() => {
                 createLessonTime({
                   variables: {startTime: '08:00', endTime: '08:45'},
                   refetchQueries: [GetAllLessonTimesDocument],
                 });
               }}>
-              <Text style={styles.addFirstLessonButtonText}>
+              <BasicText color="textContrast" textVariant="button">
                 Add first lesson
-              </Text>
-            </Pressable>
+              </BasicText>
+            </BasicButton>
           </View>
         )}
         renderItem={({item, index}) => (
           <View style={styles.listItemContainer} key={index}>
-            <View
-              style={[
-                styles.listItem,
-                {backgroundColor: theme.colors.accentBackground},
-              ]}>
+            <BasicCard style={[styles.listItem]} spacing="m">
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={styles.lessonNumber}>
+                <BasicText style={styles.lessonNumber} textVariant="button">
                   {item.lessonNumber + 1}.
-                </Text>
-                <Text>From: </Text>
-                <Pressable
-                  style={styles.timeContainer}
+                </BasicText>
+                <BasicText>From: </BasicText>
+                <BasicButton
+                  variant="outlined"
+                  backgroundColor="lightBorder"
+                  borderRadius={5}
+                  borderWidth={1}
+                  style={{marginRight: 10}}
                   onPress={() => {
                     setActiveLesson({index, time: 'start'});
                     setTimeModalVisible(true);
                   }}>
                   <Text>{item.startTime}</Text>
-                </Pressable>
-                <Text>To: </Text>
-                <Pressable
-                  style={styles.timeContainer}
+                </BasicButton>
+                <BasicText>To: </BasicText>
+                <BasicButton
+                  variant="outlined"
+                  backgroundColor="lightBorder"
+                  borderRadius={5}
+                  borderWidth={1}
                   onPress={() => {
                     setActiveLesson({index, time: 'end'});
                     setTimeModalVisible(true);
                   }}>
-                  <Text>{item.endTime}</Text>
-                </Pressable>
+                  <BasicText>{item.endTime}</BasicText>
+                </BasicButton>
               </View>
               {index == (data?.getAllLessonTimes.length || 1) - 1 && (
                 <Pressable
@@ -283,11 +281,20 @@ const LessonTimesScreen: React.FC<
                   />
                 </Pressable>
               )}
-            </View>
+            </BasicCard>
             {index + 1 !== data?.getAllLessonTimes.length ? (
               <View style={styles.break}>
-                <TextInput
-                  style={styles.breakLength}
+                <BasicTextInput
+                  style={{
+                    marginVertical: 10,
+                    marginLeft: 20,
+                    marginRight: 5,
+                    padding: 3,
+                  }}
+                  variant="outlined"
+                  borderWidth={1}
+                  backgroundColor="lightBorder"
+                  borderRadius={5}
                   defaultValue={getBreakLength(index).toString()}
                   keyboardType="numeric"
                   returnKeyType="done"
@@ -301,7 +308,7 @@ const LessonTimesScreen: React.FC<
                   }}
                   selectTextOnFocus={true}
                 />
-                <Text>minute break</Text>
+                <BasicText>minute break</BasicText>
               </View>
             ) : (
               <Pressable
@@ -342,8 +349,6 @@ const styles = StyleSheet.create({
   listItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 10,
-    borderRadius: 10,
     alignItems: 'center',
     width: '100%',
   },
@@ -351,29 +356,12 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   lessonNumber: {
-    fontWeight: 'bold',
-    marginRight: 10,
-  },
-  timeContainer: {
-    borderWidth: 1,
-    borderRadius: 5,
-    borderColor: '#aaa',
-    padding: 5,
     marginRight: 10,
   },
   addButton: {
     marginLeft: 10,
     padding: 5,
     marginTop: 5,
-  },
-  breakLength: {
-    marginVertical: 10,
-    marginLeft: 20,
-    marginRight: 5,
-    padding: 3,
-    borderWidth: 1,
-    borderRadius: 5,
-    borderColor: '#aaa',
   },
   break: {
     flexDirection: 'row',
@@ -382,22 +370,6 @@ const styles = StyleSheet.create({
   listHeaderContainer: {
     alignItems: 'center',
     paddingBottom: 15,
-  },
-  listHeader: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    marginBottom: 5,
-  },
-  addFirstLessonButton: {
-    borderRadius: 10,
-    backgroundColor: 'black',
-    color: 'white',
-    padding: 10,
-  },
-  addFirstLessonButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });
 

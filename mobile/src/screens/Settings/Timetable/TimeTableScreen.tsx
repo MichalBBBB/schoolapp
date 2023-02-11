@@ -10,6 +10,7 @@ import {
   TableWrapper,
 } from 'react-native-table-component';
 import {BasicButton} from '../../../components/basicViews/BasicButton';
+import {BasicText} from '../../../components/basicViews/BasicText';
 import SelectSubjectModal from '../../../components/selectSubject';
 import {
   GetAllLessonsDocument,
@@ -26,16 +27,17 @@ import {WEEK_DAYS} from '../../../types/weekDays';
 const TimeTableScreen: React.FC<
   NativeStackScreenProps<SettingsStackParamList, 'TimeTableScreen'>
 > = () => {
-  const [subjectModalIsVisible, setSubjectModalIsVisible] = useState(false);
-  const [activeWeekDay, setActiveWeekDay] = useState<string | null>(null);
-  const [activeLessonTimeId, setActiveLessonTimeId] = useState<string | null>(
-    null,
-  );
   const {data, loading: lessonsLoading} = useGetAllLessonsQuery();
   const {data: lessonTimes} = useGetAllLessonTimesQuery();
   const [createLesson] = useCreateLessonMutation();
   const [editLesson] = useEditLessonMutation();
   const [deleteLesson] = useDeleteLessonMutation();
+
+  const [subjectModalIsVisible, setSubjectModalIsVisible] = useState(false);
+  const [activeWeekDay, setActiveWeekDay] = useState<string | null>(null);
+  const [activeLessonTimeId, setActiveLessonTimeId] = useState<string | null>(
+    null,
+  );
 
   const lessonNumbers = [
     '',
@@ -97,7 +99,8 @@ const TimeTableScreen: React.FC<
                                   flexDirection: 'row',
                                   justifyContent: 'center',
                                 }}>
-                                <Pressable
+                                <BasicButton
+                                  spacing="m"
                                   style={styles.lesson}
                                   onPress={() => {
                                     setActiveLessonTimeId(
@@ -107,8 +110,8 @@ const TimeTableScreen: React.FC<
                                     setActiveWeekDay(weekDays[rowIndex]);
                                     setSubjectModalIsVisible(true);
                                   }}>
-                                  <Text>{item.subject.name}</Text>
-                                </Pressable>
+                                  <BasicText>{item.subject.name}</BasicText>
+                                </BasicButton>
                               </View>
                             ) : (
                               <View
@@ -117,6 +120,7 @@ const TimeTableScreen: React.FC<
                                   justifyContent: 'center',
                                 }}>
                                 <BasicButton
+                                  backgroundColor="accentBackground"
                                   onPress={() => {
                                     setActiveLessonTimeId(
                                       lessonTimes?.getAllLessonTimes[itemIndex]
@@ -125,8 +129,8 @@ const TimeTableScreen: React.FC<
                                     setActiveWeekDay(weekDays[rowIndex]);
                                     setSubjectModalIsVisible(true);
                                   }}
-                                  padding={10}>
-                                  <Text>Add</Text>
+                                  spacing="m">
+                                  <BasicText>Add</BasicText>
                                 </BasicButton>
                               </View>
                             )
@@ -192,7 +196,7 @@ const styles = StyleSheet.create({
   row: {backgroundColor: '#fff', flexDirection: 'row', height: 80},
   cell: {width: 100},
   wrapper: {flexDirection: 'row'},
-  lesson: {backgroundColor: '#7c9ab8', padding: 10, borderRadius: 10},
+  lesson: {backgroundColor: '#7c9ab8'},
 });
 
 export default TimeTableScreen;

@@ -8,7 +8,6 @@ import type {
 } from '../../types/Theme';
 
 interface BasicTextProps extends TextProps {
-  children: string;
   spacing?: keyof SpacingObject;
   textVariant?: keyof TextVariantsObject;
   color?: keyof ColorsObject;

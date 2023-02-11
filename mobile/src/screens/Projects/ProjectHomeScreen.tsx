@@ -20,7 +20,7 @@ const ProjectHomeScreen: React.FC<
     console.log(JSON.stringify(error), JSON.stringify(deleteError));
   }, [error, deleteError]);
   return (
-    <View>
+    <View style={{padding: 10}}>
       <FlatList
         data={data?.getProjects}
         renderItem={({item}) => (
@@ -31,7 +31,7 @@ const ProjectHomeScreen: React.FC<
                   projectId: item.id,
                 });
               }}>
-              <BasicCard backgroundColor="#eee">
+              <BasicCard backgroundColor="accentBackground" spacing="m">
                 <View
                   style={{
                     flexDirection: 'row',

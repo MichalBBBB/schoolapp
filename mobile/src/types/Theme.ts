@@ -18,6 +18,9 @@ export type ColorsObject = {
   accentBackground: string;
   cardView: string;
   accent: string;
+  textContrast: string;
+  dangerous: string;
+  lightBorder: string;
 };
 
 export type SpacingObject = {
@@ -33,4 +36,6 @@ export type TextVariantsObject = {
   body: TextStyle;
   subHeading: TextStyle;
   subText: TextStyle;
+  button: TextStyle;
+  title: TextStyle;
 };

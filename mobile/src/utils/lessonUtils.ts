@@ -6,6 +6,9 @@ export const closestLesson = (
   subject: SubjectFragment,
 ) => {
   const subjectLessons = lessons.filter(item => item.subject.id == subject.id);
+  if (subjectLessons.length == 0) {
+    return null;
+  }
   subjectLessons.sort((a, b) => {
     return dayjs(getDateOfClosestInstanceOfLesson(a)).diff(
       getDateOfClosestInstanceOfLesson(b),

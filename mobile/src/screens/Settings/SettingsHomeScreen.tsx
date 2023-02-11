@@ -8,8 +8,8 @@ import {
   Pressable,
   Image,
 } from 'react-native';
+import {BasicCard} from '../../components/basicViews/BasicCard';
 import {BasicText} from '../../components/basicViews/BasicText';
-import ConnectedList from '../../components/connectedList';
 import {useMeQuery} from '../../generated/graphql';
 import {SettingsStackParamList} from '../../routes/SettingsStack';
 
@@ -48,7 +48,7 @@ const SettingsHomeScreen: React.FC<
   return (
     <ScrollView style={styles.container}>
       {profile}
-      <ConnectedList>
+      <BasicCard>
         <Pressable
           style={styles.listItem}
           onPress={() => {
@@ -56,7 +56,7 @@ const SettingsHomeScreen: React.FC<
           }}>
           <Text>TimeTable</Text>
         </Pressable>
-      </ConnectedList>
+      </BasicCard>
     </ScrollView>
   );
 };

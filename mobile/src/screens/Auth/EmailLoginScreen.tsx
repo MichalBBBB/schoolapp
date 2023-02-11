@@ -7,6 +7,8 @@ import {
   View,
 } from 'react-native';
 import {isLoggedInVar} from '../../App';
+import {BasicButton} from '../../components/basicViews/BasicButton';
+import {BasicText} from '../../components/basicViews/BasicText';
 import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
 import {
   useLoginMutation,
@@ -17,13 +19,15 @@ import {
 } from '../../generated/graphql';
 import {getAccessToken, setAccessToken} from '../../utils/AccessToken';
 const EmailLoginScreen = () => {
+  const [registerMutation] = useRegisterMutation();
+  const [loginMutation] = useLoginMutation();
+  const [checkUserExists, {data: UserExistsResult}] = useUserExistsLazyQuery();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordControl, setPasswordControl] = useState('');
   const [fullName, setFullName] = useState('');
-  const [loginMutation] = useLoginMutation();
-  const [registerMutation] = useRegisterMutation();
-  const [checkUserExists, {data: UserExistsResult}] = useUserExistsLazyQuery();
+
   const [errors, setErrors] = useState<Array<UserError>>([]);
 
   const login = async () => {
@@ -59,12 +63,15 @@ const EmailLoginScreen = () => {
         keyboardType="email-address"
         textContentType="emailAddress"
         autoCapitalize="none"
+        variant="filled"
+        spacing="m"
       />
       {UserExistsResult && !UserExistsResult.userExists && (
         <BasicTextInput
           style={styles.inputField}
           onChangeText={setFullName}
           placeholder="Full Name"
+          spacing="m"
         />
       )}
       {UserExistsResult && (
@@ -73,6 +80,7 @@ const EmailLoginScreen = () => {
           onChangeText={setPassword}
           placeholder="Password"
           secureTextEntry={true}
+          spacing="m"
         />
       )}
       {UserExistsResult && !UserExistsResult.userExists && (
@@ -81,29 +89,31 @@ const EmailLoginScreen = () => {
           onChangeText={setPasswordControl}
           placeholder="Repeat password"
           secureTextEntry={true}
+          spacing="m"
         />
       )}
       {!UserExistsResult ? (
-        <TouchableOpacity
+        <BasicButton
           onPress={() => {
             checkUserExists({variables: {email}});
-          }}>
-          <View style={styles.loginButton}>
-            <Text>Next</Text>
-          </View>
-        </TouchableOpacity>
+          }}
+          spacing="m">
+          <BasicText color="textContrast" textVariant="button">
+            Next
+          </BasicText>
+        </BasicButton>
       ) : UserExistsResult.userExists ? (
-        <TouchableOpacity onPress={() => login()}>
-          <View>
-            <Text>Login</Text>
-          </View>
-        </TouchableOpacity>
+        <BasicButton onPress={() => login()} spacing="m">
+          <BasicText textVariant="button" color="textContrast">
+            Login
+          </BasicText>
+        </BasicButton>
       ) : (
-        <TouchableOpacity onPress={() => register()}>
-          <View>
-            <Text>Register</Text>
-          </View>
-        </TouchableOpacity>
+        <BasicButton onPress={() => register()} spacing="m">
+          <BasicText textVariant="button" color="textContrast">
+            Register
+          </BasicText>
+        </BasicButton>
       )}
       {errors.length > 0 &&
         // TODO - change to proper errors
@@ -119,11 +129,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   inputField: {
-    padding: 10,
-    backgroundColor: '#ddd',
-    borderRadius: 10,
-    marginBottom: 10,
     width: 250,
+    marginBottom: 10,
   },
   loginButton: {
     padding: 10,

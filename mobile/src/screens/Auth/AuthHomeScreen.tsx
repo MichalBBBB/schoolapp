@@ -3,6 +3,8 @@ import React, {useEffect} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {authorize} from 'react-native-app-auth';
 import {isLoggedInVar} from '../../App';
+import {BasicButton} from '../../components/basicViews/BasicButton';
+import {BasicText} from '../../components/basicViews/BasicText';
 import {useTheme} from '../../contexts/ThemeContext';
 import {useGoogleSignInMutation} from '../../generated/graphql';
 import {AuthStackParamList} from '../../routes/AuthStack';
@@ -20,17 +22,11 @@ const config = {
 const AuthHomeScreen: React.FC<
   NativeStackScreenProps<AuthStackParamList, 'AuthHome'>
 > = ({navigation}) => {
-  const theme = useTheme();
   const [googleSignIn] = useGoogleSignInMutation();
-
-  useEffect(() => {
-    console.log(theme);
-  });
 
   const signInWithGoogle = async () => {
     try {
       const authState = await authorize(config);
-      console.log(authState);
       const response = await googleSignIn({
         variables: {idToken: authState.idToken},
       });
@@ -45,19 +41,26 @@ const AuthHomeScreen: React.FC<
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <View style={styles.loginButton}>
-          <Text>Email Login</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
+      <BasicButton
+        onPress={() => navigation.navigate('Login')}
+        style={{marginBottom: 5, width: 250}}>
+        <BasicText
+          color="textContrast"
+          spacing="s"
+          style={{fontWeight: 'bold'}}>
+          Sign in with email
+        </BasicText>
+      </BasicButton>
+      <BasicButton
+        style={{width: 250}}
         onPress={() => {
           signInWithGoogle();
-        }}>
-        <View style={styles.loginButton}>
-          <Text>Sign in with google</Text>
-        </View>
-      </TouchableOpacity>
+        }}
+        variant="outlined">
+        <BasicText color="text" style={{fontWeight: 'bold'}} spacing="s">
+          Sign in with google
+        </BasicText>
+      </BasicButton>
     </View>
   );
 };
@@ -67,14 +70,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-  },
-  loginButton: {
-    padding: 10,
-    borderRadius: 10,
-    backgroundColor: 'lightblue',
-  },
-  registerButton: {
-    padding: 10,
   },
 });
 

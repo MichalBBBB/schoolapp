@@ -16,6 +16,7 @@ interface BasicButtonProps extends PressableProps {
   style?: ViewStyle | ViewStyle[];
   variant?: 'filled' | 'outlined' | 'unstyled';
   backgroundColor?: keyof ColorsObject;
+  borderWidth?: number;
 }
 
 export const BasicButton = forwardRef<View, BasicButtonProps>((props, ref) => {
@@ -26,6 +27,7 @@ export const BasicButton = forwardRef<View, BasicButtonProps>((props, ref) => {
     borderRadius = 15,
     spacing = 's',
     variant = 'filled',
+    borderWidth = 3,
     style,
   } = props;
   const [theme] = useTheme();
@@ -39,6 +41,9 @@ export const BasicButton = forwardRef<View, BasicButtonProps>((props, ref) => {
             variant == 'filled' ? theme.colors[backgroundColor] : undefined,
           borderRadius,
           padding: theme.spacing[spacing],
+          borderColor:
+            variant == 'outlined' ? theme.colors[backgroundColor] : undefined,
+          borderWidth: variant == 'outlined' ? borderWidth : undefined,
         },
         styles.button,
         style,

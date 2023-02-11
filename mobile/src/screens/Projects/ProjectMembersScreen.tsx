@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import {FlatList, Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {AddProjectMemberWindow} from '../../components/addProjectMemberWindow';
 import {BasicButton} from '../../components/basicViews/BasicButton';
+import {BasicText} from '../../components/basicViews/BasicText';
 import {
   useAddMemberToProjectMutation,
   useGetProjectsQuery,
@@ -24,13 +25,15 @@ export const ProjectMembersScreen: React.FC<
     <>
       <View style={styles.container}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>{project?.name}</Text>
+          <BasicText textVariant="title">{project?.name}</BasicText>
           <BasicButton
-            padding={8}
+            spacing="s"
+            variant="outlined"
+            borderWidth={2}
             onPress={() => {
               setAddProjectMemberWindowVisible(true);
             }}>
-            <Text>Add member</Text>
+            <BasicText textVariant="button">Add member</BasicText>
           </BasicButton>
         </View>
 
@@ -38,7 +41,7 @@ export const ProjectMembersScreen: React.FC<
           data={project?.members}
           renderItem={({item, index}) => (
             <View key={index} style={styles.memberContainer}>
-              <Text>{item.name}</Text>
+              <BasicText>{item.name}</BasicText>
               <Pressable
                 onPress={() => {
                   removeMember({
@@ -70,7 +73,8 @@ export const ProjectMembersScreen: React.FC<
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    margin: 10,
+    marginHorizontal: 20,
   },
   title: {
     fontSize: 24,

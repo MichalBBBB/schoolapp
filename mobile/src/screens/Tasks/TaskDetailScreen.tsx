@@ -14,6 +14,8 @@ import {
 import BackButton from '../../components/backButton';
 import BasicInputWindow from '../../components/basicInputWindow';
 import {BasicButton} from '../../components/basicViews/BasicButton';
+import {BasicText} from '../../components/basicViews/BasicText';
+import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
 import EditDateModal from '../../components/editDateWindow';
 import Subtask from '../../components/subtask';
 import {calendarConfigWithoutTime} from '../../components/task';
@@ -49,6 +51,7 @@ const TaskDetailScreen: React.FC<
     useState(false);
   const [addSubtaskModalIsVisible, setAddSubtaskModalIsVisible] =
     useState(false);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -86,46 +89,51 @@ const TaskDetailScreen: React.FC<
       <View style={styles.container}>
         <View style={styles.actionContainer}>
           <BasicButton
+            backgroundColor="accentBackground"
             onPress={() => {
               setEditDueDateModalIsVisible(true);
             }}
             spacing="s"
             borderRadius={10}
             style={styles.action}>
-            <Text>
+            <BasicText>
               {task.dueDate
                 ? `Due: ${dayjs(task.dueDate).calendar(
                     null,
                     calendarConfigWithoutTime,
                   )}`
                 : 'Due date'}
-            </Text>
+            </BasicText>
           </BasicButton>
           <BasicButton
+            backgroundColor="accentBackground"
             onPress={() => {
               setEditDoDateModalIsVisible(true);
             }}
             spacing="s"
             borderRadius={10}>
-            <Text>
+            <BasicText>
               {task.doDate
                 ? `Do: ${dayjs(task.doDate).calendar(
                     null,
                     calendarConfigWithoutTime,
                   )}`
                 : 'Schedule'}
-            </Text>
+            </BasicText>
           </BasicButton>
         </View>
-        <TextInput
+        <BasicTextInput
+          variant="unstyled"
+          spacing="none"
+          textVariant="heading"
           onChangeText={text => {
             setEdited(true);
             setName(text);
           }}
           defaultValue={task.name}
-          style={styles.name}
         />
-        <TextInput
+        <BasicTextInput
+          variant="unstyled"
           multiline={true}
           onChangeText={setText}
           defaultValue={task.text || ''}
@@ -199,17 +207,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 5,
   },
-  task: {
-    padding: 10,
-  },
   separator: {
     height: 0.5,
     backgroundColor: '#ccc',
     marginHorizontal: 10,
-  },
-  name: {
-    fontSize: 20,
-    fontWeight: 'bold',
   },
   container: {
     padding: 10,

@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import {AssignMembersWindow} from '../../components/assignMembersWindow';
 import BasicInputWindow from '../../components/basicInputWindow';
+import {BasicText} from '../../components/basicViews/BasicText';
 import {Menu} from '../../components/menu';
 import {MenuItem} from '../../components/menu/MenuItem';
 import ProjectTask from '../../components/projectTask';
@@ -24,11 +25,12 @@ const ProjectDetailScreen: React.FC<
   NativeStackScreenProps<ProjectStackParamList, 'ProjectDetailScreen'>
 > = ({route, navigation}) => {
   const {data: projects} = useGetProjectsQuery();
+  const [addProjectTask, {error}] = useAddProjectTaskMutation();
+
   const project = projects?.getProjects.find(
     item => item.id == route.params.projectId,
   );
   const [addTaskModalIsVisible, setAddTaskModalIsVisible] = useState(false);
-  const [addProjectTask, {error}] = useAddProjectTaskMutation();
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
 
   useLayoutEffect(() => {
@@ -66,7 +68,7 @@ const ProjectDetailScreen: React.FC<
     <>
       <View style={styles.container}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>{project?.name}</Text>
+          <BasicText textVariant="title">{project?.name}</BasicText>
           <TouchableOpacity
             onPress={() => {
               setAddTaskModalIsVisible(true);
@@ -123,10 +125,6 @@ const styles = StyleSheet.create({
   container: {
     margin: 10,
     marginHorizontal: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
   },
   plusButton: {
     resizeMode: 'stretch',

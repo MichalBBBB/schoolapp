@@ -20,22 +20,32 @@ const LighTheme: MyTheme = {
     textSecondary: 'grey',
     cardView: '#eee',
     accent: 'black',
+    textContrast: 'white',
+    dangerous: 'red',
+    lightBorder: '#aaa',
   },
   spacing: {
     none: 0,
-    s: 8,
-    m: 16,
-    l: 24,
-    xl: 40,
+    s: 6,
+    m: 12,
+    l: 20,
+    xl: 30,
   },
   textVariants: {
     heading: {
       fontSize: 20,
       fontWeight: 'bold',
     },
+    title: {
+      fontSize: 24,
+      fontWeight: 'bold',
+    },
     subHeading: {},
     body: {},
     subText: {},
+    button: {
+      fontWeight: 'bold',
+    },
   },
 };
 
