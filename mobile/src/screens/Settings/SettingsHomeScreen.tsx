@@ -36,8 +36,8 @@ const SettingsHomeScreen: React.FC<
           }}></View>
       )}
 
-      <View style={styles.nameContainer}>
-        <Text style={styles.name}>{me?.me.fullName}</Text>
+      <View>
+        <BasicText textVariant="heading">{me?.me.fullName}</BasicText>
         <BasicText textVariant="subText" color="textSecondary">
           Change your profile info
         </BasicText>
@@ -48,13 +48,13 @@ const SettingsHomeScreen: React.FC<
   return (
     <ScrollView style={styles.container}>
       {profile}
-      <BasicCard>
+      <BasicCard backgroundColor="accentBackground">
         <Pressable
           style={styles.listItem}
           onPress={() => {
             navigation.navigate('LessonTimesScreen');
           }}>
-          <Text>TimeTable</Text>
+          <BasicText>TimeTable</BasicText>
         </Pressable>
       </BasicCard>
     </ScrollView>
@@ -66,11 +66,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 20,
     alignItems: 'center',
-  },
-  nameContainer: {},
-  name: {
-    fontSize: 20,
-    fontWeight: 'bold',
   },
   listItem: {
     flexDirection: 'row',

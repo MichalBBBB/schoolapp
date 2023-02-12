@@ -31,6 +31,7 @@ const Routes = () => {
   screens = (
     <Tab.Navigator
       screenOptions={{
+        tabBarHideOnKeyboard: true,
         header: () => null,
         tabBarStyle: {borderTopWidth: 0},
       }}>

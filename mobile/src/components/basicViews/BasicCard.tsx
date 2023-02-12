@@ -13,7 +13,7 @@ export interface BasicCardProps extends ViewProps {
 
 export const BasicCard = forwardRef<View, BasicCardProps>((props, ref) => {
   const {
-    backgroundColor = 'accentBackground',
+    backgroundColor = 'background',
     borderRadius = 15,
     children,
     spacing = 's',

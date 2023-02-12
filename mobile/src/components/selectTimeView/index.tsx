@@ -1,6 +1,7 @@
 import {PickerIOS, Picker} from '@react-native-picker/picker';
 import React, {useEffect, useState} from 'react';
 import {View, Text, Pressable, StyleSheet} from 'react-native';
+import DatePicker from 'react-native-date-picker';
 import {BasicButton} from '../basicViews/BasicButton';
 import {BasicText} from '../basicViews/BasicText';
 
@@ -40,27 +41,11 @@ const SelectTimeView: React.FC<SelectTimeViewModalProps> = ({
 
   return (
     <View style={styles.container}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <PickerIOS
-          itemStyle={{fontSize: 15, width: 100}}
-          selectedValue={selectedHour}
-          onValueChange={value => {
-            setSelectedHour(value as string);
-          }}>
-          {hours.map((item, index) => (
-            <Picker.Item label={item} value={item} key={index} />
-          ))}
-        </PickerIOS>
-        <BasicText>:</BasicText>
-        <PickerIOS
-          itemStyle={{fontSize: 15, width: 100}}
-          selectedValue={selectedMinute}
-          onValueChange={value => setSelectedMinute(value as string)}>
-          {minutes.map((item, index) => (
-            <Picker.Item label={item} value={item} key={index} />
-          ))}
-        </PickerIOS>
-      </View>
+      <DatePicker
+        date={new Date()}
+        mode="time"
+        androidVariant="nativeAndroid"
+      />
       <BasicButton
         style={{padding: 10}}
         onPress={() => {

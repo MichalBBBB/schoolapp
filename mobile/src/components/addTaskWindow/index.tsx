@@ -60,6 +60,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
   return (
     <>
       <BasicModalCard
+        backgroundColor="background"
         alignCard="flex-end"
         isVisible={
           visible && viewVisible == 'main' && viewShouldAppear == 'main'
@@ -72,6 +73,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
           setViewVisible(viewShouldAppear);
         }}>
         <BasicTextInput
+          spacing="m"
           variant="unstyled"
           placeholder="Task name"
           ref={taskInputRef}

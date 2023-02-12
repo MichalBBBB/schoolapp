@@ -10,6 +10,8 @@ import {
   Image,
   TouchableOpacity,
   Pressable,
+  Platform,
+  UIManager,
 } from 'react-native';
 import AddButton from '../../components/addButton';
 import AddTaskWindow from '../../components/addTaskWindow';
@@ -18,6 +20,13 @@ import EditDateModal from '../../components/editDateWindow';
 import Task from '../../components/task';
 import {useGetAllTasksQuery} from '../../generated/graphql';
 import {TaskStackParamList} from '../../routes/TaskStack';
+
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 const TaskHomeScreen: React.FC<
   NativeStackScreenProps<TaskStackParamList, 'TaskHomeScreen'>
