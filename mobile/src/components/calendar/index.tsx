@@ -3,6 +3,8 @@ import React, {createRef, useEffect, useState} from 'react';
 import {FlatList, View} from 'react-native';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Month from './month';
+import {FlashList} from '@shopify/flash-list';
+import {BasicText} from '../basicViews/BasicText';
 
 dayjs.extend(relativeTime);
 
@@ -16,6 +18,8 @@ interface CalendarProps {
   onChangeActiveMonth?: (newMonth: dayjs.Dayjs) => void | undefined;
   scrollToDate?: dayjs.Dayjs | null | undefined;
 }
+
+const calendarHeight = 204;
 
 const Calendar: React.FC<CalendarProps> = ({
   calendarWidth,
@@ -108,7 +112,7 @@ const Calendar: React.FC<CalendarProps> = ({
     }
   }, [scrollToDate]);
 
-  const flatListRef = createRef<FlatList>();
+  const flatListRef = createRef<FlashList<any>>();
 
   const onDayPress = (date: dayjs.Dayjs) => {
     // if pressed day is in a different month than active, scroll to it
@@ -129,6 +133,7 @@ const Calendar: React.FC<CalendarProps> = ({
           month={item}
           selectedDay={selectedDay}
           onDayPress={date => {
+            console.log('here');
             onDayPress(date);
           }}
         />
@@ -136,47 +141,54 @@ const Calendar: React.FC<CalendarProps> = ({
     );
   };
 
-  const monthView = (
-    <FlatList
-      style={{width: calendarWidth}}
-      data={months}
-      renderItem={renderItem}
-      // makes rendering faster
-      getItemLayout={(item, index) => ({
-        length: calendarWidth,
-        offset: calendarWidth * index,
-        index: index,
-      })}
-      horizontal={true}
-      initialScrollIndex={pastScrollRange}
-      // very important
-      snapToOffsets={months.map((item, index) => index * calendarWidth)}
-      decelerationRate={'fast'}
-      removeClippedSubviews={true}
-      showsHorizontalScrollIndicator={false}
-      onMomentumScrollEnd={item => {
-        // change data in months on every scroll
-        const newIndex = item.nativeEvent.contentOffset.x / calendarWidth;
+  if (!months || months.length == 0) {
+    return <BasicText>loading...</BasicText>;
+  }
 
-        // go through the data array and change months close to viewable to full dates to render full calendars
-        const monthsCopy = changeVisibility(newIndex);
-        if (
-          index !== newIndex &&
-          onChangeActiveMonth &&
-          typeof months[newIndex] !== 'string'
-        ) {
-          onChangeActiveMonth(months[newIndex] as dayjs.Dayjs);
-        }
-        setIndex(newIndex);
-        setMonths(monthsCopy);
-      }}
-      ref={flatListRef}
-      // rerender when indes changes
-      extraData={index}
-    />
+  return (
+    <View
+      style={{
+        width: calendarWidth,
+        height: calendarHeight,
+        zIndex: 20,
+      }}>
+      <FlashList
+        data={months}
+        renderItem={renderItem}
+        // makes rendering faster
+        estimatedItemSize={calendarWidth}
+        estimatedListSize={{height: calendarHeight, width: calendarWidth}}
+        horizontal={true}
+        initialScrollIndex={pastScrollRange}
+        // very important
+        snapToOffsets={months.map((item, index) => index * calendarWidth)}
+        decelerationRate={'fast'}
+        removeClippedSubviews={true}
+        showsHorizontalScrollIndicator={false}
+        onMomentumScrollEnd={item => {
+          // change data in months on every scroll
+          const newIndex = Math.round(
+            item.nativeEvent.contentOffset.x / calendarWidth,
+          );
+
+          // go through the data array and change months close to viewable to full dates to render full calendars
+          const monthsCopy = changeVisibility(newIndex);
+          if (
+            index !== newIndex &&
+            onChangeActiveMonth &&
+            typeof months[newIndex] !== 'string'
+          ) {
+            onChangeActiveMonth(months[newIndex] as dayjs.Dayjs);
+          }
+          setIndex(newIndex);
+          setMonths(monthsCopy);
+        }}
+        ref={flatListRef}
+        // rerender when indes changes
+        extraData={[index, selectedDay]}
+      />
+    </View>
   );
-
-  return monthView;
 };
 
 export default Calendar;

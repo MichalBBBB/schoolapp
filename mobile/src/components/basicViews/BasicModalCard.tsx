@@ -26,6 +26,7 @@ export const BasicModalCard: React.FC<BasicModalCardProps> = ({
   const [theme] = useTheme();
   return (
     <Modal
+      backdropTransitionOutTiming={0}
       isVisible={isVisible}
       backdropOpacity={0.3}
       avoidKeyboard={avoidKeyboard}

@@ -91,84 +91,86 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
           onHide();
         }
       }}>
-      {specialDays.map((item, index) => (
-        <View key={index} style={styles.specialDatesContainer}>
-          {item.map((day, index) => (
-            <View
-              key={index}
-              style={{
-                width: windowWidth / 2,
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'row',
-              }}>
-              <BasicButton
-                variant={selectedSpecialDay == day ? 'filled' : 'unstyled'}
-                backgroundColor={'accentBackground'}
-                onPress={() => {
-                  setSelectedSpecialDay(day);
-                  setSelectedDay(day.date);
+      <View style={{alignItems: 'center'}}>
+        {specialDays.map((item, index) => (
+          <View key={index} style={styles.specialDatesContainer}>
+            {item.map((day, index) => (
+              <View
+                key={index}
+                style={{
+                  width: windowWidth / 2,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  flexDirection: 'row',
                 }}>
-                <BasicText>{day.name}</BasicText>
-              </BasicButton>
-            </View>
-          ))}
+                <BasicButton
+                  variant={selectedSpecialDay == day ? 'filled' : 'unstyled'}
+                  backgroundColor={'accentBackground'}
+                  onPress={() => {
+                    setSelectedSpecialDay(day);
+                    setSelectedDay(day.date);
+                  }}>
+                  <BasicText>{day.name}</BasicText>
+                </BasicButton>
+              </View>
+            ))}
+          </View>
+        ))}
+        <WeekDays weekHeaderHeight={30} width={windowWidth - 20} />
+        <View style={{height: calendarHeight}}>
+          <Calendar
+            weekHeight={weekHeight}
+            calendarWidth={windowWidth - 20}
+            pastScrollRange={2}
+            futureScrollRange={20}
+            selectedDay={'get' in selectedDay ? selectedDay : null}
+            onChangeSelectedDay={date => {
+              setSelectedDay(
+                date.hour(selectedDay.hour()).minute(selectedDay.minute()),
+              );
+              setSelectedSpecialDay(null);
+            }}
+          />
         </View>
-      ))}
-      <WeekDays weekHeaderHeight={30} width={windowWidth - 20} />
-      <View style={{height: calendarHeight}}>
-        <Calendar
-          weekHeight={weekHeight}
-          calendarWidth={windowWidth - 20}
-          pastScrollRange={2}
-          futureScrollRange={20}
-          selectedDay={'get' in selectedDay ? selectedDay : null}
-          onChangeSelectedDay={date => {
-            setSelectedDay(
-              date.hour(selectedDay.hour()).minute(selectedDay.minute()),
-            );
-            setSelectedSpecialDay(null);
+        <BasicButton
+          variant="unstyled"
+          onPress={() => setTimePopupOpen(true)}
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: '100%',
+            paddingHorizontal: 30,
+          }}>
+          <BasicText>Time</BasicText>
+          <BasicText>{selectedDay.format('HH:mm')}</BasicText>
+        </BasicButton>
+        <View style={styles.submitButtonContainer}>
+          <BasicButton
+            onPress={() => {
+              const date: dayjs.Dayjs = selectedDay;
+              onSubmit(date);
+            }}>
+            <BasicText color="background" style={{fontWeight: 'bold'}}>
+              Submit
+            </BasicText>
+          </BasicButton>
+        </View>
+        <SelectTimeModal
+          onClose={() => {
+            setTimePopupOpen(false);
           }}
+          onSubmit={time => {
+            setTimePopupOpen(false);
+            setSelectedDay(
+              selectedDay
+                .hour(parseInt(time.split(':')[0]))
+                .minute(parseInt(time.split(':')[1])),
+            );
+          }}
+          isVisible={timePopupOpen}
+          initialTime={selectedDay.format('HH:mm')}
         />
       </View>
-      <BasicButton
-        variant="unstyled"
-        onPress={() => setTimePopupOpen(true)}
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          width: '100%',
-          paddingHorizontal: 30,
-        }}>
-        <BasicText>Time</BasicText>
-        <BasicText>{selectedDay.format('HH:mm')}</BasicText>
-      </BasicButton>
-      <View style={styles.submitButtonContainer}>
-        <BasicButton
-          onPress={() => {
-            const date: dayjs.Dayjs = selectedDay;
-            onSubmit(date);
-          }}>
-          <BasicText color="background" style={{fontWeight: 'bold'}}>
-            Submit
-          </BasicText>
-        </BasicButton>
-      </View>
-      <SelectTimeModal
-        onClose={() => {
-          setTimePopupOpen(false);
-        }}
-        onSubmit={time => {
-          setTimePopupOpen(false);
-          setSelectedDay(
-            selectedDay
-              .hour(parseInt(time.split(':')[0]))
-              .minute(parseInt(time.split(':')[1])),
-          );
-        }}
-        isVisible={timePopupOpen}
-        initialTime={selectedDay.format('HH:mm')}
-      />
     </BasicModalCard>
   );
 };

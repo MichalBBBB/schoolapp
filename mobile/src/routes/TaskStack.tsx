@@ -40,13 +40,7 @@ const TaskStack: React.FC<
         options={({route}) => ({title: route.params.task.name})}
       />
       <Stack.Screen name="NewProjectScreen" component={NewProjectScreen} />
-      <Stack.Screen
-        name="NotificationScreen"
-        component={NotificationScreen}
-        options={{
-          animation: 'slide_from_right',
-        }}
-      />
+      <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
     </Stack.Navigator>
   );
 };

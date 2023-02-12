@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -21,7 +21,8 @@ import {getAccessToken, setAccessToken} from '../../utils/AccessToken';
 const EmailLoginScreen = () => {
   const [registerMutation] = useRegisterMutation();
   const [loginMutation] = useLoginMutation();
-  const [checkUserExists, {data: UserExistsResult}] = useUserExistsLazyQuery();
+  const [checkUserExists, {data: UserExistsResult, error}] =
+    useUserExistsLazyQuery();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,6 +30,10 @@ const EmailLoginScreen = () => {
   const [fullName, setFullName] = useState('');
 
   const [errors, setErrors] = useState<Array<UserError>>([]);
+
+  useEffect(() => {
+    console.log(UserExistsResult, JSON.stringify(error));
+  }, [error]);
 
   const login = async () => {
     const response = await loginMutation({variables: {password, email}});

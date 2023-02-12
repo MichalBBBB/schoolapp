@@ -7,11 +7,17 @@ import {
 import {setContext} from '@apollo/client/link/context';
 import {TokenRefreshLink} from 'apollo-link-token-refresh';
 import jwtDecode from 'jwt-decode';
+import {Platform} from 'react-native';
 import {isLoggedInVar} from '../App';
 import {getAccessToken, setAccessToken} from './AccessToken';
 
+export const uri =
+  Platform.OS == 'ios'
+    ? 'http://localhost:5002/graphql'
+    : 'http://10.0.2.2:5002/graphql';
+
 const httpLink = createHttpLink({
-  uri: 'http://localhost:5002/graphql',
+  uri: uri,
 });
 
 const authLink = setContext((_, {headers}) => {

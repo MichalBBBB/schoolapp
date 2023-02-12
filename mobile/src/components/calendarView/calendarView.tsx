@@ -125,28 +125,30 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
         },
         calendarAnimatedStyle,
       ]}>
-      <Calendar
-        weekHeight={34}
-        onChangeSelectedDay={onDayPress}
-        calendarWidth={calendarWidth}
-        pastScrollRange={pastScrollRange}
-        futureScrollRange={futureScrollRange}
-        selectedDay={selectedDay}
-        onChangeActiveMonth={newMonth => {
-          let newSelectedDay;
-          if (newMonth.isSame(dayjs(), 'month')) {
-            newSelectedDay = dayjs();
-          } else if (selectedDay.isSame(newMonth, 'month')) {
-            newSelectedDay = selectedDay;
-          } else {
-            newSelectedDay = newMonth.startOf('month');
-          }
-          weekRow.value = findRowOfDate(newSelectedDay);
-          setSelectedDay(newSelectedDay);
-          setMonthString(newMonth.format('MMMM YYYY'));
-        }}
-        scrollToDate={scrollMonthToDate}
-      />
+      <View>
+        <Calendar
+          weekHeight={34}
+          onChangeSelectedDay={onDayPress}
+          calendarWidth={calendarWidth}
+          pastScrollRange={pastScrollRange}
+          futureScrollRange={futureScrollRange}
+          selectedDay={selectedDay}
+          onChangeActiveMonth={newMonth => {
+            let newSelectedDay;
+            if (newMonth.isSame(dayjs(), 'month')) {
+              newSelectedDay = dayjs();
+            } else if (selectedDay.isSame(newMonth, 'month')) {
+              newSelectedDay = selectedDay;
+            } else {
+              newSelectedDay = newMonth.startOf('month');
+            }
+            weekRow.value = findRowOfDate(newSelectedDay);
+            setSelectedDay(newSelectedDay);
+            setMonthString(newMonth.format('MMMM YYYY'));
+          }}
+          scrollToDate={scrollMonthToDate}
+        />
+      </View>
     </Animated.View>
   );
 
