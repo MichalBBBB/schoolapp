@@ -33,7 +33,7 @@ const Week: React.FC<WeekProps> = ({
       {week.map((day, index) => (
         <Day
           key={index}
-          selectedDay={selectedDay}
+          isSelected={day.isSame(selectedDay, 'date')}
           monthNum={monthNum}
           day={day}
           onPress={onDayPress}

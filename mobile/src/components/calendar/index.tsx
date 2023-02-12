@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import React, {createRef, useEffect, useState} from 'react';
+import React, {createRef, useCallback, useEffect, useState} from 'react';
 import {FlatList, View} from 'react-native';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Month from './month';
@@ -114,7 +114,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
   const flatListRef = createRef<FlashList<any>>();
 
-  const onDayPress = (date: dayjs.Dayjs) => {
+  const onDayPress = useCallback((date: dayjs.Dayjs) => {
     // if pressed day is in a different month than active, scroll to it
     if (date.month() !== (months[index] as dayjs.Dayjs).month()) {
       flatListRef.current?.scrollToIndex({
@@ -122,7 +122,7 @@ const Calendar: React.FC<CalendarProps> = ({
       });
     }
     onChangeSelectedDay(date);
-  };
+  }, []);
 
   const renderItem = ({item}: {item: dayjs.Dayjs | string}) => {
     return (
@@ -132,10 +132,7 @@ const Calendar: React.FC<CalendarProps> = ({
           calendarWidth={calendarWidth}
           month={item}
           selectedDay={selectedDay}
-          onDayPress={date => {
-            console.log('here');
-            onDayPress(date);
-          }}
+          onDayPress={onDayPress}
         />
       </View>
     );

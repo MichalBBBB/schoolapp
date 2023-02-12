@@ -5,13 +5,12 @@ import {BasicText} from '../basicViews/BasicText';
 
 interface DayProps {
   day: dayjs.Dayjs;
-  selectedDay: dayjs.Dayjs | null;
+  isSelected: boolean;
   monthNum: number | undefined;
   onPress: (date: dayjs.Dayjs) => void;
 }
 
-const Day: React.FC<DayProps> = ({day, selectedDay, monthNum, onPress}) => {
-  const isSelected = day.isSame(selectedDay, 'date');
+const Day: React.FC<DayProps> = ({day, isSelected, monthNum, onPress}) => {
   return (
     <TouchableOpacity
       onPress={() => {
@@ -23,7 +22,7 @@ const Day: React.FC<DayProps> = ({day, selectedDay, monthNum, onPress}) => {
           height: 30,
           justifyContent: 'center',
           alignItems: 'center',
-          borderRadius: 15,
+          borderRadius: isSelected ? 15 : undefined,
           backgroundColor: isSelected ? '#ddd' : undefined,
           marginVertical: 2,
         }}>
