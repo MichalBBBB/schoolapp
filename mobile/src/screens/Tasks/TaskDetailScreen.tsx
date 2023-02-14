@@ -26,6 +26,7 @@ import {
   useGetAllTasksQuery,
 } from '../../generated/graphql';
 import {TaskStackParamList} from '../../routes/TaskStack';
+import {v4 as uuidv4} from 'uuid';
 
 const TaskDetailScreen: React.FC<
   NativeStackScreenProps<TaskStackParamList, 'TaskDetailScreen'>
@@ -190,7 +191,7 @@ const TaskDetailScreen: React.FC<
         }}
         onSubmit={() => {
           addSubtask({
-            variables: {name, taskId: task.id},
+            variables: {id: uuidv4(), name, taskId: task.id},
             refetchQueries: [GetAllTasksDocument],
           });
         }}

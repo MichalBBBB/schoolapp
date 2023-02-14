@@ -27,6 +27,7 @@ import {BasicText} from '../../../components/basicViews/BasicText';
 import {BasicButton} from '../../../components/basicViews/BasicButton';
 import {BasicCard} from '../../../components/basicViews/BasicCard';
 import {BasicTextInput} from '../../../components/basicViews/BasicTextInput';
+import {v4 as uuidv4} from 'uuid';
 
 export type LessonTime = {
   lessonNumber: number;
@@ -90,6 +91,7 @@ const LessonTimesScreen: React.FC<
   const addLessonTime = (lastLessonTime: LessonTimeFragment) => {
     createLessonTime({
       variables: {
+        id: uuidv4(),
         startTime: dayjs(lastLessonTime.endTime, 'HH:mm')
           .add(10, 'minute')
           .format('HH:mm'),
@@ -223,7 +225,11 @@ const LessonTimesScreen: React.FC<
               spacing="m"
               onPress={() => {
                 createLessonTime({
-                  variables: {startTime: '08:00', endTime: '08:45'},
+                  variables: {
+                    id: uuidv4(),
+                    startTime: '08:00',
+                    endTime: '08:45',
+                  },
                   refetchQueries: [GetAllLessonTimesDocument],
                 });
               }}>
@@ -235,7 +241,10 @@ const LessonTimesScreen: React.FC<
         )}
         renderItem={({item, index}) => (
           <View style={styles.listItemContainer} key={index}>
-            <BasicCard style={[styles.listItem]} spacing="m">
+            <BasicCard
+              style={[styles.listItem]}
+              spacing="m"
+              backgroundColor="accentBackground">
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <BasicText style={styles.lessonNumber} textVariant="button">
                   {item.lessonNumber + 1}.

@@ -5,11 +5,23 @@ import {
   InMemoryCache,
 } from '@apollo/client';
 import {setContext} from '@apollo/client/link/context';
+import AsyncStorage from '@react-native-community/async-storage';
 import {TokenRefreshLink} from 'apollo-link-token-refresh';
+import {
+  AsyncStorageWrapper,
+  MMKVStorageWrapper,
+  MMKVWrapper,
+  persistCache,
+} from 'apollo3-cache-persist';
 import jwtDecode from 'jwt-decode';
 import {Platform} from 'react-native';
-import {isLoggedInVar} from '../App';
+import {isLoggedInVar, storage} from '../App';
 import {getAccessToken, setAccessToken} from './AccessToken';
+import {onError} from '@apollo/client/link/error';
+import {RetryLink} from '@apollo/client/link/retry';
+import NetInfo from '@react-native-community/netinfo';
+import SerializingLink from 'apollo-link-serialize';
+import {PersistentQueueLink} from './persistentQueueLink';
 
 export const uri =
   Platform.OS == 'ios'
@@ -18,6 +30,14 @@ export const uri =
 
 const httpLink = createHttpLink({
   uri: uri,
+});
+
+const retryLink = new RetryLink();
+
+const serializingLink = new SerializingLink();
+
+const errorLink = onError(error => {
+  console.warn(error);
 });
 
 const authLink = setContext((_, {headers}) => {
@@ -36,7 +56,8 @@ const refreshLink = new TokenRefreshLink({
   isTokenValidOrUndefined: () => {
     const token = getAccessToken();
     if (!token) {
-      return true;
+      console.log('invalidAccessToken');
+      return false;
     }
 
     try {
@@ -60,15 +81,43 @@ const refreshLink = new TokenRefreshLink({
     setAccessToken(accesToken);
   },
   handleError: err => {
-    console.warn('Your refresh token is invalid. Try to relogin');
-    isLoggedInVar(false);
+    NetInfo.fetch().then(state => {
+      if (
+        !state.isConnected ||
+        (err instanceof TypeError && err.message == 'Network request failed')
+      ) {
+        console.warn('you are offline');
+      } else {
+        console.warn('Your refresh token is invalid. Try to relogin');
+        isLoggedInVar(false);
+      }
+    });
   },
 });
 
-export const createApolloClient = () => {
-  return new ApolloClient({
-    link: ApolloLink.from([refreshLink, authLink, httpLink]),
-    cache: new InMemoryCache(),
+export const createApolloClient = async (
+  persistentQueueLink: PersistentQueueLink,
+) => {
+  const cache = new InMemoryCache();
+
+  await persistCache({
+    cache,
+    storage: new MMKVWrapper(storage),
+  });
+
+  const client = new ApolloClient({
+    link: ApolloLink.from([
+      errorLink,
+      persistentQueueLink,
+      serializingLink as unknown as ApolloLink,
+      // retryLink,
+      refreshLink,
+      authLink,
+      httpLink,
+    ]),
+    cache: cache,
     credentials: 'include',
   });
+
+  return client;
 };

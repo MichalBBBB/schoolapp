@@ -24,12 +24,13 @@ export class subjectResolver {
   @Mutation(() => Subject)
   @UseMiddleware(isAuth)
   async createSubject(
+    @Arg("id") id: string,
     @Arg("name") name: string,
     @Ctx() { payload }: MyContext
   ) {
     const result = await Subject.createQueryBuilder("subject")
       .insert()
-      .values({ name, userId: payload?.userId })
+      .values({ id, name, userId: payload?.userId })
       .returning("*")
       .execute();
     return result.raw[0];

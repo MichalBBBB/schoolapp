@@ -2,8 +2,10 @@ mutation CreateLesson(
   $dayOfTheWeek: String!
   $lessonTimeId: String!
   $subjectId: String!
+  $id: String!
 ) {
   createLesson(
+    id: $id
     dayOfTheWeek: $dayOfTheWeek
     lessonTimeId: $lessonTimeId
     subjectId: $subjectId

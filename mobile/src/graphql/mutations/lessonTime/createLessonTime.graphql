@@ -1,5 +1,9 @@
-mutation CreatelessonTime($endTime: String!, $startTime: String!) {
-  createLessonTime(endTime: $endTime, startTime: $startTime) {
+mutation CreatelessonTime(
+  $endTime: String!
+  $startTime: String!
+  $id: String!
+) {
+  createLessonTime(endTime: $endTime, startTime: $startTime, id: $id) {
     ...LessonTime
   }
 }

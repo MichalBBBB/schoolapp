@@ -77,6 +77,7 @@ export type Mutation = {
   createSubtask: Subtask;
   createTask: Task;
   declineProjectInvite: Scalars['Boolean'];
+  deleteAllGoogleUsers: Scalars['Boolean'];
   deleteEvent: Scalars['Boolean'];
   deleteLesson: Scalars['Boolean'];
   deleteLessonTime: Scalars['Boolean'];
@@ -92,6 +93,7 @@ export type Mutation = {
   editTask: Task;
   googleSignIn: UserSucces;
   login: LoginResponse;
+  logout: Scalars['Boolean'];
   register: RegisterResponse;
   removeAssignedMember: ProjectTask;
   removeMemberFromProject: Project;
@@ -133,6 +135,7 @@ export type MutationChangeSubjectOfTaskArgs = {
 
 export type MutationCreateEventArgs = {
   endDate?: InputMaybe<Scalars['DateTime']>;
+  id: Scalars['String'];
   name: Scalars['String'];
   startDate: Scalars['DateTime'];
   subjectId?: InputMaybe<Scalars['String']>;
@@ -142,6 +145,7 @@ export type MutationCreateEventArgs = {
 
 export type MutationCreateLessonArgs = {
   dayOfTheWeek: Scalars['String'];
+  id: Scalars['String'];
   lessonTimeId: Scalars['String'];
   subjectId: Scalars['String'];
 };
@@ -149,6 +153,7 @@ export type MutationCreateLessonArgs = {
 
 export type MutationCreateLessonTimeArgs = {
   endTime: Scalars['String'];
+  id: Scalars['String'];
   startTime: Scalars['String'];
 };
 
@@ -160,11 +165,13 @@ export type MutationCreateProjectArgs = {
 
 
 export type MutationCreateSubjectArgs = {
+  id: Scalars['String'];
   name: Scalars['String'];
 };
 
 
 export type MutationCreateSubtaskArgs = {
+  id: Scalars['String'];
   name: Scalars['String'];
   taskId: Scalars['String'];
 };
@@ -173,12 +180,18 @@ export type MutationCreateSubtaskArgs = {
 export type MutationCreateTaskArgs = {
   doDate?: InputMaybe<Scalars['DateTime']>;
   dueDate?: InputMaybe<Scalars['DateTime']>;
+  id: Scalars['String'];
   name: Scalars['String'];
   subjectId?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationDeclineProjectInviteArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteAllGoogleUsersArgs = {
   id: Scalars['String'];
 };
 
@@ -469,6 +482,7 @@ export type CreateEventMutationVariables = Exact<{
   wholeDay?: InputMaybe<Scalars['Boolean']>;
   name: Scalars['String'];
   subjectId?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
 }>;
 
 
@@ -485,6 +499,7 @@ export type CreateLessonMutationVariables = Exact<{
   dayOfTheWeek: Scalars['String'];
   lessonTimeId: Scalars['String'];
   subjectId: Scalars['String'];
+  id: Scalars['String'];
 }>;
 
 
@@ -508,6 +523,7 @@ export type EditLessonMutation = { __typename?: 'Mutation', editLesson: { __type
 export type CreatelessonTimeMutationVariables = Exact<{
   endTime: Scalars['String'];
   startTime: Scalars['String'];
+  id: Scalars['String'];
 }>;
 
 
@@ -622,6 +638,7 @@ export type ToggleProjectTaskMutation = { __typename?: 'Mutation', toggleProject
 
 export type CreateSubjectMutationVariables = Exact<{
   name: Scalars['String'];
+  id: Scalars['String'];
 }>;
 
 
@@ -630,6 +647,7 @@ export type CreateSubjectMutation = { __typename?: 'Mutation', createSubject: { 
 export type CreateSubtaskMutationVariables = Exact<{
   taskId: Scalars['String'];
   name: Scalars['String'];
+  id: Scalars['String'];
 }>;
 
 
@@ -640,6 +658,7 @@ export type CreateTaskMutationVariables = Exact<{
   subjectId?: InputMaybe<Scalars['String']>;
   dueDate?: InputMaybe<Scalars['DateTime']>;
   doDate?: InputMaybe<Scalars['DateTime']>;
+  id: Scalars['String'];
 }>;
 
 
@@ -866,8 +885,9 @@ export const TaskFragmentDoc = gql`
     ${SubtaskFragmentDoc}
 ${SubjectFragmentDoc}`;
 export const CreateEventDocument = gql`
-    mutation CreateEvent($startDate: DateTime!, $endDate: DateTime, $wholeDay: Boolean, $name: String!, $subjectId: String) {
+    mutation CreateEvent($startDate: DateTime!, $endDate: DateTime, $wholeDay: Boolean, $name: String!, $subjectId: String, $id: String!) {
   createEvent(
+    id: $id
     startDate: $startDate
     endDate: $endDate
     wholeDay: $wholeDay
@@ -898,6 +918,7 @@ export type CreateEventMutationFn = Apollo.MutationFunction<CreateEventMutation,
  *      wholeDay: // value for 'wholeDay'
  *      name: // value for 'name'
  *      subjectId: // value for 'subjectId'
+ *      id: // value for 'id'
  *   },
  * });
  */
@@ -940,8 +961,9 @@ export type DeleteEventMutationHookResult = ReturnType<typeof useDeleteEventMuta
 export type DeleteEventMutationResult = Apollo.MutationResult<DeleteEventMutation>;
 export type DeleteEventMutationOptions = Apollo.BaseMutationOptions<DeleteEventMutation, DeleteEventMutationVariables>;
 export const CreateLessonDocument = gql`
-    mutation CreateLesson($dayOfTheWeek: String!, $lessonTimeId: String!, $subjectId: String!) {
+    mutation CreateLesson($dayOfTheWeek: String!, $lessonTimeId: String!, $subjectId: String!, $id: String!) {
   createLesson(
+    id: $id
     dayOfTheWeek: $dayOfTheWeek
     lessonTimeId: $lessonTimeId
     subjectId: $subjectId
@@ -968,6 +990,7 @@ export type CreateLessonMutationFn = Apollo.MutationFunction<CreateLessonMutatio
  *      dayOfTheWeek: // value for 'dayOfTheWeek'
  *      lessonTimeId: // value for 'lessonTimeId'
  *      subjectId: // value for 'subjectId'
+ *      id: // value for 'id'
  *   },
  * });
  */
@@ -1044,8 +1067,8 @@ export type EditLessonMutationHookResult = ReturnType<typeof useEditLessonMutati
 export type EditLessonMutationResult = Apollo.MutationResult<EditLessonMutation>;
 export type EditLessonMutationOptions = Apollo.BaseMutationOptions<EditLessonMutation, EditLessonMutationVariables>;
 export const CreatelessonTimeDocument = gql`
-    mutation CreatelessonTime($endTime: String!, $startTime: String!) {
-  createLessonTime(endTime: $endTime, startTime: $startTime) {
+    mutation CreatelessonTime($endTime: String!, $startTime: String!, $id: String!) {
+  createLessonTime(endTime: $endTime, startTime: $startTime, id: $id) {
     ...LessonTime
   }
 }
@@ -1067,6 +1090,7 @@ export type CreatelessonTimeMutationFn = Apollo.MutationFunction<CreatelessonTim
  *   variables: {
  *      endTime: // value for 'endTime'
  *      startTime: // value for 'startTime'
+ *      id: // value for 'id'
  *   },
  * });
  */
@@ -1541,8 +1565,8 @@ export type ToggleProjectTaskMutationHookResult = ReturnType<typeof useTogglePro
 export type ToggleProjectTaskMutationResult = Apollo.MutationResult<ToggleProjectTaskMutation>;
 export type ToggleProjectTaskMutationOptions = Apollo.BaseMutationOptions<ToggleProjectTaskMutation, ToggleProjectTaskMutationVariables>;
 export const CreateSubjectDocument = gql`
-    mutation CreateSubject($name: String!) {
-  createSubject(name: $name) {
+    mutation CreateSubject($name: String!, $id: String!) {
+  createSubject(name: $name, id: $id) {
     ...Subject
   }
 }
@@ -1563,6 +1587,7 @@ export type CreateSubjectMutationFn = Apollo.MutationFunction<CreateSubjectMutat
  * const [createSubjectMutation, { data, loading, error }] = useCreateSubjectMutation({
  *   variables: {
  *      name: // value for 'name'
+ *      id: // value for 'id'
  *   },
  * });
  */
@@ -1574,8 +1599,8 @@ export type CreateSubjectMutationHookResult = ReturnType<typeof useCreateSubject
 export type CreateSubjectMutationResult = Apollo.MutationResult<CreateSubjectMutation>;
 export type CreateSubjectMutationOptions = Apollo.BaseMutationOptions<CreateSubjectMutation, CreateSubjectMutationVariables>;
 export const CreateSubtaskDocument = gql`
-    mutation CreateSubtask($taskId: String!, $name: String!) {
-  createSubtask(taskId: $taskId, name: $name) {
+    mutation CreateSubtask($taskId: String!, $name: String!, $id: String!) {
+  createSubtask(taskId: $taskId, name: $name, id: $id) {
     ...Subtask
   }
 }
@@ -1597,6 +1622,7 @@ export type CreateSubtaskMutationFn = Apollo.MutationFunction<CreateSubtaskMutat
  *   variables: {
  *      taskId: // value for 'taskId'
  *      name: // value for 'name'
+ *      id: // value for 'id'
  *   },
  * });
  */
@@ -1608,8 +1634,9 @@ export type CreateSubtaskMutationHookResult = ReturnType<typeof useCreateSubtask
 export type CreateSubtaskMutationResult = Apollo.MutationResult<CreateSubtaskMutation>;
 export type CreateSubtaskMutationOptions = Apollo.BaseMutationOptions<CreateSubtaskMutation, CreateSubtaskMutationVariables>;
 export const CreateTaskDocument = gql`
-    mutation CreateTask($name: String!, $subjectId: String, $dueDate: DateTime, $doDate: DateTime) {
+    mutation CreateTask($name: String!, $subjectId: String, $dueDate: DateTime, $doDate: DateTime, $id: String!) {
   createTask(
+    id: $id
     name: $name
     subjectId: $subjectId
     dueDate: $dueDate
@@ -1638,6 +1665,7 @@ export type CreateTaskMutationFn = Apollo.MutationFunction<CreateTaskMutation, C
  *      subjectId: // value for 'subjectId'
  *      dueDate: // value for 'dueDate'
  *      doDate: // value for 'doDate'
+ *      id: // value for 'id'
  *   },
  * });
  */

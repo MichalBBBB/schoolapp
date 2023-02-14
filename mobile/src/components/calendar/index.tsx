@@ -114,15 +114,18 @@ const Calendar: React.FC<CalendarProps> = ({
 
   const flatListRef = createRef<FlashList<any>>();
 
-  const onDayPress = useCallback((date: dayjs.Dayjs) => {
-    // if pressed day is in a different month than active, scroll to it
-    if (date.month() !== (months[index] as dayjs.Dayjs).month()) {
-      flatListRef.current?.scrollToIndex({
-        index: date.isBefore(months[index]) ? index - 1 : index + 1,
-      });
-    }
-    onChangeSelectedDay(date);
-  }, []);
+  const onDayPress = useCallback(
+    (date: dayjs.Dayjs) => {
+      // if pressed day is in a different month than active, scroll to it
+      if (date.month() !== (months[index] as dayjs.Dayjs).month()) {
+        flatListRef.current?.scrollToIndex({
+          index: date.isBefore(months[index]) ? index - 1 : index + 1,
+        });
+      }
+      onChangeSelectedDay(date);
+    },
+    [months],
+  );
 
   const renderItem = ({item}: {item: dayjs.Dayjs | string}) => {
     return (

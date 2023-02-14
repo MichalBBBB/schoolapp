@@ -43,6 +43,7 @@ const main = async () => {
 
   // The refresh token rest endpoint to return an accesToken
   app.post("/refresh_token", async (req, res) => {
+    console.log("request");
     const token = req.cookies.jid;
     if (!token) {
       return res.send({

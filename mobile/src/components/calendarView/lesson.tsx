@@ -14,7 +14,7 @@ import {BasicText} from '../basicViews/BasicText';
 import EditDateModal from '../editDateWindow';
 import {Menu} from '../menu';
 import {MenuItem} from '../menu/MenuItem';
-import SlidingView from '../slidingView';
+import {v4 as uuidv4} from 'uuid';
 
 interface LessonProps {
   lesson: LessonFragment;
@@ -63,6 +63,7 @@ export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
           addTask({
             refetchQueries: [GetAllTasksDocument],
             variables: {
+              id: uuidv4(),
               name: `Study for ${event?.name}`,
               subjectId: lesson.subject.id,
               dueDate: event?.startDate,

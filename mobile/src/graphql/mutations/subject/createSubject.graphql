@@ -1,5 +1,5 @@
-mutation CreateSubject($name: String!) {
-  createSubject(name: $name) {
+mutation CreateSubject($name: String!, $id: String!) {
+  createSubject(name: $name, id: $id) {
     ...Subject
   }
 }

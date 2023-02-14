@@ -42,11 +42,13 @@ export class lessonTimeResolver {
   @Mutation(() => LessonTime)
   @UseMiddleware(isAuth)
   async createLessonTime(
+    @Arg("id") id: string,
     @Arg("startTime") startTime: string,
     @Arg("endTime") endTime: string,
     @Ctx() { payload }: MyContext
   ) {
     const lessonTime = await LessonTime.create({
+      id,
       startTime,
       endTime,
       userId: payload?.userId,

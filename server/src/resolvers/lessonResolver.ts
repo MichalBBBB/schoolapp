@@ -26,11 +26,13 @@ export class lessonResolver {
   @UseMiddleware(isAuth)
   async createLesson(
     @Ctx() { payload }: MyContext,
+    @Arg("id") id: string,
     @Arg("subjectId") subjectId: string,
     @Arg("lessonTimeId") lessonTimeId: string,
     @Arg("dayOfTheWeek") dayOfTheWeek: string
   ) {
     const lesson = await Lesson.create({
+      id,
       subjectId,
       lessonTimeId,
       dayOfTheWeek: dayOfTheWeek as WEEK_DAYS,

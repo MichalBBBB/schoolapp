@@ -3,8 +3,10 @@ mutation CreateTask(
   $subjectId: String
   $dueDate: DateTime
   $doDate: DateTime
+  $id: String!
 ) {
   createTask(
+    id: $id
     name: $name
     subjectId: $subjectId
     dueDate: $dueDate

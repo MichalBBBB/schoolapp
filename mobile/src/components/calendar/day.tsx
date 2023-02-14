@@ -14,6 +14,7 @@ const Day: React.FC<DayProps> = ({day, isSelected, monthNum, onPress}) => {
   return (
     <TouchableOpacity
       onPress={() => {
+        console.log(day);
         onPress(day);
       }}>
       <View

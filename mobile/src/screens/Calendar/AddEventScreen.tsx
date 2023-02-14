@@ -15,6 +15,7 @@ import SelectSubjectModal from '../../components/selectSubject';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
 import {BasicCard} from '../../components/basicViews/BasicCard';
+import {v4 as uuidv4} from 'uuid';
 
 let hours: number[] = [];
 for (var i = 0; i < 24; i++) {
@@ -107,6 +108,7 @@ const AddEventScreen: React.FC<
           onPress={() => {
             createEvent({
               variables: {
+                id: uuidv4(),
                 startDate: startDate.toISOString(),
                 name: name,
                 endDate: endDate.toISOString(),

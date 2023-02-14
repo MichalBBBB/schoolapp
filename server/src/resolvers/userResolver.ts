@@ -260,4 +260,10 @@ export class userResolver {
       return false;
     }
   }
+
+  @Mutation(() => Boolean)
+  logout(@Ctx() { res }: MyContext) {
+    sendRefreshToken(res, "");
+    return true;
+  }
 }

@@ -10,6 +10,7 @@ import BasicInputWindow from '../basicInputWindow';
 import {BasicButton} from '../basicViews/BasicButton';
 import {BasicModalCard} from '../basicViews/BasicModalCard';
 import {BasicText} from '../basicViews/BasicText';
+import {v4 as uuidv4} from 'uuid';
 
 interface SelectSubjectProps {
   isVisible: boolean;
@@ -89,7 +90,7 @@ const SelectSubjectModal: React.FC<SelectSubjectProps> = ({
         placeholder="Subject name"
         onSubmit={text => {
           addSubject({
-            variables: {name: text},
+            variables: {id: uuidv4(), name: text},
             refetchQueries: [GetAllSubjectsDocument],
           });
         }}

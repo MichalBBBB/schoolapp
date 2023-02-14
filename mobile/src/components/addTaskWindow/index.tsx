@@ -2,7 +2,10 @@ import dayjs from 'dayjs';
 import React, {createRef, useEffect, useRef, useState} from 'react';
 import {View, TextInput, Text, StyleSheet} from 'react-native';
 import {
+  GetAllEventsDocument,
   GetAllTasksDocument,
+  GetAllTasksQuery,
+  GetAllTasksQueryResult,
   SubjectFragment,
   useCreateTaskMutation,
   useGetAllLessonsQuery,
@@ -16,6 +19,8 @@ import {BasicButton} from '../basicViews/BasicButton';
 import SelectSubjectModal from '../selectSubject';
 import {getCurrentLesson} from '../../utils/lessonUtils';
 import {BasicText} from '../basicViews/BasicText';
+import {v4 as uuidv4} from 'uuid';
+import {useCreateTask} from '../../mutationHooks/createTask';
 
 interface addTaskWindowProps {
   onClose: () => void;
@@ -24,6 +29,7 @@ interface addTaskWindowProps {
 
 const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
   const [addTask, {error}] = useCreateTaskMutation();
+  const [createTask] = useCreateTask();
   const {data: lessons} = useGetAllLessonsQuery();
 
   const taskInputRef = createRef<TextInput>();
@@ -102,13 +108,20 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
           <AddButton
             onPress={() => {
               console.log(taskDate);
-              addTask({
-                variables: {
-                  name,
-                  subjectId: subject ? subject.id : undefined,
-                  dueDate: taskDate,
-                },
-                refetchQueries: [GetAllTasksDocument],
+              // addTask({
+              //   variables: {
+              //     id: uuidv4(),
+              //     name,
+              //     subjectId: subject ? subject.id : undefined,
+              //     dueDate: taskDate,
+              //   },
+              //   refetchQueries: [GetAllTasksDocument],
+              // });
+              createTask({
+                id: uuidv4(),
+                name,
+                subjectId: subject ? subject.id : undefined,
+                dueDate: taskDate,
               });
               closeWindow();
             }}

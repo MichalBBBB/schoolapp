@@ -35,6 +35,7 @@ export class subtaskResolver {
   @Mutation(() => Subtask)
   @UseMiddleware(isAuth)
   async createSubtask(
+    @Arg("id") id: string,
     @Arg("name") name: string,
     @Arg("taskId") taskId: string,
     @Ctx() { payload }: MyContext
@@ -44,7 +45,7 @@ export class subtaskResolver {
     if (task?.userId == payload?.userId) {
       const result = await Subtask.createQueryBuilder()
         .insert()
-        .values({ name, taskId })
+        .values({ id, name, taskId })
         .returning("*")
         .execute();
 

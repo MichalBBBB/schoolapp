@@ -24,6 +24,7 @@ export class calendarEventResolver {
   @Mutation(() => CalendarEvent)
   @UseMiddleware(isAuth)
   async createEvent(
+    @Arg("id") id: string,
     @Arg("startDate") startDate: Date,
     @Arg("endDate", { nullable: true }) endDate: Date,
     @Arg("wholeDay", { nullable: true }) wholeDay: Boolean,
@@ -34,6 +35,7 @@ export class calendarEventResolver {
     const result = await CalendarEvent.createQueryBuilder("calendarEvent")
       .insert()
       .values({
+        id,
         startDate,
         endDate,
         wholeDay,

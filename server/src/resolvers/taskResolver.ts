@@ -70,6 +70,7 @@ export class taskResolver {
   @UseMiddleware(isAuth)
   async createTask(
     @Ctx() { payload }: MyContext,
+    @Arg("id") id: string,
     @Arg("name") name: string,
     @Arg("subjectId", { nullable: true }) subjectId?: string,
     @Arg("dueDate", { nullable: true }) dueDate?: Date,
@@ -80,6 +81,7 @@ export class taskResolver {
       .insert()
       .into(Task)
       .values({
+        id,
         name,
         userId: payload?.userId,
         subjectId,

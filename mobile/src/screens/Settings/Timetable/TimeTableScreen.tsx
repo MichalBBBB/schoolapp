@@ -23,6 +23,7 @@ import {
 } from '../../../generated/graphql';
 import {SettingsStackParamList} from '../../../routes/SettingsStack';
 import {WEEK_DAYS} from '../../../types/weekDays';
+import {v4 as uuidv4} from 'uuid';
 
 const TimeTableScreen: React.FC<
   NativeStackScreenProps<SettingsStackParamList, 'TimeTableScreen'>
@@ -171,6 +172,7 @@ const TimeTableScreen: React.FC<
           } else if (subject) {
             createLesson({
               variables: {
+                id: uuidv4(),
                 lessonTimeId: activeLessonTimeId!,
                 dayOfTheWeek: activeWeekDay!,
                 subjectId: subject.id,

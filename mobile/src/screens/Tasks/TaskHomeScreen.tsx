@@ -1,6 +1,12 @@
 import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {createRef, useLayoutEffect, useRef, useState} from 'react';
+import React, {
+  createRef,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   Button,
   StyleSheet,
@@ -13,6 +19,7 @@ import {
   Platform,
   UIManager,
 } from 'react-native';
+import {isOnlineVar} from '../../App';
 import AddButton from '../../components/addButton';
 import AddTaskWindow from '../../components/addTaskWindow';
 import {BasicText} from '../../components/basicViews/BasicText';
@@ -34,13 +41,20 @@ const TaskHomeScreen: React.FC<
   const {data} = useGetAllTasksQuery();
   const [addTaskOpen, setAddTaskOpen] = useState(false);
 
+  useEffect(() => {
+    console.log(data);
+  });
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <Pressable
           style={{flexDirection: 'row', alignItems: 'center'}}
-          onPress={() => navigation.navigate('NewProjectScreen')}>
-          <BasicText>New Project</BasicText>
+          onPress={() => {
+            const isOnline = isOnlineVar();
+            isOnlineVar(!isOnline);
+          }}>
+          <BasicText>{isOnlineVar() ? 'online' : 'offline'}</BasicText>
         </Pressable>
       ),
       headerLeft: () => (

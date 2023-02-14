@@ -4,8 +4,10 @@ mutation CreateEvent(
   $wholeDay: Boolean
   $name: String!
   $subjectId: String
+  $id: String!
 ) {
   createEvent(
+    id: $id
     startDate: $startDate
     endDate: $endDate
     wholeDay: $wholeDay
