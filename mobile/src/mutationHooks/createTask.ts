@@ -9,7 +9,6 @@ import {
   CreateEventMutation,
   GetAllSubjectsQuery,
 } from '../generated/graphql';
-import {v4 as uuidv4} from 'uuid';
 import {CreateTaskMutationVariables} from '../generated/graphql';
 import {FetchResult, MutationResult, useApolloClient} from '@apollo/client';
 
@@ -21,7 +20,6 @@ export const useCreateTask: () => [
   CreateTaskFunction,
   MutationResult<CreateTaskMutation>,
 ] = () => {
-  const id = uuidv4();
   const client = useApolloClient();
 
   const [createTask, data] = useCreateTaskMutation();
@@ -53,12 +51,12 @@ export const useCreateTask: () => [
         __typename: 'Mutation',
         createTask: {
           __typename: 'Task',
-          id: id,
+          id: variables.id,
           name: variables.name,
           userId: '',
-          createdAt: new Date(),
+          createdAt: new Date().toISOString(),
           done: false,
-          updatedAt: new Date(),
+          updatedAt: new Date().toISOString(),
           text: '',
           dueDate: variables.dueDate || null,
           doDate: variables.doDate || null,

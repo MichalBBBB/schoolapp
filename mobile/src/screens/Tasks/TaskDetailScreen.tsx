@@ -27,6 +27,8 @@ import {
 } from '../../generated/graphql';
 import {TaskStackParamList} from '../../routes/TaskStack';
 import {v4 as uuidv4} from 'uuid';
+import {useCreateSubtask} from '../../mutationHooks/createSubtask';
+import {useEditTask} from '../../mutationHooks/editTask';
 
 const TaskDetailScreen: React.FC<
   NativeStackScreenProps<TaskStackParamList, 'TaskDetailScreen'>
@@ -35,7 +37,7 @@ const TaskDetailScreen: React.FC<
   const task = Tasks?.getAllTasks.find(
     item => item.id == route.params.task.id,
   )!;
-  const [addSubtask] = useCreateSubtaskMutation();
+  const [addSubtask] = useCreateSubtask();
   const [name, setName] = useState(task.name);
   const [text, setText] = useState(task.text);
   const [dueDate, setDueDate] = useState<dayjs.Dayjs | null>(
@@ -45,7 +47,7 @@ const TaskDetailScreen: React.FC<
     task.doDate ? dayjs(task.doDate) : null,
   );
   const [edited, setEdited] = useState(false);
-  const [editTask] = useEditTaskMutation();
+  const [editTask] = useEditTask();
   const [editDueDateModalIsVisible, setEditDueDateModalIsVisible] =
     useState(false);
   const [editDoDateModalIsVisible, setEditDoDateModalIsVisible] =
@@ -70,13 +72,11 @@ const TaskDetailScreen: React.FC<
         <BackButton
           onPress={() => {
             editTask({
-              variables: {
-                id: task.id,
-                name,
-                text,
-                dueDate: task.dueDate,
-                doDate: task.doDate,
-              },
+              id: task.id,
+              name,
+              text,
+              dueDate: task.dueDate,
+              doDate: task.doDate,
             });
             navigation.goBack();
           }}
@@ -153,13 +153,11 @@ const TaskDetailScreen: React.FC<
         onSubmit={date => {
           setDueDate(date);
           editTask({
-            variables: {
-              id: task.id,
-              name,
-              text,
-              dueDate: date.toDate(),
-              doDate: task.doDate,
-            },
+            id: task.id,
+            name,
+            text,
+            dueDate: date.toDate(),
+            doDate: task.doDate,
           });
           setEditDueDateModalIsVisible(false);
         }}
@@ -173,13 +171,11 @@ const TaskDetailScreen: React.FC<
           setDoDate(date);
           setEditDoDateModalIsVisible(false);
           editTask({
-            variables: {
-              id: task.id,
-              name,
-              text,
-              dueDate: task.dueDate,
-              doDate: date.toDate(),
-            },
+            id: task.id,
+            name,
+            text,
+            dueDate: task.dueDate,
+            doDate: date.toDate(),
           });
         }}
         isVisible={editDoDateModalIsVisible}
@@ -189,11 +185,8 @@ const TaskDetailScreen: React.FC<
         onClose={() => {
           setAddSubtaskModalIsVisible(false);
         }}
-        onSubmit={() => {
-          addSubtask({
-            variables: {id: uuidv4(), name, taskId: task.id},
-            refetchQueries: [GetAllTasksDocument],
-          });
+        onSubmit={value => {
+          addSubtask({id: uuidv4(), name: value, taskId: task.id});
         }}
       />
     </>
