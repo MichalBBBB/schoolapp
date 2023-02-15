@@ -38,7 +38,11 @@ export class projectTaskResolver {
     @Arg("projectId") projectId: string,
     @Arg("dueDate", { nullable: true }) dueDate?: Date
   ) {
-    return ProjectTask.create({ projectId: projectId, name, dueDate }).save();
+    return ProjectTask.create({
+      projectId: projectId,
+      name,
+      dueDate,
+    }).save();
   }
 
   @Mutation(() => ProjectTask)

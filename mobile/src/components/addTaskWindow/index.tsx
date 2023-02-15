@@ -20,7 +20,7 @@ import SelectSubjectModal from '../selectSubject';
 import {getCurrentLesson} from '../../utils/lessonUtils';
 import {BasicText} from '../basicViews/BasicText';
 import {v4 as uuidv4} from 'uuid';
-import {useCreateTask} from '../../mutationHooks/createTask';
+import {useCreateTask} from '../../mutationHooks/task/createTask';
 
 interface addTaskWindowProps {
   onClose: () => void;

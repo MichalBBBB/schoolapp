@@ -88,7 +88,6 @@ export type Mutation = {
   deleteTask: Scalars['Boolean'];
   editEvent: CalendarEvent;
   editLesson: Lesson;
-  editLessonTime: LessonTime;
   editLessonTimes: Array<LessonTime>;
   editTask: Task;
   googleSignIn: UserSucces;
@@ -248,13 +247,6 @@ export type MutationEditEventArgs = {
 export type MutationEditLessonArgs = {
   id: Scalars['String'];
   subjectId: Scalars['String'];
-};
-
-
-export type MutationEditLessonTimeArgs = {
-  endTime: Scalars['String'];
-  id: Scalars['String'];
-  startTime: Scalars['String'];
 };
 
 
@@ -464,9 +456,9 @@ export type LessonFragment = { __typename?: 'Lesson', id: string, dayOfTheWeek: 
 
 export type LessonTimeFragment = { __typename?: 'LessonTime', id: string, startTime: string, endTime: string };
 
-export type ProjectFragment = { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> };
+export type ProjectFragment = { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, projectId: string, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> };
 
-export type ProjectTaskFragment = { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> };
+export type ProjectTaskFragment = { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, projectId: string, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> };
 
 export type PublicUserFragment = { __typename?: 'PublicUser', name: string, email: string, id: string };
 
@@ -520,14 +512,14 @@ export type EditLessonMutationVariables = Exact<{
 
 export type EditLessonMutation = { __typename?: 'Mutation', editLesson: { __typename?: 'Lesson', id: string, dayOfTheWeek: string, subject: { __typename?: 'Subject', id: string, name: string }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } } };
 
-export type CreatelessonTimeMutationVariables = Exact<{
+export type CreateLessonTimeMutationVariables = Exact<{
   endTime: Scalars['String'];
   startTime: Scalars['String'];
   id: Scalars['String'];
 }>;
 
 
-export type CreatelessonTimeMutation = { __typename?: 'Mutation', createLessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } };
+export type CreateLessonTimeMutation = { __typename?: 'Mutation', createLessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } };
 
 export type DeleteLessonTimeMutationVariables = Exact<{
   id: Scalars['String'];
@@ -535,15 +527,6 @@ export type DeleteLessonTimeMutationVariables = Exact<{
 
 
 export type DeleteLessonTimeMutation = { __typename?: 'Mutation', deleteLessonTime: boolean };
-
-export type EditLessonTimeMutationVariables = Exact<{
-  endTime: Scalars['String'];
-  startTime: Scalars['String'];
-  id: Scalars['String'];
-}>;
-
-
-export type EditLessonTimeMutation = { __typename?: 'Mutation', editLessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } };
 
 export type EditLessonTimesMutationVariables = Exact<{
   lessonTimes: Array<LessonTimeInput> | LessonTimeInput;
@@ -557,7 +540,7 @@ export type AcceptProjectInviteMutationVariables = Exact<{
 }>;
 
 
-export type AcceptProjectInviteMutation = { __typename?: 'Mutation', acceptProjectInvite: { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
+export type AcceptProjectInviteMutation = { __typename?: 'Mutation', acceptProjectInvite: { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, projectId: string, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
 
 export type AddMemberToProjectMutationVariables = Exact<{
   projectId: Scalars['String'];
@@ -565,7 +548,7 @@ export type AddMemberToProjectMutationVariables = Exact<{
 }>;
 
 
-export type AddMemberToProjectMutation = { __typename?: 'Mutation', addMemberToProject: { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
+export type AddMemberToProjectMutation = { __typename?: 'Mutation', addMemberToProject: { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, projectId: string, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
 
 export type CreateProjectMutationVariables = Exact<{
   name: Scalars['String'];
@@ -573,7 +556,7 @@ export type CreateProjectMutationVariables = Exact<{
 }>;
 
 
-export type CreateProjectMutation = { __typename?: 'Mutation', createProject: { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
+export type CreateProjectMutation = { __typename?: 'Mutation', createProject: { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, projectId: string, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
 
 export type DeclineProjectInviteMutationVariables = Exact<{
   id: Scalars['String'];
@@ -595,7 +578,7 @@ export type RemoveMemberFromProjectMutationVariables = Exact<{
 }>;
 
 
-export type RemoveMemberFromProjectMutation = { __typename?: 'Mutation', removeMemberFromProject: { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
+export type RemoveMemberFromProjectMutation = { __typename?: 'Mutation', removeMemberFromProject: { __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, projectId: string, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
 
 export type AddProjectTaskMutationVariables = Exact<{
   name: Scalars['String'];
@@ -604,7 +587,7 @@ export type AddProjectTaskMutationVariables = Exact<{
 }>;
 
 
-export type AddProjectTaskMutation = { __typename?: 'Mutation', addProjectTask: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
+export type AddProjectTaskMutation = { __typename?: 'Mutation', addProjectTask: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, projectId: string, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
 
 export type AssignMemberMutationVariables = Exact<{
   userId: Scalars['String'];
@@ -612,7 +595,7 @@ export type AssignMemberMutationVariables = Exact<{
 }>;
 
 
-export type AssignMemberMutation = { __typename?: 'Mutation', assignMember: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
+export type AssignMemberMutation = { __typename?: 'Mutation', assignMember: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, projectId: string, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
 
 export type DeleteProjectTaskMutationVariables = Exact<{
   id: Scalars['String'];
@@ -627,14 +610,14 @@ export type RemoveAssignedMemberMutationVariables = Exact<{
 }>;
 
 
-export type RemoveAssignedMemberMutation = { __typename?: 'Mutation', removeAssignedMember: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
+export type RemoveAssignedMemberMutation = { __typename?: 'Mutation', removeAssignedMember: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, projectId: string, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
 
 export type ToggleProjectTaskMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type ToggleProjectTaskMutation = { __typename?: 'Mutation', toggleProjectTask: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
+export type ToggleProjectTaskMutation = { __typename?: 'Mutation', toggleProjectTask: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, projectId: string, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
 
 export type CreateSubjectMutationVariables = Exact<{
   name: Scalars['String'];
@@ -760,7 +743,7 @@ export type GetInvitesQuery = { __typename?: 'Query', getInvites: Array<{ __type
 export type GetProjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProjectsQuery = { __typename?: 'Query', getProjects: Array<{ __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }> };
+export type GetProjectsQuery = { __typename?: 'Query', getProjects: Array<{ __typename?: 'Project', name: string, id: string, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, projectId: string, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }> };
 
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -838,6 +821,7 @@ export const ProjectTaskFragmentDoc = gql`
   dueDate
   doDate
   done
+  projectId
   publicUsers {
     ...PublicUser
   }
@@ -1066,27 +1050,27 @@ export function useEditLessonMutation(baseOptions?: Apollo.MutationHookOptions<E
 export type EditLessonMutationHookResult = ReturnType<typeof useEditLessonMutation>;
 export type EditLessonMutationResult = Apollo.MutationResult<EditLessonMutation>;
 export type EditLessonMutationOptions = Apollo.BaseMutationOptions<EditLessonMutation, EditLessonMutationVariables>;
-export const CreatelessonTimeDocument = gql`
-    mutation CreatelessonTime($endTime: String!, $startTime: String!, $id: String!) {
+export const CreateLessonTimeDocument = gql`
+    mutation CreateLessonTime($endTime: String!, $startTime: String!, $id: String!) {
   createLessonTime(endTime: $endTime, startTime: $startTime, id: $id) {
     ...LessonTime
   }
 }
     ${LessonTimeFragmentDoc}`;
-export type CreatelessonTimeMutationFn = Apollo.MutationFunction<CreatelessonTimeMutation, CreatelessonTimeMutationVariables>;
+export type CreateLessonTimeMutationFn = Apollo.MutationFunction<CreateLessonTimeMutation, CreateLessonTimeMutationVariables>;
 
 /**
- * __useCreatelessonTimeMutation__
+ * __useCreateLessonTimeMutation__
  *
- * To run a mutation, you first call `useCreatelessonTimeMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreatelessonTimeMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateLessonTimeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateLessonTimeMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createlessonTimeMutation, { data, loading, error }] = useCreatelessonTimeMutation({
+ * const [createLessonTimeMutation, { data, loading, error }] = useCreateLessonTimeMutation({
  *   variables: {
  *      endTime: // value for 'endTime'
  *      startTime: // value for 'startTime'
@@ -1094,13 +1078,13 @@ export type CreatelessonTimeMutationFn = Apollo.MutationFunction<CreatelessonTim
  *   },
  * });
  */
-export function useCreatelessonTimeMutation(baseOptions?: Apollo.MutationHookOptions<CreatelessonTimeMutation, CreatelessonTimeMutationVariables>) {
+export function useCreateLessonTimeMutation(baseOptions?: Apollo.MutationHookOptions<CreateLessonTimeMutation, CreateLessonTimeMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreatelessonTimeMutation, CreatelessonTimeMutationVariables>(CreatelessonTimeDocument, options);
+        return Apollo.useMutation<CreateLessonTimeMutation, CreateLessonTimeMutationVariables>(CreateLessonTimeDocument, options);
       }
-export type CreatelessonTimeMutationHookResult = ReturnType<typeof useCreatelessonTimeMutation>;
-export type CreatelessonTimeMutationResult = Apollo.MutationResult<CreatelessonTimeMutation>;
-export type CreatelessonTimeMutationOptions = Apollo.BaseMutationOptions<CreatelessonTimeMutation, CreatelessonTimeMutationVariables>;
+export type CreateLessonTimeMutationHookResult = ReturnType<typeof useCreateLessonTimeMutation>;
+export type CreateLessonTimeMutationResult = Apollo.MutationResult<CreateLessonTimeMutation>;
+export type CreateLessonTimeMutationOptions = Apollo.BaseMutationOptions<CreateLessonTimeMutation, CreateLessonTimeMutationVariables>;
 export const DeleteLessonTimeDocument = gql`
     mutation DeleteLessonTime($id: String!) {
   deleteLessonTime(id: $id)
@@ -1132,41 +1116,6 @@ export function useDeleteLessonTimeMutation(baseOptions?: Apollo.MutationHookOpt
 export type DeleteLessonTimeMutationHookResult = ReturnType<typeof useDeleteLessonTimeMutation>;
 export type DeleteLessonTimeMutationResult = Apollo.MutationResult<DeleteLessonTimeMutation>;
 export type DeleteLessonTimeMutationOptions = Apollo.BaseMutationOptions<DeleteLessonTimeMutation, DeleteLessonTimeMutationVariables>;
-export const EditLessonTimeDocument = gql`
-    mutation EditLessonTime($endTime: String!, $startTime: String!, $id: String!) {
-  editLessonTime(endTime: $endTime, startTime: $startTime, id: $id) {
-    ...LessonTime
-  }
-}
-    ${LessonTimeFragmentDoc}`;
-export type EditLessonTimeMutationFn = Apollo.MutationFunction<EditLessonTimeMutation, EditLessonTimeMutationVariables>;
-
-/**
- * __useEditLessonTimeMutation__
- *
- * To run a mutation, you first call `useEditLessonTimeMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useEditLessonTimeMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [editLessonTimeMutation, { data, loading, error }] = useEditLessonTimeMutation({
- *   variables: {
- *      endTime: // value for 'endTime'
- *      startTime: // value for 'startTime'
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useEditLessonTimeMutation(baseOptions?: Apollo.MutationHookOptions<EditLessonTimeMutation, EditLessonTimeMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<EditLessonTimeMutation, EditLessonTimeMutationVariables>(EditLessonTimeDocument, options);
-      }
-export type EditLessonTimeMutationHookResult = ReturnType<typeof useEditLessonTimeMutation>;
-export type EditLessonTimeMutationResult = Apollo.MutationResult<EditLessonTimeMutation>;
-export type EditLessonTimeMutationOptions = Apollo.BaseMutationOptions<EditLessonTimeMutation, EditLessonTimeMutationVariables>;
 export const EditLessonTimesDocument = gql`
     mutation EditLessonTimes($lessonTimes: [LessonTimeInput!]!) {
   editLessonTimes(lessonTimes: $lessonTimes) {

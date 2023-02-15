@@ -13,6 +13,8 @@ import SlidingView from './slidingView';
 import calendar from 'dayjs/plugin/calendar';
 import {BasicText} from './basicViews/BasicText';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useToggleTask} from '../mutationHooks/task/toggleTask';
+import {useDeleteTask} from '../mutationHooks/task/deleteTask';
 
 dayjs.extend(calendar);
 
@@ -28,9 +30,9 @@ export const calendarConfigWithoutTime = {
 const Task: React.FC<{
   task: TaskFragment;
 }> = ({task}) => {
-  const [deleteTask] = useDeleteTaskMutation();
+  const [deleteTask] = useDeleteTask();
   const navigation = useNavigation<TaskNavigationProp>();
-  const [toggleTask] = useToggleTaskMutation();
+  const [toggleTask] = useToggleTask();
   const [done, setDone] = useState(false);
 
   useEffect(() => {
@@ -40,14 +42,7 @@ const Task: React.FC<{
   const deleteTaskFunc = async () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     await deleteTask({
-      variables: {id: task.id},
-      update: cache => {
-        const normalizedId = cache.identify({
-          id: task.id,
-          __typename: 'Task',
-        });
-        cache.evict({id: normalizedId});
-      },
+      id: task.id,
     });
   };
   const back = (
@@ -90,7 +85,7 @@ const Task: React.FC<{
                     LayoutAnimation.Presets.easeInEaseOut,
                   );
                   setTimeout(() => {
-                    toggleTask({variables: {id: task.id}});
+                    toggleTask({id: task.id});
                   }, 400);
                 }}>
                 <Image

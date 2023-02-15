@@ -1,4 +1,5 @@
 import {PickerIOS, Picker} from '@react-native-picker/picker';
+import dayjs from 'dayjs';
 import React, {useEffect, useState} from 'react';
 import {View, Text, Pressable, StyleSheet} from 'react-native';
 import DatePicker from 'react-native-date-picker';
@@ -34,23 +35,23 @@ const SelectTimeView: React.FC<SelectTimeViewModalProps> = ({
   onSubmit,
   initialTime = '8:00',
 }) => {
-  const [selectedHour, setSelectedHour] = useState(initialTime.split(':')[0]);
-  const [selectedMinute, setSelectedMinute] = useState(
-    initialTime.split(':')[1],
-  );
+  const [date, setDate] = useState(dayjs(initialTime, 'HH:mm').toDate());
 
   return (
     <View style={styles.container}>
       <DatePicker
-        date={new Date()}
+        date={date}
         mode="time"
         androidVariant="nativeAndroid"
+        onDateChange={newDate => {
+          setDate(newDate);
+        }}
       />
       <BasicButton
         style={{padding: 10}}
         onPress={() => {
           if (onSubmit) {
-            onSubmit(selectedHour + ':' + selectedMinute);
+            onSubmit(dayjs(date).format('HH:mm'));
           }
         }}>
         <BasicText color="background">Select</BasicText>

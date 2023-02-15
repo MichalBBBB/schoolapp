@@ -5,23 +5,18 @@ import {
   useDeleteSubtaskMutation,
   useToggleSubtaskMutation,
 } from '../generated/graphql';
+import {useDeleteSubtask} from '../mutationHooks/task/deleteSubtask';
+import {useToggleSubtask} from '../mutationHooks/task/toggleSubtask';
 import {TaskNavigationProp} from '../utils/types';
 import {BasicText} from './basicViews/BasicText';
 import SlidingView from './slidingView';
 
 const Subtask: React.FC<{subtask: SubtaskFragment}> = ({subtask}) => {
-  const [deleteSubtask] = useDeleteSubtaskMutation();
-  const [toggleSubtask] = useToggleSubtaskMutation();
+  const [deleteSubtask] = useDeleteSubtask();
+  const [toggleSubtask] = useToggleSubtask();
   const deleteSubtaskFunc = async () => {
     await deleteSubtask({
-      variables: {id: subtask.id},
-      update: cache => {
-        const normalizedId = cache.identify({
-          id: subtask.id,
-          __typename: 'Subtask',
-        });
-        cache.evict({id: normalizedId});
-      },
+      id: subtask.id,
     });
   };
   const back = (
@@ -61,7 +56,7 @@ const Subtask: React.FC<{subtask: SubtaskFragment}> = ({subtask}) => {
             }}>
             <TouchableOpacity
               onPress={() => {
-                toggleSubtask({variables: {id: subtask.id}});
+                toggleSubtask({id: subtask.id});
               }}>
               <Image
                 source={

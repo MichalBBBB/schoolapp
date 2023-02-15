@@ -1,4 +1,4 @@
-mutation CreatelessonTime(
+mutation CreateLessonTime(
   $endTime: String!
   $startTime: String!
   $id: String!

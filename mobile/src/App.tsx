@@ -56,7 +56,7 @@ const App = () => {
     if (client) {
       console.log('client changed');
       const openQueue = async () => {
-        persistentQueueLink.open();
+        await persistentQueueLink.open();
         const promises: Array<Promise<any>> = [];
         allQueries.forEach(item => {
           promises.push(

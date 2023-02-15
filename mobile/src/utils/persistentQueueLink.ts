@@ -65,8 +65,6 @@ export class PersistentQueueLink extends ApolloLink {
   }
 
   public request(operation: Operation, forward: NextLink) {
-    console.log(operation.getContext().optimisticResponse);
-    console.log('request', this.isOpen);
     if (this.isOpen) {
       console.log(this.isOpen);
       return forward(operation);
@@ -90,6 +88,8 @@ export class PersistentQueueLink extends ApolloLink {
       id,
     });
     storage.set(queueStorageKey, JSON.stringify(this.queue));
+    console.log('result', context.optimisticResponse);
+    console.log('context', context);
     return new Observable<FetchResult>((observer: Observer<FetchResult>) => {
       observer.next?.({data: context.optimisticResponse} as MutationResult);
       observer.complete?.();

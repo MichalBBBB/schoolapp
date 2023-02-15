@@ -27,8 +27,8 @@ import {
 } from '../../generated/graphql';
 import {TaskStackParamList} from '../../routes/TaskStack';
 import {v4 as uuidv4} from 'uuid';
-import {useCreateSubtask} from '../../mutationHooks/createSubtask';
-import {useEditTask} from '../../mutationHooks/editTask';
+import {useCreateSubtask} from '../../mutationHooks/task/createSubtask';
+import {useEditTask} from '../../mutationHooks/task/editTask';
 
 const TaskDetailScreen: React.FC<
   NativeStackScreenProps<TaskStackParamList, 'TaskDetailScreen'>

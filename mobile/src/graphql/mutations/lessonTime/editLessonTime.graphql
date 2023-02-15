@@ -1,5 +1,0 @@
-mutation EditLessonTime($endTime: String!, $startTime: String!, $id: String!) {
-  editLessonTime(endTime: $endTime, startTime: $startTime, id: $id) {
-    ...LessonTime
-  }
-}

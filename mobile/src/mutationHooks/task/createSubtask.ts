@@ -5,7 +5,7 @@ import {
   TaskFragment,
   TaskFragmentDoc,
   useCreateSubtaskMutation,
-} from '../generated/graphql';
+} from '../../generated/graphql';
 
 export type CreateSubtaskFunction = (
   variables: CreateSubtaskMutationVariables,

@@ -11,6 +11,7 @@ import {BasicButton} from '../basicViews/BasicButton';
 import {BasicModalCard} from '../basicViews/BasicModalCard';
 import {BasicText} from '../basicViews/BasicText';
 import {v4 as uuidv4} from 'uuid';
+import {useCreateSubject} from '../../mutationHooks/subject/createSubject';
 
 interface SelectSubjectProps {
   isVisible: boolean;
@@ -26,7 +27,7 @@ const SelectSubjectModal: React.FC<SelectSubjectProps> = ({
   onModalHide,
 }) => {
   const {data} = useGetAllSubjectsQuery();
-  const [addSubject] = useCreateSubjectMutation();
+  const [addSubject] = useCreateSubject();
   const [viewVisible, setViewVisible] = useState<
     'SelectSubject' | 'AddSubject'
   >('SelectSubject');
@@ -90,8 +91,8 @@ const SelectSubjectModal: React.FC<SelectSubjectProps> = ({
         placeholder="Subject name"
         onSubmit={text => {
           addSubject({
-            variables: {id: uuidv4(), name: text},
-            refetchQueries: [GetAllSubjectsDocument],
+            id: uuidv4(),
+            name: text,
           });
         }}
         visible={

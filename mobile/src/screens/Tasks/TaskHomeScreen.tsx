@@ -41,10 +41,6 @@ const TaskHomeScreen: React.FC<
   const {data} = useGetAllTasksQuery();
   const [addTaskOpen, setAddTaskOpen] = useState(false);
 
-  useEffect(() => {
-    console.log(data);
-  });
-
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (

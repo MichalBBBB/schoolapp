@@ -8,8 +8,8 @@ import {
   GetAllTasksQuery,
   CreateEventMutation,
   GetAllSubjectsQuery,
-} from '../generated/graphql';
-import {CreateTaskMutationVariables} from '../generated/graphql';
+} from '../../generated/graphql';
+import {CreateTaskMutationVariables} from '../../generated/graphql';
 import {FetchResult, MutationResult, useApolloClient} from '@apollo/client';
 
 export type CreateTaskFunction = (
@@ -34,18 +34,8 @@ export const useCreateTask: () => [
         return item.id == variables.subjectId;
       },
     );
-    console.log('subject', subjects, variables.subjectId, subject);
-
-    // if ((variables.subjectId && !subject) || !me) {
-    //   return new Promise<>(() => null);
-    // }
 
     const result = await createTask({
-      context: {
-        getResultObject: (data: any) => {
-          return {createTask: data};
-        },
-      },
       variables: variables,
       optimisticResponse: {
         __typename: 'Mutation',
@@ -87,6 +77,5 @@ export const useCreateTask: () => [
     });
     return result;
   };
-  console.log(data.data);
   return [func, data];
 };

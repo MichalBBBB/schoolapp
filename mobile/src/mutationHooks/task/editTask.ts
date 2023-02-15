@@ -10,7 +10,7 @@ import {
   TaskFragmentDoc,
   useCreateSubtaskMutation,
   useEditTaskMutation,
-} from '../generated/graphql';
+} from '../../generated/graphql';
 
 export type EditTaskFunction = (
   variables: EditTaskMutationVariables,
@@ -55,14 +55,6 @@ export const useEditTask: () => [
           return;
         }
         const normalizedTaskId = `Task:${variables.id}`;
-        const cacheData = cache.readFragment<TaskFragment>({
-          id: normalizedTaskId,
-          fragmentName: 'Task',
-          fragment: TaskFragmentDoc,
-        });
-        if (!cacheData) {
-          return;
-        }
         cache.writeFragment({
           id: normalizedTaskId,
           fragment: TaskFragmentDoc,

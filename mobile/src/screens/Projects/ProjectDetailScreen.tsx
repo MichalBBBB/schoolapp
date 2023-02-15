@@ -99,7 +99,10 @@ const ProjectDetailScreen: React.FC<
         }}
         onSubmit={text => {
           addProjectTask({
-            variables: {name: text, projectId: project.id},
+            variables: {
+              name: text,
+              projectId: project.id,
+            },
             refetchQueries: [GetProjectsDocument],
           });
         }}

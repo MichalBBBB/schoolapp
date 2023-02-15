@@ -70,27 +70,6 @@ export class lessonTimeResolver {
     return true;
   }
 
-  @Mutation(() => LessonTime)
-  @UseMiddleware(isAuth)
-  async editLessonTime(
-    @Arg("id") id: string,
-    @Arg("startTime") startTime: string,
-    @Arg("endTime") endTime: string,
-    @Ctx() { payload }: MyContext
-  ) {
-    const lessonTime = await LessonTime.findOne({
-      where: { id, userId: payload?.userId },
-    });
-    if (lessonTime) {
-      lessonTime.startTime = startTime;
-      lessonTime.endTime = endTime;
-      await lessonTime.save();
-      return lessonTime;
-    } else {
-      throw new Error("LessonTime wasn't found");
-    }
-  }
-
   @Mutation(() => [LessonTime])
   @UseMiddleware(isAuth)
   async editLessonTimes(
