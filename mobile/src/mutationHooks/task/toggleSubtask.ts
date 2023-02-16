@@ -26,6 +26,9 @@ export const useToggleSubtask: () => [
       id: normalizedSubtaskId,
     });
     const result = await toggleSubtask({
+      context: {
+        serializationKey: 'MUTATION',
+      },
       variables: variables,
       optimisticResponse: {
         toggleSubtask: {

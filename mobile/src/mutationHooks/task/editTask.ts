@@ -32,6 +32,9 @@ export const useEditTask: () => [
       return item.id == variables.id;
     });
     const result = await editTask({
+      context: {
+        serializationKey: 'MUTATION',
+      },
       variables: variables,
       optimisticResponse: {
         __typename: 'Mutation',

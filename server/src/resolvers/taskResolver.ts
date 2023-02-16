@@ -76,7 +76,7 @@ export class taskResolver {
     @Arg("dueDate", { nullable: true }) dueDate?: Date,
     @Arg("doDate", { nullable: true }) doDate?: Date
   ) {
-    console.log(name);
+    console.log("CreateTaskStart", new Date());
     const result = await AppDataSource.createQueryBuilder()
       .insert()
       .into(Task)
@@ -90,6 +90,7 @@ export class taskResolver {
       })
       .returning("*")
       .execute();
+    console.log("CreateTaskEnd", new Date());
     return result.raw[0];
   }
 
@@ -118,6 +119,7 @@ export class taskResolver {
     @Ctx() { payload }: MyContext,
     @Arg("id") id: string
   ): Promise<Task> {
+    console.log("ToggleTaskStart", new Date());
     const task = await Task.findOne({ where: { id } });
     // check if tasks user is the same as currenct user and task exists
     if (task?.userId === payload?.userId && task) {
@@ -128,8 +130,10 @@ export class taskResolver {
         .where("id = :id", { id })
         .returning("*")
         .execute();
+      console.log("ToggleTaskEnd", new Date());
       return updateResult.raw[0];
     } else {
+      console.log("ToggleTaskEnd", new Date());
       throw new Error("you are not authorized for this action");
     }
   }

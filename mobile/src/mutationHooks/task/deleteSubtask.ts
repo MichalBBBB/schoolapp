@@ -21,6 +21,9 @@ export const useDeleteSubtask: () => [
   const [deleteSubtask, data] = useDeleteSubtaskMutation();
   const func = async (variables: DeleteSubtaskMutationVariables) => {
     const result = await deleteSubtask({
+      context: {
+        serializationKey: 'MUTATION',
+      },
       variables: variables,
       optimisticResponse: {
         deleteSubtask: true,

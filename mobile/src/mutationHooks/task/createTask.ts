@@ -36,6 +36,9 @@ export const useCreateTask: () => [
     );
 
     const result = await createTask({
+      context: {
+        serializationKey: 'MUTATION',
+      },
       variables: variables,
       optimisticResponse: {
         __typename: 'Mutation',

@@ -15,6 +15,7 @@ import EditDateModal from '../editDateWindow';
 import {Menu} from '../menu';
 import {MenuItem} from '../menu/MenuItem';
 import {v4 as uuidv4} from 'uuid';
+import {useCreateTask} from '../../mutationHooks/task/createTask';
 
 interface LessonProps {
   lesson: LessonFragment;
@@ -23,7 +24,7 @@ interface LessonProps {
 
 export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
   const [studyTimeModalVisible, setStudyTimeModalVisible] = useState(false);
-  const [addTask] = useCreateTaskMutation();
+  const [addTask] = useCreateTask();
   return (
     <>
       <BasicCard backgroundColor="accentBackground" style={styles.container}>
@@ -61,14 +62,11 @@ export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
         onSubmit={date => {
           setStudyTimeModalVisible(false);
           addTask({
-            refetchQueries: [GetAllTasksDocument],
-            variables: {
-              id: uuidv4(),
-              name: `Study for ${event?.name}`,
-              subjectId: lesson.subject.id,
-              dueDate: event?.startDate,
-              doDate: date.toDate(),
-            },
+            id: uuidv4(),
+            name: `Study for ${event?.name}`,
+            subjectId: lesson.subject.id,
+            dueDate: event?.startDate,
+            doDate: date.toDate(),
           });
         }}
       />

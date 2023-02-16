@@ -27,6 +27,9 @@ export const useDeleteTask: () => [
     });
     const subtasks = task?.subtasks;
     const result = await deleteTask({
+      context: {
+        serializationKey: 'MUTATION',
+      },
       variables: variables,
       optimisticResponse: {
         __typename: 'Mutation',

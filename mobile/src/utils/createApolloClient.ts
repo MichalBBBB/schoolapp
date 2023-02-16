@@ -109,7 +109,7 @@ export const createApolloClient = async (
     link: ApolloLink.from([
       errorLink,
       persistentQueueLink,
-      serializingLink as unknown as ApolloLink,
+      serializingLink as any as ApolloLink,
       // retryLink,
       refreshLink,
       authLink,

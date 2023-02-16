@@ -1,53 +1,94 @@
 import dayjs from 'dayjs';
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import {
   CalendarEventFragment,
   GetAllEventsDocument,
   useDeleteEventMutation,
 } from '../../generated/graphql';
+import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
+import {useCreateTask} from '../../mutationHooks/task/createTask';
 import {BasicText} from '../basicViews/BasicText';
+import EditDateModal from '../editDateWindow';
+import {Menu} from '../menu';
+import {MenuItem} from '../menu/MenuItem';
 import SlidingView from '../slidingView';
+import {v4 as uuidv4} from 'uuid';
 
 interface EventProps {
   event: CalendarEventFragment;
 }
 
 const Event: React.FC<EventProps> = ({event}) => {
-  const [deleteEvent] = useDeleteEventMutation();
+  const [deleteEvent] = useDeleteEvent();
+  const [addTask] = useCreateTask();
+
+  const [studyTimeModalVisible, setStudyTimeModalVisible] = useState(false);
+
   const frontView = (
     <View style={styles.frontViewContainer}>
       <BasicText>{event.name}</BasicText>
-      <BasicText color="textSecondary">
-        {dayjs(event.startDate).format('HH:mm')}
-      </BasicText>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <BasicText color="textSecondary" style={{marginRight: 5}}>
+          {dayjs(event.startDate).format('HH:mm')}
+        </BasicText>
+        <Menu
+          trigger={
+            <Image
+              source={require('../../../assets/Options.png')}
+              style={styles.options}
+            />
+          }>
+          <MenuItem
+            text={'Add time to study'}
+            onPress={() => {
+              setStudyTimeModalVisible(true);
+            }}
+          />
+        </Menu>
+      </View>
     </View>
   );
 
   return (
-    <View style={styles.container}>
-      <SlidingView
-        frontView={frontView}
-        backView={[
-          <TouchableOpacity
-            onPress={() => {
-              deleteEvent({
-                variables: {id: event.id},
-                refetchQueries: [GetAllEventsDocument],
-              });
-            }}>
-            <View style={styles.backViewContainer}>
-              <Image
-                source={require('../../../assets/Delete.png')}
-                style={styles.image}
-              />
-            </View>
-          </TouchableOpacity>,
-        ]}
-        backViewWidth={70}
-        numberOfBackElements={1}
+    <>
+      <View style={styles.container}>
+        <SlidingView
+          frontView={frontView}
+          backView={[
+            <TouchableOpacity
+              onPress={() => {
+                deleteEvent({id: event.id});
+              }}>
+              <View style={styles.backViewContainer}>
+                <Image
+                  source={require('../../../assets/Delete.png')}
+                  style={styles.image}
+                />
+              </View>
+            </TouchableOpacity>,
+          ]}
+          backViewWidth={70}
+          numberOfBackElements={1}
+        />
+      </View>
+      <EditDateModal
+        isVisible={studyTimeModalVisible}
+        onClose={() => {
+          setStudyTimeModalVisible(false);
+        }}
+        onSubmit={date => {
+          setStudyTimeModalVisible(false);
+          addTask({
+            id: uuidv4(),
+            name: `Study for ${event?.name}`,
+            subjectId: event.subject?.id,
+            dueDate: event?.startDate,
+            doDate: date.toDate(),
+          });
+        }}
       />
-    </View>
+    </>
   );
 };
 
@@ -74,6 +115,11 @@ const styles = StyleSheet.create({
     padding: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  options: {
+    resizeMode: 'stretch',
+    height: 15,
+    width: 15,
   },
 });
 

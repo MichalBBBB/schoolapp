@@ -19,20 +19,16 @@ export const useEditLessonTimes: () => [
   MutationResult<EditLessonTimesMutation>,
 ] = () => {
   const [editLessonTimes, data] = useEditLessonTimesMutation();
-  const client = useApolloClient();
   const func = async (variables: EditLessonTimesMutationVariables) => {
-    const lessonTimes = (
-      await client.query({
-        query: GetAllLessonTimesDocument,
-      })
-    ).data as GetAllLessonTimesQuery;
-    // get the LessonTimes that are edited
     var lessonTimesArray =
       'map' in variables.lessonTimes
         ? (variables.lessonTimes as LessonTimeInput[])
         : [variables.lessonTimes as LessonTimeInput];
 
     const result = await editLessonTimes({
+      context: {
+        serializationKey: 'MUTATION',
+      },
       variables: variables,
       optimisticResponse: {
         __typename: 'Mutation',

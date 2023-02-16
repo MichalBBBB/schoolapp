@@ -51,7 +51,11 @@ export class PersistentQueueLink extends ApolloLink {
           }),
         );
       });
-      await Promise.all(promises);
+      try {
+        await Promise.all(promises);
+      } catch (err) {
+        console.log(err);
+      }
       this.queue = [];
       storage.set(queueStorageKey, JSON.stringify(this.queue));
     }

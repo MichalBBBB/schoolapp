@@ -16,6 +16,9 @@ export const useDeleteLessonTime: () => [
   const [deleteLessonTime, data] = useDeleteLessonTimeMutation();
   const func = async (variables: DeleteLessonTimeMutationVariables) => {
     const result = await deleteLessonTime({
+      context: {
+        serializationKey: 'MUTATION',
+      },
       variables: variables,
       optimisticResponse: {
         deleteLessonTime: true,

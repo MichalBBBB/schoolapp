@@ -16,6 +16,7 @@ import {BasicText} from '../../components/basicViews/BasicText';
 import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
 import {BasicCard} from '../../components/basicViews/BasicCard';
 import {v4 as uuidv4} from 'uuid';
+import {useCreateEvent} from '../../mutationHooks/calendarEvent/createEvent';
 
 let hours: number[] = [];
 for (var i = 0; i < 24; i++) {
@@ -32,7 +33,7 @@ console.log(dayjs().hour());
 const AddEventScreen: React.FC<
   NativeStackScreenProps<CalendarStackParamList, 'AddEventScreen'>
 > = ({navigation}) => {
-  const [createEvent] = useCreateEventMutation();
+  const [createEvent] = useCreateEvent();
 
   const [name, setName] = useState('');
   const [startDate, setStartDate] = useState(dayjs());
@@ -107,14 +108,11 @@ const AddEventScreen: React.FC<
           spacing="m"
           onPress={() => {
             createEvent({
-              variables: {
-                id: uuidv4(),
-                startDate: startDate.toISOString(),
-                name: name,
-                endDate: endDate.toISOString(),
-                subjectId: subject?.id,
-              },
-              refetchQueries: [GetAllEventsDocument],
+              id: uuidv4(),
+              startDate: startDate.toISOString(),
+              name: name,
+              endDate: endDate.toISOString(),
+              subjectId: subject?.id,
             });
             navigation.goBack();
           }}>

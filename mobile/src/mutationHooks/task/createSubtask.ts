@@ -18,6 +18,9 @@ export const useCreateSubtask: () => [
   const [createSubtask, data] = useCreateSubtaskMutation();
   const func = async (variables: CreateSubtaskMutationVariables) => {
     const result = await createSubtask({
+      context: {
+        serializationKey: 'MUTATION',
+      },
       variables: variables,
       optimisticResponse: {
         __typename: 'Mutation',

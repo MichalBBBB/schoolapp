@@ -20,6 +20,9 @@ export const useCreateSubject: () => [
   const [createSubject, data] = useCreateSubjectMutation();
   const func = async (variables: CreateSubjectMutationVariables) => {
     const result = await createSubject({
+      context: {
+        serializationKey: 'MUTATION',
+      },
       variables: variables,
       optimisticResponse: {
         __typename: 'Mutation',

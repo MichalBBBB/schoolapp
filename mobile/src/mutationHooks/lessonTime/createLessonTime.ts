@@ -30,6 +30,9 @@ export const useCreateLessonTime: () => [
     });
 
     const result = await createLessonTime({
+      context: {
+        serializationKey: 'MUTATION',
+      },
       variables: variables,
       optimisticResponse: {
         __typename: 'Mutation',
