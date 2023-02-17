@@ -22,6 +22,7 @@ import {RetryLink} from '@apollo/client/link/retry';
 import NetInfo from '@react-native-community/netinfo';
 import SerializingLink from 'apollo-link-serialize';
 import {PersistentQueueLink} from './persistentQueueLink';
+import {BatchHttpLink} from '@apollo/client/link/batch-http';
 
 export const uri =
   Platform.OS == 'ios'
@@ -30,6 +31,10 @@ export const uri =
 
 const httpLink = createHttpLink({
   uri: uri,
+});
+
+const batchHttpLink = new BatchHttpLink({
+  uri,
 });
 
 const retryLink = new RetryLink();
@@ -109,11 +114,11 @@ export const createApolloClient = async (
     link: ApolloLink.from([
       errorLink,
       persistentQueueLink,
-      serializingLink as any as ApolloLink,
+      // serializingLink as any as ApolloLink,
       // retryLink,
       refreshLink,
       authLink,
-      httpLink,
+      batchHttpLink,
     ]),
     cache: cache,
     credentials: 'include',

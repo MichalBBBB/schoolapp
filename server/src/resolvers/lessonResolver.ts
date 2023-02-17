@@ -10,6 +10,7 @@ import {
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../utils/MyContext";
 import { WEEK_DAYS } from "../types/weekDays";
+import { queueMiddleware } from "../middleware/queueMiddleware";
 
 @Resolver(() => Lesson)
 export class lessonResolver {
@@ -24,6 +25,7 @@ export class lessonResolver {
 
   @Mutation(() => Lesson)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async createLesson(
     @Ctx() { payload }: MyContext,
     @Arg("id") id: string,
@@ -42,12 +44,12 @@ export class lessonResolver {
       where: { id: lesson.id },
       relations: { subject: true, lessonTime: true },
     });
-    console.log(lessonWithRelations);
     return lessonWithRelations;
   }
 
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async deleteLesson(@Arg("id") id: string, @Ctx() { payload }: MyContext) {
     const lesson = await Lesson.findOne({
       where: { userId: payload?.userId, id },
@@ -62,6 +64,7 @@ export class lessonResolver {
 
   @Mutation(() => Lesson)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async editLesson(
     @Arg("subjectId") subjectId: string,
     @Arg("id") id: string,

@@ -17,7 +17,6 @@ import { MyContext } from "../utils/MyContext";
 export class projectTaskResolver {
   @FieldResolver()
   async publicUsers(@Root() root: ProjectTask) {
-    console.log("here");
     const fetchedProjectTask = await ProjectTask.findOne({
       where: { id: root.id },
       relations: { users: true },

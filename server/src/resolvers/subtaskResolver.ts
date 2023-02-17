@@ -10,6 +10,7 @@ import {
   Resolver,
   UseMiddleware,
 } from "type-graphql";
+import { queueMiddleware } from "../middleware/queueMiddleware";
 
 @Resolver(Subtask)
 export class subtaskResolver {
@@ -34,6 +35,7 @@ export class subtaskResolver {
 
   @Mutation(() => Subtask)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async createSubtask(
     @Arg("id") id: string,
     @Arg("name") name: string,
@@ -56,6 +58,7 @@ export class subtaskResolver {
 
   @Mutation(() => Subtask)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async toggleSubtask(
     @Ctx() { payload }: MyContext,
     @Arg("id") id: string
@@ -81,6 +84,7 @@ export class subtaskResolver {
 
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async deleteSubtask(@Ctx() { payload }: MyContext, @Arg("id") id: string) {
     const subtask = await Subtask.findOne({ where: { id } });
     if (subtask) {

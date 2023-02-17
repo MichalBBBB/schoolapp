@@ -34,29 +34,27 @@ export class PersistentQueueLink extends ApolloLink {
     }
     this.queue = JSON.parse(storage.getString(queueStorageKey) as string);
     this.isOpen = true;
-    const promises: Array<Promise<any>> = [];
+    const promises: Promise<any>[] = [];
 
     if (this.client && this.client !== null) {
       this.queue.map(item => {
         const query = JSON.parse(item.queryJSON);
         const context = JSON.parse(item.contextJSON);
         const variables = JSON.parse(item.variablesJSON);
-
         promises.push(
           this.client!.mutate({
             variables,
             mutation: query,
             context,
             optimisticResponse: context.optimisticResponse,
-          }),
+          })
+            .then(response => {
+              this.queue.filter(queueItem => queueItem.id !== item.id);
+            })
+            .catch(err => console.warn('queuelink error', err)),
         );
       });
-      try {
-        await Promise.all(promises);
-      } catch (err) {
-        console.log(err);
-      }
-      this.queue = [];
+      await Promise.all(promises);
       storage.set(queueStorageKey, JSON.stringify(this.queue));
     }
   }
@@ -99,6 +97,5 @@ export class PersistentQueueLink extends ApolloLink {
       observer.complete?.();
       return () => {};
     });
-    return null;
   }
 }

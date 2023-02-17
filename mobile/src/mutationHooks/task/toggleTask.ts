@@ -30,6 +30,9 @@ export const useToggleTask: () => [
       return undefined;
     }
     const result = await toggleTask({
+      context: {
+        serializationKey: 'MUTATION',
+      },
       variables: variables,
       optimisticResponse: {
         toggleTask: {

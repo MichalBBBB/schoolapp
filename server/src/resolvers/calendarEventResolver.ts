@@ -9,6 +9,7 @@ import {
   Resolver,
   UseMiddleware,
 } from "type-graphql";
+import { queueMiddleware } from "../middleware/queueMiddleware";
 
 @Resolver(() => CalendarEvent)
 export class calendarEventResolver {
@@ -23,6 +24,7 @@ export class calendarEventResolver {
 
   @Mutation(() => CalendarEvent)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async createEvent(
     @Arg("id") id: string,
     @Arg("startDate") startDate: Date,
@@ -50,6 +52,7 @@ export class calendarEventResolver {
 
   @Mutation(() => CalendarEvent)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async editEvent(
     @Ctx() { payload }: MyContext,
     @Arg("startDate") startDate: Date,
@@ -73,6 +76,7 @@ export class calendarEventResolver {
 
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async deleteEvent(@Arg("id") id: string, @Ctx() { payload }: MyContext) {
     const calendarEvent = await CalendarEvent.findOne({ where: { id } });
     // check if tasks user is the same as currenct user

@@ -63,7 +63,6 @@ export class projectResolver {
   // !!! Remove !!!
   @Query(() => [Project])
   async getAllProjects() {
-    console.log(await UserProject.find());
     return Project.find({ relations: { userProjects: true } });
   }
   @FieldResolver()
@@ -84,8 +83,6 @@ export class projectResolver {
       )
       .leftJoinAndSelect("project.tasks", "projectTask")
       .getMany();
-    console.log(projects);
-    console.log(await Project.find({ relations: { tasks: true } }));
     return projects;
   }
 
@@ -105,7 +102,6 @@ export class projectResolver {
         const user = await transactionEntityManager.findOne(User, {
           where: { email: item },
         });
-        console.log(user);
         if (user) {
           await transactionEntityManager
             .create(UserProject, {

@@ -9,6 +9,7 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { Subject } from "../entities/Subject";
+import { queueMiddleware } from "../middleware/queueMiddleware";
 
 @Resolver(Subject)
 export class subjectResolver {
@@ -23,6 +24,7 @@ export class subjectResolver {
 
   @Mutation(() => Subject)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async createSubject(
     @Arg("id") id: string,
     @Arg("name") name: string,

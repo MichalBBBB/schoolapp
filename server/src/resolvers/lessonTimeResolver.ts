@@ -12,6 +12,7 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { AppDataSource } from "../TypeORM";
+import { queueMiddleware } from "../middleware/queueMiddleware";
 
 @InputType()
 class LessonTimeInput implements Partial<LessonTime> {
@@ -41,6 +42,7 @@ export class lessonTimeResolver {
 
   @Mutation(() => LessonTime)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async createLessonTime(
     @Arg("id") id: string,
     @Arg("startTime") startTime: string,
@@ -58,6 +60,7 @@ export class lessonTimeResolver {
 
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async deleteLessonTimes(
     @Ctx() { payload }: MyContext,
     @Arg("ids", () => [String]) ids: string[]
@@ -72,11 +75,11 @@ export class lessonTimeResolver {
 
   @Mutation(() => [LessonTime])
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async editLessonTimes(
     @Arg("lessonTimes", () => [LessonTimeInput]) lessonTimes: LessonTimeInput[],
     @Ctx() { payload }: MyContext
   ) {
-    console.log("here");
     await AppDataSource.transaction(async (transactionEntityManager) => {
       lessonTimes.forEach((item) => {
         transactionEntityManager.update(
@@ -91,6 +94,7 @@ export class lessonTimeResolver {
 
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async deleteLessonTime(@Arg("id") id: string, @Ctx() { payload }: MyContext) {
     await LessonTime.createQueryBuilder("lessonTime")
       .delete()

@@ -1,7 +1,6 @@
 import "dotenv/config";
 import "reflect-metadata";
 import express from "express";
-import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { __prod__ } from "./utils/constants";
 import { HelloResolver } from "./resolvers/hello";
@@ -24,6 +23,18 @@ import { AppDataSource } from "./TypeORM";
 import { lessonResolver } from "./resolvers/lessonResolver";
 import { projectResolver } from "./resolvers/projectResolver";
 import { projectTaskResolver } from "./resolvers/projectTaskResolver";
+import { ApolloServer } from "@apollo/server";
+import { expressMiddleware } from "@apollo/server/express4";
+import cors from "cors";
+import { json } from "body-parser";
+import { DefferedObject } from "./middleware/queueMiddleware";
+
+export type UserQueueObject = {
+  resolveObject: DefferedObject;
+  req: any;
+};
+
+export const queueMap = new Map<string, Array<UserQueueObject>>();
 
 const main = async () => {
   // Initialize typeorm connection
@@ -83,6 +94,7 @@ const main = async () => {
   });
 
   const apolloServer = new ApolloServer({
+    allowBatchedHttpRequests: true,
     schema: await buildSchema({
       resolvers: [
         HelloResolver,
@@ -97,12 +109,18 @@ const main = async () => {
         projectTaskResolver,
       ],
     }),
-    context: ({ req, res }) => ({ req, res }),
   });
 
   await apolloServer.start();
 
-  apolloServer.applyMiddleware({ app });
+  app.use(
+    "/graphql",
+    cors<cors.CorsRequest>(),
+    json(),
+    expressMiddleware(apolloServer, {
+      context: async ({ res, req }) => ({ res, req }),
+    })
+  );
 
   app.listen(5002, () => {
     console.log("Server running");

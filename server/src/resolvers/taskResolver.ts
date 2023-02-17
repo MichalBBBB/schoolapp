@@ -15,6 +15,7 @@ import { Subtask } from "../entities/Subtask";
 import { Subject } from "../entities/Subject";
 import DataLoader from "dataloader";
 import { AppDataSource } from "../TypeORM";
+import { queueMiddleware } from "../middleware/queueMiddleware";
 
 const subjectLoader = new DataLoader((keys) => loadSubjects(keys as [string]), {
   cache: false,
@@ -53,7 +54,6 @@ export class taskResolver {
 
   @FieldResolver()
   async subtasks(@Root() root: Task) {
-    console.log("taskid", root.id);
     return subtaskLoader.load(root.id);
   }
 
@@ -68,6 +68,7 @@ export class taskResolver {
 
   @Mutation(() => Task)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async createTask(
     @Ctx() { payload }: MyContext,
     @Arg("id") id: string,
@@ -76,7 +77,6 @@ export class taskResolver {
     @Arg("dueDate", { nullable: true }) dueDate?: Date,
     @Arg("doDate", { nullable: true }) doDate?: Date
   ) {
-    console.log("CreateTaskStart", new Date());
     const result = await AppDataSource.createQueryBuilder()
       .insert()
       .into(Task)
@@ -90,12 +90,12 @@ export class taskResolver {
       })
       .returning("*")
       .execute();
-    console.log("CreateTaskEnd", new Date());
     return result.raw[0];
   }
 
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async deleteTask(@Ctx() { payload }: MyContext, @Arg("id") id: string) {
     const task = await Task.findOne({ where: { id } });
     // check if tasks user is the same as currenct user
@@ -115,11 +115,11 @@ export class taskResolver {
 
   @Mutation(() => Task)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async toggleTask(
     @Ctx() { payload }: MyContext,
     @Arg("id") id: string
   ): Promise<Task> {
-    console.log("ToggleTaskStart", new Date());
     const task = await Task.findOne({ where: { id } });
     // check if tasks user is the same as currenct user and task exists
     if (task?.userId === payload?.userId && task) {
@@ -130,38 +130,16 @@ export class taskResolver {
         .where("id = :id", { id })
         .returning("*")
         .execute();
-      console.log("ToggleTaskEnd", new Date());
+
       return updateResult.raw[0];
     } else {
-      console.log("ToggleTaskEnd", new Date());
       throw new Error("you are not authorized for this action");
     }
   }
 
   @Mutation(() => Task)
   @UseMiddleware(isAuth)
-  async changeSubjectOfTask(
-    @Ctx() { payload }: MyContext,
-    @Arg("subjectId") subjectId: string,
-    @Arg("taskId") taskId: string
-  ) {
-    const result = await Task.createQueryBuilder("task")
-      .update()
-      .set({ subjectId })
-      .where('task.id = :taskId and task."userId" = :userId', {
-        taskId,
-        userId: payload?.userId,
-      })
-      .returning("*")
-      .execute();
-    if (result.raw.length == 0) {
-      throw new Error("you are not authorized for this action");
-    }
-    return result.raw[0];
-  }
-
-  @Mutation(() => Task)
-  @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async editTask(
     @Ctx() { payload }: MyContext,
     @Arg("name") name: string,
