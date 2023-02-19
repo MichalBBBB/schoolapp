@@ -20,9 +20,10 @@ import {PersistentQueueLink} from './utils/persistentQueueLink';
 import {GetAllTasksDocument} from './generated/graphql';
 import {MMKV} from 'react-native-mmkv';
 import {allQueries} from './utils/allQueries';
+import {Content} from './Content';
 
 export const isLoggedInVar = makeVar(true);
-export const isOnlineVar = makeVar(false);
+export const isOnlineVar = makeVar(true);
 export const persistentQueueLink = new PersistentQueueLink();
 dayjs.extend(weekday);
 dayjs.locale('sk');
@@ -46,48 +47,8 @@ const App = () => {
     });
   };
 
-  const isOnline = useReactiveVar(isOnlineVar);
-
   useEffect(() => {
     initializeApolloClient();
-  }, []);
-
-  useEffect(() => {
-    if (client) {
-      console.log('client changed');
-      const openQueue = async () => {
-        await persistentQueueLink.open();
-        const promises: Array<Promise<any>> = [];
-        allQueries.forEach(item => {
-          promises.push(
-            client.query({
-              query: item,
-              fetchPolicy: 'network-only',
-            }),
-          );
-        });
-        await Promise.all(promises);
-        console.log('all loaded');
-      };
-      if (isOnline) {
-        openQueue();
-      } else {
-        persistentQueueLink.close();
-      }
-    }
-  }, [isOnline, client]);
-
-  useEffect(() => {
-    // const unsubscribe = NetInfo.addEventListener(state => {
-    //   if (state.isConnected) {
-    //     queueLink.open();
-    //   } else {
-    //     queueLink.close();
-    //   }
-    // });
-
-    // return () => unsubscribe();
-    persistentQueueLink.open();
   }, []);
 
   if (!client) {
@@ -102,14 +63,7 @@ const App = () => {
 
   return (
     <ApolloProvider client={client}>
-      <ThemeProvider>
-        <GestureHandlerRootView style={{flex: 1}}>
-          <PortalProvider>
-            <PortalHost name="menu" />
-            <Routes />
-          </PortalProvider>
-        </GestureHandlerRootView>
-      </ThemeProvider>
+      <Content />
     </ApolloProvider>
   );
 };

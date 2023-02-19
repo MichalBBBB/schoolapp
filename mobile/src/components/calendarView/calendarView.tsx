@@ -220,37 +220,10 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
         />
       </Animated.View>
       {monthView}
-      {data?.getAllEvents.filter(item =>
-        dayjs(item.startDate).isSame(selectedDay, 'day'),
-      ).length !== 0 ||
-      lessons?.getAllLessons.filter(item => {
-        return (
-          selectedDay.day() ==
-          (WEEK_DAY_NUMBERS[
-            item.dayOfTheWeek as keyof typeof WEEK_DAY_NUMBERS
-          ] as number)
-        );
-      }).length !== 0 ? (
-        <Animated.View style={[dayEventsAnimatedStyle, {zIndex: 10}]}>
-          <DayEvents date={selectedDay} scrollEnabled={isWeekView} />
-        </Animated.View>
-      ) : (
-        <Animated.View
-          style={[
-            {
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '100%',
-              backgroundColor: 'white',
-              zIndex: 10,
-            },
-            dayEventsAnimatedStyle,
-          ]}>
-          <BasicText textVariant="heading" color="textSecondary">
-            Nothing for this day
-          </BasicText>
-        </Animated.View>
-      )}
+
+      <Animated.View style={[dayEventsAnimatedStyle, {zIndex: 10}]}>
+        <DayEvents date={selectedDay} scrollEnabled={isWeekView} />
+      </Animated.View>
     </View>
   );
 };

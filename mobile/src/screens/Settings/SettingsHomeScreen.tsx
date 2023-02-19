@@ -8,15 +8,19 @@ import {
   Pressable,
   Image,
 } from 'react-native';
+import {isLoggedInVar} from '../../App';
+import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicCard} from '../../components/basicViews/BasicCard';
 import {BasicText} from '../../components/basicViews/BasicText';
-import {useMeQuery} from '../../generated/graphql';
+import {useLogoutMutation, useMeQuery} from '../../generated/graphql';
 import {SettingsStackParamList} from '../../routes/SettingsStack';
+import {setAccessToken} from '../../utils/AccessToken';
 
 const SettingsHomeScreen: React.FC<
   NativeStackScreenProps<SettingsStackParamList, 'SettingsHomeScreen'>
 > = ({navigation}) => {
   const {data: me} = useMeQuery();
+  const [logout] = useLogoutMutation();
 
   const profile = (
     <View style={styles.profileContainer}>
@@ -48,13 +52,24 @@ const SettingsHomeScreen: React.FC<
   return (
     <ScrollView style={styles.container}>
       {profile}
-      <BasicCard backgroundColor="accentBackground">
+      <BasicCard backgroundColor="accentBackground" marginBottom={10}>
         <Pressable
           style={styles.listItem}
           onPress={() => {
             navigation.navigate('LessonTimesScreen');
           }}>
           <BasicText>TimeTable</BasicText>
+        </Pressable>
+      </BasicCard>
+      <BasicCard backgroundColor="accentBackground">
+        <Pressable
+          style={styles.listItem}
+          onPress={() => {
+            logout();
+            setAccessToken('');
+            isLoggedInVar(false);
+          }}>
+          <BasicText color="dangerous">Log out</BasicText>
         </Pressable>
       </BasicCard>
     </ScrollView>

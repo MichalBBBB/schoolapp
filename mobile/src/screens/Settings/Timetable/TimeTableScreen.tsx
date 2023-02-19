@@ -24,15 +24,18 @@ import {
 import {SettingsStackParamList} from '../../../routes/SettingsStack';
 import {WEEK_DAYS} from '../../../types/weekDays';
 import {v4 as uuidv4} from 'uuid';
+import {useCreateLesson} from '../../../mutationHooks/lesson/createLesson';
+import {useEditLesson} from '../../../mutationHooks/lesson/editLesson';
+import {useDeleteLesson} from '../../../mutationHooks/lesson/deleteLesson';
 
 const TimeTableScreen: React.FC<
   NativeStackScreenProps<SettingsStackParamList, 'TimeTableScreen'>
 > = () => {
   const {data, loading: lessonsLoading} = useGetAllLessonsQuery();
   const {data: lessonTimes} = useGetAllLessonTimesQuery();
-  const [createLesson] = useCreateLessonMutation();
-  const [editLesson] = useEditLessonMutation();
-  const [deleteLesson] = useDeleteLessonMutation();
+  const [createLesson] = useCreateLesson();
+  const [editLesson] = useEditLesson();
+  const [deleteLesson] = useDeleteLesson();
 
   const [subjectModalIsVisible, setSubjectModalIsVisible] = useState(false);
   const [activeWeekDay, setActiveWeekDay] = useState<string | null>(null);
@@ -160,24 +163,20 @@ const TimeTableScreen: React.FC<
           if (existingLesson) {
             if (subject == null) {
               deleteLesson({
-                variables: {id: existingLesson.id},
-                refetchQueries: [GetAllLessonsDocument],
+                id: existingLesson.id,
               });
             } else {
               editLesson({
-                variables: {subjectId: subject.id, id: existingLesson.id},
-                refetchQueries: [GetAllLessonsDocument],
+                subjectId: subject.id,
+                id: existingLesson.id,
               });
             }
           } else if (subject) {
             createLesson({
-              variables: {
-                id: uuidv4(),
-                lessonTimeId: activeLessonTimeId!,
-                dayOfTheWeek: activeWeekDay!,
-                subjectId: subject.id,
-              },
-              refetchQueries: [GetAllLessonsDocument],
+              id: uuidv4(),
+              lessonTimeId: activeLessonTimeId!,
+              dayOfTheWeek: activeWeekDay!,
+              subjectId: subject.id,
             });
           }
 

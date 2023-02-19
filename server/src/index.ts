@@ -56,6 +56,7 @@ const main = async () => {
   app.post("/refresh_token", async (req, res) => {
     console.log("request");
     const token = req.cookies.jid;
+    console.log("cookies", req.cookies);
     if (!token) {
       return res.send({
         ok: false,

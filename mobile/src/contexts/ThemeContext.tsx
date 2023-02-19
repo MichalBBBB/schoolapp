@@ -9,7 +9,7 @@ import React, {
 import {TextStyle} from 'react-native';
 import {MyTheme} from '../types/Theme';
 
-const LighTheme: MyTheme = {
+const LightTheme: MyTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
@@ -49,9 +49,27 @@ const LighTheme: MyTheme = {
   },
 };
 
+const DarkTheme: MyTheme = {
+  ...LightTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    text: 'white',
+    primary: 'white',
+    background: 'black',
+    card: 'black',
+    accentBackground: '#eee',
+    textSecondary: 'green',
+    cardView: '#eee',
+    accent: 'black',
+    textContrast: 'white',
+    dangerous: 'red',
+    lightBorder: '#aaa',
+  },
+};
+
 const ThemeContext = createContext<
   [MyTheme, Dispatch<SetStateAction<MyTheme>>]
->([LighTheme, () => {}]);
+>([LightTheme, () => {}]);
 
 export const useTheme = () => {
   const value = useContext(ThemeContext);
@@ -59,7 +77,7 @@ export const useTheme = () => {
 };
 
 export const ThemeProvider: React.FC<{}> = ({children}) => {
-  const [theme, setTheme] = useState<MyTheme>(LighTheme);
+  const [theme, setTheme] = useState<MyTheme>(LightTheme);
   return (
     <ThemeContext.Provider value={[theme, setTheme]}>
       {children}

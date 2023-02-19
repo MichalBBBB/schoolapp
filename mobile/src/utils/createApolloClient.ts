@@ -5,7 +5,6 @@ import {
   InMemoryCache,
 } from '@apollo/client';
 import {setContext} from '@apollo/client/link/context';
-import AsyncStorage from '@react-native-community/async-storage';
 import {TokenRefreshLink} from 'apollo-link-token-refresh';
 import {
   AsyncStorageWrapper,
@@ -24,10 +23,10 @@ import SerializingLink from 'apollo-link-serialize';
 import {PersistentQueueLink} from './persistentQueueLink';
 import {BatchHttpLink} from '@apollo/client/link/batch-http';
 
-export const uri =
-  Platform.OS == 'ios'
-    ? 'http://localhost:5002/graphql'
-    : 'http://10.0.2.2:5002/graphql';
+export const baseUri =
+  Platform.OS == 'ios' ? 'http://localhost:5002' : 'http://10.0.2.2:5002';
+
+export const uri = baseUri + '/graphql';
 
 const httpLink = createHttpLink({
   uri: uri,
@@ -77,7 +76,7 @@ const refreshLink = new TokenRefreshLink({
     }
   },
   fetchAccessToken: () => {
-    return fetch('http://localhost:5002/refresh_token', {
+    return fetch(baseUri + '/refresh_token', {
       credentials: 'include',
       method: 'post',
     });

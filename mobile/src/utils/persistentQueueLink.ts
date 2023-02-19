@@ -28,6 +28,7 @@ export class PersistentQueueLink extends ApolloLink {
   private client: ApolloClient<NormalizedCacheObject> | null = null;
 
   public async open() {
+    // storage.set(queueStorageKey, JSON.stringify([]));
     const savedQueue = storage.getString(queueStorageKey);
     if (!savedQueue) {
       storage.set(queueStorageKey, JSON.stringify([]));
@@ -74,6 +75,11 @@ export class PersistentQueueLink extends ApolloLink {
     if (operation.getContext().skipQueue) {
       return forward(operation);
     }
+
+    if (!operation.getContext().optimisticResponse) {
+      return forward(operation);
+    }
+
     const name: string = operation.operationName;
     const queryJSON: string = JSON.stringify(operation.query);
     const variablesJSON: string = JSON.stringify(operation.variables);

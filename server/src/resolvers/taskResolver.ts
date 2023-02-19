@@ -48,8 +48,11 @@ const loadSubtasks = async (keys: [string]) => {
 export class taskResolver {
   @Query(() => [Task])
   @UseMiddleware(isAuth)
-  getAllTasks(@Ctx() { payload }: MyContext) {
-    return Task.find({ where: { userId: payload?.userId } });
+  async getAllTasks(@Ctx() { payload }: MyContext) {
+    return Task.find({
+      where: { userId: payload?.userId },
+      order: { createdAt: "ASC" },
+    });
   }
 
   @FieldResolver()
