@@ -21,7 +21,7 @@ export class Task extends BaseEntity {
   @Field()
   id: string;
 
-  @Column({ unique: true })
+  @Column()
   @Field()
   name: string;
 
