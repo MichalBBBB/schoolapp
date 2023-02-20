@@ -4,6 +4,7 @@ import React from 'react';
 import BackButton from '../components/backButton';
 import {TabStackParamList} from '../Routes';
 import SettingsHomeScreen from '../screens/Settings/SettingsHomeScreen';
+import {SubjectScreen} from '../screens/Settings/SubjectScreen';
 import LessonTimesScreen from '../screens/Settings/Timetable/LessonTimesScreen';
 import TimeTableScreen from '../screens/Settings/Timetable/TimeTableScreen';
 
@@ -11,6 +12,7 @@ export type SettingsStackParamList = {
   SettingsHomeScreen: undefined;
   LessonTimesScreen: undefined;
   TimeTableScreen: undefined;
+  SubjectScreen: undefined;
 };
 
 const SettingsStack: React.FC<
@@ -32,6 +34,7 @@ const SettingsStack: React.FC<
       <Stack.Screen name="SettingsHomeScreen" component={SettingsHomeScreen} />
       <Stack.Screen name="LessonTimesScreen" component={LessonTimesScreen} />
       <Stack.Screen name="TimeTableScreen" component={TimeTableScreen} />
+      <Stack.Screen name="SubjectScreen" component={SubjectScreen} />
     </Stack.Navigator>
   );
 };

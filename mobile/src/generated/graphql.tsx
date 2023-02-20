@@ -83,6 +83,7 @@ export type Mutation = {
   deleteLessonTimes: Scalars['Boolean'];
   deleteProject: Scalars['Boolean'];
   deleteProjectTask: Scalars['Boolean'];
+  deleteSubject: Scalars['Boolean'];
   deleteSubtask: Scalars['Boolean'];
   deleteTask: Scalars['Boolean'];
   editEvent: CalendarEvent;
@@ -214,6 +215,11 @@ export type MutationDeleteProjectArgs = {
 
 
 export type MutationDeleteProjectTaskArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteSubjectArgs = {
   id: Scalars['String'];
 };
 
@@ -619,6 +625,13 @@ export type CreateSubjectMutationVariables = Exact<{
 
 
 export type CreateSubjectMutation = { __typename?: 'Mutation', createSubject: { __typename?: 'Subject', id: string, name: string } };
+
+export type DeleteSubjectMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteSubjectMutation = { __typename?: 'Mutation', deleteSubject: boolean };
 
 export type CreateSubtaskMutationVariables = Exact<{
   taskId: Scalars['String'];
@@ -1545,6 +1558,37 @@ export function useCreateSubjectMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateSubjectMutationHookResult = ReturnType<typeof useCreateSubjectMutation>;
 export type CreateSubjectMutationResult = Apollo.MutationResult<CreateSubjectMutation>;
 export type CreateSubjectMutationOptions = Apollo.BaseMutationOptions<CreateSubjectMutation, CreateSubjectMutationVariables>;
+export const DeleteSubjectDocument = gql`
+    mutation DeleteSubject($id: String!) {
+  deleteSubject(id: $id)
+}
+    `;
+export type DeleteSubjectMutationFn = Apollo.MutationFunction<DeleteSubjectMutation, DeleteSubjectMutationVariables>;
+
+/**
+ * __useDeleteSubjectMutation__
+ *
+ * To run a mutation, you first call `useDeleteSubjectMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteSubjectMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteSubjectMutation, { data, loading, error }] = useDeleteSubjectMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteSubjectMutation(baseOptions?: Apollo.MutationHookOptions<DeleteSubjectMutation, DeleteSubjectMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteSubjectMutation, DeleteSubjectMutationVariables>(DeleteSubjectDocument, options);
+      }
+export type DeleteSubjectMutationHookResult = ReturnType<typeof useDeleteSubjectMutation>;
+export type DeleteSubjectMutationResult = Apollo.MutationResult<DeleteSubjectMutation>;
+export type DeleteSubjectMutationOptions = Apollo.BaseMutationOptions<DeleteSubjectMutation, DeleteSubjectMutationVariables>;
 export const CreateSubtaskDocument = gql`
     mutation CreateSubtask($taskId: String!, $name: String!, $id: String!) {
   createSubtask(taskId: $taskId, name: $name, id: $id) {

@@ -28,7 +28,7 @@ export const BasicCard = forwardRef<View, BasicCardProps>((props, ref) => {
     ? children.map((item, index) => {
         if (index !== children.length - 1) {
           return (
-            <View style={{marginBottom}} key={index}>
+            <View style={{marginBottom: gap}} key={index}>
               {item}
             </View>
           );

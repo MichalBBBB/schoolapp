@@ -16,6 +16,7 @@
     "@SocialAutoTransport/apollo-link-queue": "https://github.com/SocialAutoTransport/apollo-link-queue.git",
     "@apollo/client": "3.4.16",
     "@gorhom/portal": "^1.0.14",
+    "@notifee/react-native": "^7.4.0",
     "@react-native-community/netinfo": "^9.3.7",
     "@react-native-picker/picker": "^2.4.0",
     "@react-navigation/bottom-tabs": "^6.4.0",

@@ -37,4 +37,17 @@ export class subjectResolver {
       .execute();
     return result.raw[0];
   }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
+  async deleteSubject(@Arg("id") id: string, @Ctx() { payload }: MyContext) {
+    const subject = await Subject.findOne({ where: { id } });
+    if (subject && subject?.userId == payload?.userId) {
+      subject.remove();
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

@@ -8,6 +8,7 @@ import {
   View,
   TouchableOpacity,
   Pressable,
+  Image,
 } from 'react-native';
 import {SubjectFragment, useGetAllLessonsQuery} from '../../generated/graphql';
 import {closestLesson} from '../../utils/lessonUtils';
@@ -16,6 +17,7 @@ import {BasicModalCard} from '../basicViews/BasicModalCard';
 import {BasicText} from '../basicViews/BasicText';
 import Calendar from '../calendar';
 import WeekDays from '../calendar/weekDays';
+import {RemindersWindow} from '../remindersWindow';
 import SelectTimeModal from '../selectTimeView/selectTimeModal';
 
 interface EditDateWindowProps {
@@ -61,6 +63,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
     useState<SpecialDate | null>(null);
   const [specialDays, setSpecialDays] = useState<SpecialDate[][]>(specialDates);
   const [timePopupOpen, setTimePopupOpen] = useState(false);
+  const [remindersWindowOpen, setRemindersWindowOpen] = useState(false);
 
   useEffect(() => {
     // if there is a subject specified and the subject has assigned lessons,
@@ -140,9 +143,35 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             justifyContent: 'space-between',
             width: '100%',
             paddingHorizontal: 30,
+            marginTop: 10,
           }}>
           <BasicText>Time</BasicText>
-          <BasicText>{selectedDay.format('HH:mm')}</BasicText>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <BasicText>{selectedDay.format('HH:mm')}</BasicText>
+            <Image
+              source={require('../../../assets/Chevron-right.png')}
+              style={{height: 20, width: 20}}
+            />
+          </View>
+        </BasicButton>
+        <BasicButton
+          variant="unstyled"
+          onPress={() => setRemindersWindowOpen(true)}
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: '100%',
+            paddingHorizontal: 30,
+            marginTop: 10,
+          }}>
+          <BasicText>Reminder</BasicText>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            {/* <BasicText>{selectedDay.format('HH:mm')}</BasicText> */}
+            <Image
+              source={require('../../../assets/Chevron-right.png')}
+              style={{height: 20, width: 20}}
+            />
+          </View>
         </BasicButton>
         <View style={styles.submitButtonContainer}>
           <BasicButton
@@ -155,6 +184,11 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             </BasicText>
           </BasicButton>
         </View>
+        <RemindersWindow
+          isVisible={remindersWindowOpen}
+          onClose={() => setRemindersWindowOpen(false)}
+          onSubmit={value => {}}
+        />
         <SelectTimeModal
           onClose={() => {
             setTimePopupOpen(false);

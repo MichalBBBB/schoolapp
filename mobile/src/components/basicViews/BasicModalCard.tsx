@@ -5,7 +5,7 @@ import {useTheme} from '../../contexts/ThemeContext';
 import {ColorsObject} from '../../types/Theme';
 import {BasicCard, BasicCardProps} from './BasicCard';
 
-interface BasicModalCardProps extends BasicCardProps {
+export interface BasicModalCardProps extends BasicCardProps {
   borderRadius?: number | undefined;
   isVisible: boolean;
   avoidKeyboard?: boolean | undefined;

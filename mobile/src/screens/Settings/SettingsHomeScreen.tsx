@@ -16,6 +16,27 @@ import {useLogoutMutation, useMeQuery} from '../../generated/graphql';
 import {SettingsStackParamList} from '../../routes/SettingsStack';
 import {setAccessToken} from '../../utils/AccessToken';
 
+const SettingsItem: React.FC<{text: string; onPress: () => void}> = ({
+  text,
+  onPress,
+}) => {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}>
+      <BasicText>{text}</BasicText>
+      <Image
+        source={require('../../../assets/Chevron-right.png')}
+        style={{height: 15, width: 15}}
+      />
+    </Pressable>
+  );
+};
+
 const SettingsHomeScreen: React.FC<
   NativeStackScreenProps<SettingsStackParamList, 'SettingsHomeScreen'>
 > = ({navigation}) => {
@@ -52,26 +73,37 @@ const SettingsHomeScreen: React.FC<
   return (
     <ScrollView style={styles.container}>
       {profile}
-      <BasicCard backgroundColor="accentBackground" marginBottom={10}>
-        <Pressable
-          style={styles.listItem}
-          onPress={() => {
-            navigation.navigate('LessonTimesScreen');
-          }}>
-          <BasicText>TimeTable</BasicText>
-        </Pressable>
-      </BasicCard>
-      <BasicCard backgroundColor="accentBackground">
-        <Pressable
-          style={styles.listItem}
-          onPress={() => {
-            logout();
-            setAccessToken('');
-            isLoggedInVar(false);
-          }}>
-          <BasicText color="dangerous">Log out</BasicText>
-        </Pressable>
-      </BasicCard>
+      <View style={styles.listContainer}>
+        <BasicCard
+          backgroundColor="accentBackground"
+          marginBottom={10}
+          spacing="m"
+          gap={10}>
+          <SettingsItem
+            text="TimeTable"
+            onPress={() => {
+              navigation.navigate('LessonTimesScreen');
+            }}
+          />
+          <SettingsItem
+            text="Subjects"
+            onPress={() => {
+              navigation.navigate('SubjectScreen');
+            }}
+          />
+        </BasicCard>
+        <BasicCard backgroundColor="accentBackground" spacing="m">
+          <Pressable
+            style={styles.listItem}
+            onPress={() => {
+              logout();
+              setAccessToken('');
+              isLoggedInVar(false);
+            }}>
+            <BasicText color="dangerous">Log out</BasicText>
+          </Pressable>
+        </BasicCard>
+      </View>
     </ScrollView>
   );
 };
@@ -86,10 +118,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 10,
   },
   container: {
     padding: 10,
+  },
+  listContainer: {
+    paddingHorizontal: 10,
   },
 });
 

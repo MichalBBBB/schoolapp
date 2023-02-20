@@ -28,8 +28,8 @@ const LightTheme: MyTheme = {
     none: 0,
     s: 6,
     m: 12,
-    l: 20,
-    xl: 30,
+    l: 16,
+    xl: 24,
   },
   textVariants: {
     heading: {
