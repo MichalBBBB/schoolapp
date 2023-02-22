@@ -259,6 +259,7 @@ export type MutationEditTaskArgs = {
   dueDate?: InputMaybe<Scalars['DateTime']>;
   id: Scalars['String'];
   name: Scalars['String'];
+  reminders?: InputMaybe<Array<RemindersInput>>;
   text?: InputMaybe<Scalars['String']>;
 };
 
@@ -345,6 +346,7 @@ export type Query = {
   getAllLessonTimes: Array<LessonTime>;
   getAllLessons: Array<Lesson>;
   getAllProjects: Array<Project>;
+  getAllReminders: Array<Reminder>;
   getAllSubjects: Array<Subject>;
   getAllSubtasksOfTask: Array<Subtask>;
   getAllTasks: Array<Task>;
@@ -367,6 +369,25 @@ export type QueryUserExistsArgs = {
 };
 
 export type RegisterResponse = UserFail | UserSucces;
+
+export type Reminder = {
+  __typename?: 'Reminder';
+  body?: Maybe<Scalars['String']>;
+  date: Scalars['DateTime'];
+  id: Scalars['String'];
+  minutesBefore: Scalars['Float'];
+  task: Task;
+  taskId: Scalars['String'];
+  title: Scalars['String'];
+};
+
+export type RemindersInput = {
+  body?: InputMaybe<Scalars['String']>;
+  date: Scalars['DateTime'];
+  id: Scalars['String'];
+  minutesBefore: Scalars['Float'];
+  title: Scalars['String'];
+};
 
 export type Subject = {
   __typename?: 'Subject';
@@ -393,6 +414,7 @@ export type Task = {
   dueDate?: Maybe<Scalars['DateTime']>;
   id: Scalars['String'];
   name: Scalars['String'];
+  reminders: Array<Reminder>;
   subject?: Maybe<Subject>;
   subjectId?: Maybe<Scalars['String']>;
   subtasks: Array<Subtask>;
@@ -415,6 +437,7 @@ export type User = {
   lessons: Array<Lesson>;
   ownedProjects: Array<Project>;
   projectTasks: Array<Task>;
+  reminders: Array<Reminder>;
   subjects: Array<Subject>;
   tasks: Array<Task>;
   updatedAt: Scalars['DateTime'];
@@ -461,11 +484,13 @@ export type ProjectTaskFragment = { __typename?: 'ProjectTask', id: string, name
 
 export type PublicUserFragment = { __typename?: 'PublicUser', name: string, email: string, id: string };
 
+export type ReminderFragment = { __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null | undefined, date: any, taskId: string };
+
 export type SubjectFragment = { __typename?: 'Subject', id: string, name: string };
 
 export type SubtaskFragment = { __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean };
 
-export type TaskFragment = { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, doDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined };
+export type TaskFragment = { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, doDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null | undefined, date: any, taskId: string }> };
 
 export type CreateEventMutationVariables = Exact<{
   startDate: Scalars['DateTime'];
@@ -651,7 +676,7 @@ export type CreateTaskMutationVariables = Exact<{
 }>;
 
 
-export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, doDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
+export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, doDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null | undefined, date: any, taskId: string }> } };
 
 export type DeleteSubtaskMutationVariables = Exact<{
   id: Scalars['String'];
@@ -673,10 +698,11 @@ export type EditTaskMutationVariables = Exact<{
   text?: InputMaybe<Scalars['String']>;
   dueDate?: InputMaybe<Scalars['DateTime']>;
   doDate?: InputMaybe<Scalars['DateTime']>;
+  reminders?: InputMaybe<Array<RemindersInput> | RemindersInput>;
 }>;
 
 
-export type EditTaskMutation = { __typename?: 'Mutation', editTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, doDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
+export type EditTaskMutation = { __typename?: 'Mutation', editTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, doDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null | undefined, date: any, taskId: string }> } };
 
 export type ToggleSubtaskMutationVariables = Exact<{
   id: Scalars['String'];
@@ -690,7 +716,7 @@ export type ToggleTaskMutationVariables = Exact<{
 }>;
 
 
-export type ToggleTaskMutation = { __typename?: 'Mutation', toggleTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, doDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined } };
+export type ToggleTaskMutation = { __typename?: 'Mutation', toggleTask: { __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, doDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null | undefined, date: any, taskId: string }> } };
 
 export type GoogleSignInMutationVariables = Exact<{
   idToken: Scalars['String'];
@@ -736,6 +762,11 @@ export type GetAllLessonsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetAllLessonsQuery = { __typename?: 'Query', getAllLessons: Array<{ __typename?: 'Lesson', id: string, dayOfTheWeek: string, subject: { __typename?: 'Subject', id: string, name: string }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } }> };
 
+export type GetAllRemindersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllRemindersQuery = { __typename?: 'Query', getAllReminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null | undefined, date: any, taskId: string }> };
+
 export type GetAllSubjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -744,7 +775,7 @@ export type GetAllSubjectsQuery = { __typename?: 'Query', getAllSubjects: Array<
 export type GetAllTasksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllTasksQuery = { __typename?: 'Query', getAllTasks: Array<{ __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, doDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined }> };
+export type GetAllTasksQuery = { __typename?: 'Query', getAllTasks: Array<{ __typename?: 'Task', id: string, name: string, userId: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null | undefined, dueDate?: any | null | undefined, doDate?: any | null | undefined, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null | undefined, date: any, taskId: string }> }> };
 
 export type GetInvitesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -859,6 +890,16 @@ export const SubtaskFragmentDoc = gql`
   done
 }
     `;
+export const ReminderFragmentDoc = gql`
+    fragment Reminder on Reminder {
+  id
+  minutesBefore
+  title
+  body
+  date
+  taskId
+}
+    `;
 export const TaskFragmentDoc = gql`
     fragment Task on Task {
   id
@@ -876,9 +917,13 @@ export const TaskFragmentDoc = gql`
   text
   dueDate
   doDate
+  reminders {
+    ...Reminder
+  }
 }
     ${SubtaskFragmentDoc}
-${SubjectFragmentDoc}`;
+${SubjectFragmentDoc}
+${ReminderFragmentDoc}`;
 export const CreateEventDocument = gql`
     mutation CreateEvent($startDate: DateTime!, $endDate: DateTime, $wholeDay: Boolean, $name: String!, $subjectId: String, $id: String!) {
   createEvent(
@@ -1730,8 +1775,15 @@ export type DeleteTaskMutationHookResult = ReturnType<typeof useDeleteTaskMutati
 export type DeleteTaskMutationResult = Apollo.MutationResult<DeleteTaskMutation>;
 export type DeleteTaskMutationOptions = Apollo.BaseMutationOptions<DeleteTaskMutation, DeleteTaskMutationVariables>;
 export const EditTaskDocument = gql`
-    mutation EditTask($id: String!, $name: String!, $text: String, $dueDate: DateTime, $doDate: DateTime) {
-  editTask(id: $id, name: $name, text: $text, dueDate: $dueDate, doDate: $doDate) {
+    mutation EditTask($id: String!, $name: String!, $text: String, $dueDate: DateTime, $doDate: DateTime, $reminders: [RemindersInput!]) {
+  editTask(
+    id: $id
+    name: $name
+    text: $text
+    dueDate: $dueDate
+    doDate: $doDate
+    reminders: $reminders
+  ) {
     ...Task
   }
 }
@@ -1756,6 +1808,7 @@ export type EditTaskMutationFn = Apollo.MutationFunction<EditTaskMutation, EditT
  *      text: // value for 'text'
  *      dueDate: // value for 'dueDate'
  *      doDate: // value for 'doDate'
+ *      reminders: // value for 'reminders'
  *   },
  * });
  */
@@ -2097,6 +2150,40 @@ export function useGetAllLessonsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetAllLessonsQueryHookResult = ReturnType<typeof useGetAllLessonsQuery>;
 export type GetAllLessonsLazyQueryHookResult = ReturnType<typeof useGetAllLessonsLazyQuery>;
 export type GetAllLessonsQueryResult = Apollo.QueryResult<GetAllLessonsQuery, GetAllLessonsQueryVariables>;
+export const GetAllRemindersDocument = gql`
+    query GetAllReminders {
+  getAllReminders {
+    ...Reminder
+  }
+}
+    ${ReminderFragmentDoc}`;
+
+/**
+ * __useGetAllRemindersQuery__
+ *
+ * To run a query within a React component, call `useGetAllRemindersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllRemindersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllRemindersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllRemindersQuery(baseOptions?: Apollo.QueryHookOptions<GetAllRemindersQuery, GetAllRemindersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllRemindersQuery, GetAllRemindersQueryVariables>(GetAllRemindersDocument, options);
+      }
+export function useGetAllRemindersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllRemindersQuery, GetAllRemindersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllRemindersQuery, GetAllRemindersQueryVariables>(GetAllRemindersDocument, options);
+        }
+export type GetAllRemindersQueryHookResult = ReturnType<typeof useGetAllRemindersQuery>;
+export type GetAllRemindersLazyQueryHookResult = ReturnType<typeof useGetAllRemindersLazyQuery>;
+export type GetAllRemindersQueryResult = Apollo.QueryResult<GetAllRemindersQuery, GetAllRemindersQueryVariables>;
 export const GetAllSubjectsDocument = gql`
     query GetAllSubjects {
   getAllSubjects {

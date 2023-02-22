@@ -2,6 +2,7 @@ import {
   GetAllEventsDocument,
   GetAllLessonsDocument,
   GetAllLessonTimesDocument,
+  GetAllRemindersDocument,
   GetAllSubjectsDocument,
   GetAllTasksDocument,
   GetInvitesDocument,
@@ -17,5 +18,6 @@ export const allQueries = [
   GetAllTasksDocument,
   GetInvitesDocument,
   GetProjectsDocument,
+  GetAllRemindersDocument,
   MeDocument,
 ];

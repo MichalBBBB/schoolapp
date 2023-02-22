@@ -81,13 +81,13 @@ export class lessonTimeResolver {
     @Ctx() { payload }: MyContext
   ) {
     await AppDataSource.transaction(async (transactionEntityManager) => {
-      lessonTimes.forEach((item) => {
+      for (const item of lessonTimes) {
         transactionEntityManager.update(
           LessonTime,
           { id: item.id, userId: payload?.userId },
           { startTime: item.startTime, endTime: item.endTime }
         );
-      });
+      }
     });
     return LessonTime.find({ where: { userId: payload?.userId } });
   }

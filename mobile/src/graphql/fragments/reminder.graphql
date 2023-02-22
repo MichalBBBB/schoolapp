@@ -1,0 +1,8 @@
+fragment Reminder on Reminder {
+  id
+  minutesBefore
+  title
+  body
+  date
+  taskId
+}

@@ -16,6 +16,7 @@ import { Lesson } from "./Lesson";
 import { LessonTime } from "./LessonTime";
 import { Project } from "./Project";
 import { ProjectTask } from "./ProjectTask";
+import { Reminder } from "./Reminder";
 import { Task } from "./Task";
 import { UserProject } from "./UserProject";
 
@@ -99,4 +100,8 @@ export class User extends BaseEntity {
   @OneToMany(() => Project, (project) => project.owner)
   @Field(() => [Project])
   ownedProjects: Relation<Project>[];
+
+  @OneToMany(() => Reminder, (reminder) => reminder.user)
+  @Field(() => [Reminder])
+  reminders: Relation<Reminder>;
 }

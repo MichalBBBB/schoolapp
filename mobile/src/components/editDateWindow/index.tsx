@@ -10,7 +10,12 @@ import {
   Pressable,
   Image,
 } from 'react-native';
-import {SubjectFragment, useGetAllLessonsQuery} from '../../generated/graphql';
+import {
+  Reminder,
+  ReminderFragment,
+  SubjectFragment,
+  useGetAllLessonsQuery,
+} from '../../generated/graphql';
 import {closestLesson} from '../../utils/lessonUtils';
 import {BasicButton} from '../basicViews/BasicButton';
 import {BasicModalCard} from '../basicViews/BasicModalCard';
@@ -21,12 +26,14 @@ import {RemindersWindow} from '../remindersWindow';
 import SelectTimeModal from '../selectTimeView/selectTimeModal';
 
 interface EditDateWindowProps {
-  onSubmit: (date: dayjs.Dayjs) => void;
+  onSubmit: (date: dayjs.Dayjs, reminderTimes?: number[]) => void;
   initialDate?: dayjs.Dayjs | null;
   subject?: SubjectFragment | undefined | null;
   onClose: () => void;
   isVisible: boolean;
   onHide?: () => void | undefined;
+  reminders?: boolean;
+  initialReminderTimes?: number[];
 }
 
 type SpecialDate = {
@@ -49,10 +56,12 @@ const calendarHeight = 34 * 6;
 const EditDateModal: React.FC<EditDateWindowProps> = ({
   onSubmit,
   initialDate,
+  initialReminderTimes,
   subject,
   onClose,
   isVisible,
   onHide,
+  reminders = false,
 }) => {
   const {data: lessons} = useGetAllLessonsQuery();
 
@@ -64,6 +73,9 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
   const [specialDays, setSpecialDays] = useState<SpecialDate[][]>(specialDates);
   const [timePopupOpen, setTimePopupOpen] = useState(false);
   const [remindersWindowOpen, setRemindersWindowOpen] = useState(false);
+  const [reminderTimes, setReminderTimes] = useState<number[] | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
     // if there is a subject specified and the subject has assigned lessons,
@@ -95,11 +107,11 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
         }
       }}>
       <View style={{alignItems: 'center'}}>
-        {specialDays.map((item, index) => (
-          <View key={index} style={styles.specialDatesContainer}>
-            {item.map((day, index) => (
+        {specialDays.map((item, index1) => (
+          <View key={index1} style={styles.specialDatesContainer}>
+            {item.map((day, index2) => (
               <View
-                key={index}
+                key={index2}
                 style={{
                   width: windowWidth / 2,
                   justifyContent: 'center',
@@ -154,30 +166,33 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             />
           </View>
         </BasicButton>
-        <BasicButton
-          variant="unstyled"
-          onPress={() => setRemindersWindowOpen(true)}
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            width: '100%',
-            paddingHorizontal: 30,
-            marginTop: 10,
-          }}>
-          <BasicText>Reminder</BasicText>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            {/* <BasicText>{selectedDay.format('HH:mm')}</BasicText> */}
-            <Image
-              source={require('../../../assets/Chevron-right.png')}
-              style={{height: 20, width: 20}}
-            />
-          </View>
-        </BasicButton>
+        {reminders && (
+          <BasicButton
+            variant="unstyled"
+            onPress={() => setRemindersWindowOpen(true)}
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              width: '100%',
+              paddingHorizontal: 30,
+              marginTop: 10,
+            }}>
+            <BasicText>Reminder</BasicText>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              {/* <BasicText>{selectedDay.format('HH:mm')}</BasicText> */}
+              <Image
+                source={require('../../../assets/Chevron-right.png')}
+                style={{height: 20, width: 20}}
+              />
+            </View>
+          </BasicButton>
+        )}
+
         <View style={styles.submitButtonContainer}>
           <BasicButton
             onPress={() => {
               const date: dayjs.Dayjs = selectedDay;
-              onSubmit(date);
+              onSubmit(date, reminderTimes);
             }}>
             <BasicText color="background" style={{fontWeight: 'bold'}}>
               Submit
@@ -185,9 +200,13 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
           </BasicButton>
         </View>
         <RemindersWindow
+          initialReminderTimes={initialReminderTimes}
           isVisible={remindersWindowOpen}
           onClose={() => setRemindersWindowOpen(false)}
-          onSubmit={value => {}}
+          onSubmit={value => {
+            setReminderTimes(value);
+            setRemindersWindowOpen(false);
+          }}
         />
         <SelectTimeModal
           onClose={() => {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import dayjs from 'dayjs';
 import {useState} from 'react';
 import {View} from 'react-native';
@@ -7,43 +7,45 @@ import {BasicRadio} from './basicViews/BasicRadio';
 import {BasicCardProps} from './basicViews/BasicCard';
 import {BasicText} from './basicViews/BasicText';
 import {BasicButton} from './basicViews/BasicButton';
+import {sendNotification, setNotificationTrigger} from '../utils/notifications';
 
 interface RemindersWindowProps {
-  onSubmit: (date: dayjs.Dayjs) => void;
+  onSubmit: (reminderTImes: number[]) => void;
   onClose: () => void;
   isVisible: boolean;
   onHide?: () => void | undefined;
+  initialReminderTimes?: number[];
 }
 
 type ReminderTime = {
   title: string;
-  getDate: (date: dayjs.Dayjs) => dayjs.Dayjs;
+  minutesBefore: number;
 };
 
 const reminderTimes: ReminderTime[] = [
   {
     title: 'At the time',
-    getDate: date => date,
+    minutesBefore: 0,
   },
   {
     title: '10 minutes early',
-    getDate: date => date.subtract(10, 'minute'),
+    minutesBefore: 1,
   },
   {
     title: '30 minutes early',
-    getDate: date => date.subtract(30, 'minutes'),
+    minutesBefore: 2,
   },
   {
     title: '1 hour early',
-    getDate: date => date.subtract(1, 'hour'),
+    minutesBefore: 3,
   },
   {
     title: '2 hours early',
-    getDate: date => date.subtract(2, 'hours'),
+    minutesBefore: 120,
   },
   {
     title: '1 day early',
-    getDate: date => date.subtract(1, 'day'),
+    minutesBefore: 60 * 24,
   },
 ];
 
@@ -52,11 +54,11 @@ export const RemindersWindow: React.FC<RemindersWindowProps> = ({
   onClose,
   onSubmit,
   onHide,
-  ...rest
+  initialReminderTimes = [],
 }) => {
-  const [selectedReminderTimes, setSelectedReminderTimes] = useState<
-    ReminderTime[]
-  >([]);
+  const [selectedReminderTimes, setSelectedReminderTimes] =
+    useState<number[]>(initialReminderTimes);
+
   return (
     <BasicModalCard
       spacing="l"
@@ -71,20 +73,31 @@ export const RemindersWindow: React.FC<RemindersWindowProps> = ({
           onHide();
         }
       }}>
+      <View style={{flexDirection: 'row', marginBottom: 10}}>
+        <BasicRadio
+          style={{marginRight: 10}}
+          toggled={selectedReminderTimes.length == 0}
+          onToggle={toggled => {
+            setSelectedReminderTimes([]);
+          }}
+        />
+        <BasicText>None</BasicText>
+      </View>
       {reminderTimes.map((item, index) => (
-        <View style={{flexDirection: 'row', marginBottom: 10}}>
+        <View key={index} style={{flexDirection: 'row', marginBottom: 10}}>
           <BasicRadio
             style={{marginRight: 10}}
-            toggled={selectedReminderTimes
-              .map(item => item.title)
-              .includes(item.title)}
+            toggled={selectedReminderTimes.includes(item.minutesBefore)}
             onToggle={toggled => {
               if (toggled) {
-                setSelectedReminderTimes([...selectedReminderTimes, item]);
+                setSelectedReminderTimes([
+                  ...selectedReminderTimes,
+                  item.minutesBefore,
+                ]);
               } else {
                 setSelectedReminderTimes(
                   selectedReminderTimes.filter(
-                    time => time.title !== item.title,
+                    time => time !== item.minutesBefore,
                   ),
                 );
               }
@@ -94,7 +107,11 @@ export const RemindersWindow: React.FC<RemindersWindowProps> = ({
         </View>
       ))}
       <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-        <BasicButton spacing="m">
+        <BasicButton
+          spacing="m"
+          onPress={() => {
+            onSubmit(selectedReminderTimes);
+          }}>
           <BasicText color="textContrast" textVariant="button">
             Submit
           </BasicText>

@@ -21,6 +21,7 @@ import Subtask from '../../components/subtask';
 import {calendarConfigWithoutTime} from '../../components/task';
 import {
   GetAllTasksDocument,
+  RemindersInput,
   useCreateSubtaskMutation,
   useEditTaskMutation,
   useGetAllTasksQuery,
@@ -29,6 +30,8 @@ import {TaskStackParamList} from '../../routes/TaskStack';
 import {v4 as uuidv4} from 'uuid';
 import {useCreateSubtask} from '../../mutationHooks/task/createSubtask';
 import {useEditTask} from '../../mutationHooks/task/editTask';
+import {setRemindersFromApollo} from '../../utils/reminderUtils';
+import {useApolloClient} from '@apollo/client';
 
 const TaskDetailScreen: React.FC<
   NativeStackScreenProps<TaskStackParamList, 'TaskDetailScreen'>
@@ -38,13 +41,13 @@ const TaskDetailScreen: React.FC<
     item => item.id == route.params.task.id,
   )!;
   const [addSubtask] = useCreateSubtask();
+
+  const client = useApolloClient();
+
   const [name, setName] = useState(task.name);
   const [text, setText] = useState(task.text);
   const [dueDate, setDueDate] = useState<dayjs.Dayjs | null>(
     task.dueDate ? dayjs(task.dueDate) : null,
-  );
-  const [doDate, setDoDate] = useState<dayjs.Dayjs | null>(
-    task.doDate ? dayjs(task.doDate) : null,
   );
   const [edited, setEdited] = useState(false);
   const [editTask] = useEditTask();
@@ -164,19 +167,35 @@ const TaskDetailScreen: React.FC<
         isVisible={editDueDateModalIsVisible}
       />
       <EditDateModal
+        initialDate={dayjs(task.doDate)}
+        initialReminderTimes={task.reminders.map(item => item.minutesBefore)}
+        reminders
         onClose={() => {
           setEditDoDateModalIsVisible(false);
         }}
-        onSubmit={date => {
-          setDoDate(date);
+        onSubmit={async (date, reminderTimes) => {
+          let reminders: RemindersInput[] | undefined;
+          if (reminderTimes) {
+            reminders = reminderTimes.map(item => {
+              const id = uuidv4();
+              return {
+                id,
+                title: task.name,
+                minutesBefore: item,
+                date: dayjs(task.doDate).subtract(item, 'minute').toDate(),
+              };
+            });
+          }
           setEditDoDateModalIsVisible(false);
-          editTask({
+          await editTask({
             id: task.id,
             name,
             text,
             dueDate: task.dueDate,
             doDate: date.toDate(),
+            reminders,
           });
+          setRemindersFromApollo(client);
         }}
         isVisible={editDoDateModalIsVisible}
       />

@@ -55,6 +55,7 @@ export const useCreateTask: () => [
           doDate: variables.doDate || null,
           subtasks: [],
           subject: subject || null,
+          reminders: [],
         },
       },
       update: (cache, {data}) => {

@@ -1,20 +1,19 @@
 import {FetchResult, MutationResult, useApolloClient} from '@apollo/client';
 import {
-  CreateSubtaskMutation,
-  CreateSubtaskMutationVariables,
   EditTaskMutation,
   EditTaskMutationVariables,
+  GetAllRemindersDocument,
+  GetAllRemindersQuery,
   GetAllTasksDocument,
   GetAllTasksQuery,
-  TaskFragment,
+  RemindersInput,
   TaskFragmentDoc,
-  useCreateSubtaskMutation,
   useEditTaskMutation,
 } from '../../generated/graphql';
 
 export type EditTaskFunction = (
   variables: EditTaskMutationVariables,
-) => Promise<FetchResult<EditTaskMutation>>;
+) => Promise<FetchResult<EditTaskMutation> | null>;
 
 export const useEditTask: () => [
   EditTaskFunction,
@@ -31,42 +30,84 @@ export const useEditTask: () => [
     const task = (tasks as GetAllTasksQuery).getAllTasks.find(item => {
       return item.id == variables.id;
     });
-    const result = await editTask({
-      context: {
-        serializationKey: 'MUTATION',
-      },
-      variables: variables,
-      optimisticResponse: {
-        __typename: 'Mutation',
-        editTask: {
-          __typename: 'Task',
-          id: variables.id,
-          name: variables.name,
-          userId: '',
-          createdAt: task?.createdAt,
-          done: false,
-          updatedAt: new Date().toISOString(),
-          text: variables.text,
-          dueDate: variables.dueDate || null,
-          doDate: variables.doDate || null,
-          subtasks: task?.subtasks || [],
-          subject: task?.subject,
+    if (task) {
+      var remindersArray: RemindersInput[] = [];
+      if (variables.reminders) {
+        remindersArray =
+          'map' in variables.reminders
+            ? (variables.reminders as RemindersInput[])
+            : [variables.reminders as RemindersInput];
+      }
+
+      const result = await editTask({
+        context: {
+          serializationKey: 'MUTATION',
         },
-      },
-      update: (cache, {data}) => {
-        if (!data) {
-          return;
-        }
-        const normalizedTaskId = `Task:${variables.id}`;
-        cache.writeFragment({
-          id: normalizedTaskId,
-          fragment: TaskFragmentDoc,
-          fragmentName: 'Task',
-          data: data.editTask,
-        });
-      },
-    });
-    return result;
+        variables: variables,
+        optimisticResponse: {
+          __typename: 'Mutation',
+          editTask: {
+            __typename: 'Task',
+            id: variables.id,
+            name: variables.name,
+            userId: '',
+            createdAt: task.createdAt,
+            done: false,
+            updatedAt: new Date().toISOString(),
+            text: variables.text,
+            dueDate: variables.dueDate || null,
+            doDate: variables.doDate || null,
+            subtasks: task?.subtasks || [],
+            subject: task?.subject,
+            reminders: remindersArray.map(item => {
+              return {
+                __typename: 'Reminder',
+                minutesBefore: item.minutesBefore,
+                id: item.id,
+                title: item.title,
+                body: item.body || null,
+                date: item.date,
+                taskId: task.id,
+              };
+            }),
+          },
+        },
+        update: (cache, {data}) => {
+          if (!data) {
+            return;
+          }
+          const normalizedTaskId = `Task:${variables.id}`;
+          cache.writeFragment({
+            id: normalizedTaskId,
+            fragment: TaskFragmentDoc,
+            fragmentName: 'Task',
+            data: data.editTask,
+          });
+          const cacheData = cache.readQuery<GetAllRemindersQuery>({
+            query: GetAllRemindersDocument,
+          });
+          if (!cacheData) {
+            return;
+          }
+          const existingReminders = cacheData.getAllReminders;
+          const unrelatedReminders = existingReminders.filter(item => {
+            return item.taskId !== data.editTask.id;
+          });
+          const newReminders = [
+            ...unrelatedReminders,
+            ...data.editTask.reminders,
+          ];
+          cache.writeQuery<GetAllRemindersQuery>({
+            query: GetAllRemindersDocument,
+            data: {
+              getAllReminders: newReminders,
+            },
+          });
+        },
+      });
+      return result;
+    }
+    return null;
   };
   return [func, data];
 };

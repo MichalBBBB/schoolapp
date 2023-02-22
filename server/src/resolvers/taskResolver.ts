@@ -4,7 +4,9 @@ import { MyContext } from "../utils/MyContext";
 import {
   Arg,
   Ctx,
+  Field,
   FieldResolver,
+  InputType,
   Mutation,
   Query,
   Resolver,
@@ -16,6 +18,25 @@ import { Subject } from "../entities/Subject";
 import DataLoader from "dataloader";
 import { AppDataSource } from "../TypeORM";
 import { queueMiddleware } from "../middleware/queueMiddleware";
+import { Reminder } from "../entities/Reminder";
+
+@InputType()
+class RemindersInput implements Partial<Reminder> {
+  @Field()
+  id: string;
+
+  @Field()
+  minutesBefore: number;
+
+  @Field()
+  title: string;
+
+  @Field({ nullable: true })
+  body?: string;
+
+  @Field()
+  date: Date;
+}
 
 const subjectLoader = new DataLoader((keys) => loadSubjects(keys as [string]), {
   cache: false,
@@ -44,6 +65,23 @@ const loadSubtasks = async (keys: [string]) => {
   return keys.map((key) => result.filter((subtask) => subtask.taskId === key));
 };
 
+const remindersLoader = new DataLoader(
+  (keys) => loadReminders(keys as [string]),
+  {
+    cache: false,
+  }
+);
+
+const loadReminders = async (keys: [string]) => {
+  const result = await Reminder.createQueryBuilder("reminder")
+    .select()
+    .where("reminder.taskId IN (:...ids)", { ids: keys })
+    .getMany();
+  return keys.map((key) =>
+    result.filter((reminder) => reminder.taskId === key)
+  );
+};
+
 @Resolver(Task)
 export class taskResolver {
   @Query(() => [Task])
@@ -58,6 +96,11 @@ export class taskResolver {
   @FieldResolver()
   async subtasks(@Root() root: Task) {
     return subtaskLoader.load(root.id);
+  }
+
+  @FieldResolver()
+  async reminders(@Root() root: Task) {
+    return remindersLoader.load(root.id);
   }
 
   @FieldResolver()
@@ -149,15 +192,35 @@ export class taskResolver {
     @Arg("text", { nullable: true }) text: string,
     @Arg("id") id: string,
     @Arg("dueDate", { nullable: true }) dueDate?: Date,
-    @Arg("doDate", { nullable: true }) doDate?: Date
+    @Arg("doDate", { nullable: true }) doDate?: Date,
+    @Arg("reminders", () => [RemindersInput], { nullable: true })
+    reminders?: RemindersInput[]
   ) {
     const task = await Task.findOne({ where: { id } });
     if (task?.userId === payload?.userId && task) {
+      // important - if we don't provide reminders, nothing should be changed,
+      // only if empty array is provided
+      if (reminders) {
+        await AppDataSource.transaction(async (transactionEntityManager) => {
+          await transactionEntityManager.delete(Reminder, { taskId: id });
+          for (const item of reminders) {
+            await transactionEntityManager.insert(Reminder, {
+              id: item.id,
+              minutesBefore: item.minutesBefore,
+              title: item.title,
+              body: item.body,
+              taskId: id,
+              userId: payload?.userId,
+              date: item.date,
+            });
+          }
+        });
+      }
       task.name = name;
       task.text = text;
       task.doDate = doDate;
       task.dueDate = dueDate;
-      task.save();
+      await task.save();
       return task;
     } else {
       throw new Error(

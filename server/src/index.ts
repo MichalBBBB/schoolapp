@@ -28,6 +28,7 @@ import { expressMiddleware } from "@apollo/server/express4";
 import cors from "cors";
 import { json } from "body-parser";
 import { DefferedObject } from "./middleware/queueMiddleware";
+import { reminderResolver } from "./resolvers/reminderResolver";
 
 export type UserQueueObject = {
   resolveObject: DefferedObject;
@@ -108,6 +109,7 @@ const main = async () => {
         lessonResolver,
         projectResolver,
         projectTaskResolver,
+        reminderResolver,
       ],
     }),
   });

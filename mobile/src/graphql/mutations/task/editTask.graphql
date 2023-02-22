@@ -4,6 +4,7 @@ mutation EditTask(
   $text: String
   $dueDate: DateTime
   $doDate: DateTime
+  $reminders: [RemindersInput!]
 ) {
   editTask(
     id: $id
@@ -11,6 +12,7 @@ mutation EditTask(
     text: $text
     dueDate: $dueDate
     doDate: $doDate
+    reminders: $reminders
   ) {
     ...Task
   }

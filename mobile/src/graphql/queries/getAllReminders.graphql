@@ -1,0 +1,5 @@
+query GetAllReminders {
+  getAllReminders {
+    ...Reminder
+  }
+}

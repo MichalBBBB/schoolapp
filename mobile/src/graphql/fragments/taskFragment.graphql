@@ -14,4 +14,7 @@ fragment Task on Task {
   text
   dueDate
   doDate
+  reminders {
+    ...Reminder
+  }
 }

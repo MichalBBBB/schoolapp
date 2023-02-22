@@ -10,6 +10,7 @@ import {
   Relation,
   UpdateDateColumn,
 } from "typeorm";
+import { Reminder } from "./Reminder";
 import { Subject } from "./Subject";
 import { Subtask } from "./Subtask";
 import { User } from "./User";
@@ -62,6 +63,10 @@ export class Task extends BaseEntity {
   @Column({ nullable: true })
   @Field({ nullable: true })
   subjectId: string;
+
+  @OneToMany(() => Reminder, (reminder) => reminder.task)
+  @Field(() => [Reminder])
+  reminders: Relation<Reminder>[];
 
   @CreateDateColumn()
   @Field()
