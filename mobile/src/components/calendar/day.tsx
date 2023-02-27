@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import React, {memo, useContext} from 'react';
-import {TouchableOpacity, View, Text} from 'react-native';
+import React, {memo, useContext, useEffect} from 'react';
+import {TouchableOpacity, View, Text, Pressable} from 'react-native';
 import {BasicText} from '../basicViews/BasicText';
 
 interface DayProps {
@@ -12,34 +12,37 @@ interface DayProps {
 
 const Day: React.FC<DayProps> = ({day, isSelected, monthNum, onPress}) => {
   return (
-    <TouchableOpacity
+    <Pressable
+      style={{
+        width: 30,
+        height: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: isSelected ? 15 : undefined,
+        backgroundColor: isSelected ? '#ddd' : undefined,
+        marginVertical: 2,
+      }}
       onPress={() => {
-        console.log(day);
         onPress(day);
       }}>
-      <View
-        style={{
-          width: 30,
-          height: 30,
-          justifyContent: 'center',
-          alignItems: 'center',
-          borderRadius: isSelected ? 15 : undefined,
-          backgroundColor: isSelected ? '#ddd' : undefined,
-          marginVertical: 2,
-        }}>
-        <BasicText
-          color={
-            !monthNum
-              ? 'text'
-              : day.get('month') + 1 == monthNum
-              ? 'text'
-              : 'textSecondary'
-          }>
-          {day.get('date').toString()}
-        </BasicText>
-      </View>
-    </TouchableOpacity>
+      <BasicText
+        color={
+          !monthNum
+            ? 'text'
+            : day.get('month') + 1 == monthNum
+            ? 'text'
+            : 'textSecondary'
+        }>
+        {day.get('date').toString()}
+      </BasicText>
+    </Pressable>
   );
 };
 
-export default memo(Day);
+export default memo(Day, (prevProps, nextProps) => {
+  if (prevProps.isSelected == nextProps.isSelected) {
+    return true;
+  } else {
+    return false;
+  }
+});

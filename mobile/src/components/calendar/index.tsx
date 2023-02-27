@@ -184,7 +184,7 @@ const Calendar: React.FC<CalendarProps> = ({
           setMonths(monthsCopy);
         }}
         ref={flatListRef}
-        // rerender when indes changes
+        // rerender when index changes
         extraData={[index, selectedDay]}
       />
     </View>

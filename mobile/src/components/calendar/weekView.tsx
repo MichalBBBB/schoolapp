@@ -85,7 +85,6 @@ const WeekView: React.FC<weekViewProps> = ({
       }
       weeksCopy.push(newWeek);
     }
-    console.log(weeksCopy);
     setWeeks(weeksCopy);
   }, []);
 
@@ -107,7 +106,6 @@ const WeekView: React.FC<weekViewProps> = ({
           }
         }
       });
-      console.log(newIndex);
       setWeeks(changeVisibility(newIndex));
       flatListRef.current?.scrollToIndex({
         index: newIndex,
@@ -131,6 +129,10 @@ const WeekView: React.FC<weekViewProps> = ({
       </View>
     );
   };
+
+  if (weeks.length == 1) {
+    return <View style={{height: weekHeight, width: calendarWidth}} />;
+  }
 
   return (
     <FlatList

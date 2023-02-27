@@ -222,7 +222,17 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
       {monthView}
 
       <Animated.View style={[dayEventsAnimatedStyle, {zIndex: 10}]}>
-        <DayEvents date={selectedDay} scrollEnabled={isWeekView} />
+        {/* <DayEvents date={selectedDay} scrollEnabled={isWeekView} /> */}
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            backgroundColor: 'white',
+          }}>
+          <BasicText>Empty</BasicText>
+        </View>
       </Animated.View>
     </View>
   );
