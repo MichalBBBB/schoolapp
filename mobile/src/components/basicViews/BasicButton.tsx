@@ -8,20 +8,28 @@ import {
   ViewStyle,
 } from 'react-native';
 import {useTheme} from '../../contexts/ThemeContext';
-import {ColorsObject, SpacingObject} from '../../types/Theme';
+import {
+  ColorsObject,
+  SpacingObject,
+  SubjectColorsObject,
+} from '../../types/Theme';
 
 interface BasicButtonProps extends PressableProps {
   spacing?: keyof SpacingObject;
   borderRadius?: number;
   style?: ViewStyle | ViewStyle[];
-  variant?: 'filled' | 'outlined' | 'unstyled';
+  variant?: 'filled' | 'outlined' | 'unstyled' | 'subject';
   backgroundColor?: keyof ColorsObject;
+  borderColor?: keyof ColorsObject;
   borderWidth?: number;
+  subjectColor?: keyof SubjectColorsObject;
 }
 
 export const BasicButton = forwardRef<View, BasicButtonProps>((props, ref) => {
   const {
     backgroundColor = 'accent',
+    borderColor = 'accent',
+    subjectColor,
     children,
     onPress,
     borderRadius = 15,
@@ -38,12 +46,23 @@ export const BasicButton = forwardRef<View, BasicButtonProps>((props, ref) => {
       style={[
         {
           backgroundColor:
-            variant == 'filled' ? theme.colors[backgroundColor] : undefined,
+            variant == 'filled'
+              ? theme.colors[backgroundColor]
+              : variant == 'subject' && subjectColor
+              ? theme.subjectColors[subjectColor].secondary
+              : undefined,
           borderRadius,
           padding: theme.spacing[spacing],
           borderColor:
-            variant == 'outlined' ? theme.colors[backgroundColor] : undefined,
-          borderWidth: variant == 'outlined' ? borderWidth : undefined,
+            variant == 'outlined'
+              ? theme.colors[borderColor]
+              : variant == 'subject' && subjectColor
+              ? theme.subjectColors[subjectColor].primary
+              : undefined,
+          borderWidth:
+            variant == 'outlined' || variant == 'subject'
+              ? borderWidth
+              : undefined,
         },
         styles.button,
         style,

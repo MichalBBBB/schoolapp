@@ -15,6 +15,7 @@ import {BasicText} from './basicViews/BasicText';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useToggleTask} from '../mutationHooks/task/toggleTask';
 import {useDeleteTask} from '../mutationHooks/task/deleteTask';
+import {useTheme} from '../contexts/ThemeContext';
 
 dayjs.extend(calendar);
 
@@ -34,6 +35,7 @@ const Task: React.FC<{
   const navigation = useNavigation<TaskNavigationProp>();
   const [toggleTask] = useToggleTask();
   const [done, setDone] = useState(false);
+  const [theme] = useTheme();
 
   useEffect(() => {
     setDone(task.done);
@@ -77,7 +79,11 @@ const Task: React.FC<{
             onPress={() => {
               navigation.navigate('TaskDetailScreen', {task: task});
             }}>
-            <View style={styles.container}>
+            <View
+              style={[
+                styles.container,
+                {backgroundColor: theme.colors.background},
+              ]}>
               <TouchableOpacity
                 onPress={() => {
                   setDone(!done);
@@ -136,7 +142,6 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 10,
-    backgroundColor: 'white',
     paddingHorizontal: 15,
     flexDirection: 'row',
     alignItems: 'center',

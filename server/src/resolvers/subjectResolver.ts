@@ -28,11 +28,12 @@ export class subjectResolver {
   async createSubject(
     @Arg("id") id: string,
     @Arg("name") name: string,
+    @Arg("colorName") colorName: string,
     @Ctx() { payload }: MyContext
   ) {
     const result = await Subject.createQueryBuilder("subject")
       .insert()
-      .values({ id, name, userId: payload?.userId })
+      .values({ id, name, userId: payload?.userId, colorName })
       .returning("*")
       .execute();
     return result.raw[0];

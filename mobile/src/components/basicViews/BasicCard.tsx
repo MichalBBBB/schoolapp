@@ -1,10 +1,17 @@
 import React, {forwardRef} from 'react';
 import {View, ViewProps} from 'react-native';
 import {useTheme} from '../../contexts/ThemeContext';
-import {ColorsObject, SpacingObject} from '../../types/Theme';
+import {
+  ColorsObject,
+  SpacingObject,
+  SubjectColorsObject,
+} from '../../types/Theme';
 
 export interface BasicCardProps extends ViewProps {
+  subjectColor?: keyof SubjectColorsObject;
+  borderWidth?: number;
   backgroundColor?: keyof ColorsObject;
+  borderColor?: keyof ColorsObject;
   borderRadius?: number;
   spacing?: keyof SpacingObject;
   marginBottom?: number;
@@ -20,6 +27,9 @@ export const BasicCard = forwardRef<View, BasicCardProps>((props, ref) => {
     style,
     marginBottom,
     gap,
+    subjectColor,
+    borderColor,
+    borderWidth,
     ...restProps
   } = props;
   const [theme] = useTheme();
@@ -42,8 +52,16 @@ export const BasicCard = forwardRef<View, BasicCardProps>((props, ref) => {
     <View
       style={[
         {
-          backgroundColor: theme.colors[backgroundColor],
+          backgroundColor: subjectColor
+            ? theme.subjectColors[subjectColor].secondary
+            : theme.colors[backgroundColor],
           borderRadius,
+          borderWidth,
+          borderColor: subjectColor
+            ? theme.subjectColors[subjectColor].primary
+            : borderColor
+            ? theme.colors[borderColor]
+            : undefined,
           padding: theme.spacing[spacing],
           marginBottom,
         },

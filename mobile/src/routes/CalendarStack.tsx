@@ -14,7 +14,7 @@ export type CalendarStackParamList = {
 const CalendarStack: React.FC<
   BottomTabScreenProps<TabStackParamList, 'CalendarStack'>
 > = () => {
-  const Stack = createNativeStackNavigator();
+  const Stack = createNativeStackNavigator<CalendarStackParamList>();
   return (
     <Stack.Navigator
       screenOptions={({navigation}) => ({
@@ -27,7 +27,11 @@ const CalendarStack: React.FC<
           }
         },
       })}>
-      <Stack.Screen name="CalendarHomeScreen" component={CalendarHomeScreen} />
+      <Stack.Screen
+        name="CalendarHomeScreen"
+        options={{title: 'Calendar'}}
+        component={CalendarHomeScreen}
+      />
       <Stack.Screen name="AddEventScreen" component={AddEventScreen} />
     </Stack.Navigator>
   );

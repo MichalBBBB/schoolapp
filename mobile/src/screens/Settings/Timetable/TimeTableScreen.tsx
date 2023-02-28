@@ -27,6 +27,8 @@ import {v4 as uuidv4} from 'uuid';
 import {useCreateLesson} from '../../../mutationHooks/lesson/createLesson';
 import {useEditLesson} from '../../../mutationHooks/lesson/editLesson';
 import {useDeleteLesson} from '../../../mutationHooks/lesson/deleteLesson';
+import {useTheme} from '../../../contexts/ThemeContext';
+import {SubjectColorsObject} from '../../../types/Theme';
 
 const TimeTableScreen: React.FC<
   NativeStackScreenProps<SettingsStackParamList, 'TimeTableScreen'>
@@ -36,6 +38,8 @@ const TimeTableScreen: React.FC<
   const [createLesson] = useCreateLesson();
   const [editLesson] = useEditLesson();
   const [deleteLesson] = useDeleteLesson();
+
+  const [theme] = useTheme();
 
   const [subjectModalIsVisible, setSubjectModalIsVisible] = useState(false);
   const [activeWeekDay, setActiveWeekDay] = useState<string | null>(null);
@@ -74,10 +78,11 @@ const TimeTableScreen: React.FC<
   }
   return (
     <View style={styles.container}>
-      <Pressable></Pressable>
-      <ScrollView horizontal={true}>
+      <ScrollView horizontal={true} style={{padding: 10}}>
         <View>
-          <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
+          <Table
+            borderStyle={{borderWidth: 1, borderColor: 'transparent'}}
+            style={{backgroundColor: theme.colors.background}}>
             <Row
               data={lessonNumbers}
               widthArr={widthArr}
@@ -86,26 +91,44 @@ const TimeTableScreen: React.FC<
             />
           </Table>
           <ScrollView style={styles.dataWrapper}>
-            <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
-              <TableWrapper style={styles.wrapper}>
+            <Table
+              borderStyle={{borderWidth: 1, borderColor: 'transparent'}}
+              style={{backgroundColor: theme.colors.background}}>
+              <TableWrapper
+                style={{
+                  flexDirection: 'row',
+                }}>
                 <Col data={weekDays} width={40} heightArr={Array(7).fill(80)} />
                 <TableWrapper>
                   {tableData.map((row, rowIndex) => (
                     <TableWrapper key={rowIndex} style={styles.row}>
                       {row?.map((item, itemIndex) => (
                         <Cell
-                          style={styles.cell}
+                          style={{
+                            width: 100,
+                            backgroundColor: theme.colors.background,
+                          }}
                           key={itemIndex}
                           data={
                             item ? (
                               <View
                                 style={{
-                                  flexDirection: 'row',
-                                  justifyContent: 'center',
+                                  width: '100%',
+                                  height: '100%',
+                                  padding: 2,
                                 }}>
                                 <BasicButton
+                                  variant="subject"
+                                  subjectColor={
+                                    item.subject
+                                      .colorName as keyof SubjectColorsObject
+                                  }
+                                  borderWidth={1}
+                                  style={{
+                                    width: '100%',
+                                    height: '100%',
+                                  }}
                                   spacing="m"
-                                  style={styles.lesson}
                                   onPress={() => {
                                     setActiveLessonTimeId(
                                       lessonTimes?.getAllLessonTimes[itemIndex]
@@ -120,10 +143,12 @@ const TimeTableScreen: React.FC<
                             ) : (
                               <View
                                 style={{
-                                  flexDirection: 'row',
-                                  justifyContent: 'center',
+                                  width: '100%',
+                                  height: '100%',
+                                  padding: 2,
                                 }}>
                                 <BasicButton
+                                  style={{width: '100%', height: '100%'}}
                                   backgroundColor="accentBackground"
                                   onPress={() => {
                                     setActiveLessonTimeId(
@@ -190,14 +215,11 @@ const TimeTableScreen: React.FC<
 };
 
 const styles = StyleSheet.create({
-  container: {flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff'},
-  header: {height: 50, backgroundColor: '#fff'},
+  container: {flex: 1},
+  header: {height: 50},
   text: {textAlign: 'center', fontWeight: '100'},
   dataWrapper: {marginTop: -1},
   row: {backgroundColor: '#fff', flexDirection: 'row', height: 80},
-  cell: {width: 100},
-  wrapper: {flexDirection: 'row'},
-  lesson: {backgroundColor: '#7c9ab8'},
 });
 
 export default TimeTableScreen;

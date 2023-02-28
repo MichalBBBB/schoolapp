@@ -5,6 +5,7 @@ export type MyTheme = {
   colors: ColorsObject;
   spacing: SpacingObject;
   textVariants: TextVariantsObject;
+  subjectColors: SubjectColorsObject;
 };
 
 export type ColorsObject = {
@@ -21,6 +22,22 @@ export type ColorsObject = {
   textContrast: string;
   dangerous: string;
   lightBorder: string;
+};
+
+export type SubjectColor = {
+  primary: string;
+  secondary: string;
+};
+
+export type SubjectColorsObject = {
+  blue: SubjectColor;
+  beige: SubjectColor;
+  grey: SubjectColor;
+  brown: SubjectColor;
+  pink: SubjectColor;
+  yellow: SubjectColor;
+  green: SubjectColor;
+  red: SubjectColor;
 };
 
 export type SpacingObject = {

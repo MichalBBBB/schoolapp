@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
   FlatList,
+  Image,
 } from 'react-native';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import {useNavigation} from '@react-navigation/native';
@@ -30,6 +31,7 @@ import {BasicCard} from '../basicViews/BasicCard';
 import DayEvents from './dayEvents';
 import {BasicButton} from '../basicViews/BasicButton';
 import {BasicText} from '../basicViews/BasicText';
+import {useTheme} from '../../contexts/ThemeContext';
 
 // constants
 export const calendarWidth = Dimensions.get('screen').width;
@@ -58,6 +60,8 @@ interface calendarProps {
 const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
   const {data: lessons} = useGetAllLessonsQuery();
   const {data} = useGetAllEventsQuery();
+
+  const [theme] = useTheme();
 
   const [selectedDay, setSelectedDay] = useState(dayjs());
   const [isWeekView, setIsWeekView] = useState(false);
@@ -111,6 +115,21 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
     };
   });
 
+  const chevronAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          rotateZ:
+            interpolate(
+              y.value,
+              [0, -(calendarHeight - weekHeight)],
+              [0, -180],
+            ).toString() + 'deg',
+        },
+      ],
+    };
+  });
+
   const onDayPress = (date: dayjs.Dayjs) => {
     setSelectedDay(date);
     const row = findRowOfDate(date);
@@ -156,16 +175,24 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
 
   return (
     <View style={{flex: 1, justifyContent: 'space-between'}}>
-      <View style={{backgroundColor: 'white', zIndex: 10}}>
+      <View style={{backgroundColor: theme.colors.background, zIndex: 10}}>
         <View
           style={{
             height: 34,
             alignItems: 'center',
-            paddingLeft: 20,
+            paddingHorizontal: 20,
             flexDirection: 'row',
+            justifyContent: 'space-between',
             width: '100%',
           }}>
+          <Image
+            source={require('../../../assets/Chevron-left.png')}
+            style={{height: 20, width: 20}}
+          />
           <BasicButton
+            variant="outlined"
+            borderWidth={1}
+            backgroundColor={'border'}
             onPress={() => {
               if (isMonthView) {
                 setScrollWeekToDate(selectedDay);
@@ -183,10 +210,21 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
                 });
               }
             }}
-            backgroundColor="accentBackground"
             spacing="s">
-            <BasicText>{monthString}</BasicText>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <BasicText style={{marginRight: 5}}>{monthString}</BasicText>
+              <Animated.View style={chevronAnimatedStyle}>
+                <Image
+                  source={require('../../../assets/Chevron-down.png')}
+                  style={{height: 20, width: 20}}
+                />
+              </Animated.View>
+            </View>
           </BasicButton>
+          <Image
+            source={require('../../../assets/Chevron-right.png')}
+            style={{height: 20, width: 20}}
+          />
         </View>
         <WeekDays weekHeaderHeight={weekHeaderHeight} width={calendarWidth} />
       </View>
@@ -222,7 +260,11 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
       </Animated.View>
       {monthView}
 
-      <Animated.View style={[dayEventsAnimatedStyle, {zIndex: 10}]}>
+      <Animated.View
+        style={[
+          dayEventsAnimatedStyle,
+          {zIndex: 10, backgroundColor: theme.colors.background},
+        ]}>
         <DayEvents date={selectedDay} scrollEnabled={isWeekView} />
       </Animated.View>
     </View>

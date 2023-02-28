@@ -8,6 +8,7 @@ import {
   Pressable,
 } from 'react-native';
 import {BaseButton} from 'react-native-gesture-handler';
+import {useTheme} from '../contexts/ThemeContext';
 import {
   GetProjectsDocument,
   ProjectTaskFragment,
@@ -24,6 +25,8 @@ const ProjectTask: React.FC<{
 }> = ({projectTask, onUsersPress}) => {
   const [deleteProjectTask] = useDeleteProjectTaskMutation();
   const [toggleProjectTask] = useToggleProjectTaskMutation();
+
+  const [theme] = useTheme();
 
   const back = (
     <TouchableOpacity
@@ -56,7 +59,11 @@ const ProjectTask: React.FC<{
     <View>
       <SlidingView
         frontView={
-          <View style={styles.container}>
+          <View
+            style={[
+              styles.container,
+              {backgroundColor: theme.colors.background},
+            ]}>
             <View style={styles.leftContainer}>
               <BasicButton
                 variant="unstyled"
@@ -109,7 +116,6 @@ const styles = StyleSheet.create({
   },
   leftContainer: {
     padding: 10,
-    backgroundColor: 'white',
     flexDirection: 'row',
     alignItems: 'center',
   },

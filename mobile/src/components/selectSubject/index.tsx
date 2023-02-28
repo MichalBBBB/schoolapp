@@ -12,6 +12,7 @@ import {BasicModalCard} from '../basicViews/BasicModalCard';
 import {BasicText} from '../basicViews/BasicText';
 import {v4 as uuidv4} from 'uuid';
 import {useCreateSubject} from '../../mutationHooks/subject/createSubject';
+import AddSubjectWindow from '../addSubjectWindow';
 
 interface SelectSubjectProps {
   isVisible: boolean;
@@ -87,14 +88,7 @@ const SelectSubjectModal: React.FC<SelectSubjectProps> = ({
           </BasicButton>
         </View>
       </BasicModalCard>
-      <BasicInputWindow
-        placeholder="Subject name"
-        onSubmit={text => {
-          addSubject({
-            id: uuidv4(),
-            name: text,
-          });
-        }}
+      <AddSubjectWindow
         visible={
           viewVisible == 'AddSubject' && viewShouldAppear == 'AddSubject'
         }

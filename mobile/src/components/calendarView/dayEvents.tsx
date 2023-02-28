@@ -153,7 +153,6 @@ const styles = StyleSheet.create({
   },
   sectionList: {
     flex: 1,
-    backgroundColor: 'white',
     paddingTop: 5,
   },
 });

@@ -39,4 +39,8 @@ export class Subject extends BaseEntity {
   @OneToMany(() => Lesson, (lesson) => lesson.subject)
   @Field(() => [Lesson])
   lessons: Relation<Lesson>[];
+
+  @Field()
+  @Column()
+  colorName: string;
 }

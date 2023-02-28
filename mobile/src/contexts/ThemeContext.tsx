@@ -7,16 +7,27 @@ import React, {
   useState,
 } from 'react';
 import {TextStyle} from 'react-native';
-import {MyTheme} from '../types/Theme';
+import {MyTheme, SubjectColorsObject} from '../types/Theme';
+
+const lightSubjectColors: SubjectColorsObject = {
+  blue: {primary: '#a2cffe', secondary: '#a2cffe55'},
+  beige: {primary: '#efc5b5', secondary: '#efc5b555'},
+  grey: {primary: '#f3f0e8', secondary: '#f3f0e855'},
+  brown: {primary: '#d3b683', secondary: '#d3b68355'},
+  pink: {primary: '#fdefe9', secondary: '#fdefe955'},
+  yellow: {primary: '#fdee73', secondary: '#fdee7355'},
+  green: {primary: '#95e3c0', secondary: '#95e3c055'},
+  red: {primary: '#ffa180', secondary: '#ffa18055'},
+};
 
 const LightTheme: MyTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
     primary: 'black',
-    background: 'white',
-    card: 'white',
-    accentBackground: '#eee',
+    background: '#eee',
+    card: '#eee',
+    accentBackground: 'white',
     textSecondary: 'grey',
     cardView: '#eee',
     accent: 'black',
@@ -47,6 +58,7 @@ const LightTheme: MyTheme = {
       fontWeight: 'bold',
     },
   },
+  subjectColors: lightSubjectColors,
 };
 
 const DarkTheme: MyTheme = {

@@ -31,10 +31,26 @@ const SettingsStack: React.FC<
           }
         },
       })}>
-      <Stack.Screen name="SettingsHomeScreen" component={SettingsHomeScreen} />
-      <Stack.Screen name="LessonTimesScreen" component={LessonTimesScreen} />
-      <Stack.Screen name="TimeTableScreen" component={TimeTableScreen} />
-      <Stack.Screen name="SubjectScreen" component={SubjectScreen} />
+      <Stack.Screen
+        name="SettingsHomeScreen"
+        options={{title: 'Settings'}}
+        component={SettingsHomeScreen}
+      />
+      <Stack.Screen
+        name="LessonTimesScreen"
+        options={{title: 'Lesson times'}}
+        component={LessonTimesScreen}
+      />
+      <Stack.Screen
+        name="TimeTableScreen"
+        options={{title: 'Timetable'}}
+        component={TimeTableScreen}
+      />
+      <Stack.Screen
+        name="SubjectScreen"
+        options={{title: 'Subjects'}}
+        component={SubjectScreen}
+      />
     </Stack.Navigator>
   );
 };
