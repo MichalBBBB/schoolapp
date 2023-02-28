@@ -39,6 +39,26 @@ export class subjectResolver {
     return result.raw[0];
   }
 
+  @Mutation(() => Subject)
+  @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
+  async editSubject(
+    @Arg("id") id: string,
+    @Arg("name") name: string,
+    @Arg("colorName") colorName: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    const subject = await Subject.findOne({ where: { id } });
+    if (subject && subject.userId == payload?.userId) {
+      subject.name = name;
+      subject.colorName = colorName;
+      await subject.save();
+      return subject;
+    } else {
+      throw new Error("you are not authorized for this action");
+    }
+  }
+
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   @UseMiddleware(queueMiddleware)

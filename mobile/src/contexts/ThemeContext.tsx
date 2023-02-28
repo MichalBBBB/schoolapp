@@ -12,10 +12,10 @@ import {MyTheme, SubjectColorsObject} from '../types/Theme';
 const lightSubjectColors: SubjectColorsObject = {
   blue: {primary: '#a2cffe', secondary: '#a2cffe55'},
   beige: {primary: '#efc5b5', secondary: '#efc5b555'},
-  grey: {primary: '#f3f0e8', secondary: '#f3f0e855'},
-  brown: {primary: '#d3b683', secondary: '#d3b68355'},
-  pink: {primary: '#fdefe9', secondary: '#fdefe955'},
-  yellow: {primary: '#fdee73', secondary: '#fdee7355'},
+  grey: {primary: '#a5a49f', secondary: '#a5a49f55'},
+  brown: {primary: '#ad8d56', secondary: '#ad8d5655'},
+  pink: {primary: '#efa7cf', secondary: '#efa7cf55'},
+  yellow: {primary: '#e9d32a', secondary: '#e9d32a55'},
   green: {primary: '#95e3c0', secondary: '#95e3c055'},
   red: {primary: '#ffa180', secondary: '#ffa18055'},
 };

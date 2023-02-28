@@ -1,7 +1,14 @@
 import {useNavigation} from '@react-navigation/native';
 import dayjs from 'dayjs';
-import React, {createRef, useEffect, useState} from 'react';
+import React, {
+  createRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import {View, FlatList} from 'react-native';
+import {CalendarHandle} from '.';
 import Week from './week';
 
 interface weekViewProps {
@@ -29,14 +36,37 @@ const createWeek = (date: dayjs.Dayjs | string) => {
 const pastScrollRange = 10;
 const futureScrollRange = 20;
 
-const WeekView: React.FC<weekViewProps> = ({
-  week,
-  selectedDay,
-  onDayPress,
-  calendarWidth,
-  weekHeight,
-  onChangeActiveWeek,
-}) => {
+const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
+  const {
+    week,
+    selectedDay,
+    onDayPress,
+    calendarWidth,
+    weekHeight,
+    onChangeActiveWeek,
+  } = props;
+
+  useImperativeHandle(ref, () => {
+    return {
+      goForward() {
+        if (index + 1 <= weeks.length - 1) {
+          flatListRef.current?.scrollToIndex({
+            index: index + 1,
+            animated: true,
+          });
+        }
+      },
+      goBackwards() {
+        if (index - 1 >= 0) {
+          flatListRef.current?.scrollToIndex({
+            index: index - 1,
+            animated: true,
+          });
+        }
+      },
+    };
+  });
+
   const [weeks, setWeeks] = useState<Array<dayjs.Dayjs | string>>([week]);
   const [index, setIndex] = useState(pastScrollRange);
   const flatListRef = createRef<FlatList>();
@@ -165,6 +195,6 @@ const WeekView: React.FC<weekViewProps> = ({
       }}
     />
   );
-};
+});
 
 export default WeekView;

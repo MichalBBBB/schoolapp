@@ -2,7 +2,14 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import React, {useEffect, useState} from 'react';
-import {Image, StyleSheet, Text, View, LayoutAnimation} from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  LayoutAnimation,
+  TouchableHighlight,
+} from 'react-native';
 import {
   TaskFragment,
   useDeleteTaskMutation,
@@ -16,6 +23,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useToggleTask} from '../mutationHooks/task/toggleTask';
 import {useDeleteTask} from '../mutationHooks/task/deleteTask';
 import {useTheme} from '../contexts/ThemeContext';
+import {SubjectColorsObject} from '../types/Theme';
 
 dayjs.extend(calendar);
 
@@ -75,7 +83,7 @@ const Task: React.FC<{
     <View>
       <SlidingView
         frontView={
-          <TouchableOpacity
+          <TouchableHighlight
             onPress={() => {
               navigation.navigate('TaskDetailScreen', {task: task});
             }}>
@@ -106,9 +114,23 @@ const Task: React.FC<{
               <View style={{flex: 1}}>
                 <BasicText>{task.name}</BasicText>
                 {task.subject?.name && (
-                  <BasicText textVariant="subText" color="textSecondary">
-                    {task.subject?.name}
-                  </BasicText>
+                  <View style={{alignItems: 'center', flexDirection: 'row'}}>
+                    <View
+                      style={{
+                        marginRight: 5,
+                        height: 10,
+                        width: 10,
+                        borderRadius: 5,
+                        backgroundColor:
+                          theme.subjectColors[
+                            task.subject.colorName as keyof SubjectColorsObject
+                          ].primary,
+                      }}
+                    />
+                    <BasicText textVariant="subText" color="textSecondary">
+                      {task.subject?.name}
+                    </BasicText>
+                  </View>
                 )}
               </View>
               {task.dueDate && (
@@ -120,7 +142,7 @@ const Task: React.FC<{
                 </BasicText>
               )}
             </View>
-          </TouchableOpacity>
+          </TouchableHighlight>
         }
         backView={[back]}
         backViewWidth={70}

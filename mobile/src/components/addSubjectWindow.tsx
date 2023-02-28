@@ -87,6 +87,9 @@ const AddSubjectWindow: React.FC<AddSubjectWindowProps> = ({
                 name: text,
                 colorName: color,
               });
+              if (onClose) {
+                onClose();
+              }
             }}
           />
         </View>

@@ -5,7 +5,6 @@ import {
   Cell,
   Col,
   Row,
-  Rows,
   Table,
   TableWrapper,
 } from 'react-native-table-component';
@@ -13,11 +12,7 @@ import {BasicButton} from '../../../components/basicViews/BasicButton';
 import {BasicText} from '../../../components/basicViews/BasicText';
 import SelectSubjectModal from '../../../components/selectSubject';
 import {
-  GetAllLessonsDocument,
   LessonFragment,
-  useCreateLessonMutation,
-  useDeleteLessonMutation,
-  useEditLessonMutation,
   useGetAllLessonsQuery,
   useGetAllLessonTimesQuery,
 } from '../../../generated/graphql';
@@ -78,7 +73,7 @@ const TimeTableScreen: React.FC<
   }
   return (
     <View style={styles.container}>
-      <ScrollView horizontal={true} style={{padding: 10}}>
+      <ScrollView horizontal={true} style={{paddingHorizontal: 10}}>
         <View>
           <Table
             borderStyle={{borderWidth: 1, borderColor: 'transparent'}}
@@ -128,7 +123,7 @@ const TimeTableScreen: React.FC<
                                     width: '100%',
                                     height: '100%',
                                   }}
-                                  spacing="m"
+                                  spacing="s"
                                   onPress={() => {
                                     setActiveLessonTimeId(
                                       lessonTimes?.getAllLessonTimes[itemIndex]
@@ -137,7 +132,9 @@ const TimeTableScreen: React.FC<
                                     setActiveWeekDay(weekDays[rowIndex]);
                                     setSubjectModalIsVisible(true);
                                   }}>
-                                  <BasicText>{item.subject.name}</BasicText>
+                                  <BasicText numberOfLines={1}>
+                                    {item.subject.name}
+                                  </BasicText>
                                 </BasicButton>
                               </View>
                             ) : (

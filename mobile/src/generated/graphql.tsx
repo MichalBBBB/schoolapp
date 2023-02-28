@@ -89,6 +89,7 @@ export type Mutation = {
   editEvent: CalendarEvent;
   editLesson: Lesson;
   editLessonTimes: Array<LessonTime>;
+  editSubject: Subject;
   editTask: Task;
   googleSignIn: UserSucces;
   login: LoginResponse;
@@ -252,6 +253,13 @@ export type MutationEditLessonArgs = {
 
 export type MutationEditLessonTimesArgs = {
   lessonTimes: Array<LessonTimeInput>;
+};
+
+
+export type MutationEditSubjectArgs = {
+  colorName: Scalars['String'];
+  id: Scalars['String'];
+  name: Scalars['String'];
 };
 
 
@@ -660,6 +668,15 @@ export type DeleteSubjectMutationVariables = Exact<{
 
 
 export type DeleteSubjectMutation = { __typename?: 'Mutation', deleteSubject: boolean };
+
+export type EditSubjectMutationVariables = Exact<{
+  name: Scalars['String'];
+  id: Scalars['String'];
+  colorName: Scalars['String'];
+}>;
+
+
+export type EditSubjectMutation = { __typename?: 'Mutation', editSubject: { __typename?: 'Subject', id: string, name: string, colorName: string } };
 
 export type CreateSubtaskMutationVariables = Exact<{
   taskId: Scalars['String'];
@@ -1639,6 +1656,41 @@ export function useDeleteSubjectMutation(baseOptions?: Apollo.MutationHookOption
 export type DeleteSubjectMutationHookResult = ReturnType<typeof useDeleteSubjectMutation>;
 export type DeleteSubjectMutationResult = Apollo.MutationResult<DeleteSubjectMutation>;
 export type DeleteSubjectMutationOptions = Apollo.BaseMutationOptions<DeleteSubjectMutation, DeleteSubjectMutationVariables>;
+export const EditSubjectDocument = gql`
+    mutation EditSubject($name: String!, $id: String!, $colorName: String!) {
+  editSubject(name: $name, id: $id, colorName: $colorName) {
+    ...Subject
+  }
+}
+    ${SubjectFragmentDoc}`;
+export type EditSubjectMutationFn = Apollo.MutationFunction<EditSubjectMutation, EditSubjectMutationVariables>;
+
+/**
+ * __useEditSubjectMutation__
+ *
+ * To run a mutation, you first call `useEditSubjectMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditSubjectMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editSubjectMutation, { data, loading, error }] = useEditSubjectMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      id: // value for 'id'
+ *      colorName: // value for 'colorName'
+ *   },
+ * });
+ */
+export function useEditSubjectMutation(baseOptions?: Apollo.MutationHookOptions<EditSubjectMutation, EditSubjectMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditSubjectMutation, EditSubjectMutationVariables>(EditSubjectDocument, options);
+      }
+export type EditSubjectMutationHookResult = ReturnType<typeof useEditSubjectMutation>;
+export type EditSubjectMutationResult = Apollo.MutationResult<EditSubjectMutation>;
+export type EditSubjectMutationOptions = Apollo.BaseMutationOptions<EditSubjectMutation, EditSubjectMutationVariables>;
 export const CreateSubtaskDocument = gql`
     mutation CreateSubtask($taskId: String!, $name: String!, $id: String!) {
   createSubtask(taskId: $taskId, name: $name, id: $id) {

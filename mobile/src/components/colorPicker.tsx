@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Pressable, View} from 'react-native';
 import {useTheme} from '../contexts/ThemeContext';
 import {SubjectColorsObject} from '../types/Theme';
@@ -21,6 +21,11 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
 }) => {
   const [theme] = useTheme();
   const [color, setColor] = useState(initialColor);
+
+  useEffect(() => {
+    setColor(initialColor);
+  }, [isVisible]);
+
   return (
     <BasicModalCard
       isVisible={isVisible}

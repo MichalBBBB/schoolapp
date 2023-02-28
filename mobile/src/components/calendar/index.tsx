@@ -1,5 +1,12 @@
 import dayjs from 'dayjs';
-import React, {createRef, useCallback, useEffect, useState} from 'react';
+import React, {
+  createRef,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import {FlatList, View} from 'react-native';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Month from './month';
@@ -20,18 +27,45 @@ interface CalendarProps {
 
 const calendarHeight = 204;
 
-const Calendar: React.FC<CalendarProps> = ({
-  calendarWidth,
-  pastScrollRange,
-  futureScrollRange,
-  selectedDay,
-  onChangeSelectedDay,
-  weekHeight,
-  onChangeActiveMonth,
-}) => {
+export type CalendarHandle = {
+  goForward: () => void;
+  goBackwards: () => void;
+};
+
+const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
+  const {
+    calendarWidth,
+    pastScrollRange,
+    futureScrollRange,
+    selectedDay,
+    onChangeSelectedDay,
+    weekHeight,
+    onChangeActiveMonth,
+  } = props;
   const [month, setMonth] = useState(dayjs());
   const [months, setMonths] = useState<Array<dayjs.Dayjs | string>>([]);
   const [index, setIndex] = useState(pastScrollRange);
+
+  useImperativeHandle(ref, () => {
+    return {
+      goForward() {
+        if (index + 1 <= months.length - 1) {
+          flatListRef.current?.scrollToIndex({
+            index: index + 1,
+            animated: true,
+          });
+        }
+      },
+      goBackwards() {
+        if (index - 1 >= 0) {
+          flatListRef.current?.scrollToIndex({
+            index: index - 1,
+            animated: true,
+          });
+        }
+      },
+    };
+  });
 
   // months that are not rendered are stored as string instead of date
   const createDateFromString = (string: string) => {
@@ -187,6 +221,6 @@ const Calendar: React.FC<CalendarProps> = ({
       />
     </View>
   );
-};
+});
 
 export default Calendar;

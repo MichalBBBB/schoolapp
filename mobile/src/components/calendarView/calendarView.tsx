@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {
   Button,
   Dimensions,
@@ -8,6 +8,7 @@ import {
   View,
   FlatList,
   Image,
+  Pressable,
 } from 'react-native';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import {useNavigation} from '@react-navigation/native';
@@ -19,7 +20,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import WeekView from '../calendar/weekView';
-import Calendar from '../calendar';
+import Calendar, {CalendarHandle} from '../calendar';
 import WeekDays from '../calendar/weekDays';
 import {
   useGetAllEventsQuery,
@@ -74,8 +75,9 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
   const [scrollWeekToDate, setScrollWeekToDate] = useState<dayjs.Dayjs | null>(
     null,
   );
-  const [scrollMonthToDate, setScrollMonthToDate] =
-    useState<dayjs.Dayjs | null>(null);
+
+  const calendarRef = useRef<CalendarHandle>(null);
+  const weekViewRef = useRef<CalendarHandle>(null);
 
   useLayoutEffect(() => {
     navigation.setOptions({});
@@ -149,6 +151,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
       ]}>
       <View>
         <Calendar
+          ref={calendarRef}
           weekHeight={34}
           onChangeSelectedDay={onDayPress}
           calendarWidth={calendarWidth}
@@ -185,10 +188,19 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
             justifyContent: 'space-between',
             width: '100%',
           }}>
-          <Image
-            source={require('../../../assets/Chevron-left.png')}
-            style={{height: 20, width: 20}}
-          />
+          <Pressable
+            onPress={() => {
+              if (isMonthView) {
+                calendarRef.current?.goBackwards();
+              } else {
+                weekViewRef.current?.goBackwards();
+              }
+            }}>
+            <Image
+              source={require('../../../assets/Chevron-left.png')}
+              style={{height: 20, width: 20}}
+            />
+          </Pressable>
           <BasicButton
             variant="outlined"
             borderWidth={1}
@@ -202,7 +214,6 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
                   runOnJS(setIsWeekView)(true);
                 });
               } else {
-                setScrollMonthToDate(selectedDay);
                 setIsWeekView(false);
                 monthViewOpacity.value = 1;
                 y.value = withTiming(0, {}, () => {
@@ -221,10 +232,19 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
               </Animated.View>
             </View>
           </BasicButton>
-          <Image
-            source={require('../../../assets/Chevron-right.png')}
-            style={{height: 20, width: 20}}
-          />
+          <Pressable
+            onPress={() => {
+              if (isMonthView) {
+                calendarRef.current?.goForward();
+              } else {
+                weekViewRef.current?.goForward();
+              }
+            }}>
+            <Image
+              source={require('../../../assets/Chevron-right.png')}
+              style={{height: 20, width: 20}}
+            />
+          </Pressable>
         </View>
         <WeekDays weekHeaderHeight={weekHeaderHeight} width={calendarWidth} />
       </View>
@@ -238,6 +258,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
           weekViewAnimatedStyle,
         ]}>
         <WeekView
+          ref={weekViewRef}
           calendarWidth={calendarWidth}
           week={selectedDay}
           onDayPress={onDayPress}
