@@ -16,7 +16,6 @@ interface CalendarProps {
   onChangeSelectedDay: (day: dayjs.Dayjs) => void;
   weekHeight: number;
   onChangeActiveMonth?: (newMonth: dayjs.Dayjs) => void | undefined;
-  scrollToDate?: dayjs.Dayjs | null | undefined;
 }
 
 const calendarHeight = 204;
@@ -29,7 +28,6 @@ const Calendar: React.FC<CalendarProps> = ({
   onChangeSelectedDay,
   weekHeight,
   onChangeActiveMonth,
-  scrollToDate,
 }) => {
   const [month, setMonth] = useState(dayjs());
   const [months, setMonths] = useState<Array<dayjs.Dayjs | string>>([]);
@@ -87,17 +85,17 @@ const Calendar: React.FC<CalendarProps> = ({
   }, []);
 
   useEffect(() => {
-    if (scrollToDate) {
+    if (months.length !== 0) {
       const newIndex = months.findIndex(value => {
         if (typeof value == 'string') {
           const date = createDateFromString(value);
-          if (date.isSame(scrollToDate, 'month')) {
+          if (date.isSame(selectedDay, 'month')) {
             return true;
           } else {
             return false;
           }
         } else {
-          if (value.isSame(scrollToDate, 'month')) {
+          if (value.isSame(selectedDay, 'month')) {
             return true;
           } else {
             return false;
@@ -110,7 +108,7 @@ const Calendar: React.FC<CalendarProps> = ({
         animated: false,
       });
     }
-  }, [scrollToDate]);
+  }, [selectedDay]);
 
   const flatListRef = createRef<FlashList<any>>();
 

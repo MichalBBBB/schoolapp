@@ -5,6 +5,7 @@ import {
 import notifee from '@notifee/react-native';
 import {setNotificationTrigger} from './notifications';
 import {ApolloClient} from '@apollo/client';
+import dayjs from 'dayjs';
 
 export const setRemindersFromApollo = async (client: ApolloClient<any>) => {
   const notificationIds = await notifee.getTriggerNotificationIds();
@@ -23,6 +24,7 @@ export const setRemindersFromApollo = async (client: ApolloClient<any>) => {
   });
   reminders.data.getAllReminders
     .filter(item => idsToBeCreated.includes(item.id))
+    .filter(item => dayjs(item.date).isAfter(dayjs()))
     .forEach(item => {
       console.log(item.date);
       setNotificationTrigger({

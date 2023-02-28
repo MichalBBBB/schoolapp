@@ -11,7 +11,6 @@ interface weekViewProps {
   calendarWidth: number;
   weekHeight: number;
   onChangeActiveWeek?: (newWeek: dayjs.Dayjs) => void | undefined;
-  scrollToDate?: dayjs.Dayjs | undefined | null;
 }
 
 const createWeek = (date: dayjs.Dayjs | string) => {
@@ -37,7 +36,6 @@ const WeekView: React.FC<weekViewProps> = ({
   calendarWidth,
   weekHeight,
   onChangeActiveWeek,
-  scrollToDate,
 }) => {
   const [weeks, setWeeks] = useState<Array<dayjs.Dayjs | string>>([week]);
   const [index, setIndex] = useState(pastScrollRange);
@@ -50,6 +48,30 @@ const WeekView: React.FC<weekViewProps> = ({
       .map(item => parseInt(item));
     return dayjs(new Date(date[0], date[1] - 1, date[2]));
   };
+
+  useEffect(() => {
+    const newIndex = weeks.findIndex(value => {
+      if (typeof value == 'string') {
+        const date = createDateFromString(value);
+        if (date.isSame(selectedDay, 'week')) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        if (value.isSame(selectedDay, 'week')) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    });
+    setWeeks(changeVisibility(newIndex));
+    flatListRef.current?.scrollToIndex({
+      index: newIndex,
+      animated: false,
+    });
+  }, [selectedDay]);
 
   const changeVisibility = (newIndex: number) => {
     const weeksCopy = [...weeks];
@@ -87,32 +109,6 @@ const WeekView: React.FC<weekViewProps> = ({
     }
     setWeeks(weeksCopy);
   }, []);
-
-  useEffect(() => {
-    if (scrollToDate) {
-      const newIndex = weeks.findIndex(value => {
-        if (typeof value == 'string') {
-          const date = createDateFromString(value);
-          if (date.isSame(scrollToDate, 'week')) {
-            return true;
-          } else {
-            return false;
-          }
-        } else {
-          if (value.isSame(scrollToDate, 'week')) {
-            return true;
-          } else {
-            return false;
-          }
-        }
-      });
-      setWeeks(changeVisibility(newIndex));
-      flatListRef.current?.scrollToIndex({
-        index: newIndex,
-        animated: false,
-      });
-    }
-  }, [scrollToDate]);
 
   const renderItem = ({item}: {item: dayjs.Dayjs | string}) => {
     return (

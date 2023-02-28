@@ -14,7 +14,7 @@ import {
 } from 'apollo3-cache-persist';
 import jwtDecode from 'jwt-decode';
 import {Platform} from 'react-native';
-import {isLoggedInVar, storage} from '../App';
+import {isLoggedInVar, isOnlineVar, persistentQueueLink, storage} from '../App';
 import {getAccessToken, setAccessToken} from './AccessToken';
 import {onError} from '@apollo/client/link/error';
 import {RetryLink} from '@apollo/client/link/retry';
@@ -41,7 +41,10 @@ const retryLink = new RetryLink();
 const serializingLink = new SerializingLink();
 
 const errorLink = onError(error => {
-  console.warn(error);
+  if (error.networkError) {
+    isOnlineVar(false);
+    persistentQueueLink.close();
+  }
 });
 
 const authLink = setContext((_, {headers}) => {

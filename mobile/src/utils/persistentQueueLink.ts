@@ -49,7 +49,7 @@ export class PersistentQueueLink extends ApolloLink {
             context,
             optimisticResponse: context.optimisticResponse,
           })
-            .then(response => {
+            .finally(() => {
               this.queue.filter(queueItem => queueItem.id !== item.id);
             })
             .catch(err => console.warn('queuelink error', err)),

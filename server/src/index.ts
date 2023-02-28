@@ -125,6 +125,10 @@ const main = async () => {
     })
   );
 
+  app.get("/check", (_req, res) => {
+    res.send(true);
+  });
+
   app.listen(5002, () => {
     console.log("Server running");
   });

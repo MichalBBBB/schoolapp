@@ -8,7 +8,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import {Platform, Text, UIManager, View} from 'react-native';
 import Routes from './Routes';
-import {createApolloClient} from './utils/createApolloClient';
+import {baseUri, createApolloClient} from './utils/createApolloClient';
 import {ThemeProvider} from './contexts/ThemeContext';
 import dayjs from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
@@ -22,6 +22,7 @@ import {MMKV} from 'react-native-mmkv';
 import {allQueries} from './utils/allQueries';
 import {Content} from './Content';
 import notifee from '@notifee/react-native';
+import NetInfo from '@react-native-community/netinfo';
 
 export const isLoggedInVar = makeVar(true);
 export const isOnlineVar = makeVar(true);

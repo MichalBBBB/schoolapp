@@ -11,6 +11,9 @@ import {isLoggedInVar, isOnlineVar, persistentQueueLink} from './App';
 import {ThemeProvider} from './contexts/ThemeContext';
 import Routes from './Routes';
 import {allQueries} from './utils/allQueries';
+import NetInfo from '@react-native-community/netinfo';
+import {baseUri} from './utils/createApolloClient';
+import {setRemindersFromApollo} from './utils/reminderUtils';
 
 const replaceAllData = async (client: ApolloClient<any>) => {
   const promises: Array<Promise<any>> = [];
@@ -23,6 +26,7 @@ const replaceAllData = async (client: ApolloClient<any>) => {
     );
   });
   await Promise.all(promises);
+  setRemindersFromApollo(client);
 };
 
 const openQueue = async (client: ApolloClient<any>) => {
@@ -49,12 +53,26 @@ export const Content: React.FC = () => {
     }
   }, [isOnline, isLoggedIn]);
 
-  // useEffect(() => {
-  //   if (isOnline && isLoggedIn) {
-  //     replaceAllData(client);
-  //   }
-  // }, []);
+  useEffect(() => {
+    let interval: NodeJS.Timer;
+    (async () => {
+      const isActuallyOnline = (await NetInfo.fetch()).isInternetReachable;
+      // when the server is down, isActuallyOnline is going to be true
+      // we keep checking if the server started working every few seconds
+      if (isActuallyOnline && !isOnline) {
+        interval = setInterval(async () => {
+          try {
+            await fetch(baseUri + '/check');
+            isOnlineVar(true);
+          } catch (e) {}
+        }, 10000);
+      }
+    })();
 
+    return () => {
+      clearInterval(interval);
+    }; // cleanup function
+  }, [isOnline]);
   return (
     <ThemeProvider>
       <GestureHandlerRootView style={{flex: 1}}>

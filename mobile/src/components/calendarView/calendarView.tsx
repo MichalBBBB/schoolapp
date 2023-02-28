@@ -43,6 +43,14 @@ dayjs.extend(relativeTime);
 
 const maxCalendarZIndex = 8;
 
+// function to find the row of given day in active month
+const findRowOfDate = (date: dayjs.Dayjs) => {
+  const dateOfMonth = date.date();
+  const firstDay = date.startOf('M').day();
+  console.log('sum', dateOfMonth + firstDay - 2);
+  return Math.floor((dateOfMonth + firstDay - 2) / 7);
+};
+
 interface calendarProps {
   screenHeight: number;
 }
@@ -68,13 +76,6 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
   useLayoutEffect(() => {
     navigation.setOptions({});
   });
-
-  // function to find the row of given day in active month
-  const findRowOfDate = (date: dayjs.Dayjs) => {
-    const dateOfMonth = date.date();
-    const firstDay = date.startOf('M').day();
-    return Math.floor((dateOfMonth + firstDay - 1) / 7);
-  };
 
   useEffect(() => {
     weekRow.value = findRowOfDate(selectedDay);
@@ -112,7 +113,9 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
 
   const onDayPress = (date: dayjs.Dayjs) => {
     setSelectedDay(date);
-    weekRow.value = findRowOfDate(date);
+    const row = findRowOfDate(date);
+    console.log('row', row);
+    weekRow.value = row;
   };
 
   const monthView = (
@@ -146,7 +149,6 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
             setSelectedDay(newSelectedDay);
             setMonthString(newMonth.format('MMMM YYYY'));
           }}
-          scrollToDate={scrollMonthToDate}
         />
       </View>
     </Animated.View>
@@ -216,23 +218,12 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
             setSelectedDay(newSelectedDay);
             setMonthString(newWeek.format('MMMM YYYY'));
           }}
-          scrollToDate={scrollWeekToDate}
         />
       </Animated.View>
       {monthView}
 
       <Animated.View style={[dayEventsAnimatedStyle, {zIndex: 10}]}>
-        {/* <DayEvents date={selectedDay} scrollEnabled={isWeekView} /> */}
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            backgroundColor: 'white',
-          }}>
-          <BasicText>Empty</BasicText>
-        </View>
+        <DayEvents date={selectedDay} scrollEnabled={isWeekView} />
       </Animated.View>
     </View>
   );

@@ -76,4 +76,18 @@ const Month: React.FC<MonthProps> = ({
   );
 };
 
-export default memo(Month);
+export default memo(Month, (prevProps, nextProps) => {
+  if (prevProps.month !== nextProps.month) {
+    // render new month due to month change
+    return false;
+  }
+  if (
+    typeof nextProps.month !== 'string' &&
+    nextProps.selectedDay?.get('month') === nextProps.month.get('month')
+  ) {
+    // month does not change, but new date is selected. Only re-render the
+    // month where the newly selected date is in it.
+    return false;
+  }
+  return true;
+});
