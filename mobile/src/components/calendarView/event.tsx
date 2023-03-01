@@ -14,6 +14,7 @@ import {Menu} from '../menu';
 import {MenuItem} from '../menu/MenuItem';
 import SlidingView from '../slidingView';
 import {v4 as uuidv4} from 'uuid';
+import {Popup} from '../popup';
 
 interface EventProps {
   event: CalendarEventFragment;
@@ -32,20 +33,22 @@ const Event: React.FC<EventProps> = ({event}) => {
         <BasicText color="textSecondary" style={{marginRight: 5}}>
           {dayjs(event.startDate).format('HH:mm')}
         </BasicText>
-        <Menu
+        <Popup
           trigger={
             <Image
               source={require('../../../assets/Options.png')}
               style={styles.options}
             />
           }>
-          <MenuItem
-            text={'Add time to study'}
-            onPress={() => {
-              setStudyTimeModalVisible(true);
-            }}
-          />
-        </Menu>
+          <Menu>
+            <MenuItem
+              text={'Add time to study'}
+              onPress={() => {
+                setStudyTimeModalVisible(true);
+              }}
+            />
+          </Menu>
+        </Popup>
       </View>
     </View>
   );

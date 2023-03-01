@@ -22,10 +22,10 @@ export const MenuItem: React.FC<MenuItemProps> = ({
   });
 
   const handleOnPress = () => {
-    onPress();
     if (closeModal) {
       closeModal();
     }
+    onPress();
   };
 
   return (

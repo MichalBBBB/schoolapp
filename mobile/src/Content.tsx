@@ -78,6 +78,7 @@ export const Content: React.FC = () => {
       <GestureHandlerRootView style={{flex: 1}}>
         <PortalProvider>
           <PortalHost name="menu" />
+          <PortalHost name="popup" />
           <Routes />
         </PortalProvider>
       </GestureHandlerRootView>

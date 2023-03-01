@@ -13,6 +13,7 @@ import BasicInputWindow from '../../components/basicInputWindow';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {Menu} from '../../components/menu';
 import {MenuItem} from '../../components/menu/MenuItem';
+import {Popup} from '../../components/popup';
 import ProjectTask from '../../components/projectTask';
 import {
   GetProjectsDocument,
@@ -36,22 +37,24 @@ const ProjectDetailScreen: React.FC<
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Menu
+        <Popup
           trigger={
             <Image
               source={require('../../../assets/Options.png')}
               style={styles.options}
             />
           }>
-          <MenuItem
-            text={'Members'}
-            onPress={() =>
-              navigation.navigate('ProjectMembersScreen', {
-                projectId: route.params.projectId,
-              })
-            }
-          />
-        </Menu>
+          <Menu>
+            <MenuItem
+              text={'Members'}
+              onPress={() =>
+                navigation.navigate('ProjectMembersScreen', {
+                  projectId: route.params.projectId,
+                })
+              }
+            />
+          </Menu>
+        </Popup>
       ),
     });
   });

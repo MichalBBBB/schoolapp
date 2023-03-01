@@ -24,6 +24,7 @@ import AddButton from '../../components/addButton';
 import AddTaskWindow from '../../components/addTaskWindow';
 import {BasicText} from '../../components/basicViews/BasicText';
 import EditDateModal from '../../components/editDateWindow';
+import {Popup} from '../../components/popup';
 import Task from '../../components/task';
 import {useGetAllTasksQuery} from '../../generated/graphql';
 import {TaskStackParamList} from '../../routes/TaskStack';
@@ -44,14 +45,9 @@ const TaskHomeScreen: React.FC<
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Pressable
-          style={{flexDirection: 'row', alignItems: 'center'}}
-          onPress={() => {
-            const isOnline = isOnlineVar();
-            isOnlineVar(!isOnline);
-          }}>
-          <BasicText>{isOnlineVar() ? 'online' : 'offline'}</BasicText>
-        </Pressable>
+        <Popup trigger={<BasicText>Popup</BasicText>}>
+          <View style={{height: 100, width: 100, backgroundColor: 'grey'}} />
+        </Popup>
       ),
       headerLeft: () => (
         <Pressable
