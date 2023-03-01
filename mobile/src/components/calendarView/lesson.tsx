@@ -16,6 +16,8 @@ import {Menu} from '../menu';
 import {MenuItem} from '../menu/MenuItem';
 import {v4 as uuidv4} from 'uuid';
 import {useCreateTask} from '../../mutationHooks/task/createTask';
+import {SubjectColorsObject} from '../../types/Theme';
+import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
 
 interface LessonProps {
   lesson: LessonFragment;
@@ -25,9 +27,13 @@ interface LessonProps {
 export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
   const [studyTimeModalVisible, setStudyTimeModalVisible] = useState(false);
   const [addTask] = useCreateTask();
+  const [deleteEvent] = useDeleteEvent();
   return (
     <>
-      <BasicCard backgroundColor="accentBackground" style={styles.container}>
+      <BasicCard
+        subjectColor={lesson.subject.colorName as keyof SubjectColorsObject}
+        borderWidth={1}
+        style={styles.container}>
         <View style={styles.horizontalContainer}>
           <BasicText>{lesson.subject.name}</BasicText>
           <BasicText color="textSecondary">
@@ -48,6 +54,12 @@ export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
                 text={'Add time to study'}
                 onPress={() => {
                   setStudyTimeModalVisible(true);
+                }}
+              />
+              <MenuItem
+                text={'Delete'}
+                onPress={() => {
+                  deleteEvent({id: event.id});
                 }}
               />
             </Menu>

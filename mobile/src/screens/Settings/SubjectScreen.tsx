@@ -34,10 +34,6 @@ export const SubjectScreen: React.FC<
   );
   const [theme] = useTheme();
 
-  useEffect(() => {
-    console.log(activeSubject);
-  });
-
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (

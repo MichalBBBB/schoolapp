@@ -60,10 +60,6 @@ const LessonTimesScreen: React.FC<
   } | null>(null);
   const [changingValue, setChangingValue] = useState<number | string>(0);
 
-  useEffect(() => {
-    console.log(editLessonTimesData);
-  }, [editLessonTimesData]);
-
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: '',

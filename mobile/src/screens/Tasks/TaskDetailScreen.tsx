@@ -32,6 +32,7 @@ import {useCreateSubtask} from '../../mutationHooks/task/createSubtask';
 import {useEditTask} from '../../mutationHooks/task/editTask';
 import {setRemindersFromApollo} from '../../utils/reminderUtils';
 import {useApolloClient} from '@apollo/client';
+import SelectSubjectModal from '../../components/selectSubject';
 
 const TaskDetailScreen: React.FC<
   NativeStackScreenProps<TaskStackParamList, 'TaskDetailScreen'>
@@ -57,6 +58,8 @@ const TaskDetailScreen: React.FC<
     useState(false);
   const [addSubtaskModalIsVisible, setAddSubtaskModalIsVisible] =
     useState(false);
+  const [selectSubjectModalIsVisible, setSelectSubjectModalIsVisible] =
+    useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -80,6 +83,7 @@ const TaskDetailScreen: React.FC<
               text,
               dueDate: task.dueDate,
               doDate: task.doDate,
+              subjectId: task.subject?.id,
             });
             navigation.goBack();
           }}
@@ -110,6 +114,7 @@ const TaskDetailScreen: React.FC<
             </BasicText>
           </BasicButton>
           <BasicButton
+            style={styles.action}
             backgroundColor="accentBackground"
             onPress={() => {
               setEditDoDateModalIsVisible(true);
@@ -123,6 +128,17 @@ const TaskDetailScreen: React.FC<
                     calendarConfigWithoutTime,
                   )}`
                 : 'Schedule'}
+            </BasicText>
+          </BasicButton>
+          <BasicButton
+            backgroundColor="accentBackground"
+            onPress={() => {
+              setSelectSubjectModalIsVisible(true);
+            }}
+            spacing="s"
+            borderRadius={10}>
+            <BasicText>
+              {task.subject ? task.subject.name : 'Subject'}
             </BasicText>
           </BasicButton>
         </View>
@@ -161,6 +177,7 @@ const TaskDetailScreen: React.FC<
             text,
             dueDate: date.toDate(),
             doDate: task.doDate,
+            subjectId: task.subject?.id,
           });
           setEditDueDateModalIsVisible(false);
         }}
@@ -194,6 +211,7 @@ const TaskDetailScreen: React.FC<
             dueDate: task.dueDate,
             doDate: date.toDate(),
             reminders,
+            subjectId: task.subject?.id,
           });
           setRemindersFromApollo(client);
         }}
@@ -206,6 +224,23 @@ const TaskDetailScreen: React.FC<
         }}
         onSubmit={value => {
           addSubtask({id: uuidv4(), name: value, taskId: task.id});
+        }}
+      />
+      <SelectSubjectModal
+        isVisible={selectSubjectModalIsVisible}
+        onClose={() => {
+          setSelectSubjectModalIsVisible(false);
+        }}
+        onSubmit={subject => {
+          editTask({
+            id: task.id,
+            name,
+            text,
+            dueDate: task.dueDate,
+            doDate: task.doDate,
+            subjectId: subject?.id,
+          });
+          setSelectSubjectModalIsVisible(false);
         }}
       />
     </>

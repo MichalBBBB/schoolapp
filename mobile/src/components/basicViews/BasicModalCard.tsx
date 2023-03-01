@@ -12,6 +12,7 @@ export interface BasicModalCardProps extends BasicCardProps {
   onModalHide?: (() => void) | undefined;
   onBackdropPress?: (() => void) | undefined;
   alignCard: 'flex-end' | 'center' | 'flex-start' | undefined;
+  shouldStretchWidth?: boolean;
 }
 
 export const BasicModalCard: React.FC<BasicModalCardProps> = ({
@@ -21,6 +22,7 @@ export const BasicModalCard: React.FC<BasicModalCardProps> = ({
   onModalHide,
   onBackdropPress,
   alignCard = 'center',
+  shouldStretchWidth = true,
   ...restProps
 }) => {
   const [theme] = useTheme();
@@ -32,7 +34,11 @@ export const BasicModalCard: React.FC<BasicModalCardProps> = ({
       avoidKeyboard={avoidKeyboard}
       animationIn={'fadeInUp'}
       animationOut={'fadeOutDown'}
-      style={{margin: 10, justifyContent: alignCard}}
+      style={{
+        flexDirection: 'column',
+        margin: 10,
+        justifyContent: alignCard,
+      }}
       onBackdropPress={() => {
         if (onBackdropPress) {
           onBackdropPress();
@@ -43,7 +49,13 @@ export const BasicModalCard: React.FC<BasicModalCardProps> = ({
           onModalHide();
         }
       }}>
-      <BasicCard {...restProps}>{children}</BasicCard>
+      <View
+        style={{
+          flexDirection: shouldStretchWidth ? 'column' : 'row',
+          justifyContent: 'center',
+        }}>
+        <BasicCard {...restProps}>{children}</BasicCard>
+      </View>
     </Modal>
   );
 };

@@ -16,7 +16,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({
 }) => {
   const styles = StyleSheet.create({
     body: {
-      padding: 10,
+      padding: 5,
       alignItems: 'flex-start',
     },
   });

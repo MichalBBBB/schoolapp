@@ -194,7 +194,8 @@ export class taskResolver {
     @Arg("dueDate", { nullable: true }) dueDate?: Date,
     @Arg("doDate", { nullable: true }) doDate?: Date,
     @Arg("reminders", () => [RemindersInput], { nullable: true })
-    reminders?: RemindersInput[]
+    reminders?: RemindersInput[],
+    @Arg("subjectId", { nullable: true }) subjectId?: string
   ) {
     const task = await Task.findOne({ where: { id } });
     if (task?.userId === payload?.userId && task) {
@@ -220,6 +221,7 @@ export class taskResolver {
       task.text = text;
       task.doDate = doDate;
       task.dueDate = dueDate;
+      task.subjectId = subjectId;
       await task.save();
       return task;
     } else {

@@ -13,6 +13,8 @@ import {BasicText} from '../basicViews/BasicText';
 import {v4 as uuidv4} from 'uuid';
 import {useCreateSubject} from '../../mutationHooks/subject/createSubject';
 import AddSubjectWindow from '../addSubjectWindow';
+import {useTheme} from '../../contexts/ThemeContext';
+import {SubjectColorsObject} from '../../types/Theme';
 
 interface SelectSubjectProps {
   isVisible: boolean;
@@ -29,6 +31,8 @@ const SelectSubjectModal: React.FC<SelectSubjectProps> = ({
 }) => {
   const {data} = useGetAllSubjectsQuery();
   const [addSubject] = useCreateSubject();
+
+  const [theme] = useTheme();
   const [viewVisible, setViewVisible] = useState<
     'SelectSubject' | 'AddSubject'
   >('SelectSubject');
@@ -38,6 +42,8 @@ const SelectSubjectModal: React.FC<SelectSubjectProps> = ({
   return (
     <>
       <BasicModalCard
+        spacing="l"
+        shouldStretchWidth={false}
         isVisible={
           isVisible &&
           viewShouldAppear == 'SelectSubject' &&
@@ -54,30 +60,58 @@ const SelectSubjectModal: React.FC<SelectSubjectProps> = ({
             onModalHide();
           }
         }}>
-        <View style={{alignItems: 'center'}}>
+        <View>
           <FlatList
-            contentContainerStyle={{alignItems: 'center'}}
             data={data?.getAllSubjects}
             renderItem={({item}) => (
               <BasicButton
                 spacing="none"
                 variant="unstyled"
-                style={{marginBottom: 10}}
+                style={{marginBottom: 10, alignItems: 'flex-start'}}
                 onPress={() => {
                   onSubmit(item);
                 }}>
-                <Text>{item.name}</Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <View
+                    style={{
+                      height: 20,
+                      width: 20,
+                      backgroundColor:
+                        theme.subjectColors[
+                          item.colorName as keyof SubjectColorsObject
+                        ].primary,
+                      borderRadius: 10,
+                      marginRight: 10,
+                    }}
+                  />
+                  <BasicText>{item.name}</BasicText>
+                </View>
               </BasicButton>
             )}
           />
           <BasicButton
             variant="unstyled"
             spacing="none"
-            style={{marginBottom: 10}}
+            style={{marginBottom: 10, alignItems: 'flex-start'}}
             onPress={() => {
               onSubmit(null);
             }}>
-            <BasicText>None</BasicText>
+            <View style={{flexDirection: 'row'}}>
+              <View
+                style={{
+                  height: 20,
+                  width: 20,
+                  backgroundColor: 'trasparent',
+                  borderRadius: 10,
+                  marginRight: 10,
+                }}
+              />
+              <BasicText>None</BasicText>
+            </View>
           </BasicButton>
           <BasicButton
             spacing="s"

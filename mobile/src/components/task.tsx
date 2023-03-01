@@ -2,14 +2,7 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import React, {useEffect, useState} from 'react';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  LayoutAnimation,
-  TouchableHighlight,
-} from 'react-native';
+import {Image, StyleSheet, Text, View, LayoutAnimation} from 'react-native';
 import {
   TaskFragment,
   useDeleteTaskMutation,
@@ -19,7 +12,10 @@ import {TaskNavigationProp} from '../utils/types';
 import SlidingView from './slidingView';
 import calendar from 'dayjs/plugin/calendar';
 import {BasicText} from './basicViews/BasicText';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {
+  TouchableHighlight,
+  TouchableOpacity,
+} from 'react-native-gesture-handler';
 import {useToggleTask} from '../mutationHooks/task/toggleTask';
 import {useDeleteTask} from '../mutationHooks/task/deleteTask';
 import {useTheme} from '../contexts/ThemeContext';

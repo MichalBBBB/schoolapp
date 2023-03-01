@@ -62,7 +62,7 @@ export class Task extends BaseEntity {
 
   @Column({ nullable: true })
   @Field({ nullable: true })
-  subjectId: string;
+  subjectId?: string;
 
   @OneToMany(() => Reminder, (reminder) => reminder.task)
   @Field(() => [Reminder])

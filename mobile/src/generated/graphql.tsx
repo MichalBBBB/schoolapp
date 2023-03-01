@@ -269,6 +269,7 @@ export type MutationEditTaskArgs = {
   id: Scalars['String'];
   name: Scalars['String'];
   reminders?: InputMaybe<Array<RemindersInput>>;
+  subjectId?: InputMaybe<Scalars['String']>;
   text?: InputMaybe<Scalars['String']>;
 };
 
@@ -719,6 +720,7 @@ export type EditTaskMutationVariables = Exact<{
   dueDate?: InputMaybe<Scalars['DateTime']>;
   doDate?: InputMaybe<Scalars['DateTime']>;
   reminders?: InputMaybe<Array<RemindersInput> | RemindersInput>;
+  subjectId?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -1832,7 +1834,7 @@ export type DeleteTaskMutationHookResult = ReturnType<typeof useDeleteTaskMutati
 export type DeleteTaskMutationResult = Apollo.MutationResult<DeleteTaskMutation>;
 export type DeleteTaskMutationOptions = Apollo.BaseMutationOptions<DeleteTaskMutation, DeleteTaskMutationVariables>;
 export const EditTaskDocument = gql`
-    mutation EditTask($id: String!, $name: String!, $text: String, $dueDate: DateTime, $doDate: DateTime, $reminders: [RemindersInput!]) {
+    mutation EditTask($id: String!, $name: String!, $text: String, $dueDate: DateTime, $doDate: DateTime, $reminders: [RemindersInput!], $subjectId: String) {
   editTask(
     id: $id
     name: $name
@@ -1840,6 +1842,7 @@ export const EditTaskDocument = gql`
     dueDate: $dueDate
     doDate: $doDate
     reminders: $reminders
+    subjectId: $subjectId
   ) {
     ...Task
   }
@@ -1866,6 +1869,7 @@ export type EditTaskMutationFn = Apollo.MutationFunction<EditTaskMutation, EditT
  *      dueDate: // value for 'dueDate'
  *      doDate: // value for 'doDate'
  *      reminders: // value for 'reminders'
+ *      subjectId: // value for 'subjectId'
  *   },
  * });
  */

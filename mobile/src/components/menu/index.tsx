@@ -57,6 +57,7 @@ export const Menu: React.FC<MenuProps> = ({trigger, children}) => {
     activeSection: {
       backgroundColor: 'white',
       alignSelf: 'flex-start',
+      padding: 5,
       ...Platform.select({
         ios: {
           alignSelf: 'flex-start',

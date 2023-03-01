@@ -4,21 +4,46 @@ import { MyContext } from "../utils/MyContext";
 import {
   Arg,
   Ctx,
+  FieldResolver,
   Mutation,
   Query,
   Resolver,
+  Root,
   UseMiddleware,
 } from "type-graphql";
 import { queueMiddleware } from "../middleware/queueMiddleware";
+import DataLoader from "dataloader";
+import { Subject } from "../entities/Subject";
+
+const subjectLoader = new DataLoader((keys) => loadSubjects(keys as [string]), {
+  cache: false,
+});
+// loading subjects for all tasks at once
+const loadSubjects = async (keys: [string]) => {
+  const result = await Subject.createQueryBuilder("subject")
+    .select()
+    .where("subject.id IN (:...ids)", { ids: keys })
+    .getMany();
+  // mapping loaded subjects to task ids
+  return keys.map((key) => result.find((subject) => subject.id === key));
+};
 
 @Resolver(() => CalendarEvent)
 export class calendarEventResolver {
+  @FieldResolver()
+  async subject(@Root() root: CalendarEvent) {
+    if (root.subjectId) {
+      return subjectLoader.load(root.subjectId);
+    } else {
+      return null;
+    }
+  }
+
   @Query(() => [CalendarEvent])
   @UseMiddleware(isAuth)
   getAllEvents(@Ctx() { payload }: MyContext) {
     return CalendarEvent.find({
       where: { userId: payload?.userId },
-      relations: { subject: true },
     });
   }
 
