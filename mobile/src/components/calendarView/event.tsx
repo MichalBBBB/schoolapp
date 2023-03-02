@@ -1,11 +1,14 @@
 import dayjs from 'dayjs';
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import {
-  CalendarEventFragment,
-  GetAllEventsDocument,
-  useDeleteEventMutation,
-} from '../../generated/graphql';
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Pressable,
+} from 'react-native';
+import {CalendarEventFragment} from '../../generated/graphql';
 import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
 import {useCreateTask} from '../../mutationHooks/task/createTask';
 import {BasicText} from '../basicViews/BasicText';
@@ -35,10 +38,12 @@ const Event: React.FC<EventProps> = ({event}) => {
         </BasicText>
         <Popup
           trigger={
-            <Image
-              source={require('../../../assets/Options.png')}
-              style={styles.options}
-            />
+            <Pressable>
+              <Image
+                source={require('../../../assets/Options.png')}
+                style={styles.options}
+              />
+            </Pressable>
           }>
           <Menu>
             <MenuItem

@@ -32,6 +32,7 @@ export const SubjectScreen: React.FC<
   const [activeSubject, setActiveSubject] = useState<SubjectFragment | null>(
     null,
   );
+  const [isEditingText, setIsEditingText] = useState(false);
   const [theme] = useTheme();
 
   useLayoutEffect(() => {
@@ -82,6 +83,7 @@ export const SubjectScreen: React.FC<
               />
               <BasicTextInput
                 onFocus={() => {
+                  setIsEditingText(true);
                   setActiveSubject(item);
                   setActiveName(item.name);
                 }}
@@ -97,7 +99,11 @@ export const SubjectScreen: React.FC<
                 onChangeText={value => {
                   setActiveName(value);
                 }}
-                value={activeSubject?.id == item.id ? activeName : item.name}
+                value={
+                  activeSubject?.id == item.id && isEditingText
+                    ? activeName
+                    : item.name
+                }
                 variant={'unstyled'}
               />
             </View>

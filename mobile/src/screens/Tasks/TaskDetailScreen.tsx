@@ -32,7 +32,9 @@ import {useCreateSubtask} from '../../mutationHooks/task/createSubtask';
 import {useEditTask} from '../../mutationHooks/task/editTask';
 import {setRemindersFromApollo} from '../../utils/reminderUtils';
 import {useApolloClient} from '@apollo/client';
-import SelectSubjectModal from '../../components/selectSubject';
+import SelectSubjectWindow from '../../components/selectSubject';
+import {Popup} from '../../components/popup';
+import {SelectSubjectPopup} from '../../components/selectSubject/selectSubjectPopup';
 
 const TaskDetailScreen: React.FC<
   NativeStackScreenProps<TaskStackParamList, 'TaskDetailScreen'>
@@ -130,17 +132,29 @@ const TaskDetailScreen: React.FC<
                 : 'Schedule'}
             </BasicText>
           </BasicButton>
-          <BasicButton
-            backgroundColor="accentBackground"
-            onPress={() => {
-              setSelectSubjectModalIsVisible(true);
+          <SelectSubjectPopup
+            trigger={
+              <BasicButton
+                backgroundColor="accentBackground"
+                spacing="s"
+                borderRadius={10}>
+                <BasicText>
+                  {task.subject ? task.subject.name : 'Subject'}
+                </BasicText>
+              </BasicButton>
+            }
+            onSubmit={subject => {
+              editTask({
+                id: task.id,
+                name,
+                text,
+                dueDate: task.dueDate,
+                doDate: task.doDate,
+                subjectId: subject?.id,
+              });
+              setSelectSubjectModalIsVisible(false);
             }}
-            spacing="s"
-            borderRadius={10}>
-            <BasicText>
-              {task.subject ? task.subject.name : 'Subject'}
-            </BasicText>
-          </BasicButton>
+          />
         </View>
         <BasicTextInput
           variant="unstyled"
@@ -224,23 +238,6 @@ const TaskDetailScreen: React.FC<
         }}
         onSubmit={value => {
           addSubtask({id: uuidv4(), name: value, taskId: task.id});
-        }}
-      />
-      <SelectSubjectModal
-        isVisible={selectSubjectModalIsVisible}
-        onClose={() => {
-          setSelectSubjectModalIsVisible(false);
-        }}
-        onSubmit={subject => {
-          editTask({
-            id: task.id,
-            name,
-            text,
-            dueDate: task.dueDate,
-            doDate: task.doDate,
-            subjectId: subject?.id,
-          });
-          setSelectSubjectModalIsVisible(false);
         }}
       />
     </>

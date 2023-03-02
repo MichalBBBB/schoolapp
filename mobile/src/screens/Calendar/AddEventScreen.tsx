@@ -11,7 +11,7 @@ import {
 } from '../../generated/graphql';
 import EditDateModal from '../../components/editDateWindow';
 import {BasicButton} from '../../components/basicViews/BasicButton';
-import SelectSubjectModal from '../../components/selectSubject';
+import SelectSubjectWindow from '../../components/selectSubject';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
 import {BasicCard} from '../../components/basicViews/BasicCard';
@@ -150,7 +150,7 @@ const AddEventScreen: React.FC<
           setEndDate(date);
         }}
       />
-      <SelectSubjectModal
+      <SelectSubjectWindow
         isVisible={subjectModalVisible}
         onClose={() => {
           setSubjectModalVisible(false);

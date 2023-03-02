@@ -25,6 +25,7 @@ import AddTaskWindow from '../../components/addTaskWindow';
 import {BasicText} from '../../components/basicViews/BasicText';
 import EditDateModal from '../../components/editDateWindow';
 import {Popup} from '../../components/popup';
+import {SelectSubjectPopup} from '../../components/selectSubject/selectSubjectPopup';
 import Task from '../../components/task';
 import {useGetAllTasksQuery} from '../../generated/graphql';
 import {TaskStackParamList} from '../../routes/TaskStack';
@@ -45,9 +46,14 @@ const TaskHomeScreen: React.FC<
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Popup trigger={<BasicText>Popup</BasicText>}>
-          <View style={{height: 100, width: 100, backgroundColor: 'grey'}} />
-        </Popup>
+        <SelectSubjectPopup
+          onSubmit={() => {}}
+          trigger={
+            <Pressable>
+              <BasicText>Popup</BasicText>
+            </Pressable>
+          }
+        />
       ),
       headerLeft: () => (
         <Pressable

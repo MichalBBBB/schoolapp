@@ -10,7 +10,7 @@ import {
 } from 'react-native-table-component';
 import {BasicButton} from '../../../components/basicViews/BasicButton';
 import {BasicText} from '../../../components/basicViews/BasicText';
-import SelectSubjectModal from '../../../components/selectSubject';
+import SelectSubjectWindow from '../../../components/selectSubject';
 import {
   LessonFragment,
   useGetAllLessonsQuery,
@@ -171,7 +171,7 @@ const TimeTableScreen: React.FC<
           </ScrollView>
         </View>
       </ScrollView>
-      <SelectSubjectModal
+      <SelectSubjectWindow
         isVisible={subjectModalIsVisible}
         onClose={() => setSubjectModalIsVisible(false)}
         onSubmit={subject => {

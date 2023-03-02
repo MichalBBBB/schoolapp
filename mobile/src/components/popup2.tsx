@@ -10,6 +10,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
+import ReactNativeModal from 'react-native-modal';
 import Animated, {
   interpolate,
   runOnJS,
@@ -70,6 +71,7 @@ export const Popup: React.FC<PopupProps> = ({
   }, [shouldClose]);
 
   useEffect(() => {
+    console.log(contentDimensions);
     if (shouldAnimate) {
       setContentVisible(true);
       scale.value = 0;
@@ -124,6 +126,7 @@ export const Popup: React.FC<PopupProps> = ({
             contentDimensions.height
           : initialTriggerTop;
     }
+    console.log(top, left);
     return {top, left};
   }, [contentDimensions, triggerDimensions]);
 
@@ -171,44 +174,44 @@ export const Popup: React.FC<PopupProps> = ({
         },
         ref: triggerWrapperRef,
       })}
-      <Portal hostName="modal">
-        {popupVisible && (
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={closeModal}
-            style={styles.modalWrapper}>
-            <Animated.View
-              onLayout={event => {
-                setContentDimensions({
-                  height: event.nativeEvent.layout.height,
-                  width: event.nativeEvent.layout.width,
-                });
-                setShouldAnimate(true);
-              }}
-              style={[
-                {
-                  alignSelf: 'flex-start',
-                  zIndex: 99,
-                  opacity: contentVisible ? 1 : 0,
-                  top,
-                  left,
-                },
-                contentAnimatedStyle,
-              ]}>
-              {Array.isArray(children)
-                ? children.map((childrenItem, index) => {
-                    return React.cloneElement(childrenItem, {
-                      closeModal: setModalToClosed,
-                      key: index,
-                    });
-                  })
-                : React.cloneElement(children as any, {
+      {popupVisible && (
+        <ReactNativeModal
+          isVisible={true}
+          backdropOpacity={0.3}
+          onBackdropPress={closeModal}
+          style={{alignItems: 'flex-start', justifyContent: 'flex-start'}}>
+          <Animated.View
+            onLayout={event => {
+              console.log(event.nativeEvent.layout);
+              setContentDimensions({
+                height: Math.round(event.nativeEvent.layout.height),
+                width: Math.round(event.nativeEvent.layout.width),
+              });
+              setShouldAnimate(true);
+            }}
+            style={[
+              {
+                alignSelf: 'flex-start',
+                zIndex: 99,
+                // opacity: contentVisible ? 1 : 0,
+                top,
+                left,
+              },
+              contentAnimatedStyle,
+            ]}>
+            {Array.isArray(children)
+              ? children.map((childrenItem, index) => {
+                  return React.cloneElement(childrenItem, {
                     closeModal: setModalToClosed,
-                  })}
-            </Animated.View>
-          </TouchableOpacity>
-        )}
-      </Portal>
+                    key: index,
+                  });
+                })
+              : React.cloneElement(children as any, {
+                  closeModal: setModalToClosed,
+                })}
+          </Animated.View>
+        </ReactNativeModal>
+      )}
     </>
   );
 };

@@ -16,11 +16,13 @@ import {calendarConfigWithoutTime} from '../task';
 import {BasicModalCard} from '../basicViews/BasicModalCard';
 import {BasicTextInput} from '../basicViews/BasicTextInput';
 import {BasicButton} from '../basicViews/BasicButton';
-import SelectSubjectModal from '../selectSubject';
+import SelectSubjectWindow from '../selectSubject';
 import {getCurrentLesson} from '../../utils/lessonUtils';
 import {BasicText} from '../basicViews/BasicText';
 import {v4 as uuidv4} from 'uuid';
 import {useCreateTask} from '../../mutationHooks/task/createTask';
+import {BasicCard} from '../basicViews/BasicCard';
+import {SelectSubjectPopup} from '../selectSubject/selectSubjectPopup';
 
 interface addTaskWindowProps {
   onClose: () => void;
@@ -32,22 +34,18 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
   const [createTask] = useCreateTask();
   const {data: lessons} = useGetAllLessonsQuery();
 
-  const taskInputRef = createRef<TextInput>();
+  const taskInputRef = useRef<TextInput>(null);
   const [name, setName] = useState('');
   const [subject, setSubject] = useState<SubjectFragment | null>(null);
-  const [viewVisible, setViewVisible] = useState<
-    'main' | 'editDate' | 'addSubject' | 'selectSubject'
-  >('main');
-  const [viewShouldAppear, setViewShouldAppear] = useState<
-    'main' | 'editDate' | 'addSubject' | 'selectSubject'
-  >('main');
+  const [viewVisible, setViewVisible] = useState<'main' | 'editDate'>('main');
   const [taskDate, setTaskDate] = useState<dayjs.Dayjs | null>();
 
   useEffect(() => {
-    if (visible) {
+    if (visible && viewVisible == 'main') {
+      console.log('focus');
       taskInputRef.current?.focus();
     }
-  }, [visible]);
+  }, [visible, viewVisible, taskInputRef]);
 
   useEffect(() => {
     // automatically set subject to current lesson
@@ -68,15 +66,10 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
       <BasicModalCard
         backgroundColor="background"
         alignCard="flex-end"
-        isVisible={
-          visible && viewVisible == 'main' && viewShouldAppear == 'main'
-        }
+        isVisible={visible && viewVisible == 'main'}
         avoidKeyboard={true}
         onBackdropPress={() => {
           closeWindow();
-        }}
-        onModalHide={() => {
-          setViewVisible(viewShouldAppear);
         }}>
         <BasicTextInput
           spacing="m"
@@ -87,17 +80,24 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
           onChangeText={setName}
         />
         <View style={styles.bottomContainer}>
-          <BasicButton
-            backgroundColor="accentBackground"
-            onPress={() => setViewShouldAppear('selectSubject')}
-            style={styles.button}>
-            <BasicText>{subject?.name || 'Subject'}</BasicText>
-          </BasicButton>
+          <SelectSubjectPopup
+            onSubmit={subject => {
+              setSubject(subject);
+            }}
+            trigger={
+              <BasicButton
+                backgroundColor="accentBackground"
+                style={styles.button}>
+                <BasicText>{subject?.name || 'Subject'}</BasicText>
+              </BasicButton>
+            }
+          />
+
           <BasicButton
             backgroundColor="accentBackground"
             style={styles.button}
             onPress={() => {
-              setViewShouldAppear('editDate');
+              setViewVisible('editDate');
             }}>
             <BasicText>
               {taskDate
@@ -107,16 +107,6 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
           </BasicButton>
           <AddButton
             onPress={() => {
-              console.log(taskDate);
-              // addTask({
-              //   variables: {
-              //     id: uuidv4(),
-              //     name,
-              //     subjectId: subject ? subject.id : undefined,
-              //     dueDate: taskDate,
-              //   },
-              //   refetchQueries: [GetAllTasksDocument],
-              // });
               createTask({
                 id: uuidv4(),
                 name,
@@ -129,31 +119,15 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
         </View>
       </BasicModalCard>
       <EditDateModal
-        isVisible={viewVisible == 'editDate' && viewShouldAppear == 'editDate'}
+        isVisible={visible && viewVisible == 'editDate'}
         initialDate={taskDate ? taskDate : undefined}
         subject={subject}
         onClose={() => {
-          setViewShouldAppear('main');
-        }}
-        onHide={() => {
-          setViewVisible(viewShouldAppear);
+          setViewVisible('main');
         }}
         onSubmit={date => {
           setTaskDate(date);
-          setViewShouldAppear('main');
-        }}
-      />
-      <SelectSubjectModal
-        isVisible={
-          viewShouldAppear == 'selectSubject' && viewVisible == 'selectSubject'
-        }
-        onClose={() => setViewShouldAppear('main')}
-        onModalHide={() => {
-          setViewVisible(viewShouldAppear);
-        }}
-        onSubmit={subject => {
-          setSubject(subject);
-          setViewShouldAppear('main');
+          setViewVisible('main');
         }}
       />
     </>

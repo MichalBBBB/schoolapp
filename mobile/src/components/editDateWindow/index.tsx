@@ -100,11 +100,6 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
       isVisible={isVisible}
       onBackdropPress={() => {
         onClose();
-      }}
-      onModalHide={() => {
-        if (onHide) {
-          onHide();
-        }
       }}>
       <View style={{alignItems: 'center'}}>
         {specialDays.map((item, index1) => (

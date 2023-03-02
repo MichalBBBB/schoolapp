@@ -1,6 +1,13 @@
 import dayjs from 'dayjs';
 import React, {useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Pressable,
+} from 'react-native';
 import {
   CalendarEventFragment,
   GetAllEventsDocument,
@@ -18,6 +25,7 @@ import {v4 as uuidv4} from 'uuid';
 import {useCreateTask} from '../../mutationHooks/task/createTask';
 import {SubjectColorsObject} from '../../types/Theme';
 import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
+import {Popup} from '../popup';
 
 interface LessonProps {
   lesson: LessonFragment;
@@ -43,26 +51,30 @@ export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
         {event && (
           <View style={styles.eventContainer}>
             <BasicText>{event.name}</BasicText>
-            <Menu
+            <Popup
               trigger={
-                <Image
-                  source={require('../../../assets/Options.png')}
-                  style={styles.options}
-                />
+                <Pressable>
+                  <Image
+                    source={require('../../../assets/Options.png')}
+                    style={styles.options}
+                  />
+                </Pressable>
               }>
-              <MenuItem
-                text={'Add time to study'}
-                onPress={() => {
-                  setStudyTimeModalVisible(true);
-                }}
-              />
-              <MenuItem
-                text={'Delete'}
-                onPress={() => {
-                  deleteEvent({id: event.id});
-                }}
-              />
-            </Menu>
+              <Menu>
+                <MenuItem
+                  text={'Add time to study'}
+                  onPress={() => {
+                    setStudyTimeModalVisible(true);
+                  }}
+                />
+                <MenuItem
+                  text={'Delete'}
+                  onPress={() => {
+                    deleteEvent({id: event.id});
+                  }}
+                />
+              </Menu>
+            </Popup>
           </View>
         )}
       </BasicCard>
