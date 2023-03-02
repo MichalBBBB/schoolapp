@@ -49,6 +49,9 @@ export const Popup: React.FC<PopupProps> = ({
   const [popupVisible, setPopupVisible] = useState(false);
   const [contentVisible, setContentVisible] = useState(false);
 
+  const [isTop, setIsTop] = useState(false);
+  const [isRight, setisRight] = useState(true);
+
   const scale = useSharedValue(1);
 
   const closeModal = () => {
@@ -98,8 +101,10 @@ export const Popup: React.FC<PopupProps> = ({
       contentDimensions.width +
       triggerDimensions.width;
     // if the popup is outside the screen from the left
-    if (triggerDimensions.left - contentDimensions.width < 0)
+    if (triggerDimensions.left - contentDimensions.width < 0) {
       left = triggerDimensions.left;
+      setisRight(false);
+    }
 
     if (isIOS) {
       const initialTriggerTop =
@@ -107,22 +112,32 @@ export const Popup: React.FC<PopupProps> = ({
       if (
         contentDimensions.height + initialTriggerTop >
         layoutHeight - keyboardHeight
-      )
+      ) {
         top = triggerDimensions.top - contentDimensions.height - 10;
-      else top = initialTriggerTop;
+        setIsTop(false);
+      } else {
+        top = initialTriggerTop;
+        setIsTop(true);
+      }
     } else {
       const initialTriggerTop =
         triggerDimensions.top +
         triggerDimensions.height +
         NativeModules.StatusBarManager.HEIGHT;
 
-      top =
+      if (
         initialTriggerTop + contentDimensions.height >
         layoutHeight - keyboardHeight
-          ? initialTriggerTop -
-            triggerDimensions.height -
-            contentDimensions.height
-          : initialTriggerTop;
+      ) {
+        top =
+          initialTriggerTop -
+          triggerDimensions.height -
+          contentDimensions.height;
+        setIsTop(false);
+      } else {
+        top = initialTriggerTop;
+        setIsTop(true);
+      }
     }
     return {top, left};
   }, [contentDimensions, triggerDimensions]);
@@ -134,14 +149,24 @@ export const Popup: React.FC<PopupProps> = ({
           translateY: interpolate(
             scale.value,
             [0, 1],
-            [-contentDimensions.height / 2, 0],
+            [
+              isTop
+                ? -contentDimensions.height / 2
+                : contentDimensions.height / 2,
+              0,
+            ],
           ),
         },
         {
           translateX: interpolate(
             scale.value,
             [0, 1],
-            [contentDimensions.width / 2, 0],
+            [
+              isRight
+                ? contentDimensions.width / 2
+                : -contentDimensions.width / 2,
+              0,
+            ],
           ),
         },
         {

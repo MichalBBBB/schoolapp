@@ -19,7 +19,7 @@ import {
 import {useToggleTask} from '../mutationHooks/task/toggleTask';
 import {useDeleteTask} from '../mutationHooks/task/deleteTask';
 import {useTheme} from '../contexts/ThemeContext';
-import {SubjectColorsObject} from '../types/Theme';
+import {ColorsObject, SubjectColorsObject} from '../types/Theme';
 
 dayjs.extend(calendar);
 
@@ -34,7 +34,8 @@ export const calendarConfigWithoutTime = {
 
 const Task: React.FC<{
   task: TaskFragment;
-}> = ({task}) => {
+  backgroundColor?: keyof ColorsObject;
+}> = ({task, backgroundColor = 'background'}) => {
   const [deleteTask] = useDeleteTask();
   const navigation = useNavigation<TaskNavigationProp>();
   const [toggleTask] = useToggleTask();
@@ -76,7 +77,7 @@ const Task: React.FC<{
   );
 
   return (
-    <View>
+    <View style={{overflow: 'hidden'}}>
       <SlidingView
         frontView={
           <TouchableHighlight
@@ -86,7 +87,7 @@ const Task: React.FC<{
             <View
               style={[
                 styles.container,
-                {backgroundColor: theme.colors.background},
+                {backgroundColor: theme.colors[backgroundColor]},
               ]}>
               <TouchableOpacity
                 onPress={() => {

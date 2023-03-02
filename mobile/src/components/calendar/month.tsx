@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import React, {memo} from 'react';
+import React, {memo, useMemo} from 'react';
 import {Text, View} from 'react-native';
 import {BasicText} from '../basicViews/BasicText';
 import Week from './week';
@@ -57,21 +57,23 @@ const Month: React.FC<MonthProps> = ({
     );
   }
 
+  const matrix = useMemo(() => {
+    return createMatrix(month.get('year'), month.get('month'));
+  }, [month]);
+
   return (
     <View style={{width: calendarWidth}}>
-      {createMatrix(month.get('year'), month.get('month')).map(
-        (week, index) => (
-          <Week
-            calendarWidth={calendarWidth}
-            weekHeight={weekHeight}
-            week={week}
-            monthNum={month.get('month') + 1}
-            key={index}
-            selectedDay={selectedDay}
-            onDayPress={onDayPress}
-          />
-        ),
-      )}
+      {matrix.map((week, index) => (
+        <Week
+          calendarWidth={calendarWidth}
+          weekHeight={weekHeight}
+          week={week}
+          monthNum={month.get('month') + 1}
+          key={index}
+          selectedDay={selectedDay}
+          onDayPress={onDayPress}
+        />
+      ))}
     </View>
   );
 };

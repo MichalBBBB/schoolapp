@@ -72,10 +72,14 @@ const TaskHomeScreen: React.FC<
   return (
     <View style={{flex: 1}}>
       <FlatList
+        contentContainerStyle={{borderRadius: 15, overflow: 'hidden'}}
+        style={{padding: 10}}
         data={data?.getAllTasks.filter(item => {
           return item.done == false;
         })}
-        renderItem={({item, index}) => <Task task={item} />}
+        renderItem={({item, index}) => (
+          <Task task={item} backgroundColor={'accentBackground'} />
+        )}
         //ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
       <View style={{position: 'absolute', right: 0, bottom: 0, margin: 20}}>
