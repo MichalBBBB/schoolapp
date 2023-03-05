@@ -34,7 +34,6 @@ export const BasicModalCard: React.FC<BasicModalCardProps> = ({
       // animationOut={'fadeOutDown'}
       style={{
         flexDirection: 'column',
-        padding: 10,
         justifyContent: alignCard,
       }}
       onBackdropPress={() => {
@@ -47,7 +46,9 @@ export const BasicModalCard: React.FC<BasicModalCardProps> = ({
           flexDirection: shouldStretchWidth ? 'column' : 'row',
           justifyContent: 'center',
         }}>
-        <BasicCard {...restProps}>{children}</BasicCard>
+        <BasicCard {...restProps} style={{margin: 10}}>
+          {children}
+        </BasicCard>
       </View>
     </Modal>
   );

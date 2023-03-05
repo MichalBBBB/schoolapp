@@ -12,14 +12,17 @@ import {
 import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {BasicCard} from '../../components/basicViews/BasicCard';
+import {ProjectStackParamList} from '../../routes/ProjectStack';
 
 export const NewProjectScreen: React.FC<
-  NativeStackScreenProps<TaskStackParamList, 'NewProjectScreen'>
+  NativeStackScreenProps<ProjectStackParamList, 'NewProjectScreen'>
 > = () => {
   const [name, setName] = useState('');
   const [members, setMembers] = useState<string[]>([]);
   const [email, setEmail] = useState('');
-  const [createProject, {error}] = useCreateProjectMutation();
+  const [createProject, {error}] = useCreateProjectMutation({
+    context: {skipQeue: true},
+  });
 
   useEffect(() => {
     console.log(JSON.stringify(error));

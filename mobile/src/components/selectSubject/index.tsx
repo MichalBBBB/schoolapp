@@ -49,6 +49,7 @@ const SelectSubjectWindow: React.FC<SelectSubjectProps> = ({
       }}>
       <View>
         <FlatList
+          keyboardShouldPersistTaps="handled"
           data={data?.getAllSubjects}
           renderItem={({item}) => (
             <BasicButton

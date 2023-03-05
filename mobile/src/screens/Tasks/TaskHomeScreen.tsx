@@ -27,7 +27,12 @@ import EditDateModal from '../../components/editDateWindow';
 import {Popup} from '../../components/popup';
 import {SelectSubjectPopup} from '../../components/selectSubject/selectSubjectPopup';
 import Task from '../../components/task';
-import {useGetAllTasksQuery} from '../../generated/graphql';
+import {useTheme} from '../../contexts/ThemeContext';
+import {
+  useGetAllTasksQuery,
+  useGetProjectTasksOfUserLazyQuery,
+  useGetProjectTasksOfUserQuery,
+} from '../../generated/graphql';
 import {TaskStackParamList} from '../../routes/TaskStack';
 
 if (
@@ -41,7 +46,15 @@ const TaskHomeScreen: React.FC<
   NativeStackScreenProps<TaskStackParamList, 'TaskHomeScreen'>
 > = ({navigation}) => {
   const {data} = useGetAllTasksQuery();
+  const {data: projectTasks} = useGetProjectTasksOfUserQuery({
+    fetchPolicy: 'network-only',
+  });
   const [addTaskOpen, setAddTaskOpen] = useState(false);
+  const [theme] = useTheme();
+
+  useEffect(() => {
+    console.log('projectTasks', projectTasks);
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -72,7 +85,11 @@ const TaskHomeScreen: React.FC<
   return (
     <View style={{flex: 1}}>
       <FlatList
-        contentContainerStyle={{borderRadius: 15, overflow: 'hidden'}}
+        contentContainerStyle={{
+          borderRadius: 15,
+          overflow: 'hidden',
+          backgroundColor: theme.colors.accentBackground,
+        }}
         style={{padding: 10}}
         data={data?.getAllTasks.filter(item => {
           return item.done == false;

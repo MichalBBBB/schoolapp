@@ -24,6 +24,7 @@ import {useEditLesson} from '../../../mutationHooks/lesson/editLesson';
 import {useDeleteLesson} from '../../../mutationHooks/lesson/deleteLesson';
 import {useTheme} from '../../../contexts/ThemeContext';
 import {SubjectColorsObject} from '../../../types/Theme';
+import {SelectSubjectPopup} from '../../../components/selectSubject/selectSubjectPopup';
 
 const TimeTableScreen: React.FC<
   NativeStackScreenProps<SettingsStackParamList, 'TimeTableScreen'>
@@ -35,12 +36,6 @@ const TimeTableScreen: React.FC<
   const [deleteLesson] = useDeleteLesson();
 
   const [theme] = useTheme();
-
-  const [subjectModalIsVisible, setSubjectModalIsVisible] = useState(false);
-  const [activeWeekDay, setActiveWeekDay] = useState<string | null>(null);
-  const [activeLessonTimeId, setActiveLessonTimeId] = useState<string | null>(
-    null,
-  );
 
   const lessonNumbers = [
     '',
@@ -73,7 +68,9 @@ const TimeTableScreen: React.FC<
   }
   return (
     <View style={styles.container}>
-      <ScrollView horizontal={true} style={{paddingHorizontal: 10}}>
+      <ScrollView
+        horizontal={true}
+        contentContainerStyle={{paddingHorizontal: 20}}>
         <View>
           <Table
             borderStyle={{borderWidth: 1, borderColor: 'transparent'}}
@@ -112,30 +109,38 @@ const TimeTableScreen: React.FC<
                                   height: '100%',
                                   padding: 2,
                                 }}>
-                                <BasicButton
-                                  variant="subject"
-                                  subjectColor={
-                                    item.subject
-                                      .colorName as keyof SubjectColorsObject
-                                  }
-                                  borderWidth={1}
-                                  style={{
-                                    width: '100%',
-                                    height: '100%',
+                                <SelectSubjectPopup
+                                  onSubmit={subject => {
+                                    if (subject == null) {
+                                      deleteLesson({
+                                        id: item.id,
+                                      });
+                                    } else {
+                                      editLesson({
+                                        subjectId: subject.id,
+                                        id: item.id,
+                                      });
+                                    }
                                   }}
-                                  spacing="s"
-                                  onPress={() => {
-                                    setActiveLessonTimeId(
-                                      lessonTimes?.getAllLessonTimes[itemIndex]
-                                        .id || null,
-                                    );
-                                    setActiveWeekDay(weekDays[rowIndex]);
-                                    setSubjectModalIsVisible(true);
-                                  }}>
-                                  <BasicText numberOfLines={1}>
-                                    {item.subject.name}
-                                  </BasicText>
-                                </BasicButton>
+                                  trigger={
+                                    <BasicButton
+                                      variant="subject"
+                                      subjectColor={
+                                        item.subject
+                                          .colorName as keyof SubjectColorsObject
+                                      }
+                                      borderWidth={1}
+                                      style={{
+                                        width: '100%',
+                                        height: '100%',
+                                      }}
+                                      spacing="s">
+                                      <BasicText numberOfLines={1}>
+                                        {item.subject.name}
+                                      </BasicText>
+                                    </BasicButton>
+                                  }
+                                />
                               </View>
                             ) : (
                               <View
@@ -144,20 +149,29 @@ const TimeTableScreen: React.FC<
                                   height: '100%',
                                   padding: 2,
                                 }}>
-                                <BasicButton
-                                  style={{width: '100%', height: '100%'}}
-                                  backgroundColor="accentBackground"
-                                  onPress={() => {
-                                    setActiveLessonTimeId(
-                                      lessonTimes?.getAllLessonTimes[itemIndex]
-                                        .id || null,
-                                    );
-                                    setActiveWeekDay(weekDays[rowIndex]);
-                                    setSubjectModalIsVisible(true);
+                                <SelectSubjectPopup
+                                  onSubmit={subject => {
+                                    if (subject && lessonTimes) {
+                                      createLesson({
+                                        id: uuidv4(),
+                                        lessonTimeId:
+                                          lessonTimes.getAllLessonTimes[
+                                            itemIndex
+                                          ].id,
+                                        dayOfTheWeek: weekDays[rowIndex],
+                                        subjectId: subject.id,
+                                      });
+                                    }
                                   }}
-                                  spacing="m">
-                                  <BasicText>Add</BasicText>
-                                </BasicButton>
+                                  trigger={
+                                    <BasicButton
+                                      style={{width: '100%', height: '100%'}}
+                                      backgroundColor="accentBackground"
+                                      spacing="m">
+                                      <BasicText>Add</BasicText>
+                                    </BasicButton>
+                                  }
+                                />
                               </View>
                             )
                           }
@@ -171,42 +185,6 @@ const TimeTableScreen: React.FC<
           </ScrollView>
         </View>
       </ScrollView>
-      <SelectSubjectWindow
-        isVisible={subjectModalIsVisible}
-        onClose={() => setSubjectModalIsVisible(false)}
-        onSubmit={subject => {
-          console.log(subject, activeLessonTimeId, activeWeekDay);
-          const existingLesson = data?.getAllLessons.find(lesson => {
-            return (
-              lesson.dayOfTheWeek == activeWeekDay &&
-              lesson.lessonTime.id == activeLessonTimeId
-            );
-          });
-          if (existingLesson) {
-            if (subject == null) {
-              deleteLesson({
-                id: existingLesson.id,
-              });
-            } else {
-              editLesson({
-                subjectId: subject.id,
-                id: existingLesson.id,
-              });
-            }
-          } else if (subject) {
-            createLesson({
-              id: uuidv4(),
-              lessonTimeId: activeLessonTimeId!,
-              dayOfTheWeek: activeWeekDay!,
-              subjectId: subject.id,
-            });
-          }
-
-          setSubjectModalIsVisible(false);
-          setActiveLessonTimeId(null);
-          setActiveWeekDay(null);
-        }}
-      />
     </View>
   );
 };

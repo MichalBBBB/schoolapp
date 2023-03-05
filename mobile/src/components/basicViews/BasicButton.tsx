@@ -3,6 +3,8 @@ import {
   Pressable,
   PressableProps,
   StyleSheet,
+  TouchableOpacity,
+  TouchableOpacityProps,
   View,
   ViewProps,
   ViewStyle,
@@ -14,7 +16,7 @@ import {
   SubjectColorsObject,
 } from '../../types/Theme';
 
-interface BasicButtonProps extends PressableProps {
+interface BasicButtonProps extends TouchableOpacityProps {
   spacing?: keyof SpacingObject;
   borderRadius?: number;
   style?: ViewStyle | ViewStyle[];

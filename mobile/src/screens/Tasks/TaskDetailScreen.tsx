@@ -173,6 +173,7 @@ const TaskDetailScreen: React.FC<
           defaultValue={task.text || ''}
         />
         <FlatList
+          contentContainerStyle={{borderRadius: 15, overflow: 'hidden'}}
           data={task.subtasks}
           renderItem={({item, index}) => <Subtask subtask={item} />}
           ItemSeparatorComponent={() => <View style={styles.separator} />}

@@ -65,8 +65,8 @@ export class User extends BaseEntity {
   @OneToMany(() => Task, (task) => task.user)
   tasks: Task[];
 
-  @Field(() => [Task])
-  @ManyToMany(() => Task, (task) => task.user)
+  @Field(() => [ProjectTask])
+  @ManyToMany(() => ProjectTask, (projectTask) => projectTask.users)
   projectTasks: ProjectTask[];
 
   @Field(() => [Subject])

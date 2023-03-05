@@ -113,7 +113,9 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
       style={styles.sectionList}
       sections={createSections()}
       renderSectionHeader={({section: {title}}) => (
-        <Text style={styles.sectionTitle}>{title}</Text>
+        <BasicText color="textSecondary" style={styles.sectionTitle}>
+          {title}
+        </BasicText>
       )}
       renderItem={({item, index}) => {
         if (item.__typename == 'Lesson') {
@@ -146,7 +148,6 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
 const styles = StyleSheet.create({
   sectionTitle: {
     marginHorizontal: 20,
-    color: '#666',
   },
   sectionFooter: {
     height: 15,

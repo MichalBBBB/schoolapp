@@ -18,7 +18,9 @@ export const ProjectMembersScreen: React.FC<
   const project = data?.getProjects.find(item => {
     return item.id == route.params.projectId;
   });
-  const [removeMember] = useRemoveMemberFromProjectMutation();
+  const [removeMember] = useRemoveMemberFromProjectMutation({
+    context: {skipQeue: true},
+  });
   const [addProjectMemberWindowVisible, setAddProjectMemberWindowVisible] =
     useState(false);
   return (

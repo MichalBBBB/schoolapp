@@ -23,8 +23,12 @@ const ProjectTask: React.FC<{
   projectTask: ProjectTaskFragment;
   onUsersPress: () => void;
 }> = ({projectTask, onUsersPress}) => {
-  const [deleteProjectTask] = useDeleteProjectTaskMutation();
-  const [toggleProjectTask] = useToggleProjectTaskMutation();
+  const [deleteProjectTask] = useDeleteProjectTaskMutation({
+    context: {skipQeue: true},
+  });
+  const [toggleProjectTask] = useToggleProjectTaskMutation({
+    context: {skipQeue: true},
+  });
 
   const [theme] = useTheme();
 

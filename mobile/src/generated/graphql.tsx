@@ -362,6 +362,7 @@ export type Query = {
   getAllTasks: Array<Task>;
   getAllUsers: Array<User>;
   getInvites: Array<Invite>;
+  getProjectTasksOfUser: Array<ProjectTask>;
   getProjects: Array<Project>;
   hello: Scalars['String'];
   me: User;
@@ -803,6 +804,11 @@ export type GetInvitesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetInvitesQuery = { __typename?: 'Query', getInvites: Array<{ __typename?: 'Invite', ownerName: string, projectName: string, projectId: string }> };
+
+export type GetProjectTasksOfUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetProjectTasksOfUserQuery = { __typename?: 'Query', getProjectTasksOfUser: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, projectId: string, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }> };
 
 export type GetProjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2347,6 +2353,40 @@ export function useGetInvitesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetInvitesQueryHookResult = ReturnType<typeof useGetInvitesQuery>;
 export type GetInvitesLazyQueryHookResult = ReturnType<typeof useGetInvitesLazyQuery>;
 export type GetInvitesQueryResult = Apollo.QueryResult<GetInvitesQuery, GetInvitesQueryVariables>;
+export const GetProjectTasksOfUserDocument = gql`
+    query GetProjectTasksOfUser {
+  getProjectTasksOfUser {
+    ...ProjectTask
+  }
+}
+    ${ProjectTaskFragmentDoc}`;
+
+/**
+ * __useGetProjectTasksOfUserQuery__
+ *
+ * To run a query within a React component, call `useGetProjectTasksOfUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProjectTasksOfUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProjectTasksOfUserQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetProjectTasksOfUserQuery(baseOptions?: Apollo.QueryHookOptions<GetProjectTasksOfUserQuery, GetProjectTasksOfUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetProjectTasksOfUserQuery, GetProjectTasksOfUserQueryVariables>(GetProjectTasksOfUserDocument, options);
+      }
+export function useGetProjectTasksOfUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProjectTasksOfUserQuery, GetProjectTasksOfUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetProjectTasksOfUserQuery, GetProjectTasksOfUserQueryVariables>(GetProjectTasksOfUserDocument, options);
+        }
+export type GetProjectTasksOfUserQueryHookResult = ReturnType<typeof useGetProjectTasksOfUserQuery>;
+export type GetProjectTasksOfUserLazyQueryHookResult = ReturnType<typeof useGetProjectTasksOfUserLazyQuery>;
+export type GetProjectTasksOfUserQueryResult = Apollo.QueryResult<GetProjectTasksOfUserQuery, GetProjectTasksOfUserQueryVariables>;
 export const GetProjectsDocument = gql`
     query GetProjects {
   getProjects {

@@ -17,6 +17,8 @@ import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
 import {BasicCard} from '../../components/basicViews/BasicCard';
 import {v4 as uuidv4} from 'uuid';
 import {useCreateEvent} from '../../mutationHooks/calendarEvent/createEvent';
+import {Popup} from '../../components/popup';
+import {SelectSubjectPopup} from '../../components/selectSubject/selectSubjectPopup';
 
 let hours: number[] = [];
 for (var i = 0; i < 24; i++) {
@@ -53,14 +55,21 @@ const AddEventScreen: React.FC<
         marginBottom={10}
       />
       <BasicCard spacing="m" marginBottom={10}>
-        <Pressable
-          style={styles.listItem}
-          onPress={() => {
-            setSubjectModalVisible(true);
-          }}>
-          <BasicText>Subject</BasicText>
-          <BasicText>{subject ? subject.name : 'None'}</BasicText>
-        </Pressable>
+        <SelectSubjectPopup
+          onSubmit={subject => {
+            setSubject(subject);
+          }}
+          trigger={
+            <Pressable
+              style={styles.listItem}
+              onPress={() => {
+                setSubjectModalVisible(true);
+              }}>
+              <BasicText>Subject</BasicText>
+              <BasicText>{subject ? subject.name : 'None'}</BasicText>
+            </Pressable>
+          }
+        />
       </BasicCard>
       <BasicCard gap={5} marginBottom={10}>
         <View style={styles.dateListItem}>
@@ -148,16 +157,6 @@ const AddEventScreen: React.FC<
             setEndDateHasBeenChanged(true);
           }
           setEndDate(date);
-        }}
-      />
-      <SelectSubjectWindow
-        isVisible={subjectModalVisible}
-        onClose={() => {
-          setSubjectModalVisible(false);
-        }}
-        onSubmit={subject => {
-          setSubject(subject);
-          setSubjectModalVisible(false);
         }}
       />
     </View>

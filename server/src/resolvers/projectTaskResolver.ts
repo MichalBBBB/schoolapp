@@ -3,6 +3,7 @@ import {
   Ctx,
   FieldResolver,
   Mutation,
+  Query,
   Resolver,
   Root,
   UseMiddleware,
@@ -133,5 +134,22 @@ export class projectTaskResolver {
     } else {
       throw new Error("task or user wasn't found");
     }
+  }
+
+  @Query(() => [ProjectTask])
+  @UseMiddleware(isAuth)
+  async getProjectTasksOfUser(@Ctx() { payload }: MyContext) {
+    console.log("here2");
+    const result = await User.findOne({
+      where: { id: payload?.userId },
+      relations: { projectTasks: true },
+    });
+    console.log(
+      (await ProjectTask.find({ relations: { users: true } })).map(
+        (item) => item.users
+      )
+    );
+    console.log("result", result);
+    return result?.projectTasks;
   }
 }

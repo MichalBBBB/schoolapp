@@ -23,6 +23,8 @@ import {v4 as uuidv4} from 'uuid';
 import {useCreateTask} from '../../mutationHooks/task/createTask';
 import {BasicCard} from '../basicViews/BasicCard';
 import {SelectSubjectPopup} from '../selectSubject/selectSubjectPopup';
+import {useTheme} from '../../contexts/ThemeContext';
+import {SubjectColorsObject} from '../../types/Theme';
 
 interface addTaskWindowProps {
   onClose: () => void;
@@ -33,6 +35,8 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
   const [addTask, {error}] = useCreateTaskMutation();
   const [createTask] = useCreateTask();
   const {data: lessons} = useGetAllLessonsQuery();
+
+  const [theme] = useTheme();
 
   const taskInputRef = useRef<TextInput>(null);
   const [name, setName] = useState('');
@@ -88,7 +92,24 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
               <BasicButton
                 backgroundColor="accentBackground"
                 style={styles.button}>
-                <BasicText>{subject?.name || 'Subject'}</BasicText>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  {subject && (
+                    <View
+                      style={{
+                        backgroundColor:
+                          theme.subjectColors[
+                            subject.colorName as keyof SubjectColorsObject
+                          ].primary,
+                        height: 16,
+                        width: 16,
+                        borderRadius: 8,
+                        marginRight: 5,
+                      }}
+                    />
+                  )}
+
+                  <BasicText>{subject?.name || 'Subject'}</BasicText>
+                </View>
               </BasicButton>
             }
           />

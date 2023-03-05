@@ -1,9 +1,11 @@
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useEffect} from 'react';
+import React, {useEffect, useLayoutEffect} from 'react';
 import {FlatList, Pressable, Text, View} from 'react-native';
 import {BaseButton} from 'react-native-gesture-handler';
+import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicCard} from '../../components/basicViews/BasicCard';
+import {BasicText} from '../../components/basicViews/BasicText';
 import {
   GetProjectsDocument,
   useDeleteProjectMutation,
@@ -15,10 +17,27 @@ const ProjectHomeScreen: React.FC<
   NativeStackScreenProps<ProjectStackParamList, 'ProjectHomeScreen'>
 > = ({navigation}) => {
   const {data, error} = useGetProjectsQuery();
-  const [deleteProject, {error: deleteError}] = useDeleteProjectMutation();
+  const [deleteProject, {error: deleteError}] = useDeleteProjectMutation({
+    context: {skipQeue: true},
+  });
   useEffect(() => {
     console.log(JSON.stringify(error), JSON.stringify(deleteError));
   }, [error, deleteError]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <BasicButton
+          variant="unstyled"
+          onPress={() => {
+            navigation.navigate('NewProjectScreen');
+          }}>
+          <BasicText>Add</BasicText>
+        </BasicButton>
+      ),
+    });
+  });
+
   return (
     <View style={{padding: 10}}>
       <FlatList

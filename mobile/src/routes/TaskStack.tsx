@@ -13,7 +13,6 @@ export type TaskStackParamList = {
   TaskHomeScreen: undefined;
   TaskDetailScreen: {task: TaskFragment};
   AddSubtaskScreen: {taskId: string};
-  NewProjectScreen: undefined;
   NotificationScreen: undefined;
 };
 
@@ -39,7 +38,6 @@ const TaskStack: React.FC<
         component={TaskDetailScreen}
         options={({route}) => ({title: route.params.task.name})}
       />
-      <Stack.Screen name="NewProjectScreen" component={NewProjectScreen} />
       <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
     </Stack.Navigator>
   );

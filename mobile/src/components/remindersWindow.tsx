@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import dayjs from 'dayjs';
 import {useState} from 'react';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {BasicModalCard, BasicModalCardProps} from './basicViews/BasicModalCard';
 import {BasicRadio} from './basicViews/BasicRadio';
 import {BasicCardProps} from './basicViews/BasicCard';
@@ -13,7 +13,6 @@ interface RemindersWindowProps {
   onSubmit: (reminderTImes: number[]) => void;
   onClose: () => void;
   isVisible: boolean;
-  onHide?: () => void | undefined;
   initialReminderTimes?: number[];
 }
 
@@ -53,7 +52,6 @@ export const RemindersWindow: React.FC<RemindersWindowProps> = ({
   isVisible,
   onClose,
   onSubmit,
-  onHide,
   initialReminderTimes = [],
 }) => {
   const [selectedReminderTimes, setSelectedReminderTimes] =
@@ -61,62 +59,87 @@ export const RemindersWindow: React.FC<RemindersWindowProps> = ({
 
   return (
     <BasicModalCard
-      spacing="l"
       style={{marginHorizontal: 20}}
       alignCard="center"
       isVisible={isVisible}
       onBackdropPress={() => {
         onClose();
-      }}
-      onModalHide={() => {
-        if (onHide) {
-          onHide();
-        }
       }}>
-      <View style={{flexDirection: 'row', marginBottom: 10}}>
-        <BasicRadio
-          style={{marginRight: 10}}
-          toggled={selectedReminderTimes.length == 0}
-          onToggle={toggled => {
-            setSelectedReminderTimes([]);
-          }}
-        />
-        <BasicText>None</BasicText>
+      <View style={{width: '100%', padding: 10, paddingLeft: 20}}>
+        <BasicText textVariant="heading">Reminders</BasicText>
       </View>
-      {reminderTimes.map((item, index) => (
-        <View key={index} style={{flexDirection: 'row', marginBottom: 10}}>
+      <View style={styles.reminderTimesContainer}>
+        <View style={{flexDirection: 'row', marginBottom: 10}}>
           <BasicRadio
             style={{marginRight: 10}}
-            toggled={selectedReminderTimes.includes(item.minutesBefore)}
+            toggled={selectedReminderTimes.length == 0}
             onToggle={toggled => {
-              if (toggled) {
-                setSelectedReminderTimes([
-                  ...selectedReminderTimes,
-                  item.minutesBefore,
-                ]);
-              } else {
-                setSelectedReminderTimes(
-                  selectedReminderTimes.filter(
-                    time => time !== item.minutesBefore,
-                  ),
-                );
-              }
+              setSelectedReminderTimes([]);
             }}
           />
-          <BasicText>{item.title}</BasicText>
+          <BasicText>None</BasicText>
         </View>
-      ))}
-      <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+        {reminderTimes.map((item, index) => (
+          <View key={index} style={{flexDirection: 'row', marginBottom: 10}}>
+            <BasicRadio
+              style={{marginRight: 10}}
+              toggled={selectedReminderTimes.includes(item.minutesBefore)}
+              onToggle={toggled => {
+                if (toggled) {
+                  setSelectedReminderTimes([
+                    ...selectedReminderTimes,
+                    item.minutesBefore,
+                  ]);
+                } else {
+                  setSelectedReminderTimes(
+                    selectedReminderTimes.filter(
+                      time => time !== item.minutesBefore,
+                    ),
+                  );
+                }
+              }}
+            />
+            <BasicText>{item.title}</BasicText>
+          </View>
+        ))}
+      </View>
+      <View style={styles.submitButtonContainer}>
         <BasicButton
-          spacing="m"
+          style={{flex: 1}}
+          onPress={() => {
+            onClose();
+          }}
+          variant={'unstyled'}>
+          <BasicText color="textSecondary" style={{fontWeight: 'bold'}}>
+            Cancel
+          </BasicText>
+        </BasicButton>
+        <BasicButton
+          style={{flex: 1}}
           onPress={() => {
             onSubmit(selectedReminderTimes);
-          }}>
-          <BasicText color="textContrast" textVariant="button">
-            Submit
+          }}
+          variant={'unstyled'}>
+          <BasicText color="primary" style={{fontWeight: 'bold'}}>
+            Select
           </BasicText>
         </BasicButton>
       </View>
     </BasicModalCard>
   );
 };
+
+const styles = StyleSheet.create({
+  submitButtonContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    padding: 5,
+    paddingTop: 10,
+  },
+  reminderTimesContainer: {
+    marginHorizontal: 15,
+    marginTop: 5,
+  },
+});

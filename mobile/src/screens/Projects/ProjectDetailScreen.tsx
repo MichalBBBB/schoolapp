@@ -3,6 +3,7 @@ import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {
   FlatList,
   Image,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -26,7 +27,9 @@ const ProjectDetailScreen: React.FC<
   NativeStackScreenProps<ProjectStackParamList, 'ProjectDetailScreen'>
 > = ({route, navigation}) => {
   const {data: projects} = useGetProjectsQuery();
-  const [addProjectTask, {error}] = useAddProjectTaskMutation();
+  const [addProjectTask, {error}] = useAddProjectTaskMutation({
+    context: {skipQeue: true},
+  });
 
   const project = projects?.getProjects.find(
     item => item.id == route.params.projectId,
@@ -39,10 +42,12 @@ const ProjectDetailScreen: React.FC<
       headerRight: () => (
         <Popup
           trigger={
-            <Image
-              source={require('../../../assets/Options.png')}
-              style={styles.options}
-            />
+            <Pressable>
+              <Image
+                source={require('../../../assets/Options.png')}
+                style={styles.options}
+              />
+            </Pressable>
           }>
           <Menu>
             <MenuItem
