@@ -39,7 +39,7 @@ export const Modal: React.FC<ModalProps> = ({
   );
 
   return (
-    <Portal hostName="modal">
+    <Portal>
       {isVisible && (
         <TouchableOpacity
           activeOpacity={1}

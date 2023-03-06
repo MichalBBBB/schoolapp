@@ -95,7 +95,7 @@ android {
 
     namespace "com.mobile"
     defaultConfig {
-        manifestPlaceholders = ['appAuthRedirectScheme': 'com.mobile']
+        manifestPlaceholders = [appAuthRedirectScheme: 'com.googleusercontent.apps.1073547053227-8unebat1npl554u7sficsagpmpdkb08j']
         applicationId "com.mobile"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion

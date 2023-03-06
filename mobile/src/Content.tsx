@@ -31,7 +31,6 @@ const replaceAllData = async (client: ApolloClient<any>) => {
 
 const openQueue = async (client: ApolloClient<any>) => {
   await persistentQueueLink.open();
-  console.log('isOnline Change');
   await replaceAllData(client);
   console.log('all loaded');
 };
@@ -42,11 +41,7 @@ export const Content: React.FC = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   useEffect(() => {
-    console.log(isOnline);
-    console.log('client changed');
-
     if (isOnline && isLoggedIn) {
-      console.log('here', isOnline, isLoggedIn);
       openQueue(client);
     } else if (!isOnline) {
       persistentQueueLink.close();
@@ -56,7 +51,7 @@ export const Content: React.FC = () => {
   useEffect(() => {
     let interval: NodeJS.Timer;
     (async () => {
-      const isActuallyOnline = (await NetInfo.fetch()).isInternetReachable;
+      const isActuallyOnline = (await NetInfo.fetch()).isConnected;
       // when the server is down, isActuallyOnline is going to be true
       // we keep checking if the server started working every few seconds
       if (isActuallyOnline && !isOnline) {
@@ -77,8 +72,6 @@ export const Content: React.FC = () => {
     <ThemeProvider>
       <GestureHandlerRootView style={{flex: 1}}>
         <PortalProvider>
-          <PortalHost name="menu" />
-          <PortalHost name="modal" />
           <Routes />
         </PortalProvider>
       </GestureHandlerRootView>

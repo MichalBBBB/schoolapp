@@ -10,7 +10,7 @@ import {
   Operation,
 } from '@apollo/client';
 import {v4 as uuidv4} from 'uuid';
-import {storage} from '../App';
+import {isOnlineVar, storage} from '../App';
 
 export type QueueItem = {
   id: string;
@@ -27,6 +27,7 @@ export class PersistentQueueLink extends ApolloLink {
   private queue: QueueItem[] = [];
   private client: ApolloClient<NormalizedCacheObject> | null = null;
 
+  // after the app goes online, we need to go through the queue and execute all mutations
   public async open() {
     // storage.set(queueStorageKey, JSON.stringify([]));
     const savedQueue = storage.getString(queueStorageKey);
@@ -50,9 +51,14 @@ export class PersistentQueueLink extends ApolloLink {
             optimisticResponse: context.optimisticResponse,
           })
             .finally(() => {
-              this.queue.filter(queueItem => queueItem.id !== item.id);
+              // remove the finished operation from the queue
+              this.queue = this.queue.filter(
+                queueItem => queueItem.id !== item.id,
+              );
             })
-            .catch(err => console.warn('queuelink error', err)),
+            .catch(err => {
+              console.warn('queuelink error', err);
+            }),
         );
       });
       await Promise.all(promises);
@@ -67,19 +73,7 @@ export class PersistentQueueLink extends ApolloLink {
     this.client = client;
   }
 
-  public request(operation: Operation, forward: NextLink) {
-    if (this.isOpen) {
-      console.log(this.isOpen);
-      return forward(operation);
-    }
-    if (operation.getContext().skipQueue) {
-      return forward(operation);
-    }
-
-    if (!operation.getContext().optimisticResponse) {
-      return forward(operation);
-    }
-
+  private addRequestToQueue = (operation: Operation) => {
     const name: string = operation.operationName;
     const queryJSON: string = JSON.stringify(operation.query);
     const variablesJSON: string = JSON.stringify(operation.variables);
@@ -96,8 +90,60 @@ export class PersistentQueueLink extends ApolloLink {
       id,
     });
     storage.set(queueStorageKey, JSON.stringify(this.queue));
-    console.log('result', context.optimisticResponse);
-    console.log('context', context);
+  };
+
+  // if the app doesn't know the server is offline, or there is some other network error,
+  // we need to check if there were any errors on the operation, otherwise the operation would be lost
+  private forwardCatchErrors(forward: NextLink, operation: Operation) {
+    // we need to return a new observable object, to control the next and error resolutions
+    return new Observable<FetchResult>((observer: Observer<FetchResult>) => {
+      const sub = forward(operation).subscribe({
+        // if there were no errors, just return the original value
+        next: result => {
+          observer.next?.(result);
+        },
+        error: e => {
+          // if there is an optimistic response - the operation should be put into queue,
+          // add it to queue and return optimistic response
+          const optimisticResponse = operation.getContext().optimisticResponse;
+          if (optimisticResponse) {
+            this.addRequestToQueue(operation);
+            observer.next?.({data: optimisticResponse} as MutationResult);
+            // tell the app it is offline
+            isOnlineVar(false);
+            this.close();
+          } else {
+            observer.error?.(e);
+          }
+        },
+      });
+      return () => {
+        sub.unsubscribe();
+      };
+    });
+  }
+
+  public request(operation: Operation, forward: NextLink) {
+    // happens when the app thinks is online - queue is open
+    if (this.isOpen) {
+      // preventitive measure - if there is something stuck in queue even when it is open,
+      // remove it to prevent causing bigger issues
+      const queue = JSON.parse(storage.getString(queueStorageKey) || '[]');
+      if ((queue as Array<any>).length !== 0) {
+        storage.set(queueStorageKey, JSON.stringify([]));
+      }
+      return this.forwardCatchErrors(forward, operation);
+    }
+    if (operation.getContext().skipQueue) {
+      return this.forwardCatchErrors(forward, operation);
+    }
+    // if there was no optimisticResponse provided, we can't run the offline process
+    if (!operation.getContext().optimisticResponse) {
+      return this.forwardCatchErrors(forward, operation);
+    }
+
+    this.addRequestToQueue(operation);
+    const context = operation.getContext();
     return new Observable<FetchResult>((observer: Observer<FetchResult>) => {
       observer.next?.({data: context.optimisticResponse} as MutationResult);
       observer.complete?.();

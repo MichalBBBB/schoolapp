@@ -180,6 +180,7 @@ const TaskDetailScreen: React.FC<
         />
       </View>
       <EditDateModal
+        initialDate={task.dueDate ? dayjs(task.dueDate) : dayjs()}
         subject={task.subject}
         onClose={() => {
           setEditDueDateModalIsVisible(false);
@@ -199,7 +200,7 @@ const TaskDetailScreen: React.FC<
         isVisible={editDueDateModalIsVisible}
       />
       <EditDateModal
-        initialDate={dayjs(task.doDate)}
+        initialDate={task.doDate ? dayjs(task.doDate) : dayjs()}
         initialReminderTimes={task.reminders.map(item => item.minutesBefore)}
         reminders
         onClose={() => {
@@ -209,12 +210,13 @@ const TaskDetailScreen: React.FC<
           let reminders: RemindersInput[] | undefined;
           if (reminderTimes) {
             reminders = reminderTimes.map(item => {
+              console.log('date', dayjs(date).subtract(item, 'minute'));
               const id = uuidv4();
               return {
                 id,
                 title: task.name,
                 minutesBefore: item,
-                date: dayjs(task.doDate).subtract(item, 'minute').toDate(),
+                date: dayjs(date).subtract(item, 'minute').toDate(),
               };
             });
           }

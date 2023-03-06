@@ -23,6 +23,7 @@ import {allQueries} from './utils/allQueries';
 import {Content} from './Content';
 import notifee from '@notifee/react-native';
 import NetInfo from '@react-native-community/netinfo';
+import {createRemindersChannel} from './utils/notifications';
 
 export const isLoggedInVar = makeVar(true);
 export const isOnlineVar = makeVar(true);
@@ -51,6 +52,7 @@ const App = () => {
 
   useEffect(() => {
     initializeApolloClient();
+    createRemindersChannel();
   }, []);
 
   if (!client) {

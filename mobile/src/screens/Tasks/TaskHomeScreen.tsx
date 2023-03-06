@@ -52,10 +52,6 @@ const TaskHomeScreen: React.FC<
   const [addTaskOpen, setAddTaskOpen] = useState(false);
   const [theme] = useTheme();
 
-  useEffect(() => {
-    console.log('projectTasks', projectTasks);
-  });
-
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (

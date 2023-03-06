@@ -196,7 +196,7 @@ export const Popup: React.FC<PopupProps> = ({
         },
         ref: triggerWrapperRef,
       })}
-      <Portal hostName="modal">
+      <Portal>
         {popupVisible && (
           <TouchableOpacity
             activeOpacity={1}

@@ -3,6 +3,7 @@ import React, {memo} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {BasicText} from '../basicViews/BasicText';
 import Day from './day';
+import weekOfYear from 'dayjs/plugin/weekOfYear';
 
 interface WeekProps {
   week: dayjs.Dayjs[] | string;
@@ -12,6 +13,8 @@ interface WeekProps {
   calendarWidth: number;
   weekHeight: number;
 }
+
+dayjs.extend(weekOfYear);
 
 const Week: React.FC<WeekProps> = ({
   week,
@@ -51,6 +54,9 @@ const styles = StyleSheet.create({
 });
 
 export default memo(Week, (prevProps, nextProps) => {
+  if (prevProps.week !== nextProps.week) {
+    return false;
+  }
   if (typeof nextProps.week == 'string' && typeof prevProps.week == 'string') {
     if (nextProps.week !== prevProps.week) return false;
   } else if (
@@ -60,16 +66,13 @@ export default memo(Week, (prevProps, nextProps) => {
     if (!nextProps.week[0].isSame(prevProps.week[0], 'day')) return false;
   }
 
+  // if the new of old selected day is in this week, rerender
   if (
     typeof nextProps.week !== 'string' &&
     typeof prevProps.week !== 'string' &&
-    ((nextProps.selectedDay?.isBefore(nextProps.week[6].add(1, 'day')) &&
-      nextProps.selectedDay.isAfter(nextProps.week[0].subtract(1, 'day'))) ||
-      (prevProps.selectedDay?.isBefore(nextProps.week[6].add(1, 'day')) &&
-        prevProps.selectedDay.isAfter(nextProps.week[0].subtract(1, 'day'))))
+    (nextProps.selectedDay?.week() == nextProps.week[0].week() ||
+      prevProps.selectedDay?.week() == nextProps.week[0].week())
   ) {
-    // month does not change, but new date is selected. Only re-render the
-    // month where the newly selected date is in it.
     return false;
   }
   return true;

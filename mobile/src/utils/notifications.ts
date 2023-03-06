@@ -1,11 +1,19 @@
-import notifee, {TimestampTrigger, TriggerType} from '@notifee/react-native';
+import notifee, {
+  AndroidImportance,
+  TimestampTrigger,
+  TriggerType,
+} from '@notifee/react-native';
 
 export const reminderChannelId = 'reminders';
 
+let channel;
+
 export const createRemindersChannel = async () => {
-  await notifee.createChannel({
+  channel = await notifee.createChannel({
     id: reminderChannelId,
     name: 'Reminders',
+    sound: 'default',
+    importance: AndroidImportance.HIGH,
   });
 };
 

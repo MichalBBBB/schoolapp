@@ -65,6 +65,10 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
     onClose();
   };
 
+  useEffect(() => {
+    console.log(visible);
+  });
+
   return (
     <>
       <BasicModalCard
@@ -73,6 +77,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
         isVisible={visible && viewVisible == 'main'}
         avoidKeyboard={true}
         onBackdropPress={() => {
+          console.log('closing window');
           closeWindow();
         }}>
         <BasicTextInput

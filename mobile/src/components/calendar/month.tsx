@@ -83,12 +83,12 @@ export default memo(Month, (prevProps, nextProps) => {
     // render new month due to month change
     return false;
   }
+  // if the new or old selected day is in this month, rerender
   if (
     typeof nextProps.month !== 'string' &&
-    nextProps.selectedDay?.get('month') === nextProps.month.get('month')
+    (nextProps.selectedDay?.get('month') === nextProps.month.get('month') ||
+      prevProps.selectedDay?.get('month') === nextProps.month.get('month'))
   ) {
-    // month does not change, but new date is selected. Only re-render the
-    // month where the newly selected date is in it.
     return false;
   }
   return true;
