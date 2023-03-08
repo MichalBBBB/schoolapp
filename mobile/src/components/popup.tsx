@@ -96,14 +96,16 @@ export const Popup: React.FC<PopupProps> = ({
     let left = 0;
     let top = 0;
 
-    left =
-      triggerDimensions.left -
-      contentDimensions.width +
-      triggerDimensions.width;
     // if the popup is outside the screen from the left
     if (triggerDimensions.left - contentDimensions.width < 0) {
       left = triggerDimensions.left;
       setisRight(false);
+    } else {
+      left =
+        triggerDimensions.left -
+        contentDimensions.width +
+        triggerDimensions.width;
+      setisRight(true);
     }
 
     if (isIOS) {

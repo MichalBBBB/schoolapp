@@ -27,8 +27,12 @@ import EditDateModal from '../../components/editDateWindow';
 import {Popup} from '../../components/popup';
 import {SelectSubjectPopup} from '../../components/selectSubject/selectSubjectPopup';
 import Task from '../../components/task';
+import TaskListProjectTask from '../../components/taskListProjectTask';
 import {useTheme} from '../../contexts/ThemeContext';
 import {
+  ProjectTaskFragment,
+  ProjectTaskWithProjectFragment,
+  TaskFragment,
   useGetAllTasksQuery,
   useGetProjectTasksOfUserLazyQuery,
   useGetProjectTasksOfUserQuery,
@@ -78,21 +82,40 @@ const TaskHomeScreen: React.FC<
       ),
     });
   });
+
+  const MyFlatList = FlatList<TaskFragment | ProjectTaskWithProjectFragment>;
+
+  const list: Array<TaskFragment | ProjectTaskWithProjectFragment> =
+    (
+      data?.getAllTasks.filter(item => {
+        return item.done == false;
+      }) as Array<TaskFragment | ProjectTaskWithProjectFragment>
+    ).concat(
+      projectTasks?.getProjectTasksOfUser.filter(item => !item.done) || [],
+    ) || [];
+
   return (
     <View style={{flex: 1}}>
-      <FlatList
+      <MyFlatList
         contentContainerStyle={{
           borderRadius: 15,
           overflow: 'hidden',
           backgroundColor: theme.colors.accentBackground,
         }}
         style={{padding: 10}}
-        data={data?.getAllTasks.filter(item => {
-          return item.done == false;
-        })}
-        renderItem={({item, index}) => (
-          <Task task={item} backgroundColor={'accentBackground'} />
-        )}
+        data={list}
+        renderItem={({item, index}) => {
+          if ('projectId' in item) {
+            return (
+              <TaskListProjectTask
+                projectTask={item}
+                backgroundColor="accentBackground"
+              />
+            );
+          } else {
+            return <Task task={item} backgroundColor={'accentBackground'} />;
+          }
+        }}
         //ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
       <View style={{position: 'absolute', right: 0, bottom: 0, margin: 20}}>

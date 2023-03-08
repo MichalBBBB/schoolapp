@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   Image,
   Text,
@@ -15,20 +15,30 @@ import {
   useDeleteProjectTaskMutation,
   useToggleProjectTaskMutation,
 } from '../generated/graphql';
+import {ColorsObject} from '../types/Theme';
+import {AssignMembersWindow} from './assignMembersWindow';
 import {BasicButton} from './basicViews/BasicButton';
 import {BasicText} from './basicViews/BasicText';
+import EditProjectTaskWindow from './editProjectTaskWindow';
+import {Menu} from './menu';
+import {MenuItem} from './menu/MenuItem';
+import {Popup} from './popup';
 import SlidingView from './slidingView';
 
 const ProjectTask: React.FC<{
   projectTask: ProjectTaskFragment;
-  onUsersPress: () => void;
-}> = ({projectTask, onUsersPress}) => {
+  backgroundColor?: keyof ColorsObject;
+}> = ({projectTask, backgroundColor = 'background'}) => {
   const [deleteProjectTask] = useDeleteProjectTaskMutation({
     context: {skipQeue: true},
   });
   const [toggleProjectTask] = useToggleProjectTaskMutation({
     context: {skipQeue: true},
   });
+
+  const [isAssignMembersVisible, setIsAssignMembersVisible] = useState(false);
+  const [isEditProjectTaskVisible, setIsEditProjectTaskVisible] =
+    useState(false);
 
   const [theme] = useTheme();
 
@@ -66,7 +76,7 @@ const ProjectTask: React.FC<{
           <View
             style={[
               styles.container,
-              {backgroundColor: theme.colors.background},
+              {backgroundColor: theme.colors[backgroundColor]},
             ]}>
             <View style={styles.leftContainer}>
               <BasicButton
@@ -89,18 +99,54 @@ const ProjectTask: React.FC<{
               </BasicButton>
               <BasicText>{projectTask.name}</BasicText>
             </View>
-            <BasicButton
-              variant="unstyled"
-              onPress={() => {
-                onUsersPress();
-              }}>
-              <BasicText color="textSecondary">Add users</BasicText>
-            </BasicButton>
+            <Popup
+              trigger={
+                <BasicButton
+                  variant="unstyled"
+                  spacing="none"
+                  style={{marginRight: 5}}>
+                  <Image
+                    style={{height: 20, width: 20}}
+                    source={require('../../assets/Options.png')}
+                  />
+                </BasicButton>
+              }>
+              <Menu>
+                <MenuItem
+                  text="Assign users"
+                  onPress={() => {
+                    setIsAssignMembersVisible(true);
+                  }}
+                />
+                <MenuItem
+                  text="edit"
+                  onPress={() => {
+                    setIsEditProjectTaskVisible(true);
+                  }}
+                />
+              </Menu>
+            </Popup>
           </View>
         }
         backView={[back]}
         backViewWidth={70}
         numberOfBackElements={1}
+      />
+      <AssignMembersWindow
+        isVisible={isAssignMembersVisible}
+        taskId={projectTask.id}
+        onClose={() => {
+          setIsAssignMembersVisible(false);
+        }}
+        projectId={projectTask.projectId}
+      />
+      <EditProjectTaskWindow
+        visible={isEditProjectTaskVisible}
+        onClose={() => {
+          setIsEditProjectTaskVisible(false);
+        }}
+        projectId={projectTask.projectId}
+        projectTask={projectTask}
       />
     </View>
   );
@@ -117,9 +163,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    padding: 10,
   },
   leftContainer: {
-    padding: 10,
     flexDirection: 'row',
     alignItems: 'center',
   },

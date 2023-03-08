@@ -12,10 +12,12 @@ import {
 import {AssignMembersWindow} from '../../components/assignMembersWindow';
 import BasicInputWindow from '../../components/basicInputWindow';
 import {BasicText} from '../../components/basicViews/BasicText';
+import EditProjectTaskWindow from '../../components/editProjectTaskWindow';
 import {Menu} from '../../components/menu';
 import {MenuItem} from '../../components/menu/MenuItem';
 import {Popup} from '../../components/popup';
 import ProjectTask from '../../components/projectTask';
+import {useTheme} from '../../contexts/ThemeContext';
 import {
   GetProjectsDocument,
   useAddProjectTaskMutation,
@@ -27,18 +29,16 @@ const ProjectDetailScreen: React.FC<
   NativeStackScreenProps<ProjectStackParamList, 'ProjectDetailScreen'>
 > = ({route, navigation}) => {
   const {data: projects} = useGetProjectsQuery();
-  const [addProjectTask, {error}] = useAddProjectTaskMutation({
-    context: {skipQeue: true},
-  });
 
   const project = projects?.getProjects.find(
     item => item.id == route.params.projectId,
   );
   const [addTaskModalIsVisible, setAddTaskModalIsVisible] = useState(false);
-  const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
+  const [theme] = useTheme();
 
   useLayoutEffect(() => {
     navigation.setOptions({
+      title: project?.name,
       headerRight: () => (
         <Popup
           trigger={
@@ -88,40 +88,26 @@ const ProjectDetailScreen: React.FC<
           </TouchableOpacity>
         </View>
         <FlatList
+          contentContainerStyle={{
+            borderRadius: 15,
+            overflow: 'hidden',
+            backgroundColor: theme.colors.accentBackground,
+          }}
           data={project?.tasks}
           renderItem={({item}) => (
             <ProjectTask
               projectTask={item}
-              onUsersPress={() => {
-                setActiveTaskId(item.id);
-              }}
+              backgroundColor={'accentBackground'}
             />
           )}
         />
       </View>
-      <BasicInputWindow
-        placeholder="Task name"
+      <EditProjectTaskWindow
+        projectId={project.id}
         visible={addTaskModalIsVisible}
         onClose={() => {
           setAddTaskModalIsVisible(false);
         }}
-        onSubmit={text => {
-          addProjectTask({
-            variables: {
-              name: text,
-              projectId: project.id,
-            },
-            refetchQueries: [GetProjectsDocument],
-          });
-        }}
-      />
-      <AssignMembersWindow
-        isVisible={Boolean(activeTaskId)}
-        taskId={activeTaskId}
-        onClose={() => {
-          setActiveTaskId(null);
-        }}
-        project={project}
       />
     </>
   );
@@ -132,6 +118,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginBottom: 10,
   },
   container: {
     margin: 10,

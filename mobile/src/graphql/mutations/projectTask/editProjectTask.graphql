@@ -1,0 +1,10 @@
+mutation EditProjectTask(
+  $id: String!
+  $name: String!
+  $dueDate: DateTime
+  $doDate: DateTime
+) {
+  editProjectTask(id: $id, name: $name, dueDate: $dueDate, doDate: $doDate) {
+    ...ProjectTask
+  }
+}

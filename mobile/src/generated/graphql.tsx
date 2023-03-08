@@ -89,6 +89,7 @@ export type Mutation = {
   editEvent: CalendarEvent;
   editLesson: Lesson;
   editLessonTimes: Array<LessonTime>;
+  editProjectTask: ProjectTask;
   editSubject: Subject;
   editTask: Task;
   googleSignIn: UserSucces;
@@ -115,6 +116,7 @@ export type MutationAddMemberToProjectArgs = {
 
 
 export type MutationAddProjectTaskArgs = {
+  doDate?: InputMaybe<Scalars['DateTime']>;
   dueDate?: InputMaybe<Scalars['DateTime']>;
   name: Scalars['String'];
   projectId: Scalars['String'];
@@ -256,6 +258,14 @@ export type MutationEditLessonTimesArgs = {
 };
 
 
+export type MutationEditProjectTaskArgs = {
+  doDate?: InputMaybe<Scalars['DateTime']>;
+  dueDate?: InputMaybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  name: Scalars['String'];
+};
+
+
 export type MutationEditSubjectArgs = {
   colorName: Scalars['String'];
   id: Scalars['String'];
@@ -337,6 +347,7 @@ export type ProjectTask = {
   dueDate?: Maybe<Scalars['DateTime']>;
   id: Scalars['String'];
   name: Scalars['String'];
+  project: Project;
   projectId: Scalars['String'];
   publicUsers: Array<PublicUser>;
   text?: Maybe<Scalars['String']>;
@@ -448,7 +459,7 @@ export type User = {
   lessonTimes: Array<LessonTime>;
   lessons: Array<Lesson>;
   ownedProjects: Array<Project>;
-  projectTasks: Array<Task>;
+  projectTasks: Array<ProjectTask>;
   reminders: Array<Reminder>;
   subjects: Array<Subject>;
   tasks: Array<Task>;
@@ -494,9 +505,13 @@ export type ProjectFragment = { __typename?: 'Project', name: string, id: string
 
 export type ProjectTaskFragment = { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, projectId: string, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> };
 
+export type ProjectTaskWithProjectFragment = { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, projectId: string, project: { __typename?: 'Project', id: string, name: string }, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> };
+
 export type PublicUserFragment = { __typename?: 'PublicUser', name: string, email: string, id: string };
 
 export type ReminderFragment = { __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null | undefined, date: any, taskId: string };
+
+export type SimpleProjectFragment = { __typename?: 'Project', id: string, name: string };
 
 export type SubjectFragment = { __typename?: 'Subject', id: string, name: string, colorName: string };
 
@@ -619,6 +634,7 @@ export type RemoveMemberFromProjectMutation = { __typename?: 'Mutation', removeM
 export type AddProjectTaskMutationVariables = Exact<{
   name: Scalars['String'];
   dueDate?: InputMaybe<Scalars['DateTime']>;
+  doDate?: InputMaybe<Scalars['DateTime']>;
   projectId: Scalars['String'];
 }>;
 
@@ -639,6 +655,16 @@ export type DeleteProjectTaskMutationVariables = Exact<{
 
 
 export type DeleteProjectTaskMutation = { __typename?: 'Mutation', deleteProjectTask: boolean };
+
+export type EditProjectTaskMutationVariables = Exact<{
+  id: Scalars['String'];
+  name: Scalars['String'];
+  dueDate?: InputMaybe<Scalars['DateTime']>;
+  doDate?: InputMaybe<Scalars['DateTime']>;
+}>;
+
+
+export type EditProjectTaskMutation = { __typename?: 'Mutation', editProjectTask: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, projectId: string, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
 
 export type RemoveAssignedMemberMutationVariables = Exact<{
   userId: Scalars['String'];
@@ -808,7 +834,7 @@ export type GetInvitesQuery = { __typename?: 'Query', getInvites: Array<{ __type
 export type GetProjectTasksOfUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProjectTasksOfUserQuery = { __typename?: 'Query', getProjectTasksOfUser: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, projectId: string, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }> };
+export type GetProjectTasksOfUserQuery = { __typename?: 'Query', getProjectTasksOfUser: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, projectId: string, project: { __typename?: 'Project', id: string, name: string }, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> }> };
 
 export type GetProjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -910,6 +936,29 @@ export const ProjectFragmentDoc = gql`
   }
 }
     ${ProjectTaskFragmentDoc}
+${PublicUserFragmentDoc}`;
+export const SimpleProjectFragmentDoc = gql`
+    fragment SimpleProject on Project {
+  id
+  name
+}
+    `;
+export const ProjectTaskWithProjectFragmentDoc = gql`
+    fragment ProjectTaskWithProject on ProjectTask {
+  id
+  name
+  dueDate
+  doDate
+  done
+  projectId
+  project {
+    ...SimpleProject
+  }
+  publicUsers {
+    ...PublicUser
+  }
+}
+    ${SimpleProjectFragmentDoc}
 ${PublicUserFragmentDoc}`;
 export const SubtaskFragmentDoc = gql`
     fragment Subtask on Subtask {
@@ -1432,8 +1481,13 @@ export type RemoveMemberFromProjectMutationHookResult = ReturnType<typeof useRem
 export type RemoveMemberFromProjectMutationResult = Apollo.MutationResult<RemoveMemberFromProjectMutation>;
 export type RemoveMemberFromProjectMutationOptions = Apollo.BaseMutationOptions<RemoveMemberFromProjectMutation, RemoveMemberFromProjectMutationVariables>;
 export const AddProjectTaskDocument = gql`
-    mutation AddProjectTask($name: String!, $dueDate: DateTime, $projectId: String!) {
-  addProjectTask(name: $name, dueDate: $dueDate, projectId: $projectId) {
+    mutation AddProjectTask($name: String!, $dueDate: DateTime, $doDate: DateTime, $projectId: String!) {
+  addProjectTask(
+    name: $name
+    dueDate: $dueDate
+    projectId: $projectId
+    doDate: $doDate
+  ) {
     ...ProjectTask
   }
 }
@@ -1455,6 +1509,7 @@ export type AddProjectTaskMutationFn = Apollo.MutationFunction<AddProjectTaskMut
  *   variables: {
  *      name: // value for 'name'
  *      dueDate: // value for 'dueDate'
+ *      doDate: // value for 'doDate'
  *      projectId: // value for 'projectId'
  *   },
  * });
@@ -1531,6 +1586,42 @@ export function useDeleteProjectTaskMutation(baseOptions?: Apollo.MutationHookOp
 export type DeleteProjectTaskMutationHookResult = ReturnType<typeof useDeleteProjectTaskMutation>;
 export type DeleteProjectTaskMutationResult = Apollo.MutationResult<DeleteProjectTaskMutation>;
 export type DeleteProjectTaskMutationOptions = Apollo.BaseMutationOptions<DeleteProjectTaskMutation, DeleteProjectTaskMutationVariables>;
+export const EditProjectTaskDocument = gql`
+    mutation EditProjectTask($id: String!, $name: String!, $dueDate: DateTime, $doDate: DateTime) {
+  editProjectTask(id: $id, name: $name, dueDate: $dueDate, doDate: $doDate) {
+    ...ProjectTask
+  }
+}
+    ${ProjectTaskFragmentDoc}`;
+export type EditProjectTaskMutationFn = Apollo.MutationFunction<EditProjectTaskMutation, EditProjectTaskMutationVariables>;
+
+/**
+ * __useEditProjectTaskMutation__
+ *
+ * To run a mutation, you first call `useEditProjectTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditProjectTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editProjectTaskMutation, { data, loading, error }] = useEditProjectTaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      dueDate: // value for 'dueDate'
+ *      doDate: // value for 'doDate'
+ *   },
+ * });
+ */
+export function useEditProjectTaskMutation(baseOptions?: Apollo.MutationHookOptions<EditProjectTaskMutation, EditProjectTaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditProjectTaskMutation, EditProjectTaskMutationVariables>(EditProjectTaskDocument, options);
+      }
+export type EditProjectTaskMutationHookResult = ReturnType<typeof useEditProjectTaskMutation>;
+export type EditProjectTaskMutationResult = Apollo.MutationResult<EditProjectTaskMutation>;
+export type EditProjectTaskMutationOptions = Apollo.BaseMutationOptions<EditProjectTaskMutation, EditProjectTaskMutationVariables>;
 export const RemoveAssignedMemberDocument = gql`
     mutation RemoveAssignedMember($userId: String!, $taskId: String!) {
   removeAssignedMember(userId: $userId, taskId: $taskId) {
@@ -2356,10 +2447,10 @@ export type GetInvitesQueryResult = Apollo.QueryResult<GetInvitesQuery, GetInvit
 export const GetProjectTasksOfUserDocument = gql`
     query GetProjectTasksOfUser {
   getProjectTasksOfUser {
-    ...ProjectTask
+    ...ProjectTaskWithProject
   }
 }
-    ${ProjectTaskFragmentDoc}`;
+    ${ProjectTaskWithProjectFragmentDoc}`;
 
 /**
  * __useGetProjectTasksOfUserQuery__

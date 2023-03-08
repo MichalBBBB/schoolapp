@@ -1,8 +1,10 @@
 import React, {useEffect} from 'react';
 import {FlatList, Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {
+  GetProjectTasksOfUserDocument,
   ProjectFragment,
   useAssignMemberMutation,
+  useGetProjectsQuery,
   useRemoveAssignedMemberMutation,
 } from '../generated/graphql';
 import {BasicButton} from './basicViews/BasicButton';
@@ -11,19 +13,23 @@ import {BasicText} from './basicViews/BasicText';
 
 interface AssignMembersWindow {
   isVisible: boolean;
-  project: ProjectFragment;
+  projectId: string;
   taskId?: string | null;
   onClose: () => void;
 }
 
 export const AssignMembersWindow: React.FC<AssignMembersWindow> = ({
   isVisible,
-  project,
+  projectId,
   onClose,
   taskId,
 }) => {
   const [assignMember] = useAssignMemberMutation();
   const [removeAssignedMember] = useRemoveAssignedMemberMutation();
+  const {data: projects} = useGetProjectsQuery();
+  const project = projects?.getProjects.find(item => {
+    return item.id == projectId;
+  });
   const task = project?.tasks.find(item => {
     return item.id == taskId;
   });
@@ -37,6 +43,7 @@ export const AssignMembersWindow: React.FC<AssignMembersWindow> = ({
 
   return (
     <BasicModalCard
+      spacing="l"
       isVisible={isVisible}
       alignCard={'center'}
       onBackdropPress={() => {
@@ -72,14 +79,14 @@ export const AssignMembersWindow: React.FC<AssignMembersWindow> = ({
           <View
             style={{
               width: '100%',
-              height: 2,
+              height: 1,
               borderRadius: 1,
               backgroundColor: '#ddd',
             }}
           />
         </View>
         <FlatList
-          data={project.members.filter(member => {
+          data={project?.members.filter(member => {
             return !task?.publicUsers.some(item => {
               return member.id == item.id;
             });
@@ -97,7 +104,10 @@ export const AssignMembersWindow: React.FC<AssignMembersWindow> = ({
                 variant="unstyled"
                 spacing="none"
                 onPress={() => {
-                  assignMember({variables: {userId: item.id, taskId: taskId!}});
+                  assignMember({
+                    variables: {userId: item.id, taskId: taskId!},
+                    refetchQueries: [GetProjectTasksOfUserDocument],
+                  });
                 }}>
                 <Image
                   source={require('../../assets/Plus.png')}

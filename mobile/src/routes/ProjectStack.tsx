@@ -31,7 +31,13 @@ const ProjectStack: React.FC<
           }
         },
       })}>
-      <Stack.Screen name="ProjectHomeScreen" component={ProjectHomeScreen} />
+      <Stack.Screen
+        name="ProjectHomeScreen"
+        component={ProjectHomeScreen}
+        options={{
+          title: 'Projects',
+        }}
+      />
       <Stack.Screen
         name="ProjectDetailScreen"
         component={ProjectDetailScreen}

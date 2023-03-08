@@ -1,3 +1,4 @@
+import DataLoader from "dataloader";
 import {
   Arg,
   Ctx,
@@ -8,14 +9,32 @@ import {
   Root,
   UseMiddleware,
 } from "type-graphql";
+import { Project } from "../entities/Project";
 import { ProjectTask } from "../entities/ProjectTask";
 import { User } from "../entities/User";
 import { isAuth } from "../middleware/isAuth";
 import { isUserInProject } from "../utils/isUserInProject";
 import { MyContext } from "../utils/MyContext";
 
+const projectLoader = new DataLoader((keys) => loadProjects(keys as [string]), {
+  cache: false,
+});
+
+const loadProjects = async (keys: [string]) => {
+  const result = await Project.createQueryBuilder("subject")
+    .select()
+    .where("id IN (:...ids)", { ids: keys })
+    .getMany();
+  return keys.map((key) => result.find((subject) => subject.id === key));
+};
+
 @Resolver(ProjectTask)
 export class projectTaskResolver {
+  @FieldResolver(() => Project)
+  async project(@Root() root: ProjectTask) {
+    return projectLoader.load(root.projectId);
+  }
+
   @FieldResolver()
   async publicUsers(@Root() root: ProjectTask) {
     const fetchedProjectTask = await ProjectTask.findOne({
@@ -36,13 +55,35 @@ export class projectTaskResolver {
   async addProjectTask(
     @Arg("name") name: string,
     @Arg("projectId") projectId: string,
-    @Arg("dueDate", { nullable: true }) dueDate?: Date
+    @Arg("dueDate", { nullable: true }) dueDate?: Date,
+    @Arg("doDate", { nullable: true }) doDate?: Date
   ) {
     return ProjectTask.create({
       projectId: projectId,
       name,
       dueDate,
+      doDate,
     }).save();
+  }
+
+  @Mutation(() => ProjectTask)
+  @UseMiddleware(isAuth)
+  async editProjectTask(
+    @Arg("id") id: string,
+    @Arg("name") name: string,
+    @Arg("dueDate", { nullable: true }) dueDate?: Date,
+    @Arg("doDate", { nullable: true }) doDate?: Date
+  ) {
+    const projectTask = await ProjectTask.findOne({ where: { id } });
+    if (projectTask) {
+      projectTask.name = name;
+      projectTask.dueDate = dueDate;
+      projectTask.doDate = doDate;
+      await projectTask.save();
+      return projectTask;
+    } else {
+      throw new Error("task wasn't found");
+    }
   }
 
   @Mutation(() => ProjectTask)

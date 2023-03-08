@@ -1,5 +1,5 @@
 query GetProjectTasksOfUser {
   getProjectTasksOfUser {
-    ...ProjectTask
+    ...ProjectTaskWithProject
   }
 }
