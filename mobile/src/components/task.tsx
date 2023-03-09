@@ -1,7 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
-import React, {useEffect, useState} from 'react';
+import React, {memo, useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, View, LayoutAnimation} from 'react-native';
 import {
   TaskFragment,
@@ -20,6 +20,7 @@ import {useToggleTask} from '../mutationHooks/task/toggleTask';
 import {useDeleteTask} from '../mutationHooks/task/deleteTask';
 import {useTheme} from '../contexts/ThemeContext';
 import {ColorsObject, SubjectColorsObject} from '../types/Theme';
+import {useEditTask} from '../mutationHooks/task/editTask';
 
 dayjs.extend(calendar);
 
@@ -35,10 +36,18 @@ export const calendarConfigWithoutTime = {
 const Task: React.FC<{
   task: TaskFragment;
   backgroundColor?: keyof ColorsObject;
-}> = ({task, backgroundColor = 'background'}) => {
+  planning?: Boolean;
+  planningDay?: dayjs.Dayjs;
+}> = ({
+  task,
+  backgroundColor = 'background',
+  planning = false,
+  planningDay = dayjs(),
+}) => {
   const [deleteTask] = useDeleteTask();
   const navigation = useNavigation<TaskNavigationProp>();
   const [toggleTask] = useToggleTask();
+  const [editTask] = useEditTask();
   const [done, setDone] = useState(false);
   const [theme] = useTheme();
 
@@ -52,6 +61,16 @@ const Task: React.FC<{
       id: task.id,
     });
   };
+
+  // only when planning tasks
+  const isTaskSelected = () => {
+    if (task.doDate) {
+      return dayjs(task.doDate).isSame(planningDay, 'day');
+    } else {
+      return false;
+    }
+  };
+
   const back = (
     <TouchableOpacity
       onPress={() => {
@@ -91,22 +110,47 @@ const Task: React.FC<{
               ]}>
               <TouchableOpacity
                 onPress={() => {
-                  setDone(!done);
-                  LayoutAnimation.configureNext(
-                    LayoutAnimation.Presets.easeInEaseOut,
-                  );
-                  setTimeout(() => {
-                    toggleTask({id: task.id});
-                  }, 400);
-                }}>
-                <Image
-                  source={
-                    done
-                      ? require('../../assets/Checkmark.png')
-                      : require('../../assets/Circle.png')
+                  if (planning) {
+                    LayoutAnimation.configureNext(
+                      LayoutAnimation.Presets.easeInEaseOut,
+                    );
+                    editTask({
+                      id: task.id,
+                      name: task.name,
+                      text: task.text,
+                      dueDate: task.dueDate,
+                      doDate: task.doDate ? null : planningDay.toDate(),
+                      subjectId: task.subject?.id,
+                    });
+                  } else {
+                    setDone(!done);
+                    LayoutAnimation.configureNext(
+                      LayoutAnimation.Presets.easeInEaseOut,
+                    );
+                    setTimeout(() => {
+                      toggleTask({id: task.id});
+                    }, 400);
                   }
-                  style={styles.checkMark}
-                />
+                }}>
+                {planning ? (
+                  <Image
+                    source={
+                      isTaskSelected()
+                        ? require('../../assets/Chevron-down.png')
+                        : require('../../assets/Chevron-up.png')
+                    }
+                    style={styles.arrow}
+                  />
+                ) : (
+                  <Image
+                    source={
+                      done
+                        ? require('../../assets/Checkmark.png')
+                        : require('../../assets/Circle.png')
+                    }
+                    style={styles.checkMark}
+                  />
+                )}
               </TouchableOpacity>
               <View style={{flex: 1}}>
                 <BasicText>{task.name}</BasicText>
@@ -159,6 +203,12 @@ const styles = StyleSheet.create({
     height: 25,
     marginRight: 10,
   },
+  arrow: {
+    resizeMode: 'stretch',
+    width: 20,
+    height: 20,
+    marginRight: 10,
+  },
   container: {
     padding: 10,
     paddingHorizontal: 15,
@@ -167,4 +217,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Task;
+export default memo(Task);

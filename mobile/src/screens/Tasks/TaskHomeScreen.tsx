@@ -22,8 +22,11 @@ import {
 import {isOnlineVar} from '../../App';
 import AddButton from '../../components/addButton';
 import AddTaskWindow from '../../components/addTaskWindow';
+import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicText} from '../../components/basicViews/BasicText';
 import EditDateModal from '../../components/editDateWindow';
+import {Menu} from '../../components/menu';
+import {MenuItem} from '../../components/menu/MenuItem';
 import {Popup} from '../../components/popup';
 import {SelectSubjectPopup} from '../../components/selectSubject/selectSubjectPopup';
 import Task from '../../components/task';
@@ -59,14 +62,31 @@ const TaskHomeScreen: React.FC<
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <SelectSubjectPopup
-          onSubmit={() => {}}
-          trigger={
-            <Pressable>
-              <BasicText>Popup</BasicText>
-            </Pressable>
-          }
-        />
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <BasicButton
+            variant="unstyled"
+            onPress={() => {
+              navigation.navigate('PlanDayScreen');
+            }}>
+            <Image
+              source={require('../../../assets/Today.png')}
+              style={{height: 25, width: 25}}
+            />
+          </BasicButton>
+          <Popup
+            trigger={
+              <BasicButton variant="unstyled">
+                <Image
+                  source={require('../../../assets/Options.png')}
+                  style={{height: 20, width: 20}}
+                />
+              </BasicButton>
+            }>
+            <Menu>
+              <MenuItem text="something random" onPress={() => {}} />
+            </Menu>
+          </Popup>
+        </View>
       ),
       headerLeft: () => (
         <Pressable

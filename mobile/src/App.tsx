@@ -29,7 +29,7 @@ export const isLoggedInVar = makeVar(true);
 export const isOnlineVar = makeVar(true);
 export const persistentQueueLink = new PersistentQueueLink();
 dayjs.extend(weekday);
-dayjs.locale('sk');
+dayjs.locale('en');
 
 export const storage = new MMKV();
 
