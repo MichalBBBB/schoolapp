@@ -191,7 +191,6 @@ const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
           onChangeActiveWeek(weeksCopy[newIndex] as dayjs.Dayjs);
         }
         setIndex(newIndex);
-        console.log(weeksCopy);
         setWeeks(weeksCopy);
       }}
     />

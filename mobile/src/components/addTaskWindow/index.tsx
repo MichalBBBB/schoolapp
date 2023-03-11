@@ -65,10 +65,6 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
     onClose();
   };
 
-  useEffect(() => {
-    console.log(visible);
-  });
-
   return (
     <>
       <BasicModalCard

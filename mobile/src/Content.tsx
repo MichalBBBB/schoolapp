@@ -49,6 +49,12 @@ export const Content: React.FC = () => {
   }, [isOnline, isLoggedIn]);
 
   useEffect(() => {
+    if (!isLoggedIn) {
+      client.resetStore();
+    }
+  }, [isLoggedInVar]);
+
+  useEffect(() => {
     let interval: NodeJS.Timer;
     (async () => {
       const isActuallyOnline = (await NetInfo.fetch()).isConnected;

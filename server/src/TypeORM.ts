@@ -10,6 +10,7 @@ import { Project } from "./entities/Project";
 import { UserProject } from "./entities/UserProject";
 import { ProjectTask } from "./entities/ProjectTask";
 import { Reminder } from "./entities/Reminder";
+import { Settings } from "./entities/Settings";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -30,5 +31,6 @@ export const AppDataSource = new DataSource({
     UserProject,
     ProjectTask,
     Reminder,
+    Settings,
   ],
 });

@@ -1,0 +1,5 @@
+mutation SetSettings($startOfWeek: String) {
+  setSettings(startOfWeek: $startOfWeek) {
+    ...Settings
+  }
+}

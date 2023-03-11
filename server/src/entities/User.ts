@@ -4,8 +4,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToMany,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
@@ -17,6 +19,7 @@ import { LessonTime } from "./LessonTime";
 import { Project } from "./Project";
 import { ProjectTask } from "./ProjectTask";
 import { Reminder } from "./Reminder";
+import { Settings } from "./Settings";
 import { Task } from "./Task";
 import { UserProject } from "./UserProject";
 
@@ -104,4 +107,13 @@ export class User extends BaseEntity {
   @OneToMany(() => Reminder, (reminder) => reminder.user)
   @Field(() => [Reminder])
   reminders: Relation<Reminder>;
+
+  @OneToOne(() => Settings)
+  @JoinColumn()
+  @Field(() => Settings)
+  settings: Relation<Settings>;
+
+  @Column()
+  @Field()
+  settingsId: string;
 }

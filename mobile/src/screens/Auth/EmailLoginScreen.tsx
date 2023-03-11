@@ -22,7 +22,7 @@ const EmailLoginScreen = () => {
   const [registerMutation] = useRegisterMutation();
   const [loginMutation] = useLoginMutation();
   const [checkUserExists, {data: UserExistsResult, error}] =
-    useUserExistsLazyQuery();
+    useUserExistsLazyQuery({fetchPolicy: 'network-only'});
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

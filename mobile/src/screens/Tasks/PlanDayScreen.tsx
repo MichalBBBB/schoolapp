@@ -26,7 +26,11 @@ export const PlanDayScreen: React.FC<
       return dayjs(item.doDate).isSame(day, 'day');
     }
   });
-  const unassignedTasks = unDoneTasks?.filter(item => !item.doDate);
+  const unassignedTasks = unDoneTasks
+    ?.filter(item => !item.doDate)
+    .sort((a, b) => {
+      return dayjs(a.dueDate).diff(b.dueDate, 'minute');
+    });
   return (
     <View style={{padding: 10}}>
       <FlatList

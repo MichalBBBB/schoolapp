@@ -12,6 +12,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import Month from './month';
 import {FlashList} from '@shopify/flash-list';
 import {BasicText} from '../basicViews/BasicText';
+import {useSettings} from '../../utils/useSettings';
 
 dayjs.extend(relativeTime);
 
@@ -42,9 +43,14 @@ const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
     weekHeight,
     onChangeActiveMonth,
   } = props;
+  const settings = useSettings();
   const [month, setMonth] = useState(dayjs());
   const [months, setMonths] = useState<Array<dayjs.Dayjs | string>>([]);
   const [index, setIndex] = useState(pastScrollRange);
+
+  useEffect(() => {
+    console.log(settings);
+  }, [settings]);
 
   useImperativeHandle(ref, () => {
     return {
@@ -163,6 +169,7 @@ const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
     return (
       <View style={{width: calendarWidth}}>
         <Month
+          startOfWeek={settings?.startOfWeek || 'MON'}
           weekHeight={weekHeight}
           calendarWidth={calendarWidth}
           month={item}

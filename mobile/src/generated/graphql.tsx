@@ -98,6 +98,7 @@ export type Mutation = {
   register: RegisterResponse;
   removeAssignedMember: ProjectTask;
   removeMemberFromProject: Project;
+  setSettings: Settings;
   toggleProjectTask: ProjectTask;
   toggleSubtask: Subtask;
   toggleTask: Task;
@@ -314,6 +315,11 @@ export type MutationRemoveMemberFromProjectArgs = {
 };
 
 
+export type MutationSetSettingsArgs = {
+  startOfWeek?: InputMaybe<Scalars['String']>;
+};
+
+
 export type MutationToggleProjectTaskArgs = {
   id: Scalars['String'];
 };
@@ -411,6 +417,12 @@ export type RemindersInput = {
   title: Scalars['String'];
 };
 
+export type Settings = {
+  __typename?: 'Settings';
+  id: Scalars['String'];
+  startOfWeek: Scalars['String'];
+};
+
 export type Subject = {
   __typename?: 'Subject';
   colorName: Scalars['String'];
@@ -461,6 +473,8 @@ export type User = {
   ownedProjects: Array<Project>;
   projectTasks: Array<ProjectTask>;
   reminders: Array<Reminder>;
+  settings: Settings;
+  settingsId: Scalars['String'];
   subjects: Array<Subject>;
   tasks: Array<Task>;
   updatedAt: Scalars['DateTime'];
@@ -510,6 +524,8 @@ export type ProjectTaskWithProjectFragment = { __typename?: 'ProjectTask', id: s
 export type PublicUserFragment = { __typename?: 'PublicUser', name: string, email: string, id: string };
 
 export type ReminderFragment = { __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null | undefined, date: any, taskId: string };
+
+export type SettingsFragment = { __typename?: 'Settings', id: string, startOfWeek: string };
 
 export type SimpleProjectFragment = { __typename?: 'Project', id: string, name: string };
 
@@ -681,6 +697,13 @@ export type ToggleProjectTaskMutationVariables = Exact<{
 
 export type ToggleProjectTaskMutation = { __typename?: 'Mutation', toggleProjectTask: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null | undefined, doDate?: any | null | undefined, done: boolean, projectId: string, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string }> } };
 
+export type SetSettingsMutationVariables = Exact<{
+  startOfWeek?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type SetSettingsMutation = { __typename?: 'Mutation', setSettings: { __typename?: 'Settings', id: string, startOfWeek: string } };
+
 export type CreateSubjectMutationVariables = Exact<{
   name: Scalars['String'];
   id: Scalars['String'];
@@ -849,7 +872,7 @@ export type HelloQuery = { __typename?: 'Query', hello: string };
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, imageURL?: string | null | undefined, fullName: string, createdAt: any, updatedAt: any, tasks: Array<{ __typename?: 'Task', id: string, name: string, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined, subtasks: Array<{ __typename?: 'Subtask', id: string, name: string }> }>, subjects: Array<{ __typename?: 'Subject', id: string, name: string }> } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, imageURL?: string | null | undefined, fullName: string, createdAt: any, updatedAt: any, tasks: Array<{ __typename?: 'Task', id: string, name: string, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined, subtasks: Array<{ __typename?: 'Subtask', id: string, name: string }> }>, subjects: Array<{ __typename?: 'Subject', id: string, name: string }>, settings: { __typename?: 'Settings', id: string, startOfWeek: string } } };
 
 export type UserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -960,6 +983,12 @@ export const ProjectTaskWithProjectFragmentDoc = gql`
 }
     ${SimpleProjectFragmentDoc}
 ${PublicUserFragmentDoc}`;
+export const SettingsFragmentDoc = gql`
+    fragment Settings on Settings {
+  id
+  startOfWeek
+}
+    `;
 export const SubtaskFragmentDoc = gql`
     fragment Subtask on Subtask {
   name
@@ -1689,6 +1718,39 @@ export function useToggleProjectTaskMutation(baseOptions?: Apollo.MutationHookOp
 export type ToggleProjectTaskMutationHookResult = ReturnType<typeof useToggleProjectTaskMutation>;
 export type ToggleProjectTaskMutationResult = Apollo.MutationResult<ToggleProjectTaskMutation>;
 export type ToggleProjectTaskMutationOptions = Apollo.BaseMutationOptions<ToggleProjectTaskMutation, ToggleProjectTaskMutationVariables>;
+export const SetSettingsDocument = gql`
+    mutation SetSettings($startOfWeek: String) {
+  setSettings(startOfWeek: $startOfWeek) {
+    ...Settings
+  }
+}
+    ${SettingsFragmentDoc}`;
+export type SetSettingsMutationFn = Apollo.MutationFunction<SetSettingsMutation, SetSettingsMutationVariables>;
+
+/**
+ * __useSetSettingsMutation__
+ *
+ * To run a mutation, you first call `useSetSettingsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetSettingsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setSettingsMutation, { data, loading, error }] = useSetSettingsMutation({
+ *   variables: {
+ *      startOfWeek: // value for 'startOfWeek'
+ *   },
+ * });
+ */
+export function useSetSettingsMutation(baseOptions?: Apollo.MutationHookOptions<SetSettingsMutation, SetSettingsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SetSettingsMutation, SetSettingsMutationVariables>(SetSettingsDocument, options);
+      }
+export type SetSettingsMutationHookResult = ReturnType<typeof useSetSettingsMutation>;
+export type SetSettingsMutationResult = Apollo.MutationResult<SetSettingsMutation>;
+export type SetSettingsMutationOptions = Apollo.BaseMutationOptions<SetSettingsMutation, SetSettingsMutationVariables>;
 export const CreateSubjectDocument = gql`
     mutation CreateSubject($name: String!, $id: String!, $colorName: String!) {
   createSubject(name: $name, id: $id, colorName: $colorName) {
@@ -2569,9 +2631,12 @@ export const MeDocument = gql`
     fullName
     createdAt
     updatedAt
+    settings {
+      ...Settings
+    }
   }
 }
-    `;
+    ${SettingsFragmentDoc}`;
 
 /**
  * __useMeQuery__

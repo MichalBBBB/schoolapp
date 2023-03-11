@@ -24,6 +24,7 @@ import { isAuth } from "../middleware/isAuth";
 import { Task } from "../entities/Task";
 import { Subject } from "../entities/Subject";
 import { OAuth2Client } from "google-auth-library";
+import { Settings } from "../entities/Settings";
 
 const client = new OAuth2Client({
   clientId: process.env.GOOGLE_CLIENT_ID,
@@ -124,10 +125,10 @@ export class userResolver {
   @Query(() => User)
   @UseMiddleware(isAuth)
   me(@Ctx() { payload }: MyContext) {
-    return User.createQueryBuilder("user")
-      .select()
-      .where("user.id = :id", { id: payload?.userId })
-      .getOne();
+    return User.findOne({
+      where: { id: payload?.userId },
+      relations: { settings: true },
+    });
   }
 
   @FieldResolver()
@@ -193,13 +194,17 @@ export class userResolver {
 
     let user;
 
+    const settings = await Settings.create().save();
     try {
       user = await User.create({
         email,
         password: hashedPassword,
         fullName: name,
+        settings,
       }).save();
+      console.log(settings);
     } catch (err) {
+      await settings.remove();
       // Catch postgres error about broken unique contstraint on email
       if (err.code === "23505") {
         return {
@@ -233,11 +238,13 @@ export class userResolver {
     let user;
     user = await User.findOne({ where: { email: response.email } });
     if (!user) {
+      const settings = await Settings.create().save();
       user = await User.create({
         email: response.email,
         fullName: response.name,
         googleId: response.userId,
         imageURL: response.pictureURL,
+        settings,
       }).save();
     }
     if (user) {
@@ -254,6 +261,7 @@ export class userResolver {
   @Query(() => Boolean)
   async userExists(@Arg("email") email: string) {
     const user = await User.findOne({ where: { email } });
+    console.log(user);
     if (user) {
       return true;
     } else {

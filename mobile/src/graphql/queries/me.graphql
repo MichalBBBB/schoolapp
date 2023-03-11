@@ -22,5 +22,8 @@ query Me {
     fullName
     createdAt
     updatedAt
+    settings {
+      ...Settings
+    }
   }
 }

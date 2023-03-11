@@ -3,6 +3,9 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import BackButton from '../components/backButton';
 import {TabStackParamList} from '../Routes';
+import {DateSettingsScreen} from '../screens/Settings/DateAndTime';
+import {StartOfWeekScreen} from '../screens/Settings/DateAndTime/StartOfWeekScreen';
+
 import SettingsHomeScreen from '../screens/Settings/SettingsHomeScreen';
 import {SubjectScreen} from '../screens/Settings/SubjectScreen';
 import LessonTimesScreen from '../screens/Settings/Timetable/LessonTimesScreen';
@@ -13,6 +16,8 @@ export type SettingsStackParamList = {
   LessonTimesScreen: undefined;
   TimeTableScreen: undefined;
   SubjectScreen: undefined;
+  DateSettingsScreen: undefined;
+  StartOfWeekScreen: undefined;
 };
 
 const SettingsStack: React.FC<
@@ -50,6 +55,16 @@ const SettingsStack: React.FC<
         name="SubjectScreen"
         options={{title: 'Subjects'}}
         component={SubjectScreen}
+      />
+      <Stack.Screen
+        name="DateSettingsScreen"
+        options={{title: 'Date and time'}}
+        component={DateSettingsScreen}
+      />
+      <Stack.Screen
+        name="StartOfWeekScreen"
+        options={{title: 'Start of week'}}
+        component={StartOfWeekScreen}
       />
     </Stack.Navigator>
   );

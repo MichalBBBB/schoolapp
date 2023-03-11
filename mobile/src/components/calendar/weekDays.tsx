@@ -1,8 +1,13 @@
 import React from 'react';
 import {View, Text} from 'react-native';
+import {useSettings} from '../../utils/useSettings';
 import {BasicText} from '../basicViews/BasicText';
 
-const weekDays = ['m', 't', 'w', 't', 'f', 's', 's'];
+const weekDaysMon = ['m', 't', 'w', 't', 'f', 's', 's'];
+
+const weekDaysSun = ['s', 'm', 't', 'w', 't', 'f', 's'];
+
+const weekDaysSat = ['s', 's', 'm', 't', 'w', 't', 'f'];
 
 interface weekDaysProps {
   weekHeaderHeight: number;
@@ -10,6 +15,16 @@ interface weekDaysProps {
 }
 
 const WeekDays: React.FC<weekDaysProps> = ({weekHeaderHeight, width}) => {
+  const settings = useSettings();
+  const getWeekdays = () => {
+    if (settings?.startOfWeek == 'SUN') {
+      return weekDaysSun;
+    } else if (settings?.startOfWeek == 'SAT') {
+      return weekDaysSat;
+    } else {
+      return weekDaysMon;
+    }
+  };
   return (
     <View
       style={{
@@ -19,7 +34,7 @@ const WeekDays: React.FC<weekDaysProps> = ({weekHeaderHeight, width}) => {
         zIndex: 10,
         width: width,
       }}>
-      {weekDays.map((item, index) => (
+      {getWeekdays().map((item, index) => (
         <View
           style={{
             height: weekHeaderHeight,

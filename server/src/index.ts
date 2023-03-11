@@ -29,6 +29,7 @@ import cors from "cors";
 import { json } from "body-parser";
 import { DefferedObject } from "./middleware/queueMiddleware";
 import { reminderResolver } from "./resolvers/reminderResolver";
+import { settingsResolver } from "./resolvers/settingsResolver";
 
 export type UserQueueObject = {
   resolveObject: DefferedObject;
@@ -110,6 +111,7 @@ const main = async () => {
         projectResolver,
         projectTaskResolver,
         reminderResolver,
+        settingsResolver,
       ],
     }),
   });

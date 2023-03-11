@@ -1,3 +1,4 @@
+import {useApolloClient} from '@apollo/client';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React from 'react';
 import {
@@ -16,7 +17,7 @@ import {useLogoutMutation, useMeQuery} from '../../generated/graphql';
 import {SettingsStackParamList} from '../../routes/SettingsStack';
 import {setAccessToken} from '../../utils/AccessToken';
 
-const SettingsItem: React.FC<{text: string; onPress: () => void}> = ({
+export const SettingsItem: React.FC<{text: string; onPress: () => void}> = ({
   text,
   onPress,
 }) => {
@@ -42,6 +43,7 @@ const SettingsHomeScreen: React.FC<
 > = ({navigation}) => {
   const {data: me} = useMeQuery();
   const [logout] = useLogoutMutation();
+  const client = useApolloClient();
 
   const profile = (
     <View style={styles.profileContainer}>
@@ -92,11 +94,24 @@ const SettingsHomeScreen: React.FC<
             }}
           />
         </BasicCard>
+        <BasicCard
+          backgroundColor="accentBackground"
+          marginBottom={10}
+          spacing="m"
+          gap={10}>
+          <SettingsItem
+            text="Date and time"
+            onPress={() => {
+              navigation.navigate('DateSettingsScreen');
+            }}
+          />
+        </BasicCard>
         <BasicCard backgroundColor="accentBackground" spacing="m">
           <Pressable
             style={styles.listItem}
             onPress={() => {
               logout();
+              client.resetStore();
               setAccessToken('');
               isLoggedInVar(false);
             }}>
