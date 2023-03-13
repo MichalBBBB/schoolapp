@@ -9,6 +9,8 @@ import React, {
 } from 'react';
 import {View, FlatList} from 'react-native';
 import {CalendarHandle} from '.';
+import {SettingsFragment} from '../../generated/graphql';
+import {getStartOfWeek} from '../../utils/dateUtils';
 import Week from './week';
 
 interface weekViewProps {
@@ -18,6 +20,7 @@ interface weekViewProps {
   calendarWidth: number;
   weekHeight: number;
   onChangeActiveWeek?: (newWeek: dayjs.Dayjs) => void | undefined;
+  startOfWeek: string;
 }
 
 const createWeek = (date: dayjs.Dayjs | string) => {
@@ -44,6 +47,7 @@ const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
     calendarWidth,
     weekHeight,
     onChangeActiveWeek,
+    startOfWeek,
   } = props;
 
   useImperativeHandle(ref, () => {

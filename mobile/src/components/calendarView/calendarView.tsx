@@ -33,6 +33,8 @@ import DayEvents from './dayEvents';
 import {BasicButton} from '../basicViews/BasicButton';
 import {BasicText} from '../basicViews/BasicText';
 import {useTheme} from '../../contexts/ThemeContext';
+import {useSettings} from '../../utils/useSettings';
+import {getWeekday} from '../../utils/dateUtils';
 
 // constants
 export const calendarWidth = Dimensions.get('screen').width;
@@ -49,8 +51,8 @@ const maxCalendarZIndex = 8;
 // function to find the row of given day in active month
 const findRowOfDate = (date: dayjs.Dayjs) => {
   const dateOfMonth = date.date();
-  const firstDay = date.startOf('M').day();
-  return Math.floor((dateOfMonth + firstDay - 2) / 7);
+  const firstDay = date.startOf('M').weekday();
+  return Math.floor((dateOfMonth + firstDay - 1) / 7);
 };
 
 interface calendarProps {
@@ -62,6 +64,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
   const {data} = useGetAllEventsQuery();
 
   const [theme] = useTheme();
+  const settings = useSettings();
 
   const [selectedDay, setSelectedDay] = useState(dayjs());
   const [isWeekView, setIsWeekView] = useState(false);
@@ -256,6 +259,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
           weekViewAnimatedStyle,
         ]}>
         <WeekView
+          startOfWeek={settings?.startOfWeek || 'MON'}
           ref={weekViewRef}
           calendarWidth={calendarWidth}
           week={selectedDay}

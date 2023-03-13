@@ -14,6 +14,8 @@ import {allQueries} from './utils/allQueries';
 import NetInfo from '@react-native-community/netinfo';
 import {baseUri} from './utils/createApolloClient';
 import {setRemindersFromApollo} from './utils/reminderUtils';
+import {useSettings} from './utils/useSettings';
+import dayjs from 'dayjs';
 
 const replaceAllData = async (client: ApolloClient<any>) => {
   const promises: Array<Promise<any>> = [];
@@ -39,6 +41,7 @@ export const Content: React.FC = () => {
   const client = useApolloClient();
   const isOnline = useReactiveVar(isOnlineVar);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const settings = useSettings();
 
   useEffect(() => {
     if (isOnline && isLoggedIn) {
@@ -53,6 +56,17 @@ export const Content: React.FC = () => {
       client.resetStore();
     }
   }, [isLoggedInVar]);
+
+  useEffect(() => {
+    dayjs.updateLocale('en', {
+      weekStart:
+        settings?.startOfWeek == 'MON'
+          ? 1
+          : settings?.startOfWeek == 'SAT'
+          ? 5
+          : 0,
+    });
+  }, [settings]);
 
   useEffect(() => {
     let interval: NodeJS.Timer;

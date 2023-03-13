@@ -70,13 +70,12 @@ export default memo(Week, (prevProps, nextProps) => {
   // if (typeof nextProps.week !== 'string') {
   //   console.log(nextProps.week[0].week(), prevProps.selectedDay?.week());
   // }
+
   if (
     typeof nextProps.week !== 'string' &&
     typeof prevProps.week !== 'string' &&
-    (nextProps.selectedDay?.locale('sk').week() ==
-      nextProps.week[0].locale('sk').week() ||
-      prevProps.selectedDay?.locale('sk').week() ==
-        nextProps.week[0].locale('sk').week())
+    (nextProps.selectedDay?.week() == nextProps.week[0].week() ||
+      prevProps.selectedDay?.week() == nextProps.week[0].week())
   ) {
     return false;
   }

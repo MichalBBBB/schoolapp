@@ -12,6 +12,7 @@ import {baseUri, createApolloClient} from './utils/createApolloClient';
 import {ThemeProvider} from './contexts/ThemeContext';
 import dayjs from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
+import updateLocale from 'dayjs/plugin/updateLocale';
 import 'dayjs/locale/sk';
 import {PortalHost, PortalProvider} from '@gorhom/portal';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
@@ -24,11 +25,13 @@ import {Content} from './Content';
 import notifee from '@notifee/react-native';
 import NetInfo from '@react-native-community/netinfo';
 import {createRemindersChannel} from './utils/notifications';
+import 'dayjs/locale/en';
 
 export const isLoggedInVar = makeVar(true);
 export const isOnlineVar = makeVar(true);
 export const persistentQueueLink = new PersistentQueueLink();
 dayjs.extend(weekday);
+dayjs.extend(updateLocale);
 dayjs.locale('en');
 
 export const storage = new MMKV();

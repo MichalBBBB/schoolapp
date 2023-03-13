@@ -3,8 +3,8 @@ import React from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
 import {View} from 'react-native';
 import {BasicCard} from '../../../components/basicViews/BasicCard';
+import {SettingsItem} from '../../../components/settingsItem';
 import {SettingsStackParamList} from '../../../routes/SettingsStack';
-import {SettingsItem} from '../SettingsHomeScreen';
 
 export const DateSettingsScreen: React.FC<
   NativeStackScreenProps<SettingsStackParamList, 'DateSettingsScreen'>
