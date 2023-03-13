@@ -50,7 +50,6 @@ const maxCalendarZIndex = 8;
 const findRowOfDate = (date: dayjs.Dayjs) => {
   const dateOfMonth = date.date();
   const firstDay = date.startOf('M').day();
-  console.log('sum', dateOfMonth + firstDay - 2);
   return Math.floor((dateOfMonth + firstDay - 2) / 7);
 };
 
@@ -135,7 +134,6 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
   const onDayPress = (date: dayjs.Dayjs) => {
     setSelectedDay(date);
     const row = findRowOfDate(date);
-    console.log('row', row);
     weekRow.value = row;
   };
 

@@ -25,6 +25,7 @@ import { Task } from "../entities/Task";
 import { Subject } from "../entities/Subject";
 import { OAuth2Client } from "google-auth-library";
 import { Settings } from "../entities/Settings";
+import dayjs from "dayjs";
 
 const client = new OAuth2Client({
   clientId: process.env.GOOGLE_CLIENT_ID,
@@ -194,7 +195,9 @@ export class userResolver {
 
     let user;
 
-    const settings = await Settings.create().save();
+    const settings = await Settings.create({
+      startOfRotationDate: dayjs().set("day", 1).toDate(),
+    }).save();
     try {
       user = await User.create({
         email,
@@ -238,7 +241,9 @@ export class userResolver {
     let user;
     user = await User.findOne({ where: { email: response.email } });
     if (!user) {
-      const settings = await Settings.create().save();
+      const settings = await Settings.create({
+        startOfRotationDate: dayjs().set("day", 1).toDate(),
+      }).save();
       user = await User.create({
         email: response.email,
         fullName: response.name,

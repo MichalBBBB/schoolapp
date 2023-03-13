@@ -36,6 +36,11 @@ export const useSetSettings: () => [
             __typename: 'Settings',
             id: settings.id,
             startOfWeek: variables.startOfWeek || settings.startOfWeek,
+            startOfRotationDate:
+              variables.startOfRotationDate || settings.startOfRotationDate,
+            lengthOfRotation:
+              variables.lengthOfRotation || settings.lengthOfRotation,
+            skipWeekends: variables.skipWeekends || settings.skipWeekends,
           },
         },
         update: (cache, {data}) => {

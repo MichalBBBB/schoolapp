@@ -1,4 +1,7 @@
 fragment Settings on Settings {
   id
   startOfWeek
+  startOfRotationDate
+  lengthOfRotation
+  skipWeekends
 }

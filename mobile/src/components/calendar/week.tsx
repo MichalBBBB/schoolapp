@@ -66,12 +66,17 @@ export default memo(Week, (prevProps, nextProps) => {
     if (!nextProps.week[0].isSame(prevProps.week[0], 'day')) return false;
   }
 
-  // if the new of old selected day is in this week, rerender
+  // if the new or old selected day is in this week, rerender
+  // if (typeof nextProps.week !== 'string') {
+  //   console.log(nextProps.week[0].week(), prevProps.selectedDay?.week());
+  // }
   if (
     typeof nextProps.week !== 'string' &&
     typeof prevProps.week !== 'string' &&
-    (nextProps.selectedDay?.week() == nextProps.week[0].week() ||
-      prevProps.selectedDay?.week() == nextProps.week[0].week())
+    (nextProps.selectedDay?.locale('sk').week() ==
+      nextProps.week[0].locale('sk').week() ||
+      prevProps.selectedDay?.locale('sk').week() ==
+        nextProps.week[0].locale('sk').week())
   ) {
     return false;
   }

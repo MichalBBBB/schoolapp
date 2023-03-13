@@ -31,13 +31,13 @@ export class lessonResolver {
     @Arg("id") id: string,
     @Arg("subjectId") subjectId: string,
     @Arg("lessonTimeId") lessonTimeId: string,
-    @Arg("dayOfTheWeek") dayOfTheWeek: string
+    @Arg("dayNumber") dayNumber: number
   ) {
     const lesson = await Lesson.create({
       id,
       subjectId,
       lessonTimeId,
-      dayOfTheWeek: dayOfTheWeek as WEEK_DAYS,
+      dayNumber,
       userId: payload?.userId,
     }).save();
     const lessonWithRelations = await Lesson.findOne({

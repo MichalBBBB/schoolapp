@@ -48,10 +48,6 @@ const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
   const [months, setMonths] = useState<Array<dayjs.Dayjs | string>>([]);
   const [index, setIndex] = useState(pastScrollRange);
 
-  useEffect(() => {
-    console.log(settings);
-  }, [settings]);
-
   useImperativeHandle(ref, () => {
     return {
       goForward() {

@@ -13,30 +13,10 @@ import {isLoggedInVar} from '../../App';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicCard} from '../../components/basicViews/BasicCard';
 import {BasicText} from '../../components/basicViews/BasicText';
+import {SettingsItem} from '../../components/settingsItem';
 import {useLogoutMutation, useMeQuery} from '../../generated/graphql';
 import {SettingsStackParamList} from '../../routes/SettingsStack';
 import {setAccessToken} from '../../utils/AccessToken';
-
-export const SettingsItem: React.FC<{text: string; onPress: () => void}> = ({
-  text,
-  onPress,
-}) => {
-  return (
-    <Pressable
-      onPress={onPress}
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}>
-      <BasicText>{text}</BasicText>
-      <Image
-        source={require('../../../assets/Chevron-right.png')}
-        style={{height: 15, width: 15}}
-      />
-    </Pressable>
-  );
-};
 
 const SettingsHomeScreen: React.FC<
   NativeStackScreenProps<SettingsStackParamList, 'SettingsHomeScreen'>

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import React, {useEffect} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {View, Text, SectionList, StyleSheet} from 'react-native';
 import {
   CalendarEventFragment,
@@ -14,6 +14,8 @@ import {WEEK_DAY_NUMBERS} from '../../types/weekDays';
 import {Lesson} from './lesson';
 import Task from '../task';
 import {BasicText} from '../basicViews/BasicText';
+import {useSettings} from '../../utils/useSettings';
+import {getDayNumber} from '../../utils/lessonUtils';
 
 interface DayEventsProps {
   date: dayjs.Dayjs;
@@ -30,15 +32,22 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
   const {data: lessons} = useGetAllLessonsQuery();
   const {data: tasks} = useGetAllTasksQuery();
 
+  const settings = useSettings();
+
+  const dayNumber = useMemo(() => {
+    if (settings) {
+      return getDayNumber(date, settings);
+    } else {
+      return -1;
+    }
+  }, [date, settings]);
+
   const createSections: () => section[] = () => {
     const lessonsThisDay =
       lessons?.getAllLessons
-        .filter(
-          item =>
-            WEEK_DAY_NUMBERS[
-              item.dayOfTheWeek as keyof typeof WEEK_DAY_NUMBERS
-            ] == date.weekday(),
-        )
+        .filter(item => {
+          return dayNumber == item.dayNumber;
+        })
         .sort((a, b) => {
           return dayjs(a.lessonTime.startTime, 'HH:mm').diff(
             dayjs(b.lessonTime.startTime, 'HH:mm'),

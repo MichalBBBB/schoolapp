@@ -1,5 +1,15 @@
-mutation SetSettings($startOfWeek: String) {
-  setSettings(startOfWeek: $startOfWeek) {
+mutation SetSettings(
+  $startOfWeek: String
+  $startOfRotationDate: DateTime
+  $lengthOfRotation: Float
+  $skipWeekends: Boolean
+) {
+  setSettings(
+    startOfWeek: $startOfWeek
+    startOfRotationDate: $startOfRotationDate
+    lengthOfRotation: $lengthOfRotation
+    skipWeekends: $skipWeekends
+  ) {
     ...Settings
   }
 }

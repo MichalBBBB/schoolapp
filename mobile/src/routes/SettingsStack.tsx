@@ -8,6 +8,7 @@ import {StartOfWeekScreen} from '../screens/Settings/DateAndTime/StartOfWeekScre
 
 import SettingsHomeScreen from '../screens/Settings/SettingsHomeScreen';
 import {SubjectScreen} from '../screens/Settings/SubjectScreen';
+import {AdvancedTimeTableScreen} from '../screens/Settings/Timetable/AdvancedTimeTableScreen';
 import LessonTimesScreen from '../screens/Settings/Timetable/LessonTimesScreen';
 import TimeTableScreen from '../screens/Settings/Timetable/TimeTableScreen';
 
@@ -18,6 +19,7 @@ export type SettingsStackParamList = {
   SubjectScreen: undefined;
   DateSettingsScreen: undefined;
   StartOfWeekScreen: undefined;
+  AdvancedTimeTableScreen: undefined;
 };
 
 const SettingsStack: React.FC<
@@ -65,6 +67,11 @@ const SettingsStack: React.FC<
         name="StartOfWeekScreen"
         options={{title: 'Start of week'}}
         component={StartOfWeekScreen}
+      />
+      <Stack.Screen
+        name="AdvancedTimeTableScreen"
+        options={{title: 'Advanced'}}
+        component={AdvancedTimeTableScreen}
       />
     </Stack.Navigator>
   );

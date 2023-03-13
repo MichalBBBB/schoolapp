@@ -45,7 +45,7 @@ export const useCreateLesson: () => [
           createLesson: {
             __typename: 'Lesson',
             id: variables.id,
-            dayOfTheWeek: variables.dayOfTheWeek,
+            dayNumber: variables.dayNumber,
             lessonTime: lessonTime,
             subject: subject,
           },

@@ -38,7 +38,7 @@ export type Invite = {
 
 export type Lesson = {
   __typename?: 'Lesson';
-  dayOfTheWeek: Scalars['String'];
+  dayNumber: Scalars['Float'];
   id: Scalars['String'];
   lessonTime: LessonTime;
   lessonTimeId: Scalars['String'];
@@ -141,7 +141,7 @@ export type MutationCreateEventArgs = {
 
 
 export type MutationCreateLessonArgs = {
-  dayOfTheWeek: Scalars['String'];
+  dayNumber: Scalars['Float'];
   id: Scalars['String'];
   lessonTimeId: Scalars['String'];
   subjectId: Scalars['String'];
@@ -316,6 +316,9 @@ export type MutationRemoveMemberFromProjectArgs = {
 
 
 export type MutationSetSettingsArgs = {
+  lengthOfRotation?: InputMaybe<Scalars['Float']>;
+  skipWeekends?: InputMaybe<Scalars['Boolean']>;
+  startOfRotationDate?: InputMaybe<Scalars['DateTime']>;
   startOfWeek?: InputMaybe<Scalars['String']>;
 };
 
@@ -420,6 +423,9 @@ export type RemindersInput = {
 export type Settings = {
   __typename?: 'Settings';
   id: Scalars['String'];
+  lengthOfRotation: Scalars['Float'];
+  skipWeekends: Scalars['Boolean'];
+  startOfRotationDate: Scalars['DateTime'];
   startOfWeek: Scalars['String'];
 };
 
@@ -511,7 +517,7 @@ export type CalendarEventFragment = { __typename?: 'CalendarEvent', id: string, 
 
 export type InviteFragment = { __typename?: 'Invite', ownerName: string, projectName: string, projectId: string };
 
-export type LessonFragment = { __typename?: 'Lesson', id: string, dayOfTheWeek: string, subject: { __typename?: 'Subject', id: string, name: string, colorName: string }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } };
+export type LessonFragment = { __typename?: 'Lesson', id: string, dayNumber: number, subject: { __typename?: 'Subject', id: string, name: string, colorName: string }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } };
 
 export type LessonTimeFragment = { __typename?: 'LessonTime', id: string, startTime: string, endTime: string };
 
@@ -525,7 +531,7 @@ export type PublicUserFragment = { __typename?: 'PublicUser', name: string, emai
 
 export type ReminderFragment = { __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null | undefined, date: any, taskId: string };
 
-export type SettingsFragment = { __typename?: 'Settings', id: string, startOfWeek: string };
+export type SettingsFragment = { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean };
 
 export type SimpleProjectFragment = { __typename?: 'Project', id: string, name: string };
 
@@ -555,14 +561,14 @@ export type DeleteEventMutationVariables = Exact<{
 export type DeleteEventMutation = { __typename?: 'Mutation', deleteEvent: boolean };
 
 export type CreateLessonMutationVariables = Exact<{
-  dayOfTheWeek: Scalars['String'];
+  dayNumber: Scalars['Float'];
   lessonTimeId: Scalars['String'];
   subjectId: Scalars['String'];
   id: Scalars['String'];
 }>;
 
 
-export type CreateLessonMutation = { __typename?: 'Mutation', createLesson: { __typename?: 'Lesson', id: string, dayOfTheWeek: string, subject: { __typename?: 'Subject', id: string, name: string, colorName: string }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } } };
+export type CreateLessonMutation = { __typename?: 'Mutation', createLesson: { __typename?: 'Lesson', id: string, dayNumber: number, subject: { __typename?: 'Subject', id: string, name: string, colorName: string }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } } };
 
 export type DeleteLessonMutationVariables = Exact<{
   id: Scalars['String'];
@@ -577,7 +583,7 @@ export type EditLessonMutationVariables = Exact<{
 }>;
 
 
-export type EditLessonMutation = { __typename?: 'Mutation', editLesson: { __typename?: 'Lesson', id: string, dayOfTheWeek: string, subject: { __typename?: 'Subject', id: string, name: string, colorName: string }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } } };
+export type EditLessonMutation = { __typename?: 'Mutation', editLesson: { __typename?: 'Lesson', id: string, dayNumber: number, subject: { __typename?: 'Subject', id: string, name: string, colorName: string }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } } };
 
 export type CreateLessonTimeMutationVariables = Exact<{
   endTime: Scalars['String'];
@@ -699,10 +705,13 @@ export type ToggleProjectTaskMutation = { __typename?: 'Mutation', toggleProject
 
 export type SetSettingsMutationVariables = Exact<{
   startOfWeek?: InputMaybe<Scalars['String']>;
+  startOfRotationDate?: InputMaybe<Scalars['DateTime']>;
+  lengthOfRotation?: InputMaybe<Scalars['Float']>;
+  skipWeekends?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type SetSettingsMutation = { __typename?: 'Mutation', setSettings: { __typename?: 'Settings', id: string, startOfWeek: string } };
+export type SetSettingsMutation = { __typename?: 'Mutation', setSettings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean } };
 
 export type CreateSubjectMutationVariables = Exact<{
   name: Scalars['String'];
@@ -832,7 +841,7 @@ export type GetAllLessonTimesQuery = { __typename?: 'Query', getAllLessonTimes: 
 export type GetAllLessonsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllLessonsQuery = { __typename?: 'Query', getAllLessons: Array<{ __typename?: 'Lesson', id: string, dayOfTheWeek: string, subject: { __typename?: 'Subject', id: string, name: string, colorName: string }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } }> };
+export type GetAllLessonsQuery = { __typename?: 'Query', getAllLessons: Array<{ __typename?: 'Lesson', id: string, dayNumber: number, subject: { __typename?: 'Subject', id: string, name: string, colorName: string }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } }> };
 
 export type GetAllRemindersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -872,7 +881,7 @@ export type HelloQuery = { __typename?: 'Query', hello: string };
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, imageURL?: string | null | undefined, fullName: string, createdAt: any, updatedAt: any, tasks: Array<{ __typename?: 'Task', id: string, name: string, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined, subtasks: Array<{ __typename?: 'Subtask', id: string, name: string }> }>, subjects: Array<{ __typename?: 'Subject', id: string, name: string }>, settings: { __typename?: 'Settings', id: string, startOfWeek: string } } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, imageURL?: string | null | undefined, fullName: string, createdAt: any, updatedAt: any, tasks: Array<{ __typename?: 'Task', id: string, name: string, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined, subtasks: Array<{ __typename?: 'Subtask', id: string, name: string }> }>, subjects: Array<{ __typename?: 'Subject', id: string, name: string }>, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean } } };
 
 export type UserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -917,7 +926,7 @@ export const LessonTimeFragmentDoc = gql`
 export const LessonFragmentDoc = gql`
     fragment Lesson on Lesson {
   id
-  dayOfTheWeek
+  dayNumber
   subject {
     ...Subject
   }
@@ -987,6 +996,9 @@ export const SettingsFragmentDoc = gql`
     fragment Settings on Settings {
   id
   startOfWeek
+  startOfRotationDate
+  lengthOfRotation
+  skipWeekends
 }
     `;
 export const SubtaskFragmentDoc = gql`
@@ -1108,10 +1120,10 @@ export type DeleteEventMutationHookResult = ReturnType<typeof useDeleteEventMuta
 export type DeleteEventMutationResult = Apollo.MutationResult<DeleteEventMutation>;
 export type DeleteEventMutationOptions = Apollo.BaseMutationOptions<DeleteEventMutation, DeleteEventMutationVariables>;
 export const CreateLessonDocument = gql`
-    mutation CreateLesson($dayOfTheWeek: String!, $lessonTimeId: String!, $subjectId: String!, $id: String!) {
+    mutation CreateLesson($dayNumber: Float!, $lessonTimeId: String!, $subjectId: String!, $id: String!) {
   createLesson(
     id: $id
-    dayOfTheWeek: $dayOfTheWeek
+    dayNumber: $dayNumber
     lessonTimeId: $lessonTimeId
     subjectId: $subjectId
   ) {
@@ -1134,7 +1146,7 @@ export type CreateLessonMutationFn = Apollo.MutationFunction<CreateLessonMutatio
  * @example
  * const [createLessonMutation, { data, loading, error }] = useCreateLessonMutation({
  *   variables: {
- *      dayOfTheWeek: // value for 'dayOfTheWeek'
+ *      dayNumber: // value for 'dayNumber'
  *      lessonTimeId: // value for 'lessonTimeId'
  *      subjectId: // value for 'subjectId'
  *      id: // value for 'id'
@@ -1719,8 +1731,13 @@ export type ToggleProjectTaskMutationHookResult = ReturnType<typeof useTogglePro
 export type ToggleProjectTaskMutationResult = Apollo.MutationResult<ToggleProjectTaskMutation>;
 export type ToggleProjectTaskMutationOptions = Apollo.BaseMutationOptions<ToggleProjectTaskMutation, ToggleProjectTaskMutationVariables>;
 export const SetSettingsDocument = gql`
-    mutation SetSettings($startOfWeek: String) {
-  setSettings(startOfWeek: $startOfWeek) {
+    mutation SetSettings($startOfWeek: String, $startOfRotationDate: DateTime, $lengthOfRotation: Float, $skipWeekends: Boolean) {
+  setSettings(
+    startOfWeek: $startOfWeek
+    startOfRotationDate: $startOfRotationDate
+    lengthOfRotation: $lengthOfRotation
+    skipWeekends: $skipWeekends
+  ) {
     ...Settings
   }
 }
@@ -1741,6 +1758,9 @@ export type SetSettingsMutationFn = Apollo.MutationFunction<SetSettingsMutation,
  * const [setSettingsMutation, { data, loading, error }] = useSetSettingsMutation({
  *   variables: {
  *      startOfWeek: // value for 'startOfWeek'
+ *      startOfRotationDate: // value for 'startOfRotationDate'
+ *      lengthOfRotation: // value for 'lengthOfRotation'
+ *      skipWeekends: // value for 'skipWeekends'
  *   },
  * });
  */

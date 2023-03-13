@@ -26,6 +26,7 @@ import WeekDays from '../calendar/weekDays';
 import {RemindersWindow} from '../remindersWindow';
 import SelectTimeModal from '../selectTimeView/selectTimeModal';
 import notifee, {AndroidNotificationSetting} from '@notifee/react-native';
+import {useSettings} from '../../utils/useSettings';
 
 interface EditDateWindowProps {
   onSubmit: (date: dayjs.Dayjs, reminderTimes?: number[]) => void;
@@ -65,6 +66,8 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
 }) => {
   const {data: lessons} = useGetAllLessonsQuery();
 
+  const settings = useSettings();
+
   const [selectedDay, setSelectedDay] = useState<dayjs.Dayjs>(
     initialDate || dayjs(),
   );
@@ -83,16 +86,23 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
   useEffect(() => {
     // if there is a subject specified and the subject has assigned lessons,
     // add next lesson as special date
-    if (subject && closestLesson(lessons?.getAllLessons || [], subject)) {
-      setSpecialDays([
-        ...specialDates,
-        {
-          name: `Next ${subject.name}`,
-          date: dayjs(closestLesson(lessons?.getAllLessons || [], subject)),
-        },
-      ]);
+    if (settings) {
+      if (
+        subject &&
+        closestLesson(lessons?.getAllLessons || [], subject, settings)
+      ) {
+        setSpecialDays([
+          ...specialDates,
+          {
+            name: `Next ${subject.name}`,
+            date: dayjs(
+              closestLesson(lessons?.getAllLessons || [], subject, settings),
+            ),
+          },
+        ]);
+      }
     }
-  }, [subject]);
+  }, [subject, settings]);
 
   const checkPermissions = async () => {
     const settings = await notifee.getNotificationSettings();
@@ -155,10 +165,11 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             calendarWidth={windowWidth - 20}
             pastScrollRange={2}
             futureScrollRange={20}
-            selectedDay={'get' in selectedDay ? selectedDay : null}
+            selectedDay={selectedDay}
             onChangeSelectedDay={date => {
               setSelectedDay(
                 date.hour(selectedDay.hour()).minute(selectedDay.minute()),
+                // date,
               );
               setSelectedSpecialDay(null);
             }}

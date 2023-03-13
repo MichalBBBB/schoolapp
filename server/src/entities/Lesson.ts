@@ -19,12 +19,9 @@ export class Lesson extends BaseEntity {
   @Field()
   id!: string;
 
-  @Column({
-    type: "varchar",
-    enum: WEEK_DAYS,
-  })
-  @Field(() => String)
-  dayOfTheWeek!: WEEK_DAYS;
+  @Column()
+  @Field()
+  dayNumber!: number;
 
   @ManyToOne(() => LessonTime, (lessonTime) => lessonTime.lessons, {
     onDelete: "CASCADE",

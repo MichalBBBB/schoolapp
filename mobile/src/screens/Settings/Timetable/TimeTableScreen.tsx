@@ -1,6 +1,13 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useEffect, useState} from 'react';
-import {View, ScrollView, Text, StyleSheet, Pressable} from 'react-native';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
+import {
+  View,
+  ScrollView,
+  Text,
+  StyleSheet,
+  Pressable,
+  Image,
+} from 'react-native';
 import {
   Cell,
   Col,
@@ -25,10 +32,13 @@ import {useDeleteLesson} from '../../../mutationHooks/lesson/deleteLesson';
 import {useTheme} from '../../../contexts/ThemeContext';
 import {SubjectColorsObject} from '../../../types/Theme';
 import {SelectSubjectPopup} from '../../../components/selectSubject/selectSubjectPopup';
+import {Popup} from '../../../components/popup';
+import {BasicCard} from '../../../components/basicViews/BasicCard';
+import {useSettings} from '../../../utils/useSettings';
 
 const TimeTableScreen: React.FC<
   NativeStackScreenProps<SettingsStackParamList, 'TimeTableScreen'>
-> = () => {
+> = ({navigation}) => {
   const {data, loading: lessonsLoading} = useGetAllLessonsQuery();
   const {data: lessonTimes} = useGetAllLessonTimesQuery();
   const [createLesson] = useCreateLesson();
@@ -37,22 +47,47 @@ const TimeTableScreen: React.FC<
 
   const [theme] = useTheme();
 
+  const settings = useSettings();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <BasicButton
+          style={{flexDirection: 'row', alignItems: 'center'}}
+          variant="unstyled"
+          onPress={() => {
+            navigation.navigate('AdvancedTimeTableScreen');
+          }}>
+          <BasicText>Advanced</BasicText>
+          <Image
+            source={require('../../../../assets/Chevron-right.png')}
+            style={{height: 25, width: 25, resizeMode: 'stretch'}}
+          />
+        </BasicButton>
+      ),
+    });
+  });
+
   const lessonNumbers = [
     '',
     ...(lessonTimes?.getAllLessonTimes.map(
       (item, index) => index + 1,
     ) as number[]),
   ];
-  const weekDays = Object.keys(WEEK_DAYS);
+
+  const dayNumbers = Array(settings?.lengthOfRotation)
+    .fill(0)
+    .map((item, index) => index);
+
   const widthArr = [40, ...Array(lessonNumbers.length - 1).fill(100)];
   const tableData:
     | Array<Array<LessonFragment | undefined> | undefined>
-    | undefined = weekDays.map((weekDay, weekDayIndex) => {
+    | undefined = dayNumbers.map((dayNumber, weekDayIndex) => {
     return lessonTimes?.getAllLessonTimes.map(lessonTime => {
       const lesson = data?.getAllLessons.find(item => {
         if (
           item.lessonTime.id == lessonTime.id &&
-          item.dayOfTheWeek == weekDay
+          item.dayNumber == dayNumber
         ) {
           return true;
         } else {
@@ -90,7 +125,11 @@ const TimeTableScreen: React.FC<
                 style={{
                   flexDirection: 'row',
                 }}>
-                <Col data={weekDays} width={40} heightArr={Array(7).fill(80)} />
+                <Col
+                  data={dayNumbers.map(item => item + 1)}
+                  width={40}
+                  heightArr={Array(settings?.lengthOfRotation).fill(80)}
+                />
                 <TableWrapper>
                   {tableData.map((row, rowIndex) => (
                     <TableWrapper key={rowIndex} style={styles.row}>
@@ -158,7 +197,7 @@ const TimeTableScreen: React.FC<
                                           lessonTimes.getAllLessonTimes[
                                             itemIndex
                                           ].id,
-                                        dayOfTheWeek: weekDays[rowIndex],
+                                        dayNumber: rowIndex,
                                         subjectId: subject.id,
                                       });
                                     }

@@ -108,7 +108,6 @@ export default memo(Month, (prevProps, nextProps) => {
     return false;
   }
 
-  console.log(prevProps.startOfWeek, nextProps.startOfWeek);
   if (prevProps.startOfWeek != nextProps.startOfWeek) {
     return false;
   }

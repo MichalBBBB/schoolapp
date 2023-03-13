@@ -22,16 +22,12 @@ import useKeyboardHeight, {isIOS} from '../utils/keyboardHeight';
 
 export interface PopupProps {
   trigger: React.ReactElement;
-  triggerContainerStyle?: ViewStyle;
+  forceSide?: 'right' | 'left';
 }
 
 const {width: layoutWidth, height: layoutHeight} = Dimensions.get('window');
 
-export const Popup: React.FC<PopupProps> = ({
-  trigger,
-  children,
-  triggerContainerStyle,
-}) => {
+export const Popup: React.FC<PopupProps> = ({trigger, children, forceSide}) => {
   const {keyboardHeight} = useKeyboardHeight();
   const triggerWrapperRef = useRef<View>(null);
   const [triggerDimensions, setTriggerDimensions] = useState({
@@ -97,7 +93,10 @@ export const Popup: React.FC<PopupProps> = ({
     let top = 0;
 
     // if the popup is outside the screen from the left
-    if (triggerDimensions.left - contentDimensions.width < 0) {
+    if (
+      triggerDimensions.left - contentDimensions.width < 0 &&
+      forceSide !== 'right'
+    ) {
       left = triggerDimensions.left;
       setisRight(false);
     } else {
@@ -200,10 +199,12 @@ export const Popup: React.FC<PopupProps> = ({
       })}
       <Portal>
         {popupVisible && (
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={closeModal}
-            style={styles.modalWrapper}>
+          <View style={styles.modalWrapper}>
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={closeModal}
+              style={styles.modalWrapper}
+            />
             <Animated.View
               onLayout={event => {
                 setContentDimensions({
@@ -233,7 +234,7 @@ export const Popup: React.FC<PopupProps> = ({
                     closeModal: setModalToClosed,
                   })}
             </Animated.View>
-          </TouchableOpacity>
+          </View>
         )}
       </Portal>
     </>

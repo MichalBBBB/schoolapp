@@ -10,12 +10,19 @@ export class settingsResolver {
   @Mutation(() => Settings)
   @UseMiddleware(isAuth)
   @UseMiddleware(queueMiddleware)
+  // only the parameters provided will be updated for the sake of simplicity
   async setSettings(
     @Ctx() { payload }: MyContext,
-    @Arg("startOfWeek", { nullable: true }) startOfWeek?: "MON" | "SAT" | "SUN"
+    @Arg("startOfWeek", { nullable: true }) startOfWeek?: "MON" | "SAT" | "SUN",
+    @Arg("skipWeekends", { nullable: true }) skipWeekends?: boolean,
+    @Arg("lengthOfRotation", { nullable: true }) lengthOfRotation?: number,
+    @Arg("startOfRotationDate", { nullable: true }) startOfRotationDate?: Date
   ) {
     const user = await User.findOne({ where: { id: payload?.userId } });
-    await Settings.update({ id: user?.settingsId }, { startOfWeek });
+    await Settings.update(
+      { id: user?.settingsId },
+      { startOfWeek, skipWeekends, lengthOfRotation, startOfRotationDate }
+    );
     return Settings.findOne({ where: { id: user?.settingsId } });
   }
 }
