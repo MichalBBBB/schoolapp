@@ -107,7 +107,6 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
   const checkPermissions = async () => {
     const settings = await notifee.getNotificationSettings();
     if (settings.android.alarm == AndroidNotificationSetting.ENABLED) {
-      console.log('good');
       return true;
     } else {
       // Show some user information to educate them on what exact alarm permission is,
@@ -169,7 +168,6 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             onChangeSelectedDay={date => {
               setSelectedDay(
                 date.hour(selectedDay.hour()).minute(selectedDay.minute()),
-                // date,
               );
               setSelectedSpecialDay(null);
             }}

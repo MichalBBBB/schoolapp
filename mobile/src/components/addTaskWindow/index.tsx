@@ -25,6 +25,7 @@ import {BasicCard} from '../basicViews/BasicCard';
 import {SelectSubjectPopup} from '../selectSubject/selectSubjectPopup';
 import {useTheme} from '../../contexts/ThemeContext';
 import {SubjectColorsObject} from '../../types/Theme';
+import {useSettings} from '../../utils/useSettings';
 
 interface addTaskWindowProps {
   onClose: () => void;
@@ -37,6 +38,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
   const {data: lessons} = useGetAllLessonsQuery();
 
   const [theme] = useTheme();
+  const settings = useSettings();
 
   const taskInputRef = useRef<TextInput>(null);
   const [name, setName] = useState('');
@@ -53,10 +55,12 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
 
   useEffect(() => {
     // automatically set subject to current lesson
-    if (lessons?.getAllLessons) {
-      setSubject(getCurrentLesson(lessons.getAllLessons)?.subject || null);
+    if (lessons?.getAllLessons && settings) {
+      setSubject(
+        getCurrentLesson(lessons.getAllLessons, settings)?.subject || null,
+      );
     }
-  }, [lessons, visible]);
+  }, [lessons, visible, settings]);
 
   const closeWindow = () => {
     setName('');
@@ -91,24 +95,16 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
             }}
             trigger={
               <BasicButton
+                variant={subject ? 'subject' : 'filled'}
+                borderWidth={1}
                 backgroundColor="accentBackground"
+                subjectColor={
+                  subject
+                    ? (subject.colorName as keyof SubjectColorsObject)
+                    : undefined
+                }
                 style={styles.button}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  {subject && (
-                    <View
-                      style={{
-                        backgroundColor:
-                          theme.subjectColors[
-                            subject.colorName as keyof SubjectColorsObject
-                          ].primary,
-                        height: 16,
-                        width: 16,
-                        borderRadius: 8,
-                        marginRight: 5,
-                      }}
-                    />
-                  )}
-
                   <BasicText>{subject?.name || 'Subject'}</BasicText>
                 </View>
               </BasicButton>

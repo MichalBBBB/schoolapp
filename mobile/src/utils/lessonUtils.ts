@@ -28,7 +28,6 @@ export const closestLesson = (
       'minute',
     );
   });
-  console.log(subjectLessons);
   return getDateOfClosestInstanceOfLesson(subjectLessons[0], settings);
 };
 
@@ -37,17 +36,13 @@ const getDateOfClosestInstanceOfLesson = (
   settings: SettingsFragment,
 ) => {
   const dayNumber = getDayNumber(dayjs(), settings);
-  if (
-    lesson.dayNumber > dayNumber ||
-    (lesson.dayNumber == dayNumber &&
-      dayjs().isAfter(lesson.lessonTime.startTime))
-  ) {
+  // if the lesson hasn't yet been in this rotation
+  if (lesson.dayNumber > dayNumber) {
     if (settings.skipWeekends) {
       const date = addWorkDays(
         dayjs(lesson.lessonTime.startTime, 'HH:mm'),
         lesson.dayNumber - dayNumber,
       ).toDate();
-      console.log(date);
       return date;
     } else {
       return dayjs(lesson.lessonTime.startTime, 'HH:mm').add(
@@ -55,11 +50,13 @@ const getDateOfClosestInstanceOfLesson = (
         'day',
       );
     }
+    // if the lesson is today, and it hasn't started yet
   } else if (
     lesson.dayNumber == dayNumber &&
     dayjs().isBefore(lesson.lessonTime.startTime)
   ) {
     return dayjs(lesson.lessonTime.startTime, 'HH:mm');
+    // if the lesson already happened in this rotation
   } else {
     if (settings.skipWeekends) {
       return addWorkDays(
@@ -67,6 +64,7 @@ const getDateOfClosestInstanceOfLesson = (
         settings.lengthOfRotation - dayNumber + lesson.dayNumber,
       ).toDate();
     } else {
+      console.log(settings.lengthOfRotation - dayNumber + lesson.dayNumber);
       return dayjs(lesson.lessonTime.startTime, 'HH:mm')
         .add(settings.lengthOfRotation - dayNumber + lesson.dayNumber, 'day')
         .toDate();
@@ -89,9 +87,11 @@ export const getCurrentLesson = (
   return currentLesson;
 };
 
+// change to date to add the specified amount of workdays
 export const addWorkDays = (date: dayjs.Dayjs, workdays: number) => {
   const weekday = date.locale('sk').weekday();
   const daysUntilWekeend = 4 - weekday;
+  // if we don't cross the weekend, just add the workdays
   if (workdays <= daysUntilWekeend) {
     return date.add(workdays, 'day');
   } else if (daysUntilWekeend >= 0) {
@@ -100,7 +100,6 @@ export const addWorkDays = (date: dayjs.Dayjs, workdays: number) => {
     return date.add(workdays + weekendDays, 'day');
   } else {
     const weekendDays = 2 + daysUntilWekeend + Math.floor(workdays / 5) * 2;
-    console.log(weekendDays, workdays);
     return date.add(workdays + weekendDays, 'day');
   }
 };
@@ -132,7 +131,6 @@ export const getDayNumber = (date: dayjs.Dayjs, settings: SettingsFragment) => {
       const dayNumber =
         (daysBetween - numberOfFullWeeks * 2 - extraWeekendDays) %
         settings.lengthOfRotation;
-      console.log(dayNumber);
       return dayNumber;
       // if the date is the same as the start of rotation, we know the dayNumber is 0
     } else if (date.isSame(settings.startOfRotationDate, 'day')) {
@@ -148,7 +146,6 @@ export const getDayNumber = (date: dayjs.Dayjs, settings: SettingsFragment) => {
       const extraDays = daysBetween - numberOfFullWeeks * 7;
       const extraWeekendDays =
         dayjs(date).locale('sk').weekday() + extraDays > 6 ? 2 : 0;
-      // there is a reason for the -1s, but I dont remember, but it works
       const dayNumber =
         settings.lengthOfRotation -
         ((daysBetween - 1 - numberOfFullWeeks * 2 - extraWeekendDays) %
@@ -172,7 +169,7 @@ export const getDayNumber = (date: dayjs.Dayjs, settings: SettingsFragment) => {
         .diff(dayjs(settings.startOfRotationDate).set('hour', 7), 'days');
       const dayNumber =
         settings?.lengthOfRotation -
-        (daysBetween % settings?.lengthOfRotation) -
+        ((daysBetween - 1) % settings.lengthOfRotation) -
         1;
       return dayNumber;
     }
