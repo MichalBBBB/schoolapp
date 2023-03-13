@@ -1,4 +1,3 @@
-import { WEEK_DAYS } from "../types/weekDays";
 import { Field, ObjectType } from "type-graphql";
 import {
   BaseEntity,

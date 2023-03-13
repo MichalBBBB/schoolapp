@@ -1,4 +1,5 @@
 import {Portal} from '@gorhom/portal';
+import React from 'react';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   KeyboardAvoidingView,

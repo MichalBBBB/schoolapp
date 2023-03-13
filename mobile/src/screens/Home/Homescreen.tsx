@@ -8,7 +8,6 @@ const HomeScreen = () => {
     <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
       <Text>{JSON.stringify(data)}</Text>
       <Text>{JSON.stringify(error)}</Text>
-      <BasicLoading />
     </View>
   );
 };

@@ -1,6 +1,7 @@
 import {forwardRef} from 'react';
 import {Image, Pressable, View} from 'react-native';
 import {BasicText} from './basicViews/BasicText';
+import React from 'react';
 
 interface SettingsItemProps {
   text: string;

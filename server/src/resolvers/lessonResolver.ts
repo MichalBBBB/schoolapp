@@ -9,7 +9,6 @@ import {
 } from "type-graphql";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../utils/MyContext";
-import { WEEK_DAYS } from "../types/weekDays";
 import { queueMiddleware } from "../middleware/queueMiddleware";
 
 @Resolver(() => Lesson)

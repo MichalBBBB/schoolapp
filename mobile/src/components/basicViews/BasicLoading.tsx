@@ -1,7 +1,8 @@
+import React from 'react';
+import {View} from 'react-native';
 import {UIActivityIndicator} from 'react-native-indicators';
-import {useTheme} from '../../contexts/ThemeContext';
 
 export const BasicLoading = () => {
-  const [theme] = useTheme();
-  return <UIActivityIndicator />;
+  // return <UIActivityIndicator />;
+  return <View />;
 };
