@@ -45,6 +45,7 @@ const AddEventScreen: React.FC<
   const [endDateModalVisible, setEndDateModalVisible] = useState(false);
   const [subjectModalVisible, setSubjectModalVisible] = useState(false);
   const [subject, setSubject] = useState<SubjectFragment | null>(null);
+  const [text, setText] = useState<string | null>(null);
 
   return (
     <View style={styles.container}>
@@ -116,6 +117,18 @@ const AddEventScreen: React.FC<
         </View>
       </BasicCard>
 
+      <BasicCard backgroundColor="accentBackground" marginBottom={10}>
+        <BasicTextInput
+          value={text || ''}
+          variant="unstyled"
+          placeholder="Description"
+          onChangeText={setText}
+          marginBottom={10}
+          style={{minHeight: 150}}
+          multiline={true}
+        />
+      </BasicCard>
+
       <View style={styles.buttonContainer}>
         <BasicButton
           spacing="m"
@@ -126,6 +139,7 @@ const AddEventScreen: React.FC<
               name: name,
               endDate: endDate.toISOString(),
               subjectId: subject?.id,
+              text,
             });
             navigation.goBack();
           }}>

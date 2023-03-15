@@ -8,7 +8,6 @@ import {BasicText} from '../../components/basicViews/BasicText';
 import {useTheme} from '../../contexts/ThemeContext';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import AddTaskWindow from '../../components/addTaskWindow';
-import BasicInputWindow from '../../components/basicInputWindow';
 import {useCreateSubject} from '../../mutationHooks/subject/createSubject';
 import {v4 as uuidv4} from 'uuid';
 import {useDeleteSubject} from '../../mutationHooks/subject/deleteSubject';

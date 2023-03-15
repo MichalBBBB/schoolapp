@@ -41,20 +41,12 @@ const EditProjectTaskWindow: React.FC<EditProjectTaskWindowProps> = ({
     },
   });
 
-  const taskInputRef = useRef<TextInput>(null);
   const [name, setName] = useState('');
   const [viewVisible, setViewVisible] = useState<
     'main' | 'editDueDate' | 'editDoDate'
   >('main');
   const [dueDate, setDueDate] = useState<dayjs.Dayjs | null>();
   const [doDate, setDoDate] = useState<dayjs.Dayjs | null>();
-
-  useEffect(() => {
-    if (visible && viewVisible == 'main') {
-      console.log('focus');
-      taskInputRef.current?.focus();
-    }
-  }, [visible, viewVisible, taskInputRef]);
 
   useEffect(() => {
     if (visible && projectTask) {
@@ -86,9 +78,9 @@ const EditProjectTaskWindow: React.FC<EditProjectTaskWindowProps> = ({
           spacing="m"
           variant="unstyled"
           placeholder="Task name"
-          ref={taskInputRef}
           value={name}
           onChangeText={setName}
+          autoFocus={true}
         />
         <View style={styles.bottomContainer}>
           <BasicButton

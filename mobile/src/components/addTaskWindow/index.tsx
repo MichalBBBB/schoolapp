@@ -47,13 +47,6 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
   const [taskDate, setTaskDate] = useState<dayjs.Dayjs | null>();
 
   useEffect(() => {
-    if (visible && viewVisible == 'main') {
-      console.log('focus');
-      taskInputRef.current?.focus();
-    }
-  }, [visible, viewVisible, taskInputRef]);
-
-  useEffect(() => {
     // automatically set subject to current lesson
     if (lessons?.getAllLessons && settings) {
       setSubject(
@@ -84,9 +77,9 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
           spacing="m"
           variant="unstyled"
           placeholder="Task name"
-          ref={taskInputRef}
           value={name}
           onChangeText={setName}
+          autoFocus={true}
         />
         <View style={styles.bottomContainer}>
           <SelectSubjectPopup

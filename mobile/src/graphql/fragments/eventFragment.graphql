@@ -1,10 +1,14 @@
 fragment CalendarEvent on CalendarEvent {
   id
   name
+  text
   startDate
   endDate
   wholeDay
   subject {
     ...Subject
+  }
+  reminders {
+    ...Reminder
   }
 }

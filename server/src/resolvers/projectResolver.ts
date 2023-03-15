@@ -75,14 +75,15 @@ export class projectResolver {
   async getProjects(@Ctx() { payload }: MyContext) {
     const projects = await Project.createQueryBuilder("project")
       .select()
-      .leftJoin(
+      .innerJoin(
         "project.userProjects",
         "userProject",
-        '"userProject"."userId" = :id',
-        { id: payload?.userId }
+        '"userProject"."userId" = :id AND "userProject".accepted = :accepted',
+        { id: payload?.userId, accepted: true }
       )
       .leftJoinAndSelect("project.tasks", "projectTask")
       .getMany();
+    console.log(projects);
     return projects;
   }
 

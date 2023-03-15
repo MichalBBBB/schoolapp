@@ -10,7 +10,6 @@ import {
   View,
 } from 'react-native';
 import {AssignMembersWindow} from '../../components/assignMembersWindow';
-import BasicInputWindow from '../../components/basicInputWindow';
 import {BasicText} from '../../components/basicViews/BasicText';
 import EditProjectTaskWindow from '../../components/editProjectTaskWindow';
 import {Menu} from '../../components/menu';

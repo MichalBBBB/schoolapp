@@ -5,7 +5,6 @@ import BackButton from '../components/backButton';
 import {TaskFragment} from '../generated/graphql';
 import {TabStackParamList} from '../Routes';
 import {NewProjectScreen} from '../screens/Projects/NewProjectScreen';
-import {NotificationScreen} from '../screens/Tasks/NotificationScreen';
 import {PlanDayScreen} from '../screens/Tasks/PlanDayScreen';
 import TaskDetailScreen from '../screens/Tasks/TaskDetailScreen';
 import TaskHomeScreen from '../screens/Tasks/TaskHomeScreen';
@@ -13,8 +12,6 @@ import TaskHomeScreen from '../screens/Tasks/TaskHomeScreen';
 export type TaskStackParamList = {
   TaskHomeScreen: undefined;
   TaskDetailScreen: {task: TaskFragment};
-  AddSubtaskScreen: {taskId: string};
-  NotificationScreen: undefined;
   PlanDayScreen: undefined;
 };
 
@@ -40,7 +37,6 @@ const TaskStack: React.FC<
         component={TaskDetailScreen}
         options={({route}) => ({title: route.params.task.name})}
       />
-      <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
       <Stack.Screen name="PlanDayScreen" component={PlanDayScreen} />
     </Stack.Navigator>
   );

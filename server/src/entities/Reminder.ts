@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   Relation,
 } from "typeorm";
+import { CalendarEvent } from "./CalendarEvent";
 import { Task } from "./Task";
 import { User } from "./User";
 
@@ -29,13 +30,23 @@ export class Reminder extends BaseEntity {
   @Column({ nullable: true })
   body?: string;
 
-  @ManyToOne(() => Task, (task) => task.reminders)
-  @Field(() => Task)
-  task: Relation<Task>;
+  @ManyToOne(() => Task, (task) => task.reminders, { nullable: true })
+  @Field(() => Task, { nullable: true })
+  task?: Relation<Task>;
 
-  @Column()
-  @Field()
-  taskId: string;
+  @ManyToOne(() => CalendarEvent, (event) => event.reminders, {
+    nullable: true,
+  })
+  @Field(() => CalendarEvent, { nullable: true })
+  event?: Relation<CalendarEvent>;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  taskId?: string;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  eventId?: string;
 
   @Column()
   @Field()

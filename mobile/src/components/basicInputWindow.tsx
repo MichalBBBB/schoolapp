@@ -1,32 +1,27 @@
 import React, {createRef, useEffect, useRef, useState} from 'react';
 import {View, TextInput, Text, StyleSheet} from 'react-native';
 import AddButton from './addButton';
+import {BasicButton} from './basicViews/BasicButton';
 import {BasicModalCard} from './basicViews/BasicModalCard';
+import {BasicText} from './basicViews/BasicText';
 import {BasicTextInput} from './basicViews/BasicTextInput';
 
 interface addTaskWindowProps {
   visible: boolean;
   onClose?: () => void;
   onSubmit?: (text: string) => void;
-  onModalHide?: () => void;
   placeholder?: string;
+  buttonText?: string;
 }
 
 const BasicInputWindow: React.FC<addTaskWindowProps> = ({
   onClose,
   visible,
   onSubmit,
-  onModalHide,
   placeholder,
+  buttonText = 'Add',
 }) => {
-  const textInputRef = createRef<TextInput>();
   const [text, setText] = useState('');
-
-  useEffect(() => {
-    if (visible == true) {
-      textInputRef.current?.focus();
-    }
-  }, [visible]);
 
   const closeWindow = () => {
     setText('');
@@ -43,11 +38,6 @@ const BasicInputWindow: React.FC<addTaskWindowProps> = ({
         avoidKeyboard={true}
         onBackdropPress={() => {
           closeWindow();
-        }}
-        onModalHide={() => {
-          if (onModalHide) {
-            onModalHide();
-          }
         }}>
         <View
           style={{
@@ -58,15 +48,18 @@ const BasicInputWindow: React.FC<addTaskWindowProps> = ({
             style={{flex: 1, marginRight: 5}}
             placeholder={placeholder || 'Name'}
             onChangeText={setText}
-            ref={textInputRef}
+            autoFocus={true}
           />
-          <AddButton
+          <BasicButton
+            spacing="m"
+            style={{borderRadius: 30}}
             onPress={() => {
               if (onSubmit) {
                 onSubmit(text);
               }
-            }}
-          />
+            }}>
+            <BasicText color="textContrast">{buttonText}</BasicText>
+          </BasicButton>
         </View>
       </BasicModalCard>
     </>

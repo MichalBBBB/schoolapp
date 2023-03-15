@@ -21,7 +21,7 @@ import { queueMiddleware } from "../middleware/queueMiddleware";
 import { Reminder } from "../entities/Reminder";
 
 @InputType()
-class RemindersInput implements Partial<Reminder> {
+export class RemindersInput implements Partial<Reminder> {
   @Field()
   id: string;
 

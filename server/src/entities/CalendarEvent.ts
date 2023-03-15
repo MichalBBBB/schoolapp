@@ -4,8 +4,11 @@ import {
   Column,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
+  Relation,
 } from "typeorm";
+import { Reminder } from "./Reminder";
 import { Subject } from "./Subject";
 import { User } from "./User";
 
@@ -19,6 +22,10 @@ export class CalendarEvent extends BaseEntity {
   @Column()
   @Field()
   name: string;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  text?: string;
 
   @Column()
   @Field()
@@ -41,6 +48,10 @@ export class CalendarEvent extends BaseEntity {
   })
   @Field(() => Subject, { nullable: true })
   subject?: Subject;
+
+  @OneToMany(() => Reminder, (reminder) => reminder.event)
+  @Field(() => [Reminder])
+  reminders: Relation<Reminder>[];
 
   @ManyToOne(() => User, (user) => user.events)
   @Field(() => User)

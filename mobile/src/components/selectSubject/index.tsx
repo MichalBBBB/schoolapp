@@ -6,7 +6,6 @@ import {
   useCreateSubjectMutation,
   useGetAllSubjectsQuery,
 } from '../../generated/graphql';
-import BasicInputWindow from '../basicInputWindow';
 import {BasicButton} from '../basicViews/BasicButton';
 import {BasicModalCard} from '../basicViews/BasicModalCard';
 import {BasicText} from '../basicViews/BasicText';

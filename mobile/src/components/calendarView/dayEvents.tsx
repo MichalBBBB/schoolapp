@@ -16,6 +16,7 @@ import Task from '../task';
 import {BasicText} from '../basicViews/BasicText';
 import {useSettings} from '../../utils/useSettings';
 import {getDayNumber} from '../../utils/lessonUtils';
+import {useTheme} from '../../contexts/ThemeContext';
 
 interface DayEventsProps {
   date: dayjs.Dayjs;
@@ -33,6 +34,7 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
   const {data: tasks} = useGetAllTasksQuery();
 
   const settings = useSettings();
+  const [theme] = useTheme();
 
   const dayNumber = useMemo(() => {
     if (settings) {

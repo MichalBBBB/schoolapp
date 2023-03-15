@@ -5,6 +5,9 @@ import {
   GetAllEventsDocument,
   GetAllEventsQuery,
   GetAllSubjectsQuery,
+  RemindersInput,
+  GetAllRemindersQuery,
+  GetAllRemindersDocument,
 } from '../../generated/graphql';
 import {CreateEventMutationVariables} from '../../generated/graphql';
 import {FetchResult, MutationResult, useApolloClient} from '@apollo/client';
@@ -32,6 +35,14 @@ export const useCreateEvent: () => [
       },
     );
 
+    var remindersArray: RemindersInput[] = [];
+    if (variables.reminders) {
+      remindersArray =
+        'map' in variables.reminders
+          ? (variables.reminders as RemindersInput[])
+          : [variables.reminders as RemindersInput];
+    }
+
     const result = await createEvent({
       context: {
         serializationKey: 'MUTATION',
@@ -47,6 +58,18 @@ export const useCreateEvent: () => [
           endDate: variables.endDate,
           wholeDay: variables.wholeDay || false,
           subject: subject || null,
+          text: variables.text || null,
+          reminders: remindersArray.map(item => {
+            return {
+              __typename: 'Reminder',
+              minutesBefore: item.minutesBefore,
+              id: item.id,
+              title: item.title,
+              body: item.body || null,
+              date: item.date,
+              eventId: variables.id,
+            };
+          }),
         },
       },
       update: (cache, {data}) => {
@@ -66,6 +89,23 @@ export const useCreateEvent: () => [
           query: GetAllEventsDocument,
           data: {
             getAllEvents: newEvents,
+          },
+        });
+        const reminders = cache.readQuery<GetAllRemindersQuery>({
+          query: GetAllRemindersDocument,
+        });
+        if (!reminders) {
+          return;
+        }
+        const existingReminders = reminders.getAllReminders;
+        const newReminders = [
+          ...existingReminders,
+          ...data.createEvent.reminders,
+        ];
+        cache.writeQuery<GetAllRemindersQuery>({
+          query: GetAllRemindersDocument,
+          data: {
+            getAllReminders: newReminders,
           },
         });
       },

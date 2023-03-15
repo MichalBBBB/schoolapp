@@ -7,6 +7,8 @@ import {
   Image,
   StyleSheet,
   Pressable,
+  TouchableHighlight,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {
   CalendarEventFragment,
@@ -26,6 +28,8 @@ import {useCreateTask} from '../../mutationHooks/task/createTask';
 import {SubjectColorsObject} from '../../types/Theme';
 import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
 import {Popup} from '../popup';
+import {useNavigation} from '@react-navigation/native';
+import {CalendarNavigationProp} from '../../utils/types';
 
 interface LessonProps {
   lesson: LessonFragment;
@@ -36,6 +40,7 @@ export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
   const [studyTimeModalVisible, setStudyTimeModalVisible] = useState(false);
   const [addTask] = useCreateTask();
   const [deleteEvent] = useDeleteEvent();
+  const navigation = useNavigation<CalendarNavigationProp>();
   return (
     <>
       <BasicCard
@@ -49,33 +54,38 @@ export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
           </BasicText>
         </View>
         {event && (
-          <View style={styles.eventContainer}>
-            <BasicText>{event.name}</BasicText>
-            <Popup
-              trigger={
-                <Pressable>
-                  <Image
-                    source={require('../../../assets/Options.png')}
-                    style={styles.options}
+          <TouchableWithoutFeedback
+            onPress={() => {
+              navigation.navigate('EventDetailScreen', {event});
+            }}>
+            <View style={styles.eventContainer}>
+              <BasicText>{event.name}</BasicText>
+              <Popup
+                trigger={
+                  <Pressable>
+                    <Image
+                      source={require('../../../assets/Options.png')}
+                      style={styles.options}
+                    />
+                  </Pressable>
+                }>
+                <Menu>
+                  <MenuItem
+                    text={'Add time to study'}
+                    onPress={() => {
+                      setStudyTimeModalVisible(true);
+                    }}
                   />
-                </Pressable>
-              }>
-              <Menu>
-                <MenuItem
-                  text={'Add time to study'}
-                  onPress={() => {
-                    setStudyTimeModalVisible(true);
-                  }}
-                />
-                <MenuItem
-                  text={'Delete'}
-                  onPress={() => {
-                    deleteEvent({id: event.id});
-                  }}
-                />
-              </Menu>
-            </Popup>
-          </View>
+                  <MenuItem
+                    text={'Delete'}
+                    onPress={() => {
+                      deleteEvent({id: event.id});
+                    }}
+                  />
+                </Menu>
+              </Popup>
+            </View>
+          </TouchableWithoutFeedback>
         )}
       </BasicCard>
       <EditDateModal

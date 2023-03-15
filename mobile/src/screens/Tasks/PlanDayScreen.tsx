@@ -16,11 +16,6 @@ export const PlanDayScreen: React.FC<
   const [day, setDay] = useState(dayjs());
   const {data} = useGetAllTasksQuery();
 
-  type section = {
-    title: string;
-    data: TaskFragment[];
-  };
-
   const unDoneTasks = data?.getAllTasks.filter(item => !item.done);
   const todayTasks = unDoneTasks?.filter(item => {
     if (item.doDate) {
@@ -75,18 +70,18 @@ export const PlanDayScreen: React.FC<
             ) : (
               todayTasks?.map((item, index) => (
                 <Task
+                  key={index}
                   backgroundColor="accentBackground"
                   task={item}
-                  planning={true}
+                  planning
+                  planningDay={day}
                 />
               ))
             )}
           </BasicCard>
         }
         data={unassignedTasks}
-        renderItem={({item}) => (
-          <Task task={item} planning={true} planningDay={day} />
-        )}
+        renderItem={({item}) => <Task task={item} planning planningDay={day} />}
       />
     </View>
   );

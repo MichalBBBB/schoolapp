@@ -1,8 +1,10 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useState} from 'react';
+import React, {useLayoutEffect, useState} from 'react';
 import {FlatList, Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {AddProjectMemberWindow} from '../../components/addProjectMemberWindow';
+import BasicInputWindow from '../../components/basicInputWindow';
 import {BasicButton} from '../../components/basicViews/BasicButton';
+import {BasicLoading} from '../../components/basicViews/BasicLoading';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {
   useAddMemberToProjectMutation,
@@ -14,6 +16,7 @@ import {ProjectStackParamList} from '../../routes/ProjectStack';
 export const ProjectMembersScreen: React.FC<
   NativeStackScreenProps<ProjectStackParamList, 'ProjectMembersScreen'>
 > = ({navigation, route}) => {
+  // we get the project this way to make it reactive to changes
   const {data} = useGetProjectsQuery();
   const project = data?.getProjects.find(item => {
     return item.id == route.params.projectId;
@@ -21,22 +24,37 @@ export const ProjectMembersScreen: React.FC<
   const [removeMember] = useRemoveMemberFromProjectMutation({
     context: {skipQeue: true},
   });
+  const [addMember] = useAddMemberToProjectMutation();
   const [addProjectMemberWindowVisible, setAddProjectMemberWindowVisible] =
     useState(false);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <BasicButton
+          variant="unstyled"
+          onPress={() => {
+            setAddProjectMemberWindowVisible(true);
+          }}>
+          <BasicText>Add</BasicText>
+        </BasicButton>
+      ),
+    });
+  });
+
+  if (!project) {
+    return (
+      <View>
+        <BasicLoading />
+      </View>
+    );
+  }
+
   return (
     <>
       <View style={styles.container}>
         <View style={styles.titleContainer}>
-          <BasicText textVariant="title">{project?.name}</BasicText>
-          <BasicButton
-            spacing="s"
-            variant="outlined"
-            borderWidth={2}
-            onPress={() => {
-              setAddProjectMemberWindowVisible(true);
-            }}>
-            <BasicText textVariant="button">Add member</BasicText>
-          </BasicButton>
+          <BasicText textVariant="title">Members</BasicText>
         </View>
 
         <FlatList
@@ -62,12 +80,16 @@ export const ProjectMembersScreen: React.FC<
           )}
         />
       </View>
-      <AddProjectMemberWindow
-        projectId={route.params.projectId}
-        isVisible={addProjectMemberWindowVisible}
+      <BasicInputWindow
+        visible={addProjectMemberWindowVisible}
         onClose={() => {
           setAddProjectMemberWindowVisible(false);
         }}
+        onSubmit={value => {
+          addMember({variables: {projectId: project?.id, memberEmail: value}});
+        }}
+        buttonText={'Invite'}
+        placeholder="Email"
       />
     </>
   );

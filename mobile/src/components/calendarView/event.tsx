@@ -7,6 +7,7 @@ import {
   Image,
   StyleSheet,
   Pressable,
+  TouchableHighlight,
 } from 'react-native';
 import {CalendarEventFragment} from '../../generated/graphql';
 import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
@@ -18,6 +19,10 @@ import {MenuItem} from '../menu/MenuItem';
 import SlidingView from '../slidingView';
 import {v4 as uuidv4} from 'uuid';
 import {Popup} from '../popup';
+import {useNavigation} from '@react-navigation/native';
+import {CalendarNavigationProp} from '../../utils/types';
+import {BasicCard} from '../basicViews/BasicCard';
+import {useTheme} from '../../contexts/ThemeContext';
 
 interface EventProps {
   event: CalendarEventFragment;
@@ -27,35 +32,48 @@ const Event: React.FC<EventProps> = ({event}) => {
   const [deleteEvent] = useDeleteEvent();
   const [addTask] = useCreateTask();
 
+  const navigation = useNavigation<CalendarNavigationProp>();
+
+  const [theme] = useTheme();
+
   const [studyTimeModalVisible, setStudyTimeModalVisible] = useState(false);
 
   const frontView = (
-    <View style={styles.frontViewContainer}>
-      <BasicText>{event.name}</BasicText>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <BasicText color="textSecondary" style={{marginRight: 5}}>
-          {dayjs(event.startDate).format('HH:mm')}
-        </BasicText>
-        <Popup
-          trigger={
-            <Pressable>
-              <Image
-                source={require('../../../assets/Options.png')}
-                style={styles.options}
+    <TouchableHighlight
+      onPress={() => {
+        navigation.navigate('EventDetailScreen', {event});
+      }}>
+      <View
+        style={[
+          styles.frontViewContainer,
+          {backgroundColor: theme.colors.accentBackground},
+        ]}>
+        <BasicText>{event.name}</BasicText>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <BasicText color="textSecondary" style={{marginRight: 5}}>
+            {dayjs(event.startDate).format('HH:mm')}
+          </BasicText>
+          <Popup
+            trigger={
+              <Pressable>
+                <Image
+                  source={require('../../../assets/Options.png')}
+                  style={styles.options}
+                />
+              </Pressable>
+            }>
+            <Menu>
+              <MenuItem
+                text={'Add time to study'}
+                onPress={() => {
+                  setStudyTimeModalVisible(true);
+                }}
               />
-            </Pressable>
-          }>
-          <Menu>
-            <MenuItem
-              text={'Add time to study'}
-              onPress={() => {
-                setStudyTimeModalVisible(true);
-              }}
-            />
-          </Menu>
-        </Popup>
+            </Menu>
+          </Popup>
+        </View>
       </View>
-    </View>
+    </TouchableHighlight>
   );
 
   return (
@@ -119,7 +137,6 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   frontViewContainer: {
-    backgroundColor: '#eee',
     padding: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',

@@ -90,10 +90,6 @@ export default memo(Month, (prevProps, nextProps) => {
   if (prevProps.startOfWeek !== nextProps.startOfWeek) {
     return false;
   }
-
-  if (prevProps.startOfWeek != nextProps.startOfWeek) {
-    return false;
-  }
   // if the new or old selected day is in this month, rerender
   if (
     typeof nextProps.month !== 'string' &&

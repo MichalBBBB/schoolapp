@@ -6,9 +6,17 @@ import {BaseButton} from 'react-native-gesture-handler';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicCard} from '../../components/basicViews/BasicCard';
 import {BasicText} from '../../components/basicViews/BasicText';
+import {Invite} from '../../components/invite';
+import {Project} from '../../components/project';
 import {
+  GetInvitesDocument,
   GetProjectsDocument,
+  InviteFragment,
+  ProjectFragment,
+  useAcceptProjectInviteMutation,
+  useDeclineProjectInviteMutation,
   useDeleteProjectMutation,
+  useGetInvitesQuery,
   useGetProjectsQuery,
 } from '../../generated/graphql';
 import {ProjectStackParamList} from '../../routes/ProjectStack';
@@ -17,9 +25,11 @@ const ProjectHomeScreen: React.FC<
   NativeStackScreenProps<ProjectStackParamList, 'ProjectHomeScreen'>
 > = ({navigation}) => {
   const {data, error} = useGetProjectsQuery();
+  const {data: invites} = useGetInvitesQuery();
   const [deleteProject, {error: deleteError}] = useDeleteProjectMutation({
     context: {skipQeue: true},
   });
+
   useEffect(() => {
     console.log(JSON.stringify(error), JSON.stringify(deleteError));
   }, [error, deleteError]);
@@ -38,39 +48,21 @@ const ProjectHomeScreen: React.FC<
     });
   });
 
+  const MyFlatList = FlatList<ProjectFragment | InviteFragment>;
+
   return (
     <View style={{padding: 10}}>
-      <FlatList
-        data={data?.getProjects}
-        renderItem={({item}) => (
-          <View style={{margin: 5}}>
-            <Pressable
-              onPress={() => {
-                navigation.navigate('ProjectDetailScreen', {
-                  projectId: item.id,
-                });
-              }}>
-              <BasicCard backgroundColor="accentBackground" spacing="m">
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <Text>{item.name}</Text>
-                  <BaseButton
-                    onPress={() =>
-                      deleteProject({
-                        variables: {id: item.id},
-                        refetchQueries: [GetProjectsDocument],
-                      })
-                    }>
-                    <Text style={{color: 'red'}}>Delete</Text>
-                  </BaseButton>
-                </View>
-              </BasicCard>
-            </Pressable>
-          </View>
-        )}
+      <MyFlatList
+        data={[...(invites?.getInvites || []), ...(data?.getProjects || [])]}
+        renderItem={({item}) => {
+          if (item.__typename == 'Project') {
+            return <Project project={item} />;
+          } else if (item.__typename == 'Invite') {
+            return <Invite invite={item} />;
+          } else {
+            return <View></View>;
+          }
+        }}
       />
     </View>
   );

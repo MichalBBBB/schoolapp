@@ -15,6 +15,7 @@ import {useSetSettings} from '../../../mutationHooks/settings/setSettings';
 import {SettingsStackParamList} from '../../../routes/SettingsStack';
 import {SubjectColorsObject} from '../../../types/Theme';
 import {useSettings} from '../../../utils/useSettings';
+import {BasicLoading} from '../../../components/basicViews/BasicLoading';
 
 export const AdvancedTimeTableScreen: React.FC<
   NativeStackScreenProps<SettingsStackParamList, 'AdvancedTimeTableScreen'>
@@ -22,38 +23,17 @@ export const AdvancedTimeTableScreen: React.FC<
   const numbers = Array(14)
     .fill(0)
     .map((item, index) => index + 1);
-  const [rotationLength, setRotationLength] = useState(5);
-  const [skipWeekends, setSkipWeekends] = useState(true);
-  const [startDate, setStartDate] = useState(dayjs());
   const [startDateModalVisible, setStartDateModalVisible] = useState(false);
   const [setSettings] = useSetSettings();
   const settings = useSettings();
 
-  useEffect(() => {
-    if (settings) {
-      setRotationLength(settings.lengthOfRotation);
-      setSkipWeekends(settings.skipWeekends);
-      setStartDate(dayjs(settings.startOfRotationDate));
-    }
-  }, [settings]);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerLeft: () => (
-        <BackButton
-          onPress={() => {
-            console.log(skipWeekends);
-            setSettings({
-              lengthOfRotation: rotationLength,
-              skipWeekends,
-              startOfRotationDate: startDate,
-            });
-            navigation.goBack();
-          }}
-        />
-      ),
-    });
-  });
+  if (!settings) {
+    return (
+      <View>
+        <BasicLoading />
+      </View>
+    );
+  }
 
   return (
     <View style={{padding: 10}}>
@@ -83,7 +63,9 @@ export const AdvancedTimeTableScreen: React.FC<
                   <BasicButton
                     spacing="none"
                     backgroundColor="background"
-                    variant={rotationLength == item ? 'filled' : 'unstyled'}
+                    variant={
+                      settings.lengthOfRotation == item ? 'filled' : 'unstyled'
+                    }
                     style={{
                       marginBottom: 5,
                       alignItems: 'center',
@@ -91,7 +73,9 @@ export const AdvancedTimeTableScreen: React.FC<
                       padding: 5,
                     }}
                     onPress={() => {
-                      setRotationLength(item);
+                      setSettings({
+                        lengthOfRotation: item,
+                      });
                     }}>
                     <BasicText>{item}</BasicText>
                   </BasicButton>
@@ -114,9 +98,11 @@ export const AdvancedTimeTableScreen: React.FC<
           }}>
           <BasicText>Skip weekends</BasicText>
           <Switch
-            value={skipWeekends}
+            value={settings.skipWeekends}
             onValueChange={value => {
-              setSkipWeekends(value);
+              setSettings({
+                skipWeekends: value,
+              });
             }}
           />
         </View>
@@ -139,18 +125,22 @@ export const AdvancedTimeTableScreen: React.FC<
             variant="outlined"
             spacing="s"
             borderRadius={10}>
-            <BasicText>{startDate.format('DD/MM/YYYY')}</BasicText>
+            <BasicText>
+              {dayjs(settings.startOfRotationDate).format('DD/MM/YYYY')}
+            </BasicText>
           </BasicButton>
         </View>
       </BasicCard>
       <EditDateModal
-        initialDate={startDate}
+        initialDate={dayjs(settings.startOfRotationDate)}
         isVisible={startDateModalVisible}
         onClose={() => {
           setStartDateModalVisible(false);
         }}
         onSubmit={date => {
-          setStartDate(date);
+          setSettings({
+            startOfRotationDate: date.toDate(),
+          });
           setStartDateModalVisible(false);
         }}
       />
