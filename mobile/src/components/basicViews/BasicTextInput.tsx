@@ -31,7 +31,7 @@ export const BasicTextInput = forwardRef<TextInput, BasicTextInputProps>(
       spacing = 's',
       variant = 'filled',
       style,
-      backgroundColor = 'accentBackground',
+      backgroundColor = 'accentBackground1',
       borderRadius = 15,
       borderWidth = 3,
       marginBottom,
@@ -41,10 +41,11 @@ export const BasicTextInput = forwardRef<TextInput, BasicTextInputProps>(
     return (
       <TextInput
         ref={ref}
+        placeholderTextColor={theme.colors.textSecondary}
         style={[
           {
             backgroundColor:
-              variant == 'filled' ? theme.colors.accentBackground : undefined,
+              variant == 'filled' ? theme.colors[backgroundColor] : undefined,
             borderRadius: borderRadius,
             padding: theme.spacing[spacing],
             color: theme.colors[color],

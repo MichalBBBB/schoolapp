@@ -20,7 +20,8 @@ interface weekViewProps {
   calendarWidth: number;
   weekHeight: number;
   onChangeActiveWeek?: (newWeek: dayjs.Dayjs) => void | undefined;
-  startOfWeek: string;
+  pastScrollRange: number;
+  futureScrollRange: number;
 }
 
 const createWeek = (date: dayjs.Dayjs | string) => {
@@ -36,9 +37,6 @@ const createWeek = (date: dayjs.Dayjs | string) => {
   return week;
 };
 
-const pastScrollRange = 10;
-const futureScrollRange = 20;
-
 const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
   const {
     week,
@@ -47,7 +45,8 @@ const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
     calendarWidth,
     weekHeight,
     onChangeActiveWeek,
-    startOfWeek,
+    pastScrollRange,
+    futureScrollRange,
   } = props;
 
   useImperativeHandle(ref, () => {

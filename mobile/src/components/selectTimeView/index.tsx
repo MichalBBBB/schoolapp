@@ -3,28 +3,9 @@ import dayjs from 'dayjs';
 import React, {useEffect, useState} from 'react';
 import {View, Text, Pressable, StyleSheet} from 'react-native';
 import DatePicker from 'react-native-date-picker';
+import {useTheme} from '../../contexts/ThemeContext';
 import {BasicButton} from '../basicViews/BasicButton';
 import {BasicText} from '../basicViews/BasicText';
-
-let hours: string[] = [];
-for (var i = 0; i < 24; i++) {
-  let number = i;
-  if (number.toString().length == 1) {
-    hours.push('0' + i.toString());
-  } else {
-    hours.push(i.toString());
-  }
-}
-
-let minutes: string[] = [];
-for (var i = 0; i < 60; i++) {
-  let number = i;
-  if (number.toString().length == 1) {
-    minutes.push('0' + i.toString());
-  } else {
-    minutes.push(i.toString());
-  }
-}
 
 interface SelectTimeViewModalProps {
   onSubmit?: (time: string) => void;
@@ -37,11 +18,14 @@ const SelectTimeView: React.FC<SelectTimeViewModalProps> = ({
 }) => {
   const [date, setDate] = useState(dayjs(initialTime, 'HH:mm').toDate());
 
+  const [theme] = useTheme();
+
   return (
     <View style={styles.container}>
       <DatePicker
         date={date}
         mode="time"
+        textColor={theme.colors.text}
         androidVariant="nativeAndroid"
         onDateChange={newDate => {
           setDate(newDate);

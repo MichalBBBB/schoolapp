@@ -30,7 +30,7 @@ export const Invite: React.FC<InviteProps> = ({invite}) => {
   });
   return (
     <View style={{margin: 5}}>
-      <BasicCard backgroundColor="accentBackground" spacing="m">
+      <BasicCard backgroundColor="accentBackground1" spacing="m">
         <BasicText style={{marginBottom: 5}}>
           {`${invite.ownerName} has invited you to join the project ${invite.projectName}`}
         </BasicText>

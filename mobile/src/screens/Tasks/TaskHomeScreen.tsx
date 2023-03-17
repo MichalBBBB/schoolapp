@@ -23,6 +23,7 @@ import {isOnlineVar} from '../../App';
 import AddButton from '../../components/addButton';
 import AddTaskWindow from '../../components/addTaskWindow';
 import {BasicButton} from '../../components/basicViews/BasicButton';
+import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {BasicText} from '../../components/basicViews/BasicText';
 import EditDateModal from '../../components/editDateWindow';
 import {Menu} from '../../components/menu';
@@ -68,7 +69,7 @@ const TaskHomeScreen: React.FC<
             onPress={() => {
               navigation.navigate('PlanDayScreen');
             }}>
-            <Image
+            <BasicIcon
               source={require('../../../assets/Today.png')}
               style={{height: 25, width: 25}}
             />
@@ -76,7 +77,7 @@ const TaskHomeScreen: React.FC<
           <Popup
             trigger={
               <BasicButton variant="unstyled">
-                <Image
+                <BasicIcon
                   source={require('../../../assets/Options.png')}
                   style={{height: 20, width: 20}}
                 />
@@ -87,18 +88,6 @@ const TaskHomeScreen: React.FC<
             </Menu>
           </Popup>
         </View>
-      ),
-      headerLeft: () => (
-        <Pressable
-          style={{flexDirection: 'row', alignItems: 'center'}}
-          onPress={() => {
-            navigation.navigate('NotificationScreen');
-          }}>
-          <Image
-            source={require('../../../assets/Mail.png')}
-            style={{height: 25, width: 25, resizeMode: 'stretch'}}
-          />
-        </Pressable>
       ),
     });
   });
@@ -120,7 +109,7 @@ const TaskHomeScreen: React.FC<
         contentContainerStyle={{
           borderRadius: 15,
           overflow: 'hidden',
-          backgroundColor: theme.colors.accentBackground,
+          backgroundColor: theme.colors.accentBackground1,
         }}
         style={{padding: 10}}
         data={list}
@@ -129,11 +118,11 @@ const TaskHomeScreen: React.FC<
             return (
               <TaskListProjectTask
                 projectTask={item}
-                backgroundColor="accentBackground"
+                backgroundColor="accentBackground1"
               />
             );
           } else {
-            return <Task task={item} backgroundColor={'accentBackground'} />;
+            return <Task task={item} backgroundColor={'accentBackground1'} />;
           }
         }}
         //ItemSeparatorComponent={() => <View style={styles.separator} />}

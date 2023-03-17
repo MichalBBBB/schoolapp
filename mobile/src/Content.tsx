@@ -8,7 +8,12 @@ import {PortalHost, PortalProvider} from '@gorhom/portal';
 import React, {useEffect} from 'react';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {isLoggedInVar, isOnlineVar, persistentQueueLink} from './App';
-import {ThemeProvider} from './contexts/ThemeContext';
+import {
+  DarkTheme,
+  LightTheme,
+  ThemeProvider,
+  useTheme,
+} from './contexts/ThemeContext';
 import Routes from './Routes';
 import {allQueries} from './utils/allQueries';
 import NetInfo from '@react-native-community/netinfo';
@@ -43,6 +48,8 @@ export const Content: React.FC = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const settings = useSettings();
 
+  const [theme, setTheme] = useTheme();
+
   useEffect(() => {
     if (isOnline && isLoggedIn) {
       openQueue(client);
@@ -66,10 +73,18 @@ export const Content: React.FC = () => {
           ? 5
           : 0,
     });
+    // if settings darkmode is different than theme, update the theme
+    if (theme.dark !== settings?.darkMode) {
+      if (settings?.darkMode) {
+        setTheme(DarkTheme);
+      } else {
+        setTheme(LightTheme);
+      }
+    }
   }, [settings]);
 
   useEffect(() => {
-    let interval: NodeJS.Timer;
+    let interval: ReturnType<typeof setInterval>;
     (async () => {
       const isActuallyOnline = (await NetInfo.fetch()).isConnected;
       // when the server is down, isActuallyOnline is going to be true
@@ -89,12 +104,10 @@ export const Content: React.FC = () => {
     }; // cleanup function
   }, [isOnline]);
   return (
-    <ThemeProvider>
-      <GestureHandlerRootView style={{flex: 1}}>
-        <PortalProvider>
-          <Routes />
-        </PortalProvider>
-      </GestureHandlerRootView>
-    </ThemeProvider>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <PortalProvider>
+        <Routes />
+      </PortalProvider>
+    </GestureHandlerRootView>
   );
 };

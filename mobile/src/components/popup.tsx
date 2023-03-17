@@ -18,16 +18,23 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import {ColorsObject} from '../types/Theme';
 import useKeyboardHeight, {isIOS} from '../utils/keyboardHeight';
 
 export interface PopupProps {
   trigger: React.ReactElement;
   forceSide?: 'right' | 'left';
+  extraOnPress?: () => void;
 }
 
 const {width: layoutWidth, height: layoutHeight} = Dimensions.get('window');
 
-export const Popup: React.FC<PopupProps> = ({trigger, children, forceSide}) => {
+export const Popup: React.FC<PopupProps> = ({
+  trigger,
+  children,
+  forceSide,
+  extraOnPress,
+}) => {
   const {keyboardHeight} = useKeyboardHeight();
   const triggerWrapperRef = useRef<View>(null);
   const [triggerDimensions, setTriggerDimensions] = useState({
@@ -194,6 +201,7 @@ export const Popup: React.FC<PopupProps> = ({trigger, children, forceSide}) => {
           measureTrigger();
           setPopupVisible(true);
           setShouldAnimate(true);
+          extraOnPress?.();
         },
         ref: triggerWrapperRef,
       })}

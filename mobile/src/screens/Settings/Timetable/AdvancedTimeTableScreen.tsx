@@ -38,14 +38,14 @@ export const AdvancedTimeTableScreen: React.FC<
   return (
     <View style={{padding: 10}}>
       <BasicCard
-        backgroundColor="accentBackground"
+        backgroundColor="accentBackground1"
         spacing="m"
         marginBottom={10}>
         <Popup
           trigger={<SettingsItem text={'Lenght of rotation'} />}
           forceSide="right">
           <BasicCard
-            backgroundColor="accentBackground"
+            backgroundColor="accentBackground2"
             style={{
               elevation: 8,
               shadowOpacity: 0.1,
@@ -86,7 +86,7 @@ export const AdvancedTimeTableScreen: React.FC<
         </Popup>
       </BasicCard>
       <BasicCard
-        backgroundColor="accentBackground"
+        backgroundColor="accentBackground1"
         spacing="s"
         marginBottom={10}>
         <View
@@ -107,7 +107,7 @@ export const AdvancedTimeTableScreen: React.FC<
           />
         </View>
       </BasicCard>
-      <BasicCard backgroundColor="accentBackground" spacing="s">
+      <BasicCard backgroundColor="accentBackground1" spacing="s">
         <View
           style={{
             flexDirection: 'row',
@@ -132,6 +132,8 @@ export const AdvancedTimeTableScreen: React.FC<
         </View>
       </BasicCard>
       <EditDateModal
+        showTime={false}
+        showSpecialDays={false}
         initialDate={dayjs(settings.startOfRotationDate)}
         isVisible={startDateModalVisible}
         onClose={() => {

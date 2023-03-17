@@ -10,6 +10,7 @@ import {
   TextInput,
   View,
   TouchableOpacity,
+  Keyboard,
 } from 'react-native';
 import BackButton from '../../components/backButton';
 import BasicInputWindow from '../../components/basicInputWindow';
@@ -99,8 +100,9 @@ const TaskDetailScreen: React.FC<
       <View style={styles.container}>
         <View style={styles.actionContainer}>
           <BasicButton
-            backgroundColor="accentBackground"
+            backgroundColor="accentBackground1"
             onPress={() => {
+              Keyboard.dismiss();
               setEditDueDateModalIsVisible(true);
             }}
             spacing="s"
@@ -117,8 +119,9 @@ const TaskDetailScreen: React.FC<
           </BasicButton>
           <BasicButton
             style={styles.action}
-            backgroundColor="accentBackground"
+            backgroundColor="accentBackground1"
             onPress={() => {
+              Keyboard.dismiss();
               setEditDoDateModalIsVisible(true);
             }}
             spacing="s"
@@ -133,9 +136,12 @@ const TaskDetailScreen: React.FC<
             </BasicText>
           </BasicButton>
           <SelectSubjectPopup
+            extraOnPress={() => {
+              Keyboard.dismiss();
+            }}
             trigger={
               <BasicButton
-                backgroundColor="accentBackground"
+                backgroundColor="accentBackground1"
                 spacing="s"
                 borderRadius={10}>
                 <BasicText>
@@ -202,7 +208,7 @@ const TaskDetailScreen: React.FC<
       <EditDateModal
         initialDate={task.doDate ? dayjs(task.doDate) : dayjs()}
         initialReminderTimes={task.reminders.map(item => item.minutesBefore)}
-        reminders
+        showReminders
         onClose={() => {
           setEditDoDateModalIsVisible(false);
         }}

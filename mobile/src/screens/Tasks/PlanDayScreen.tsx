@@ -31,7 +31,7 @@ export const PlanDayScreen: React.FC<
     <View style={{padding: 10}}>
       <FlatList
         ListHeaderComponent={
-          <BasicCard backgroundColor="accentBackground">
+          <BasicCard backgroundColor="accentBackground1">
             <View style={styles.topContainer}>
               <BasicButton
                 variant="unstyled"
@@ -71,7 +71,7 @@ export const PlanDayScreen: React.FC<
               todayTasks?.map((item, index) => (
                 <Task
                   key={index}
-                  backgroundColor="accentBackground"
+                  backgroundColor="accentBackground1"
                   task={item}
                   planning
                   planningDay={day}

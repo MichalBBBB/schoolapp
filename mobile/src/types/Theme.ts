@@ -16,7 +16,10 @@ export type ColorsObject = {
   textSecondary: string;
   border: string;
   notification: string;
-  accentBackground: string;
+  accentBackground1: string;
+  accentBackground2: string;
+  icon: string;
+  modal: string;
   cardView: string;
   accent: string;
   textContrast: string;

@@ -34,6 +34,7 @@ export const useSetSettings: () => [
           __typename: 'Mutation',
           setSettings: {
             __typename: 'Settings',
+            darkMode: variables.darkMode || settings.darkMode,
             id: settings.id,
             startOfWeek: variables.startOfWeek || settings.startOfWeek,
             startOfRotationDate:

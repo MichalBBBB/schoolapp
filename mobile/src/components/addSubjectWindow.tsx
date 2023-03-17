@@ -12,13 +12,11 @@ import {useCreateSubject} from '../mutationHooks/subject/createSubject';
 interface AddSubjectWindowProps {
   visible: boolean;
   onClose?: () => void;
-  onModalHide?: () => void;
 }
 
 const AddSubjectWindow: React.FC<AddSubjectWindowProps> = ({
   onClose,
   visible,
-  onModalHide,
 }) => {
   const [addSubject] = useCreateSubject();
 
@@ -50,11 +48,6 @@ const AddSubjectWindow: React.FC<AddSubjectWindowProps> = ({
         avoidKeyboard={true}
         onBackdropPress={() => {
           closeWindow();
-        }}
-        onModalHide={() => {
-          if (onModalHide) {
-            onModalHide();
-          }
         }}>
         <View
           style={{

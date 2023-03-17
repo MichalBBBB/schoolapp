@@ -42,7 +42,7 @@ export const StartOfWeekScreen: React.FC<
   }, [settings]);
   return (
     <View style={styles.container}>
-      <BasicCard backgroundColor="accentBackground" gap={10} spacing="m">
+      <BasicCard backgroundColor="accentBackground1" gap={10} spacing="m">
         {startOfWeekOptions.map((item, index) => (
           <View style={styles.item} key={index}>
             <BasicRadio

@@ -3,12 +3,14 @@ mutation SetSettings(
   $startOfRotationDate: DateTime
   $lengthOfRotation: Float
   $skipWeekends: Boolean
+  $darkMode: Boolean
 ) {
   setSettings(
     startOfWeek: $startOfWeek
     startOfRotationDate: $startOfRotationDate
     lengthOfRotation: $lengthOfRotation
     skipWeekends: $skipWeekends
+    darkMode: $darkMode
   ) {
     ...Settings
   }

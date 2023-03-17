@@ -35,6 +35,7 @@ import {SelectSubjectPopup} from '../../../components/selectSubject/selectSubjec
 import {Popup} from '../../../components/popup';
 import {BasicCard} from '../../../components/basicViews/BasicCard';
 import {useSettings} from '../../../utils/useSettings';
+import {BasicIcon} from '../../../components/basicViews/BasicIcon';
 
 const TimeTableScreen: React.FC<
   NativeStackScreenProps<SettingsStackParamList, 'TimeTableScreen'>
@@ -52,18 +53,17 @@ const TimeTableScreen: React.FC<
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <BasicButton
+        <Pressable
           style={{flexDirection: 'row', alignItems: 'center'}}
-          variant="unstyled"
           onPress={() => {
             navigation.navigate('AdvancedTimeTableScreen');
           }}>
           <BasicText>Advanced</BasicText>
-          <Image
+          <BasicIcon
             source={require('../../../../assets/Chevron-right.png')}
             style={{height: 25, width: 25, resizeMode: 'stretch'}}
           />
-        </BasicButton>
+        </Pressable>
       ),
     });
   });
@@ -114,7 +114,11 @@ const TimeTableScreen: React.FC<
               data={lessonNumbers}
               widthArr={widthArr}
               style={styles.header}
-              textStyle={styles.text}
+              textStyle={{
+                textAlign: 'center',
+                fontWeight: '100',
+                color: theme.colors.text,
+              }}
             />
           </Table>
           <ScrollView style={styles.dataWrapper}>
@@ -129,12 +133,14 @@ const TimeTableScreen: React.FC<
                   data={dayNumbers.map(item => item + 1)}
                   width={40}
                   heightArr={Array(settings?.lengthOfRotation).fill(80)}
+                  textStyle={{color: theme.colors.text}}
                 />
                 <TableWrapper>
                   {tableData.map((row, rowIndex) => (
                     <TableWrapper key={rowIndex} style={styles.row}>
                       {row?.map((item, itemIndex) => (
                         <Cell
+                          textStyle={{}}
                           style={{
                             width: 100,
                             backgroundColor: theme.colors.background,
@@ -205,7 +211,7 @@ const TimeTableScreen: React.FC<
                                   trigger={
                                     <BasicButton
                                       style={{width: '100%', height: '100%'}}
-                                      backgroundColor="accentBackground"
+                                      backgroundColor="accentBackground1"
                                       spacing="m">
                                       <BasicText>Add</BasicText>
                                     </BasicButton>
@@ -231,7 +237,6 @@ const TimeTableScreen: React.FC<
 const styles = StyleSheet.create({
   container: {flex: 1},
   header: {height: 50},
-  text: {textAlign: 'center', fontWeight: '100'},
   dataWrapper: {marginTop: -1},
   row: {backgroundColor: '#fff', flexDirection: 'row', height: 80},
 });

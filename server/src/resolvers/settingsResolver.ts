@@ -16,12 +16,19 @@ export class settingsResolver {
     @Arg("startOfWeek", { nullable: true }) startOfWeek?: "MON" | "SAT" | "SUN",
     @Arg("skipWeekends", { nullable: true }) skipWeekends?: boolean,
     @Arg("lengthOfRotation", { nullable: true }) lengthOfRotation?: number,
-    @Arg("startOfRotationDate", { nullable: true }) startOfRotationDate?: Date
+    @Arg("startOfRotationDate", { nullable: true }) startOfRotationDate?: Date,
+    @Arg("darkMode", { nullable: true }) darkMode?: boolean
   ) {
     const user = await User.findOne({ where: { id: payload?.userId } });
     await Settings.update(
       { id: user?.settingsId },
-      { startOfWeek, skipWeekends, lengthOfRotation, startOfRotationDate }
+      {
+        startOfWeek,
+        skipWeekends,
+        lengthOfRotation,
+        startOfRotationDate,
+        darkMode,
+      }
     );
     return Settings.findOne({ where: { id: user?.settingsId } });
   }

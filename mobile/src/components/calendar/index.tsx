@@ -7,7 +7,7 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
-import {FlatList, View} from 'react-native';
+import {FlatList, Platform, View} from 'react-native';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Month from './month';
 import {FlashList} from '@shopify/flash-list';
@@ -56,6 +56,9 @@ const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
             index: index + 1,
             animated: true,
           });
+          if (Platform.OS === 'android') {
+            updateMonths(index + 1);
+          }
         }
       },
       goBackwards() {
@@ -64,6 +67,9 @@ const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
             index: index - 1,
             animated: true,
           });
+          if (Platform.OS === 'android') {
+            updateMonths(index - 1);
+          }
         }
       },
     };
@@ -161,6 +167,19 @@ const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
     [months],
   );
 
+  const updateMonths = (newIndex: number) => {
+    const monthsCopy = changeVisibility(newIndex);
+    if (
+      index !== newIndex &&
+      onChangeActiveMonth &&
+      typeof months[newIndex] !== 'string'
+    ) {
+      onChangeActiveMonth(months[newIndex] as dayjs.Dayjs);
+    }
+    setIndex(newIndex);
+    setMonths(monthsCopy);
+  };
+
   const renderItem = ({item}: {item: dayjs.Dayjs | string}) => {
     return (
       <View style={{width: calendarWidth}}>
@@ -207,16 +226,7 @@ const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
           );
 
           // go through the data array and change months close to viewable to full dates to render full calendars
-          const monthsCopy = changeVisibility(newIndex);
-          if (
-            index !== newIndex &&
-            onChangeActiveMonth &&
-            typeof months[newIndex] !== 'string'
-          ) {
-            onChangeActiveMonth(months[newIndex] as dayjs.Dayjs);
-          }
-          setIndex(newIndex);
-          setMonths(monthsCopy);
+          updateMonths(newIndex);
         }}
         ref={flatListRef}
         // rerender when index changes

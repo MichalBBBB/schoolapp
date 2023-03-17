@@ -35,6 +35,7 @@ import {BasicText} from '../basicViews/BasicText';
 import {useTheme} from '../../contexts/ThemeContext';
 import {useSettings} from '../../utils/useSettings';
 import {getWeekday} from '../../utils/dateUtils';
+import {BasicIcon} from '../basicViews/BasicIcon';
 
 // constants
 export const calendarWidth = Dimensions.get('screen').width;
@@ -42,7 +43,7 @@ export const calendarHeight = 204;
 export const weekHeight = 34;
 export const weekHeaderHeight = 30;
 const pastScrollRange = 10;
-const futureScrollRange = 50;
+const futureScrollRange = 20;
 
 dayjs.extend(relativeTime);
 
@@ -74,9 +75,6 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
   const weekRow = useSharedValue(0);
   const navigation = useNavigation();
   const [monthString, setMonthString] = useState(dayjs().format('MMMM YYYY'));
-  const [scrollWeekToDate, setScrollWeekToDate] = useState<dayjs.Dayjs | null>(
-    null,
-  );
 
   const calendarRef = useRef<CalendarHandle>(null);
   const weekViewRef = useRef<CalendarHandle>(null);
@@ -87,6 +85,16 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
 
   useEffect(() => {
     weekRow.value = findRowOfDate(selectedDay);
+  }, []);
+
+  useEffect(() => {
+    console.log(
+      dayjs()
+        .subtract(pastScrollRange, 'month')
+        .startOf('month')
+        .startOf('week')
+        .diff(dayjs(), 'week'),
+    );
   }, []);
 
   // animated style for day events
@@ -197,18 +205,18 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
                 weekViewRef.current?.goBackwards();
               }
             }}>
-            <Image
+            <BasicIcon
               source={require('../../../assets/Chevron-left.png')}
               style={{height: 20, width: 20}}
             />
           </Pressable>
           <BasicButton
-            variant="outlined"
+            variant="filled"
             borderWidth={1}
-            backgroundColor={'border'}
+            backgroundColor={'accentBackground1'}
+            style={{paddingHorizontal: 15}}
             onPress={() => {
               if (isMonthView) {
-                setScrollWeekToDate(selectedDay);
                 setIsMonthView(false);
                 y.value = withTiming(-(calendarHeight - weekHeight), {}, () => {
                   monthViewOpacity.value = 0;
@@ -226,7 +234,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <BasicText style={{marginRight: 5}}>{monthString}</BasicText>
               <Animated.View style={chevronAnimatedStyle}>
-                <Image
+                <BasicIcon
                   source={require('../../../assets/Chevron-down.png')}
                   style={{height: 20, width: 20}}
                 />
@@ -241,7 +249,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
                 weekViewRef.current?.goForward();
               }
             }}>
-            <Image
+            <BasicIcon
               source={require('../../../assets/Chevron-right.png')}
               style={{height: 20, width: 20}}
             />
@@ -259,7 +267,18 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
           weekViewAnimatedStyle,
         ]}>
         <WeekView
-          startOfWeek={settings?.startOfWeek || 'MON'}
+          futureScrollRange={dayjs()
+            .add(futureScrollRange, 'month')
+            .endOf('month')
+            .endOf('week')
+            .diff(dayjs(), 'week')}
+          pastScrollRange={Math.abs(
+            dayjs()
+              .subtract(pastScrollRange, 'month')
+              .startOf('month')
+              .startOf('week')
+              .diff(dayjs(), 'week'),
+          )}
           ref={weekViewRef}
           calendarWidth={calendarWidth}
           week={selectedDay}

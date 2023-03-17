@@ -11,7 +11,7 @@ export const DateSettingsScreen: React.FC<
 > = ({navigation}) => {
   return (
     <ScrollView style={styles.container}>
-      <BasicCard backgroundColor="accentBackground" spacing="m" gap={10}>
+      <BasicCard backgroundColor="accentBackground1" spacing="m" gap={10}>
         <SettingsItem
           text="Start of week"
           onPress={() => {

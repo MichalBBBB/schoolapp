@@ -8,13 +8,16 @@ import {
   Text,
   Pressable,
   Image,
+  Switch,
 } from 'react-native';
 import {isLoggedInVar} from '../../App';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicCard} from '../../components/basicViews/BasicCard';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {SettingsItem} from '../../components/settingsItem';
+import {DarkTheme, LightTheme, useTheme} from '../../contexts/ThemeContext';
 import {useLogoutMutation, useMeQuery} from '../../generated/graphql';
+import {useSetSettings} from '../../mutationHooks/settings/setSettings';
 import {SettingsStackParamList} from '../../routes/SettingsStack';
 import {setAccessToken} from '../../utils/AccessToken';
 
@@ -24,6 +27,8 @@ const SettingsHomeScreen: React.FC<
   const {data: me} = useMeQuery();
   const [logout] = useLogoutMutation();
   const client = useApolloClient();
+  const [theme, setTheme] = useTheme();
+  const [setSettings] = useSetSettings();
 
   const profile = (
     <View style={styles.profileContainer}>
@@ -57,7 +62,7 @@ const SettingsHomeScreen: React.FC<
       {profile}
       <View style={styles.listContainer}>
         <BasicCard
-          backgroundColor="accentBackground"
+          backgroundColor="accentBackground1"
           marginBottom={10}
           spacing="m"
           gap={10}>
@@ -75,7 +80,7 @@ const SettingsHomeScreen: React.FC<
           />
         </BasicCard>
         <BasicCard
-          backgroundColor="accentBackground"
+          backgroundColor="accentBackground1"
           marginBottom={10}
           spacing="m"
           gap={10}>
@@ -86,7 +91,24 @@ const SettingsHomeScreen: React.FC<
             }}
           />
         </BasicCard>
-        <BasicCard backgroundColor="accentBackground" spacing="m">
+        <BasicCard marginBottom={10} backgroundColor="accentBackground1">
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingHorizontal: 5,
+            }}>
+            <BasicText>Dark mode</BasicText>
+            <Switch
+              value={theme.dark}
+              onValueChange={value => {
+                setSettings({darkMode: value});
+              }}
+            />
+          </View>
+        </BasicCard>
+        <BasicCard backgroundColor="accentBackground1" spacing="m">
           <Pressable
             style={styles.listItem}
             onPress={() => {

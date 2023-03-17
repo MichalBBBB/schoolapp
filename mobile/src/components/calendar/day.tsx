@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import React, {memo, useContext, useEffect} from 'react';
 import {TouchableOpacity, View, Text, Pressable} from 'react-native';
+import {useTheme} from '../../contexts/ThemeContext';
 import {BasicText} from '../basicViews/BasicText';
 
 interface DayProps {
@@ -11,6 +12,7 @@ interface DayProps {
 }
 
 const Day: React.FC<DayProps> = ({day, isSelected, monthNum, onPress}) => {
+  const [theme] = useTheme();
   return (
     <Pressable
       style={{
@@ -19,7 +21,9 @@ const Day: React.FC<DayProps> = ({day, isSelected, monthNum, onPress}) => {
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: isSelected ? 15 : undefined,
-        backgroundColor: isSelected ? '#ddd' : undefined,
+        backgroundColor: isSelected
+          ? theme.colors.accentBackground1
+          : undefined,
         marginVertical: 2,
       }}
       onPress={() => {

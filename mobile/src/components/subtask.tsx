@@ -1,5 +1,6 @@
 import React, {useRef} from 'react';
 import {Image, Text, View, TouchableOpacity, StyleSheet} from 'react-native';
+import {useTheme} from '../contexts/ThemeContext';
 import {
   SubtaskFragment,
   useDeleteSubtaskMutation,
@@ -19,6 +20,7 @@ const Subtask: React.FC<{subtask: SubtaskFragment}> = ({subtask}) => {
       id: subtask.id,
     });
   };
+  const [theme] = useTheme();
   const back = (
     <TouchableOpacity
       onPress={() => {
@@ -50,7 +52,7 @@ const Subtask: React.FC<{subtask: SubtaskFragment}> = ({subtask}) => {
           <View
             style={{
               padding: 10,
-              backgroundColor: 'white',
+              backgroundColor: theme.colors.accentBackground1,
               flexDirection: 'row',
               alignItems: 'center',
             }}>

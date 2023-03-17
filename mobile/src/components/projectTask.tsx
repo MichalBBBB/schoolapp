@@ -18,6 +18,7 @@ import {
 import {ColorsObject} from '../types/Theme';
 import {AssignMembersWindow} from './assignMembersWindow';
 import {BasicButton} from './basicViews/BasicButton';
+import {BasicIcon} from './basicViews/BasicIcon';
 import {BasicText} from './basicViews/BasicText';
 import EditProjectTaskWindow from './editProjectTaskWindow';
 import {Menu} from './menu';
@@ -88,7 +89,7 @@ const ProjectTask: React.FC<{
                     refetchQueries: [GetProjectsDocument],
                   });
                 }}>
-                <Image
+                <BasicIcon
                   source={
                     projectTask.done
                       ? require('../../assets/Checkmark.png')
@@ -105,7 +106,7 @@ const ProjectTask: React.FC<{
                   variant="unstyled"
                   spacing="none"
                   style={{marginRight: 5}}>
-                  <Image
+                  <BasicIcon
                     style={{height: 20, width: 20}}
                     source={require('../../assets/Options.png')}
                   />

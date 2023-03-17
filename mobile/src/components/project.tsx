@@ -9,6 +9,7 @@ import {
 import {ProjectNavigationProp} from '../utils/types';
 import {BasicButton} from './basicViews/BasicButton';
 import {BasicCard} from './basicViews/BasicCard';
+import {BasicText} from './basicViews/BasicText';
 
 interface ProjectProps {
   project: ProjectFragment;
@@ -24,14 +25,14 @@ export const Project: React.FC<ProjectProps> = ({project}) => {
             projectId: project.id,
           });
         }}>
-        <BasicCard backgroundColor="accentBackground" spacing="m">
+        <BasicCard backgroundColor="accentBackground1" spacing="m">
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
             }}>
-            <Text>{project.name}</Text>
+            <BasicText>{project.name}</BasicText>
             <BasicButton
               spacing="none"
               variant="unstyled"

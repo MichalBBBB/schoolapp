@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import {AssignMembersWindow} from '../../components/assignMembersWindow';
+import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {BasicText} from '../../components/basicViews/BasicText';
 import EditProjectTaskWindow from '../../components/editProjectTaskWindow';
 import {Menu} from '../../components/menu';
@@ -42,7 +43,7 @@ const ProjectDetailScreen: React.FC<
         <Popup
           trigger={
             <Pressable>
-              <Image
+              <BasicIcon
                 source={require('../../../assets/Options.png')}
                 style={styles.options}
               />
@@ -80,7 +81,7 @@ const ProjectDetailScreen: React.FC<
             onPress={() => {
               setAddTaskModalIsVisible(true);
             }}>
-            <Image
+            <BasicIcon
               source={require('../../../assets/Plus.png')}
               style={styles.plusButton}
             />
@@ -90,13 +91,13 @@ const ProjectDetailScreen: React.FC<
           contentContainerStyle={{
             borderRadius: 15,
             overflow: 'hidden',
-            backgroundColor: theme.colors.accentBackground,
+            backgroundColor: theme.colors.accentBackground1,
           }}
           data={project?.tasks}
           renderItem={({item}) => (
             <ProjectTask
               projectTask={item}
-              backgroundColor={'accentBackground'}
+              backgroundColor={'accentBackground1'}
             />
           )}
         />

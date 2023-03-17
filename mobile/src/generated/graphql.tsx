@@ -323,6 +323,7 @@ export type MutationRemoveMemberFromProjectArgs = {
 
 
 export type MutationSetSettingsArgs = {
+  darkMode?: InputMaybe<Scalars['Boolean']>;
   lengthOfRotation?: InputMaybe<Scalars['Float']>;
   skipWeekends?: InputMaybe<Scalars['Boolean']>;
   startOfRotationDate?: InputMaybe<Scalars['DateTime']>;
@@ -431,6 +432,7 @@ export type RemindersInput = {
 
 export type Settings = {
   __typename?: 'Settings';
+  darkMode: Scalars['Boolean'];
   id: Scalars['String'];
   lengthOfRotation: Scalars['Float'];
   skipWeekends: Scalars['Boolean'];
@@ -540,7 +542,7 @@ export type PublicUserFragment = { __typename?: 'PublicUser', name: string, emai
 
 export type ReminderFragment = { __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null | undefined, date: any, taskId?: string | null | undefined, eventId?: string | null | undefined };
 
-export type SettingsFragment = { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean };
+export type SettingsFragment = { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean };
 
 export type SimpleProjectFragment = { __typename?: 'Project', id: string, name: string };
 
@@ -733,10 +735,11 @@ export type SetSettingsMutationVariables = Exact<{
   startOfRotationDate?: InputMaybe<Scalars['DateTime']>;
   lengthOfRotation?: InputMaybe<Scalars['Float']>;
   skipWeekends?: InputMaybe<Scalars['Boolean']>;
+  darkMode?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type SetSettingsMutation = { __typename?: 'Mutation', setSettings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean } };
+export type SetSettingsMutation = { __typename?: 'Mutation', setSettings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean } };
 
 export type CreateSubjectMutationVariables = Exact<{
   name: Scalars['String'];
@@ -906,7 +909,7 @@ export type HelloQuery = { __typename?: 'Query', hello: string };
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, imageURL?: string | null | undefined, fullName: string, createdAt: any, updatedAt: any, tasks: Array<{ __typename?: 'Task', id: string, name: string, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined, subtasks: Array<{ __typename?: 'Subtask', id: string, name: string }> }>, subjects: Array<{ __typename?: 'Subject', id: string, name: string }>, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean } } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, imageURL?: string | null | undefined, fullName: string, createdAt: any, updatedAt: any, tasks: Array<{ __typename?: 'Task', id: string, name: string, subject?: { __typename?: 'Subject', id: string, name: string } | null | undefined, subtasks: Array<{ __typename?: 'Subtask', id: string, name: string }> }>, subjects: Array<{ __typename?: 'Subject', id: string, name: string }>, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean } } };
 
 export type UserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -1040,6 +1043,7 @@ export const SettingsFragmentDoc = gql`
   startOfRotationDate
   lengthOfRotation
   skipWeekends
+  darkMode
 }
     `;
 export const SubtaskFragmentDoc = gql`
@@ -1815,12 +1819,13 @@ export type ToggleProjectTaskMutationHookResult = ReturnType<typeof useTogglePro
 export type ToggleProjectTaskMutationResult = Apollo.MutationResult<ToggleProjectTaskMutation>;
 export type ToggleProjectTaskMutationOptions = Apollo.BaseMutationOptions<ToggleProjectTaskMutation, ToggleProjectTaskMutationVariables>;
 export const SetSettingsDocument = gql`
-    mutation SetSettings($startOfWeek: String, $startOfRotationDate: DateTime, $lengthOfRotation: Float, $skipWeekends: Boolean) {
+    mutation SetSettings($startOfWeek: String, $startOfRotationDate: DateTime, $lengthOfRotation: Float, $skipWeekends: Boolean, $darkMode: Boolean) {
   setSettings(
     startOfWeek: $startOfWeek
     startOfRotationDate: $startOfRotationDate
     lengthOfRotation: $lengthOfRotation
     skipWeekends: $skipWeekends
+    darkMode: $darkMode
   ) {
     ...Settings
   }
@@ -1845,6 +1850,7 @@ export type SetSettingsMutationFn = Apollo.MutationFunction<SetSettingsMutation,
  *      startOfRotationDate: // value for 'startOfRotationDate'
  *      lengthOfRotation: // value for 'lengthOfRotation'
  *      skipWeekends: // value for 'skipWeekends'
+ *      darkMode: // value for 'darkMode'
  *   },
  * });
  */

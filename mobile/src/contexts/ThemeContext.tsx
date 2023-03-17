@@ -20,20 +20,23 @@ const lightSubjectColors: SubjectColorsObject = {
   red: {primary: '#ffa180', secondary: '#ffa18055'},
 };
 
-const LightTheme: MyTheme = {
+export const LightTheme: MyTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
     primary: 'black',
     background: '#eee',
     card: '#eee',
-    accentBackground: 'white',
+    accentBackground1: 'white',
+    accentBackground2: 'white',
+    modal: '#eee',
     textSecondary: 'grey',
     cardView: '#eee',
     accent: 'black',
     textContrast: 'white',
     dangerous: 'red',
     lightBorder: '#aaa',
+    icon: 'black',
   },
   spacing: {
     none: 0,
@@ -61,21 +64,25 @@ const LightTheme: MyTheme = {
   subjectColors: lightSubjectColors,
 };
 
-const DarkTheme: MyTheme = {
+export const DarkTheme: MyTheme = {
   ...LightTheme,
+  dark: true,
   colors: {
     ...DefaultTheme.colors,
     text: 'white',
     primary: 'white',
     background: 'black',
     card: 'black',
-    accentBackground: '#181818',
+    accentBackground1: '#181818',
+    accentBackground2: '#232323',
+    modal: '#181818',
     textSecondary: 'grey',
     cardView: '#eee',
-    accent: 'grey',
+    accent: '#a1a1a1',
     textContrast: '',
     dangerous: 'red',
     lightBorder: '#aaa',
+    icon: 'grey',
   },
 };
 
@@ -89,7 +96,7 @@ export const useTheme = () => {
 };
 
 export const ThemeProvider: React.FC<{}> = ({children}) => {
-  const [theme, setTheme] = useState<MyTheme>(LightTheme);
+  const [theme, setTheme] = useState<MyTheme>(DarkTheme);
   return (
     <ThemeContext.Provider value={[theme, setTheme]}>
       {children}

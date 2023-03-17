@@ -58,7 +58,7 @@ const AddEventScreen: React.FC<
       <BasicCard
         spacing="m"
         marginBottom={10}
-        backgroundColor={'accentBackground'}>
+        backgroundColor={'accentBackground1'}>
         <SelectSubjectPopup
           forceSide="right"
           onSubmit={subject => {
@@ -76,7 +76,7 @@ const AddEventScreen: React.FC<
           }
         />
       </BasicCard>
-      <BasicCard gap={5} marginBottom={10} backgroundColor="accentBackground">
+      <BasicCard gap={5} marginBottom={10} backgroundColor="accentBackground1">
         <View style={styles.dateListItem}>
           <BasicText style={{marginLeft: 4}}>Start</BasicText>
           <BasicButton
@@ -117,7 +117,7 @@ const AddEventScreen: React.FC<
         </View>
       </BasicCard>
 
-      <BasicCard backgroundColor="accentBackground" marginBottom={10}>
+      <BasicCard backgroundColor="accentBackground1" marginBottom={10}>
         <BasicTextInput
           value={text || ''}
           variant="unstyled"

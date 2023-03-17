@@ -30,6 +30,7 @@ import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
 import {Popup} from '../popup';
 import {useNavigation} from '@react-navigation/native';
 import {CalendarNavigationProp} from '../../utils/types';
+import {BasicIcon} from '../basicViews/BasicIcon';
 
 interface LessonProps {
   lesson: LessonFragment;
@@ -58,12 +59,14 @@ export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
             onPress={() => {
               navigation.navigate('EventDetailScreen', {event});
             }}>
-            <View style={styles.eventContainer}>
+            <BasicCard
+              style={[styles.eventContainer]}
+              backgroundColor="accentBackground1">
               <BasicText>{event.name}</BasicText>
               <Popup
                 trigger={
                   <Pressable>
-                    <Image
+                    <BasicIcon
                       source={require('../../../assets/Options.png')}
                       style={styles.options}
                     />
@@ -84,7 +87,7 @@ export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
                   />
                 </Menu>
               </Popup>
-            </View>
+            </BasicCard>
           </TouchableWithoutFeedback>
         )}
       </BasicCard>
@@ -136,7 +139,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     borderRadius: 10,
-    backgroundColor: 'white',
     padding: 10,
     marginTop: 10,
   },

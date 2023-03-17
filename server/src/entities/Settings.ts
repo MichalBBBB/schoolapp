@@ -23,4 +23,8 @@ export class Settings extends BaseEntity {
   @Column()
   @Field()
   startOfRotationDate: Date;
+
+  @Column({ default: false })
+  @Field()
+  darkMode: boolean;
 }

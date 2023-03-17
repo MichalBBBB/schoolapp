@@ -31,6 +31,7 @@ import {v4 as uuidv4} from 'uuid';
 import {useCreateLessonTime} from '../../../mutationHooks/lessonTime/createLessonTime';
 import {useDeleteLessonTime} from '../../../mutationHooks/lessonTime/deleteLessonTimes';
 import {useEditLessonTimes} from '../../../mutationHooks/lessonTime/editLessonTimes';
+import {BasicIcon} from '../../../components/basicViews/BasicIcon';
 
 export type LessonTime = {
   lessonNumber: number;
@@ -69,8 +70,8 @@ const LessonTimesScreen: React.FC<
           onPress={() => {
             navigation.navigate('TimeTableScreen');
           }}>
-          <Text>Continue</Text>
-          <Image
+          <BasicText>Continue</BasicText>
+          <BasicIcon
             source={require('../../../../assets/Chevron-right.png')}
             style={{height: 25, width: 25, resizeMode: 'stretch'}}
           />
@@ -236,7 +237,7 @@ const LessonTimesScreen: React.FC<
             <BasicCard
               style={[styles.listItem]}
               spacing="m"
-              backgroundColor="accentBackground">
+              backgroundColor="accentBackground1">
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <BasicText style={styles.lessonNumber} textVariant="button">
                   {item.lessonNumber + 1}.
@@ -252,7 +253,7 @@ const LessonTimesScreen: React.FC<
                     setActiveLesson({index, time: 'start'});
                     setTimeModalVisible(true);
                   }}>
-                  <Text>{item.startTime}</Text>
+                  <BasicText>{item.startTime}</BasicText>
                 </BasicButton>
                 <BasicText>To: </BasicText>
                 <BasicButton

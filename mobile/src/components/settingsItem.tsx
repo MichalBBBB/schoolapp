@@ -2,6 +2,7 @@ import {forwardRef} from 'react';
 import {Image, Pressable, View} from 'react-native';
 import {BasicText} from './basicViews/BasicText';
 import React from 'react';
+import {BasicIcon} from './basicViews/BasicIcon';
 
 interface SettingsItemProps {
   text: string;
@@ -21,7 +22,7 @@ export const SettingsItem = forwardRef<View, SettingsItemProps>(
           justifyContent: 'space-between',
         }}>
         <BasicText>{text}</BasicText>
-        <Image
+        <BasicIcon
           source={require('../../assets/Chevron-right.png')}
           style={{height: 15, width: 15}}
         />

@@ -1,14 +1,20 @@
 import React from 'react';
+import {ColorsObject} from '../../types/Theme';
 import {BasicCard} from '../basicViews/BasicCard';
 
 interface MenuProps {
   closeModal?: () => void;
+  backgroundColor?: keyof ColorsObject;
 }
 
-export const Menu: React.FC<MenuProps> = ({closeModal, children}) => {
+export const Menu: React.FC<MenuProps> = ({
+  closeModal,
+  children,
+  backgroundColor = 'accentBackground2',
+}) => {
   return (
     <BasicCard
-      backgroundColor="accentBackground"
+      backgroundColor={backgroundColor}
       style={{
         elevation: 8,
         shadowOpacity: 0.1,

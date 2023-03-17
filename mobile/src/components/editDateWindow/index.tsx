@@ -27,6 +27,7 @@ import {RemindersWindow} from '../remindersWindow';
 import SelectTimeModal from '../selectTimeView/selectTimeModal';
 import notifee, {AndroidNotificationSetting} from '@notifee/react-native';
 import {useSettings} from '../../utils/useSettings';
+import {BasicIcon} from '../basicViews/BasicIcon';
 
 interface EditDateWindowProps {
   onSubmit: (date: dayjs.Dayjs, reminderTimes?: number[]) => void;
@@ -34,9 +35,10 @@ interface EditDateWindowProps {
   subject?: SubjectFragment | undefined | null;
   onClose: () => void;
   isVisible: boolean;
-  onHide?: () => void | undefined;
-  reminders?: boolean;
+  showReminders?: boolean;
   initialReminderTimes?: number[];
+  showTime?: boolean;
+  showSpecialDays?: boolean;
 }
 
 type SpecialDate = {
@@ -61,8 +63,9 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
   subject,
   onClose,
   isVisible,
-  onHide,
-  reminders = false,
+  showSpecialDays = true,
+  showTime = true,
+  showReminders = false,
 }) => {
   const {data: lessons} = useGetAllLessonsQuery();
 
@@ -116,6 +119,88 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
     }
   };
 
+  const specialDaysView = (
+    <View style={{flexDirection: 'row'}}>
+      {specialDays.map((item, index) => (
+        <View
+          key={index}
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+            flexDirection: 'row',
+          }}>
+          <BasicButton
+            variant={selectedSpecialDay == item ? 'filled' : 'unstyled'}
+            backgroundColor={'accentBackground2'}
+            onPress={() => {
+              setSelectedSpecialDay(item);
+              setSelectedDay(item.date);
+            }}
+            style={{width: '100%'}}>
+            <View style={{alignItems: 'center', width: '100%'}}>
+              <View
+                style={{
+                  height: 30,
+                  width: 30,
+                  backgroundColor: 'white',
+                  borderRadius: 10,
+                  marginBottom: 5,
+                }}
+              />
+              <BasicText style={{textAlign: 'center'}}>{item.name}</BasicText>
+            </View>
+          </BasicButton>
+        </View>
+      ))}
+    </View>
+  );
+
+  const timeView = (
+    <BasicButton
+      variant="unstyled"
+      onPress={() => setTimePopupOpen(true)}
+      style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        // width: '100%',
+        alignItems: 'center',
+      }}>
+      <BasicText>Time</BasicText>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <BasicText>{selectedDay.format('HH:mm')}</BasicText>
+        <BasicIcon
+          source={require('../../../assets/Chevron-right.png')}
+          style={{height: 20, width: 20}}
+        />
+      </View>
+    </BasicButton>
+  );
+
+  const remindersView = (
+    <BasicButton
+      variant="unstyled"
+      onPress={() => setRemindersWindowOpen(true)}
+      style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+      }}>
+      <BasicText>Reminder</BasicText>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <BasicText>
+          {reminderTimes?.length == 0
+            ? 'None'
+            : `${reminderTimes?.length} selected`}
+        </BasicText>
+        <BasicIcon
+          source={require('../../../assets/Chevron-right.png')}
+          style={{height: 20, width: 20}}
+        />
+      </View>
+    </BasicButton>
+  );
+
   return (
     <BasicModalCard
       alignCard="center"
@@ -140,7 +225,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             onPress={() => {
               calendarRef.current?.goBackwards();
             }}>
-            <Image
+            <BasicIcon
               source={require('../../../assets/Chevron-left.png')}
               style={{height: 20, width: 20}}
             />
@@ -151,7 +236,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             onPress={() => {
               calendarRef.current?.goForward();
             }}>
-            <Image
+            <BasicIcon
               source={require('../../../assets/Chevron-right.png')}
               style={{height: 20, width: 20}}
             />
@@ -176,88 +261,17 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             }}
           />
         </View>
-        <View style={{flexDirection: 'row'}}>
-          {specialDays.map((item, index) => (
-            <View
-              key={index}
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'flex-start',
-                flexDirection: 'row',
-              }}>
-              <BasicButton
-                variant={selectedSpecialDay == item ? 'filled' : 'unstyled'}
-                backgroundColor={'accentBackground'}
-                onPress={() => {
-                  setSelectedSpecialDay(item);
-                  setSelectedDay(item.date);
-                }}
-                style={{width: '100%'}}>
-                <View style={{alignItems: 'center', width: '100%'}}>
-                  <View
-                    style={{
-                      height: 30,
-                      width: 30,
-                      backgroundColor: 'white',
-                      borderRadius: 10,
-                      marginBottom: 5,
-                    }}
-                  />
-                  <BasicText style={{textAlign: 'center'}}>
-                    {item.name}
-                  </BasicText>
-                </View>
-              </BasicButton>
-            </View>
-          ))}
-        </View>
+        {showSpecialDays && specialDaysView}
+
         <View style={{width: '100%'}}>
-          <BasicCard
-            backgroundColor="accentBackground"
-            style={{marginHorizontal: 10, marginTop: 10}}>
-            <BasicButton
-              variant="unstyled"
-              onPress={() => setTimePopupOpen(true)}
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                // width: '100%',
-                alignItems: 'center',
-              }}>
-              <BasicText>Time</BasicText>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <BasicText>{selectedDay.format('HH:mm')}</BasicText>
-                <Image
-                  source={require('../../../assets/Chevron-right.png')}
-                  style={{height: 20, width: 20}}
-                />
-              </View>
-            </BasicButton>
-            {reminders && (
-              <BasicButton
-                variant="unstyled"
-                onPress={() => setRemindersWindowOpen(true)}
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  width: '100%',
-                }}>
-                <BasicText>Reminder</BasicText>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <BasicText>
-                    {reminderTimes?.length == 0
-                      ? 'None'
-                      : `${reminderTimes?.length} selected`}
-                  </BasicText>
-                  <Image
-                    source={require('../../../assets/Chevron-right.png')}
-                    style={{height: 20, width: 20}}
-                  />
-                </View>
-              </BasicButton>
-            )}
-          </BasicCard>
+          {(showTime || showReminders) && (
+            <BasicCard
+              backgroundColor="accentBackground2"
+              style={{marginHorizontal: 10, marginTop: 10}}>
+              {showTime && timeView}
+              {showReminders && remindersView}
+            </BasicCard>
+          )}
         </View>
         <View style={styles.submitButtonContainer}>
           <BasicButton

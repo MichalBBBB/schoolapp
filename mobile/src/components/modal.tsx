@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ViewStyle,
   TouchableWithoutFeedback,
+  BackHandler,
 } from 'react-native';
 import Animated, {
   FadeIn,
@@ -38,6 +39,21 @@ export const Modal: React.FC<ModalProps> = ({
       {children}
     </Animated.View>
   );
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        if (isVisible) {
+          onBackdropPress?.();
+          return true;
+        } else {
+          return false;
+        }
+      },
+    );
+    return () => backHandler.remove();
+  });
 
   return (
     <Portal>

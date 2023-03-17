@@ -65,7 +65,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
   return (
     <>
       <BasicModalCard
-        backgroundColor="background"
+        backgroundColor="modal"
         alignCard="flex-end"
         isVisible={visible && viewVisible == 'main'}
         avoidKeyboard={true}
@@ -83,6 +83,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
         />
         <View style={styles.bottomContainer}>
           <SelectSubjectPopup
+            backgroundColor="accentBackground1"
             onSubmit={subject => {
               setSubject(subject);
             }}
@@ -90,7 +91,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
               <BasicButton
                 variant={subject ? 'subject' : 'filled'}
                 borderWidth={1}
-                backgroundColor="accentBackground"
+                backgroundColor="accentBackground2"
                 subjectColor={
                   subject
                     ? (subject.colorName as keyof SubjectColorsObject)
@@ -105,7 +106,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
           />
 
           <BasicButton
-            backgroundColor="accentBackground"
+            backgroundColor="accentBackground2"
             style={styles.button}
             onPress={() => {
               setViewVisible('editDate');

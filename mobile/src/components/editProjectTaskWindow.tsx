@@ -66,7 +66,7 @@ const EditProjectTaskWindow: React.FC<EditProjectTaskWindowProps> = ({
   return (
     <>
       <BasicModalCard
-        backgroundColor="background"
+        backgroundColor="modal"
         alignCard="flex-end"
         isVisible={visible && viewVisible == 'main'}
         avoidKeyboard={true}
@@ -84,7 +84,7 @@ const EditProjectTaskWindow: React.FC<EditProjectTaskWindowProps> = ({
         />
         <View style={styles.bottomContainer}>
           <BasicButton
-            backgroundColor="accentBackground"
+            backgroundColor="accentBackground2"
             style={styles.button}
             onPress={() => {
               setViewVisible('editDueDate');
@@ -96,7 +96,7 @@ const EditProjectTaskWindow: React.FC<EditProjectTaskWindowProps> = ({
             </BasicText>
           </BasicButton>
           <BasicButton
-            backgroundColor="accentBackground"
+            backgroundColor="accentBackground2"
             style={styles.button}
             onPress={() => {
               setViewVisible('editDoDate');

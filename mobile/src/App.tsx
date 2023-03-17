@@ -70,7 +70,9 @@ const App = () => {
 
   return (
     <ApolloProvider client={client}>
-      <Content />
+      <ThemeProvider>
+        <Content />
+      </ThemeProvider>
     </ApolloProvider>
   );
 };

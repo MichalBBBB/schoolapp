@@ -13,31 +13,26 @@ import {v4 as uuidv4} from 'uuid';
 import {useCreateSubject} from '../../mutationHooks/subject/createSubject';
 import AddSubjectWindow from '../addSubjectWindow';
 import {useTheme} from '../../contexts/ThemeContext';
-import {SubjectColorsObject} from '../../types/Theme';
+import {ColorsObject, SubjectColorsObject} from '../../types/Theme';
 import {BasicCard} from '../basicViews/BasicCard';
 
 interface SelectSubjectProps {
   onSubmit: (subject: SubjectFragment | null) => void;
   closeModal?: () => void;
+  backgroundColor?: keyof ColorsObject;
 }
 
 const SelectSubjectWindow: React.FC<SelectSubjectProps> = ({
   onSubmit,
   closeModal,
+  backgroundColor = 'accentBackground1',
 }) => {
   const {data} = useGetAllSubjectsQuery();
-  const [addSubject] = useCreateSubject();
 
   const [theme] = useTheme();
-  const [viewVisible, setViewVisible] = useState<
-    'SelectSubject' | 'AddSubject'
-  >('SelectSubject');
-  const [viewShouldAppear, setViewShouldAppear] = useState<
-    'SelectSubject' | 'AddSubject'
-  >('SelectSubject');
   return (
     <BasicCard
-      backgroundColor="accentBackground"
+      backgroundColor={backgroundColor}
       spacing="m"
       style={{
         elevation: 8,

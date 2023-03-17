@@ -23,6 +23,7 @@ import {useNavigation} from '@react-navigation/native';
 import {CalendarNavigationProp} from '../../utils/types';
 import {BasicCard} from '../basicViews/BasicCard';
 import {useTheme} from '../../contexts/ThemeContext';
+import {BasicIcon} from '../basicViews/BasicIcon';
 
 interface EventProps {
   event: CalendarEventFragment;
@@ -46,7 +47,7 @@ const Event: React.FC<EventProps> = ({event}) => {
       <View
         style={[
           styles.frontViewContainer,
-          {backgroundColor: theme.colors.accentBackground},
+          {backgroundColor: theme.colors.accentBackground1},
         ]}>
         <BasicText>{event.name}</BasicText>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -56,7 +57,7 @@ const Event: React.FC<EventProps> = ({event}) => {
           <Popup
             trigger={
               <Pressable>
-                <Image
+                <BasicIcon
                   source={require('../../../assets/Options.png')}
                   style={styles.options}
                 />

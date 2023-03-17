@@ -21,6 +21,7 @@ import {useDeleteTask} from '../mutationHooks/task/deleteTask';
 import {useTheme} from '../contexts/ThemeContext';
 import {ColorsObject, SubjectColorsObject} from '../types/Theme';
 import {useEditTask} from '../mutationHooks/task/editTask';
+import {BasicIcon} from './basicViews/BasicIcon';
 
 dayjs.extend(calendar);
 
@@ -133,7 +134,7 @@ const Task: React.FC<{
                   }
                 }}>
                 {planning ? (
-                  <Image
+                  <BasicIcon
                     source={
                       isTaskSelected()
                         ? require('../../assets/Chevron-down.png')
@@ -142,7 +143,7 @@ const Task: React.FC<{
                     style={styles.arrow}
                   />
                 ) : (
-                  <Image
+                  <BasicIcon
                     source={
                       done
                         ? require('../../assets/Checkmark.png')
