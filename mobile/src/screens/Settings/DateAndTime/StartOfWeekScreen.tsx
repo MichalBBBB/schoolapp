@@ -8,8 +8,8 @@ import {BasicRadio} from '../../../components/basicViews/BasicRadio';
 import {BasicText} from '../../../components/basicViews/BasicText';
 import {useMeQuery} from '../../../generated/graphql';
 import {useSetSettings} from '../../../mutationHooks/settings/setSettings';
-import {SettingsStackParamList} from '../../../routes/SettingsStack';
 import {useSettings} from '../../../utils/useSettings';
+import {SettingsStackScreenProps} from '../../../utils/types';
 
 const startOfWeekOptions = [
   ['MON', 'Monday'],
@@ -18,7 +18,7 @@ const startOfWeekOptions = [
 ];
 
 export const StartOfWeekScreen: React.FC<
-  NativeStackScreenProps<SettingsStackParamList, 'StartOfWeekScreen'>
+  SettingsStackScreenProps<'StartOfWeekScreen'>
 > = ({navigation}) => {
   const settings = useSettings();
   const [selectedDay, setSelectedDay] = useState<string>('MON');

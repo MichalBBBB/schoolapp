@@ -3,10 +3,10 @@ import React, {useState} from 'react';
 import {Text, View} from 'react-native';
 import AddButton from '../../components/addButton';
 import CalendarView from '../../components/calendarView/calendarView';
-import {CalendarStackParamList} from '../../routes/CalendarStack';
+import {CalendarStackScreenProps} from '../../utils/types';
 
 const CalendarHomeScreen: React.FC<
-  NativeStackScreenProps<CalendarStackParamList, 'CalendarHomeScreen'>
+  CalendarStackScreenProps<'CalendarHomeScreen'>
 > = ({navigation}) => {
   const [screenHeight, setScreenHeight] = useState(0);
   const findDimensions = (layout: any) => {

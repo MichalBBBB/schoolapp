@@ -11,16 +11,7 @@ import {SubjectScreen} from '../screens/Settings/SubjectScreen';
 import {AdvancedTimeTableScreen} from '../screens/Settings/Timetable/AdvancedTimeTableScreen';
 import LessonTimesScreen from '../screens/Settings/Timetable/LessonTimesScreen';
 import TimeTableScreen from '../screens/Settings/Timetable/TimeTableScreen';
-
-export type SettingsStackParamList = {
-  SettingsHomeScreen: undefined;
-  LessonTimesScreen: undefined;
-  TimeTableScreen: undefined;
-  SubjectScreen: undefined;
-  DateSettingsScreen: undefined;
-  StartOfWeekScreen: undefined;
-  AdvancedTimeTableScreen: undefined;
-};
+import {SettingsStackParamList} from '../utils/types';
 
 const SettingsStack: React.FC<
   BottomTabScreenProps<TabStackParamList, 'SettingsStack'>

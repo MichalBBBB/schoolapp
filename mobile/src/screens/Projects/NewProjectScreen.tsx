@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {StyleSheet, Text} from 'react-native';
-import {TaskStackParamList} from '../../routes/TaskStack';
 import {View, TextInput} from 'react-native';
 import {useState} from 'react';
 import {BasicButton} from '../../components/basicViews/BasicButton';
@@ -12,10 +11,10 @@ import {
 import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {BasicCard} from '../../components/basicViews/BasicCard';
-import {ProjectStackParamList} from '../../routes/ProjectStack';
+import {ProjectStackScreenProps} from '../../utils/types';
 
 export const NewProjectScreen: React.FC<
-  NativeStackScreenProps<ProjectStackParamList, 'NewProjectScreen'>
+  ProjectStackScreenProps<'NewProjectScreen'>
 > = () => {
   const [name, setName] = useState('');
   const [members, setMembers] = useState<string[]>([]);

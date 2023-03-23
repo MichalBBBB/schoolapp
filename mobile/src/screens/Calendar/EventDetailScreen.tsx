@@ -14,12 +14,15 @@ import {v4 as uuidv4} from 'uuid';
 import {setRemindersFromApollo} from '../../utils/reminderUtils';
 import {useApolloClient} from '@apollo/client';
 import {SelectSubjectPopup} from '../../components/selectSubject/selectSubjectPopup';
-import {CalendarStackParamList} from '../../routes/CalendarStack';
 import {useEditEvent} from '../../mutationHooks/calendarEvent/editEvent';
 import {BasicCard} from '../../components/basicViews/BasicCard';
+import {
+  CalendarStackParamList,
+  CalendarStackScreenProps,
+} from '../../utils/types';
 
 const EventDetailScreen: React.FC<
-  NativeStackScreenProps<CalendarStackParamList, 'EventDetailScreen'>
+  CalendarStackScreenProps<'EventDetailScreen'>
 > = ({navigation, route}) => {
   const {data: events} = useGetAllEventsQuery();
   const event = events?.getAllEvents.find(

@@ -7,13 +7,7 @@ import {NewProjectScreen} from '../screens/Projects/NewProjectScreen';
 import ProjectDetailScreen from '../screens/Projects/ProjectDetailScreen';
 import ProjectHomeScreen from '../screens/Projects/ProjectHomeScreen';
 import {ProjectMembersScreen} from '../screens/Projects/ProjectMembersScreen';
-
-export type ProjectStackParamList = {
-  ProjectHomeScreen: undefined;
-  ProjectDetailScreen: {projectId: string};
-  ProjectMembersScreen: {projectId: string};
-  NewProjectScreen: undefined;
-};
+import {ProjectStackParamList} from '../utils/types';
 
 const ProjectStack: React.FC<
   BottomTabScreenProps<TabStackParamList, 'ProjectStack'>

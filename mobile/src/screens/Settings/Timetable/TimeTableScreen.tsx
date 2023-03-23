@@ -23,7 +23,6 @@ import {
   useGetAllLessonsQuery,
   useGetAllLessonTimesQuery,
 } from '../../../generated/graphql';
-import {SettingsStackParamList} from '../../../routes/SettingsStack';
 import {WEEK_DAYS} from '../../../types/weekDays';
 import {v4 as uuidv4} from 'uuid';
 import {useCreateLesson} from '../../../mutationHooks/lesson/createLesson';
@@ -36,9 +35,10 @@ import {Popup} from '../../../components/popup';
 import {BasicCard} from '../../../components/basicViews/BasicCard';
 import {useSettings} from '../../../utils/useSettings';
 import {BasicIcon} from '../../../components/basicViews/BasicIcon';
+import {SettingsStackScreenProps} from '../../../utils/types';
 
 const TimeTableScreen: React.FC<
-  NativeStackScreenProps<SettingsStackParamList, 'TimeTableScreen'>
+  SettingsStackScreenProps<'TimeTableScreen'>
 > = ({navigation}) => {
   const {data, loading: lessonsLoading} = useGetAllLessonsQuery();
   const {data: lessonTimes} = useGetAllLessonTimesQuery();

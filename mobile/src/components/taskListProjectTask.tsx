@@ -24,6 +24,7 @@ import {useToggleTask} from '../mutationHooks/task/toggleTask';
 import {useDeleteTask} from '../mutationHooks/task/deleteTask';
 import {useTheme} from '../contexts/ThemeContext';
 import {ColorsObject, SubjectColorsObject} from '../types/Theme';
+import {BasicIcon} from './basicViews/BasicIcon';
 
 dayjs.extend(calendar);
 
@@ -39,9 +40,9 @@ export const calendarConfigWithoutTime = {
 const TaskListProjectTask: React.FC<{
   projectTask: ProjectTaskWithProjectFragment;
   backgroundColor?: keyof ColorsObject;
-}> = ({projectTask, backgroundColor = 'background'}) => {
+  onPress: () => void;
+}> = ({projectTask, backgroundColor = 'background', onPress}) => {
   const [deleteProjectTask] = useDeleteProjectTaskMutation();
-  const navigation = useNavigation<TaskNavigationProp>();
   const [toggleTask] = useToggleProjectTaskMutation();
   const [done, setDone] = useState(false);
   const [theme] = useTheme();
@@ -88,8 +89,7 @@ const TaskListProjectTask: React.FC<{
         frontView={
           <TouchableHighlight
             onPress={() => {
-              // figure out
-              // navigation.navigate('TaskDetailScreen', {task: task});
+              onPress?.();
             }}>
             <View
               style={[
@@ -106,7 +106,7 @@ const TaskListProjectTask: React.FC<{
                     toggleTask({variables: {id: projectTask.id}});
                   }, 400);
                 }}>
-                <Image
+                <BasicIcon
                   source={
                     done
                       ? require('../../assets/Checkmark.png')

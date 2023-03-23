@@ -11,7 +11,6 @@ import {
   TextInput,
 } from 'react-native';
 import {useTheme} from '../../../contexts/ThemeContext';
-import {SettingsStackParamList} from '../../../routes/SettingsStack';
 import RelativeTime from 'dayjs/plugin/relativeTime';
 import CustomParseFormat from 'dayjs/plugin/customParseFormat';
 import SelectTimeModal from '../../../components/selectTimeView/selectTimeModal';
@@ -32,6 +31,7 @@ import {useCreateLessonTime} from '../../../mutationHooks/lessonTime/createLesso
 import {useDeleteLessonTime} from '../../../mutationHooks/lessonTime/deleteLessonTimes';
 import {useEditLessonTimes} from '../../../mutationHooks/lessonTime/editLessonTimes';
 import {BasicIcon} from '../../../components/basicViews/BasicIcon';
+import {SettingsStackScreenProps} from '../../../utils/types';
 
 export type LessonTime = {
   lessonNumber: number;
@@ -42,7 +42,7 @@ dayjs.extend(CustomParseFormat);
 dayjs.extend(RelativeTime);
 
 const LessonTimesScreen: React.FC<
-  NativeStackScreenProps<SettingsStackParamList, 'LessonTimesScreen'>
+  SettingsStackScreenProps<'LessonTimesScreen'>
 > = ({navigation}) => {
   const {data, loading: getLessonTimesLoading} = useGetAllLessonTimesQuery();
   const [createLessonTime] = useCreateLessonTime();

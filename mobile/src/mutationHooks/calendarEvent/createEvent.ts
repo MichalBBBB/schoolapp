@@ -68,6 +68,7 @@ export const useCreateEvent: () => [
               body: item.body || null,
               date: item.date,
               eventId: variables.id,
+              taskId: null,
             };
           }),
         },

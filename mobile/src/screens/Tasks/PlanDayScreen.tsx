@@ -8,10 +8,11 @@ import {BasicCard} from '../../components/basicViews/BasicCard';
 import {BasicText} from '../../components/basicViews/BasicText';
 import Task, {calendarConfigWithoutTime} from '../../components/task';
 import {TaskFragment, useGetAllTasksQuery} from '../../generated/graphql';
-import {TaskStackParamList} from '../../routes/TaskStack';
+import {BasicIcon} from '../../components/basicViews/BasicIcon';
+import {TaskStackScreenProps} from '../../utils/types';
 
 export const PlanDayScreen: React.FC<
-  NativeStackScreenProps<TaskStackParamList, 'PlanDayScreen'>
+  TaskStackScreenProps<'PlanDayScreen'>
 > = () => {
   const [day, setDay] = useState(dayjs());
   const {data} = useGetAllTasksQuery();
@@ -38,7 +39,7 @@ export const PlanDayScreen: React.FC<
                 onPress={() => {
                   setDay(day.subtract(1, 'day'));
                 }}>
-                <Image
+                <BasicIcon
                   style={styles.arrow}
                   source={require('../../../assets/Chevron-left.png')}
                 />
@@ -51,7 +52,7 @@ export const PlanDayScreen: React.FC<
                 onPress={() => {
                   setDay(day.add(1, 'day'));
                 }}>
-                <Image
+                <BasicIcon
                   style={styles.arrow}
                   source={require('../../../assets/Chevron-right.png')}
                 />

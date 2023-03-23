@@ -77,6 +77,7 @@ export const useEditEvent: () => [
                 body: item.body || null,
                 date: item.date,
                 eventId: calendarEvent.id,
+                taskId: null,
               };
             }),
           },

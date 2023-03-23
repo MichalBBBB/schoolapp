@@ -12,13 +12,13 @@ import EditDateModal from '../../../components/editDateWindow';
 import {Popup} from '../../../components/popup';
 import {SettingsItem} from '../../../components/settingsItem';
 import {useSetSettings} from '../../../mutationHooks/settings/setSettings';
-import {SettingsStackParamList} from '../../../routes/SettingsStack';
 import {SubjectColorsObject} from '../../../types/Theme';
 import {useSettings} from '../../../utils/useSettings';
 import {BasicLoading} from '../../../components/basicViews/BasicLoading';
+import {SettingsStackScreenProps} from '../../../utils/types';
 
 export const AdvancedTimeTableScreen: React.FC<
-  NativeStackScreenProps<SettingsStackParamList, 'AdvancedTimeTableScreen'>
+  SettingsStackScreenProps<'AdvancedTimeTableScreen'>
 > = ({navigation}) => {
   const numbers = Array(14)
     .fill(0)

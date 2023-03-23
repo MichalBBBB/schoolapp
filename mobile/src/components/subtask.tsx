@@ -9,6 +9,7 @@ import {
 import {useDeleteSubtask} from '../mutationHooks/task/deleteSubtask';
 import {useToggleSubtask} from '../mutationHooks/task/toggleSubtask';
 import {TaskNavigationProp} from '../utils/types';
+import {BasicIcon} from './basicViews/BasicIcon';
 import {BasicText} from './basicViews/BasicText';
 import SlidingView from './slidingView';
 
@@ -60,7 +61,7 @@ const Subtask: React.FC<{subtask: SubtaskFragment}> = ({subtask}) => {
               onPress={() => {
                 toggleSubtask({id: subtask.id});
               }}>
-              <Image
+              <BasicIcon
                 source={
                   subtask.done
                     ? require('../../assets/Checkmark.png')

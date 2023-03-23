@@ -7,12 +7,8 @@ import {TabStackParamList} from '../Routes';
 import AddEventScreen from '../screens/Calendar/AddEventScreen';
 import CalendarHomeScreen from '../screens/Calendar/CalendarHomeScreen';
 import EventDetailScreen from '../screens/Calendar/EventDetailScreen';
-
-export type CalendarStackParamList = {
-  CalendarHomeScreen: undefined;
-  AddEventScreen: undefined;
-  EventDetailScreen: {event: CalendarEventFragment};
-};
+import TaskDetailScreen from '../screens/Tasks/TaskDetailScreen';
+import {CalendarStackParamList} from '../utils/types';
 
 const CalendarStack: React.FC<
   BottomTabScreenProps<TabStackParamList, 'CalendarStack'>
@@ -37,6 +33,7 @@ const CalendarStack: React.FC<
       />
       <Stack.Screen name="AddEventScreen" component={AddEventScreen} />
       <Stack.Screen name="EventDetailScreen" component={EventDetailScreen} />
+      <Stack.Screen name="TaskDetailScreen" component={TaskDetailScreen} />
     </Stack.Navigator>
   );
 };

@@ -8,7 +8,11 @@ import {
   useDeleteTaskMutation,
   useToggleTaskMutation,
 } from '../generated/graphql';
-import {TaskNavigationProp} from '../utils/types';
+import {
+  CalendarNavigationProp,
+  TabNavigationProp,
+  TaskNavigationProp,
+} from '../utils/types';
 import SlidingView from './slidingView';
 import calendar from 'dayjs/plugin/calendar';
 import {BasicText} from './basicViews/BasicText';
@@ -39,14 +43,15 @@ const Task: React.FC<{
   backgroundColor?: keyof ColorsObject;
   planning?: Boolean;
   planningDay?: dayjs.Dayjs;
+  onPress?: () => void;
 }> = ({
   task,
   backgroundColor = 'background',
   planning = false,
   planningDay = dayjs(),
+  onPress,
 }) => {
   const [deleteTask] = useDeleteTask();
-  const navigation = useNavigation<TaskNavigationProp>();
   const [toggleTask] = useToggleTask();
   const [editTask] = useEditTask();
   const [done, setDone] = useState(false);
@@ -102,7 +107,7 @@ const Task: React.FC<{
         frontView={
           <TouchableHighlight
             onPress={() => {
-              navigation.navigate('TaskDetailScreen', {task: task});
+              onPress?.();
             }}>
             <View
               style={[

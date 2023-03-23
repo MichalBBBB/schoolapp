@@ -19,10 +19,10 @@ import {
   useGetInvitesQuery,
   useGetProjectsQuery,
 } from '../../generated/graphql';
-import {ProjectStackParamList} from '../../routes/ProjectStack';
+import {ProjectStackScreenProps} from '../../utils/types';
 
 const ProjectHomeScreen: React.FC<
-  NativeStackScreenProps<ProjectStackParamList, 'ProjectHomeScreen'>
+  ProjectStackScreenProps<'ProjectHomeScreen'>
 > = ({navigation}) => {
   const {data, error} = useGetProjectsQuery();
   const {data: invites} = useGetInvitesQuery();

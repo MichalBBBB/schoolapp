@@ -17,6 +17,8 @@ import {BasicText} from '../basicViews/BasicText';
 import {useSettings} from '../../utils/useSettings';
 import {getDayNumber} from '../../utils/lessonUtils';
 import {useTheme} from '../../contexts/ThemeContext';
+import {useNavigation} from '@react-navigation/native';
+import {CalendarNavigationProp} from '../../utils/types';
 
 interface DayEventsProps {
   date: dayjs.Dayjs;
@@ -34,7 +36,7 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
   const {data: tasks} = useGetAllTasksQuery();
 
   const settings = useSettings();
-  const [theme] = useTheme();
+  const navigation = useNavigation<CalendarNavigationProp>();
 
   const dayNumber = useMemo(() => {
     if (settings) {
@@ -146,7 +148,16 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
         } else if (item.__typename == 'CalendarEvent') {
           return <Event event={item} />;
         } else {
-          return <Task task={item as TaskFragment} />;
+          return (
+            <Task
+              task={item as TaskFragment}
+              onPress={() => {
+                navigation.navigate('TaskDetailScreen', {
+                  task: item as TaskFragment,
+                });
+              }}
+            />
+          );
         }
       }}
       renderSectionFooter={() => <View style={styles.sectionFooter}></View>}

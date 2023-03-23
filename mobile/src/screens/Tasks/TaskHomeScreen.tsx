@@ -1,4 +1,5 @@
 import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
+import {CompositeScreenProps} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {
   createRef,
@@ -41,7 +42,11 @@ import {
   useGetProjectTasksOfUserLazyQuery,
   useGetProjectTasksOfUserQuery,
 } from '../../generated/graphql';
-import {TaskStackParamList} from '../../routes/TaskStack';
+import {
+  TabParamList,
+  TaskStackParamList,
+  TaskStackScreenProps,
+} from '../../utils/types';
 
 if (
   Platform.OS === 'android' &&
@@ -50,9 +55,9 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const TaskHomeScreen: React.FC<
-  NativeStackScreenProps<TaskStackParamList, 'TaskHomeScreen'>
-> = ({navigation}) => {
+const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
+  navigation,
+}) => {
   const {data} = useGetAllTasksQuery();
   const {data: projectTasks} = useGetProjectTasksOfUserQuery({
     fetchPolicy: 'network-only',
@@ -96,9 +101,9 @@ const TaskHomeScreen: React.FC<
 
   const list: Array<TaskFragment | ProjectTaskWithProjectFragment> =
     (
-      data?.getAllTasks.filter(item => {
+      (data?.getAllTasks.filter(item => {
         return item.done == false;
-      }) as Array<TaskFragment | ProjectTaskWithProjectFragment>
+      }) as Array<TaskFragment | ProjectTaskWithProjectFragment>) || []
     ).concat(
       projectTasks?.getProjectTasksOfUser.filter(item => !item.done) || [],
     ) || [];
@@ -119,10 +124,23 @@ const TaskHomeScreen: React.FC<
               <TaskListProjectTask
                 projectTask={item}
                 backgroundColor="accentBackground1"
+                onPress={() => {
+                  navigation.navigate('ProjectDetailScreen', {
+                    projectId: item.projectId,
+                  });
+                }}
               />
             );
           } else {
-            return <Task task={item} backgroundColor={'accentBackground1'} />;
+            return (
+              <Task
+                task={item}
+                backgroundColor={'accentBackground1'}
+                onPress={() => {
+                  navigation.navigate('TaskDetailScreen', {task: item});
+                }}
+              />
+            );
           }
         }}
         //ItemSeparatorComponent={() => <View style={styles.separator} />}

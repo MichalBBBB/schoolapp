@@ -2,7 +2,6 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import React, {useState} from 'react';
 import {Pressable, StyleSheet, Text, View, TextInput} from 'react-native';
-import {CalendarStackParamList} from '../../routes/CalendarStack';
 import {
   GetAllEventsDocument,
   Subject,
@@ -19,6 +18,7 @@ import {v4 as uuidv4} from 'uuid';
 import {useCreateEvent} from '../../mutationHooks/calendarEvent/createEvent';
 import {Popup} from '../../components/popup';
 import {SelectSubjectPopup} from '../../components/selectSubject/selectSubjectPopup';
+import {CalendarStackScreenProps} from '../../utils/types';
 
 let hours: number[] = [];
 for (var i = 0; i < 24; i++) {
@@ -32,9 +32,9 @@ for (var i = 0; i < 60; i++) {
 
 console.log(dayjs().hour());
 
-const AddEventScreen: React.FC<
-  NativeStackScreenProps<CalendarStackParamList, 'AddEventScreen'>
-> = ({navigation}) => {
+const AddEventScreen: React.FC<CalendarStackScreenProps<'AddEventScreen'>> = ({
+  navigation,
+}) => {
   const [createEvent] = useCreateEvent();
 
   const [name, setName] = useState('');

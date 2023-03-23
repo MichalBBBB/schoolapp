@@ -27,7 +27,6 @@ import {
   useEditTaskMutation,
   useGetAllTasksQuery,
 } from '../../generated/graphql';
-import {TaskStackParamList} from '../../routes/TaskStack';
 import {v4 as uuidv4} from 'uuid';
 import {useCreateSubtask} from '../../mutationHooks/task/createSubtask';
 import {useEditTask} from '../../mutationHooks/task/editTask';
@@ -36,10 +35,12 @@ import {useApolloClient} from '@apollo/client';
 import SelectSubjectWindow from '../../components/selectSubject';
 import {Popup} from '../../components/popup';
 import {SelectSubjectPopup} from '../../components/selectSubject/selectSubjectPopup';
+import {TaskStackScreenProps} from '../../utils/types';
 
-const TaskDetailScreen: React.FC<
-  NativeStackScreenProps<TaskStackParamList, 'TaskDetailScreen'>
-> = ({navigation, route}) => {
+const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
+  navigation,
+  route,
+}) => {
   const {data: Tasks} = useGetAllTasksQuery();
   const task = Tasks?.getAllTasks.find(
     item => item.id == route.params.task.id,

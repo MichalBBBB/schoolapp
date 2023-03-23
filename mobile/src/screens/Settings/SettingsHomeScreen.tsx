@@ -1,28 +1,25 @@
 import {useApolloClient} from '@apollo/client';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React from 'react';
 import {
   View,
   ScrollView,
   StyleSheet,
-  Text,
   Pressable,
   Image,
   Switch,
 } from 'react-native';
 import {isLoggedInVar} from '../../App';
-import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicCard} from '../../components/basicViews/BasicCard';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {SettingsItem} from '../../components/settingsItem';
 import {DarkTheme, LightTheme, useTheme} from '../../contexts/ThemeContext';
 import {useLogoutMutation, useMeQuery} from '../../generated/graphql';
 import {useSetSettings} from '../../mutationHooks/settings/setSettings';
-import {SettingsStackParamList} from '../../routes/SettingsStack';
 import {setAccessToken} from '../../utils/AccessToken';
+import {SettingsStackScreenProps} from '../../utils/types';
 
 const SettingsHomeScreen: React.FC<
-  NativeStackScreenProps<SettingsStackParamList, 'SettingsHomeScreen'>
+  SettingsStackScreenProps<'SettingsHomeScreen'>
 > = ({navigation}) => {
   const {data: me} = useMeQuery();
   const [logout] = useLogoutMutation();

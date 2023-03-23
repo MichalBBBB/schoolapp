@@ -1,7 +1,6 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {Pressable, View, Image} from 'react-native';
-import {SettingsStackParamList} from '../../routes/SettingsStack';
 import {FlatList} from 'react-native-gesture-handler';
 import {SubjectFragment, useGetAllSubjectsQuery} from '../../generated/graphql';
 import {BasicText} from '../../components/basicViews/BasicText';
@@ -16,9 +15,10 @@ import {SubjectColorsObject} from '../../types/Theme';
 import {ColorPicker} from '../../components/colorPicker';
 import {useEditSubject} from '../../mutationHooks/subject/editSubject';
 import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
+import {SettingsStackScreenProps} from '../../utils/types';
 
 export const SubjectScreen: React.FC<
-  NativeStackScreenProps<SettingsStackParamList, 'SubjectScreen'>
+  SettingsStackScreenProps<'SubjectScreen'>
 > = ({navigation}) => {
   const {data: subjects} = useGetAllSubjectsQuery();
   const [deleteSubject] = useDeleteSubject();

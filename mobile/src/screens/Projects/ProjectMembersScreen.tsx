@@ -11,10 +11,10 @@ import {
   useGetProjectsQuery,
   useRemoveMemberFromProjectMutation,
 } from '../../generated/graphql';
-import {ProjectStackParamList} from '../../routes/ProjectStack';
+import {ProjectStackScreenProps} from '../../utils/types';
 
 export const ProjectMembersScreen: React.FC<
-  NativeStackScreenProps<ProjectStackParamList, 'ProjectMembersScreen'>
+  ProjectStackScreenProps<'ProjectMembersScreen'>
 > = ({navigation, route}) => {
   // we get the project this way to make it reactive to changes
   const {data} = useGetProjectsQuery();

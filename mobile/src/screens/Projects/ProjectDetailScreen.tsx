@@ -23,10 +23,10 @@ import {
   useAddProjectTaskMutation,
   useGetProjectsQuery,
 } from '../../generated/graphql';
-import {ProjectStackParamList} from '../../routes/ProjectStack';
+import {ProjectStackScreenProps} from '../../utils/types';
 
 const ProjectDetailScreen: React.FC<
-  NativeStackScreenProps<ProjectStackParamList, 'ProjectDetailScreen'>
+  ProjectStackScreenProps<'ProjectDetailScreen'>
 > = ({route, navigation}) => {
   const {data: projects} = useGetProjectsQuery();
 
