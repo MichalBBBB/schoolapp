@@ -17,7 +17,10 @@ export class settingsResolver {
     @Arg("skipWeekends", { nullable: true }) skipWeekends?: boolean,
     @Arg("lengthOfRotation", { nullable: true }) lengthOfRotation?: number,
     @Arg("startOfRotationDate", { nullable: true }) startOfRotationDate?: Date,
-    @Arg("darkMode", { nullable: true }) darkMode?: boolean
+    @Arg("darkMode", { nullable: true }) darkMode?: boolean,
+    @Arg("showDoDate", { nullable: true }) showDoDate?: boolean,
+    @Arg("sortTasksBy", { nullable: true })
+    sortTasksBy?: "DATE_ADDED" | "DUE_DATE" | "DO_DATE"
   ) {
     const user = await User.findOne({ where: { id: payload?.userId } });
     await Settings.update(
@@ -28,6 +31,8 @@ export class settingsResolver {
         lengthOfRotation,
         startOfRotationDate,
         darkMode,
+        showDoDate,
+        sortTasksBy,
       }
     );
     return Settings.findOne({ where: { id: user?.settingsId } });

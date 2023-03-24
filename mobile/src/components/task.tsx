@@ -44,12 +44,14 @@ const Task: React.FC<{
   planning?: Boolean;
   planningDay?: dayjs.Dayjs;
   onPress?: () => void;
+  showDoDate?: boolean;
 }> = ({
   task,
   backgroundColor = 'background',
   planning = false,
   planningDay = dayjs(),
   onPress,
+  showDoDate = false,
 }) => {
   const [deleteTask] = useDeleteTask();
   const [toggleTask] = useToggleTask();
@@ -180,9 +182,10 @@ const Task: React.FC<{
                   </View>
                 )}
               </View>
-              {task.dueDate && (
+              {((task.dueDate && !showDoDate) ||
+                (task.doDate && showDoDate)) && (
                 <BasicText textVariant="subText" color="textSecondary">
-                  {dayjs(task.dueDate).calendar(
+                  {dayjs(showDoDate ? task.doDate : task.dueDate).calendar(
                     null,
                     calendarConfigWithoutTime,
                   )}

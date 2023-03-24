@@ -1,6 +1,7 @@
 import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {CompositeScreenProps} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import dayjs from 'dayjs';
 import React, {
   createRef,
   useEffect,
@@ -24,7 +25,9 @@ import {isOnlineVar} from '../../App';
 import AddButton from '../../components/addButton';
 import AddTaskWindow from '../../components/addTaskWindow';
 import {BasicButton} from '../../components/basicViews/BasicButton';
+import {BasicCard} from '../../components/basicViews/BasicCard';
 import {BasicIcon} from '../../components/basicViews/BasicIcon';
+import {BasicRadio} from '../../components/basicViews/BasicRadio';
 import {BasicText} from '../../components/basicViews/BasicText';
 import EditDateModal from '../../components/editDateWindow';
 import {Menu} from '../../components/menu';
@@ -33,6 +36,7 @@ import {Popup} from '../../components/popup';
 import {SelectSubjectPopup} from '../../components/selectSubject/selectSubjectPopup';
 import Task from '../../components/task';
 import TaskListProjectTask from '../../components/taskListProjectTask';
+import {TaskScreenOptionsPopup} from '../../components/taskScreenOptionsPopup';
 import {useTheme} from '../../contexts/ThemeContext';
 import {
   ProjectTaskFragment,
@@ -42,11 +46,13 @@ import {
   useGetProjectTasksOfUserLazyQuery,
   useGetProjectTasksOfUserQuery,
 } from '../../generated/graphql';
+import {useSetSettings} from '../../mutationHooks/settings/setSettings';
 import {
   TabParamList,
   TaskStackParamList,
   TaskStackScreenProps,
 } from '../../utils/types';
+import {useSettings} from '../../utils/useSettings';
 
 if (
   Platform.OS === 'android' &&
@@ -62,8 +68,10 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
   const {data: projectTasks} = useGetProjectTasksOfUserQuery({
     fetchPolicy: 'network-only',
   });
+  const [setSettings] = useSetSettings();
   const [addTaskOpen, setAddTaskOpen] = useState(false);
   const [theme] = useTheme();
+  const settings = useSettings();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -79,7 +87,7 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
               style={{height: 25, width: 25}}
             />
           </BasicButton>
-          <Popup
+          <TaskScreenOptionsPopup
             trigger={
               <BasicButton variant="unstyled">
                 <BasicIcon
@@ -87,11 +95,8 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
                   style={{height: 20, width: 20}}
                 />
               </BasicButton>
-            }>
-            <Menu>
-              <MenuItem text="something random" onPress={() => {}} />
-            </Menu>
-          </Popup>
+            }
+          />
         </View>
       ),
     });
@@ -99,14 +104,43 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
 
   const MyFlatList = FlatList<TaskFragment | ProjectTaskWithProjectFragment>;
 
-  const list: Array<TaskFragment | ProjectTaskWithProjectFragment> =
+  const list: Array<TaskFragment | ProjectTaskWithProjectFragment> = (
     (
       (data?.getAllTasks.filter(item => {
         return item.done == false;
       }) as Array<TaskFragment | ProjectTaskWithProjectFragment>) || []
     ).concat(
       projectTasks?.getProjectTasksOfUser.filter(item => !item.done) || [],
-    ) || [];
+    ) || []
+  ).sort((a, b) => {
+    if (settings?.sortTasksBy == 'DUE_DATE') {
+      if (a.dueDate && b.dueDate) {
+        return dayjs(a.dueDate).diff(b.dueDate);
+      } else if (!a.dueDate && !b.dueDate) {
+        return 0;
+      } else {
+        if (a.dueDate) {
+          return -1;
+        } else {
+          return 1;
+        }
+      }
+    } else if (settings?.sortTasksBy == 'DO_DATE') {
+      if (a.doDate && b.doDate) {
+        return dayjs(a.doDate).diff(b.doDate);
+      } else if (!a.doDate && !b.doDate) {
+        return 0;
+      } else {
+        if (a.dueDate) {
+          return -1;
+        } else {
+          return 1;
+        }
+      }
+    } else {
+      return dayjs(a.createdAt).diff(b.createdAt);
+    }
+  });
 
   return (
     <View style={{flex: 1}}>
@@ -134,6 +168,7 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
           } else {
             return (
               <Task
+                showDoDate={settings?.showDoDate}
                 task={item}
                 backgroundColor={'accentBackground1'}
                 onPress={() => {

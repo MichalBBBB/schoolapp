@@ -21,6 +21,10 @@ export class UserProject extends BaseEntity {
   @PrimaryColumn()
   projectId: string;
 
+  @Field()
+  @Column({ default: false })
+  isAdmin: boolean;
+
   @ManyToOne(() => Project, (project) => project.userProjects, {
     onDelete: "CASCADE",
   })

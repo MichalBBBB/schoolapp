@@ -15,7 +15,7 @@ import {ProjectStackScreenProps} from '../../utils/types';
 
 export const NewProjectScreen: React.FC<
   ProjectStackScreenProps<'NewProjectScreen'>
-> = () => {
+> = ({navigation}) => {
   const [name, setName] = useState('');
   const [members, setMembers] = useState<string[]>([]);
   const [email, setEmail] = useState('');
@@ -84,6 +84,7 @@ export const NewProjectScreen: React.FC<
               variables: {name: name, memberEmails: members},
               refetchQueries: [GetProjectsDocument],
             });
+            navigation.goBack();
           }}>
           <BasicText textVariant="button" color="textContrast">
             Add Project

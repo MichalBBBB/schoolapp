@@ -56,7 +56,10 @@ export class Task extends BaseEntity {
   @Field(() => [Subtask])
   subtasks: Relation<Subtask>[];
 
-  @ManyToOne(() => Subject, (subject) => subject.tasks, { nullable: true })
+  @ManyToOne(() => Subject, (subject) => subject.tasks, {
+    nullable: true,
+    onDelete: "SET NULL",
+  })
   @Field(() => Subject, { nullable: true })
   subject: Relation<Subject>;
 

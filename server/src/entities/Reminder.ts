@@ -30,12 +30,16 @@ export class Reminder extends BaseEntity {
   @Column({ nullable: true })
   body?: string;
 
-  @ManyToOne(() => Task, (task) => task.reminders, { nullable: true })
+  @ManyToOne(() => Task, (task) => task.reminders, {
+    nullable: true,
+    onDelete: "CASCADE",
+  })
   @Field(() => Task, { nullable: true })
   task?: Relation<Task>;
 
   @ManyToOne(() => CalendarEvent, (event) => event.reminders, {
     nullable: true,
+    onDelete: "CASCADE",
   })
   @Field(() => CalendarEvent, { nullable: true })
   event?: Relation<CalendarEvent>;
@@ -52,7 +56,7 @@ export class Reminder extends BaseEntity {
   @Field()
   date: Date;
 
-  @ManyToOne(() => User, (user) => user.reminders)
+  @ManyToOne(() => User, (user) => user.reminders, { onDelete: "CASCADE" })
   user: Relation<User>;
 
   @Column()

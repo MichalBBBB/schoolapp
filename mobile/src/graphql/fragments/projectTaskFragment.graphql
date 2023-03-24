@@ -5,6 +5,8 @@ fragment ProjectTask on ProjectTask {
   doDate
   done
   projectId
+  createdAt
+  updatedAt
   publicUsers {
     ...PublicUser
   }

@@ -39,7 +39,7 @@ export class ProjectTask extends BaseEntity {
 
   @JoinTable()
   @ManyToMany(() => User, (user) => user.projectTasks, {
-    onDelete: "CASCADE",
+    onDelete: "SET NULL",
   })
   users: Relation<User>[];
 

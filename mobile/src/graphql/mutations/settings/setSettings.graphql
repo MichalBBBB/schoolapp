@@ -4,6 +4,8 @@ mutation SetSettings(
   $lengthOfRotation: Float
   $skipWeekends: Boolean
   $darkMode: Boolean
+  $sortTasksBy: String
+  $showDoDate: Boolean
 ) {
   setSettings(
     startOfWeek: $startOfWeek
@@ -11,6 +13,8 @@ mutation SetSettings(
     lengthOfRotation: $lengthOfRotation
     skipWeekends: $skipWeekends
     darkMode: $darkMode
+    sortTasksBy: $sortTasksBy
+    showDoDate: $showDoDate
   ) {
     ...Settings
   }

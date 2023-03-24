@@ -5,6 +5,8 @@ fragment ProjectTaskWithProject on ProjectTask {
   doDate
   done
   projectId
+  createdAt
+  updatedAt
   project {
     ...SimpleProject
   }

@@ -76,7 +76,7 @@ export const Popup: React.FC<PopupProps> = ({
   }, [shouldClose]);
 
   useEffect(() => {
-    if (shouldAnimate) {
+    if (shouldAnimate && !contentVisible) {
       setContentVisible(true);
       scale.value = 0;
       scale.value = withTiming(1, {duration: 300});

@@ -4,8 +4,13 @@ import {FlatList, Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {AddProjectMemberWindow} from '../../components/addProjectMemberWindow';
 import BasicInputWindow from '../../components/basicInputWindow';
 import {BasicButton} from '../../components/basicViews/BasicButton';
+import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {BasicLoading} from '../../components/basicViews/BasicLoading';
 import {BasicText} from '../../components/basicViews/BasicText';
+import {Menu} from '../../components/menu';
+import {MenuItem} from '../../components/menu/MenuItem';
+import {Popup} from '../../components/popup';
+import {useTheme} from '../../contexts/ThemeContext';
 import {
   useAddMemberToProjectMutation,
   useGetProjectsQuery,
@@ -27,6 +32,8 @@ export const ProjectMembersScreen: React.FC<
   const [addMember] = useAddMemberToProjectMutation();
   const [addProjectMemberWindowVisible, setAddProjectMemberWindowVisible] =
     useState(false);
+
+  const [theme] = useTheme();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -58,24 +65,53 @@ export const ProjectMembersScreen: React.FC<
         </View>
 
         <FlatList
+          style={{marginTop: 10}}
+          contentContainerStyle={{
+            borderRadius: 15,
+            overflow: 'hidden',
+          }}
           data={project?.members}
           renderItem={({item, index}) => (
-            <View key={index} style={styles.memberContainer}>
-              <BasicText>{item.name}</BasicText>
-              <Pressable
-                onPress={() => {
-                  removeMember({
-                    variables: {
-                      memberId: item.id,
-                      projectId: route.params.projectId,
-                    },
-                  });
-                }}>
-                <Image
-                  source={require('../../../assets/Delete.png')}
-                  style={styles.deleteButton}
-                />
-              </Pressable>
+            <View
+              key={index}
+              style={[
+                styles.memberContainer,
+                {backgroundColor: theme.colors.accentBackground1},
+              ]}>
+              <View style={{flexDirection: 'row'}}>
+                <BasicText>{item.name}</BasicText>
+                {item.isAdmin && (
+                  <BasicText color="textSecondary" style={{marginLeft: 10}}>
+                    Admin
+                  </BasicText>
+                )}
+              </View>
+              {!item.isAdmin && (
+                <Popup
+                  trigger={
+                    <Pressable>
+                      <BasicIcon
+                        source={require('../../../assets/Options.png')}
+                        style={{height: 20, width: 20}}
+                      />
+                    </Pressable>
+                  }>
+                  <Menu>
+                    <MenuItem
+                      color="dangerous"
+                      text="Remove member"
+                      onPress={() => {
+                        removeMember({
+                          variables: {
+                            memberId: item.id,
+                            projectId: route.params.projectId,
+                          },
+                        });
+                      }}
+                    />
+                  </Menu>
+                </Popup>
+              )}
             </View>
           )}
         />
@@ -103,7 +139,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10,
   },
   deleteButton: {
     resizeMode: 'stretch',
@@ -112,8 +147,7 @@ const styles = StyleSheet.create({
     tintColor: '#ccc',
   },
   memberContainer: {
-    margin: 5,
-    marginLeft: 10,
+    padding: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

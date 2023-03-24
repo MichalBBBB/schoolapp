@@ -7,7 +7,7 @@ import type {
   TextVariantsObject,
 } from '../../types/Theme';
 
-interface BasicTextProps extends TextProps {
+export interface BasicTextProps extends TextProps {
   spacing?: keyof SpacingObject;
   textVariant?: keyof TextVariantsObject;
   color?: keyof ColorsObject;

@@ -33,6 +33,9 @@ export class PublicUser {
 
   @Field()
   name: string;
+
+  @Field({ nullable: true })
+  isAdmin?: boolean;
 }
 
 @Entity()

@@ -45,6 +45,7 @@ export class CalendarEvent extends BaseEntity {
 
   @ManyToOne(() => Subject, (subject) => subject.calendarEvents, {
     nullable: true,
+    onDelete: "SET NULL",
   })
   @Field(() => Subject, { nullable: true })
   subject?: Subject;

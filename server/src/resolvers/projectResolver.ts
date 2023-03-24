@@ -52,6 +52,7 @@ const loadMembers: (keys: string[]) => Promise<PublicUser[][]> = async (
           name: item.user.fullName,
           email: item.user.email,
           id: item.user.id,
+          isAdmin: item.isAdmin,
         };
         return publicUser;
       })
@@ -118,6 +119,7 @@ export class projectResolver {
           projectId: project.id,
           userId: payload?.userId,
           accepted: true,
+          isAdmin: true,
         })
         .save();
     });

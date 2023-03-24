@@ -1,5 +1,13 @@
 import { Field, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  Relation,
+} from "typeorm";
+import { User } from "./User";
 
 @Entity()
 @ObjectType()
@@ -7,6 +15,9 @@ export class Settings extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   @Field()
   id: string;
+
+  @OneToOne(() => User, (user) => user.settings, { onDelete: "CASCADE" })
+  user: Relation<User>;
 
   @Column({ default: "MON" })
   @Field()
@@ -27,4 +38,12 @@ export class Settings extends BaseEntity {
   @Column({ default: false })
   @Field()
   darkMode: boolean;
+
+  @Column({ default: false })
+  @Field()
+  showDoDate: boolean;
+
+  @Column({ default: "DATE_ADDED" })
+  @Field()
+  sortTasksBy: "DATE_ADDED" | "DUE_DATE" | "DO_DATE";
 }
