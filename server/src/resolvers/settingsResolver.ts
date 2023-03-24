@@ -20,7 +20,8 @@ export class settingsResolver {
     @Arg("darkMode", { nullable: true }) darkMode?: boolean,
     @Arg("showDoDate", { nullable: true }) showDoDate?: boolean,
     @Arg("sortTasksBy", { nullable: true })
-    sortTasksBy?: "DATE_ADDED" | "DUE_DATE" | "DO_DATE"
+    sortTasksBy?: "DATE_ADDED" | "DUE_DATE" | "DO_DATE",
+    @Arg("showCompletedTasks", { nullable: true }) showCompletedTasks?: boolean
   ) {
     const user = await User.findOne({ where: { id: payload?.userId } });
     await Settings.update(
@@ -33,6 +34,7 @@ export class settingsResolver {
         darkMode,
         showDoDate,
         sortTasksBy,
+        showCompletedTasks,
       }
     );
     return Settings.findOne({ where: { id: user?.settingsId } });

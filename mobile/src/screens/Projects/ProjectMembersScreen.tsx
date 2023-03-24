@@ -37,6 +37,7 @@ export const ProjectMembersScreen: React.FC<
 
   useLayoutEffect(() => {
     navigation.setOptions({
+      title: project?.name,
       headerRight: () => (
         <BasicButton
           variant="unstyled"
@@ -69,6 +70,8 @@ export const ProjectMembersScreen: React.FC<
           contentContainerStyle={{
             borderRadius: 15,
             overflow: 'hidden',
+            backgroundColor: theme.colors.accentBackground1,
+            padding: 5,
           }}
           data={project?.members}
           renderItem={({item, index}) => (
@@ -147,7 +150,7 @@ const styles = StyleSheet.create({
     tintColor: '#ccc',
   },
   memberContainer: {
-    padding: 10,
+    padding: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

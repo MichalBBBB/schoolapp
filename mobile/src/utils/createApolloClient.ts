@@ -41,6 +41,7 @@ const retryLink = new RetryLink();
 const serializingLink = new SerializingLink();
 
 const errorLink = onError(error => {
+  console.log(error.graphQLErrors, error.networkError);
   if (error.networkError) {
     isOnlineVar(false);
     persistentQueueLink.close();

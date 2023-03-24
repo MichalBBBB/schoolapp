@@ -6,6 +6,7 @@ mutation SetSettings(
   $darkMode: Boolean
   $sortTasksBy: String
   $showDoDate: Boolean
+  $showCompletedTasks: Boolean
 ) {
   setSettings(
     startOfWeek: $startOfWeek
@@ -15,6 +16,7 @@ mutation SetSettings(
     darkMode: $darkMode
     sortTasksBy: $sortTasksBy
     showDoDate: $showDoDate
+    showCompletedTasks: $showCompletedTasks
   ) {
     ...Settings
   }

@@ -46,4 +46,8 @@ export class Settings extends BaseEntity {
   @Column({ default: "DATE_ADDED" })
   @Field()
   sortTasksBy: "DATE_ADDED" | "DUE_DATE" | "DO_DATE";
+
+  @Column({ default: false })
+  @Field()
+  showCompletedTasks: boolean;
 }

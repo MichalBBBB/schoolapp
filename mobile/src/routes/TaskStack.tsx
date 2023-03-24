@@ -29,13 +29,21 @@ const TaskStack: React.FC<
           }
         },
       })}>
-      <Stack.Screen name="TaskHomeScreen" component={TaskHomeScreen} />
+      <Stack.Screen
+        name="TaskHomeScreen"
+        component={TaskHomeScreen}
+        options={{title: 'Tasks'}}
+      />
       <Stack.Screen
         name="TaskDetailScreen"
         component={TaskDetailScreen}
         options={({route}) => ({title: route.params.task.name})}
       />
-      <Stack.Screen name="PlanDayScreen" component={PlanDayScreen} />
+      <Stack.Screen
+        name="PlanDayScreen"
+        component={PlanDayScreen}
+        options={{title: 'Plan your day'}}
+      />
       <Stack.Screen
         name="ProjectDetailScreen"
         component={ProjectDetailScreen}
@@ -43,6 +51,7 @@ const TaskStack: React.FC<
       <Stack.Screen
         name="ProjectMembersScreen"
         component={ProjectMembersScreen}
+        options={{title: 'Members'}}
       />
     </Stack.Navigator>
   );

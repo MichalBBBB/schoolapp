@@ -9,9 +9,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {AssignMembersWindow} from '../../components/assignMembersWindow';
+import BackButton from '../../components/backButton';
 import {BasicIcon} from '../../components/basicViews/BasicIcon';
-import {BasicText} from '../../components/basicViews/BasicText';
+import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
 import EditProjectTaskWindow from '../../components/editProjectTaskWindow';
 import {Menu} from '../../components/menu';
 import {MenuItem} from '../../components/menu/MenuItem';
@@ -20,7 +20,8 @@ import ProjectTask from '../../components/projectTask';
 import {useTheme} from '../../contexts/ThemeContext';
 import {
   GetProjectsDocument,
-  useAddProjectTaskMutation,
+  useDeleteProjectMutation,
+  useEditProjectMutation,
   useGetProjectsQuery,
 } from '../../generated/graphql';
 import {ProjectStackScreenProps} from '../../utils/types';
@@ -29,6 +30,16 @@ const ProjectDetailScreen: React.FC<
   ProjectStackScreenProps<'ProjectDetailScreen'>
 > = ({route, navigation}) => {
   const {data: projects} = useGetProjectsQuery();
+  const [editProject] = useEditProjectMutation({
+    context: {
+      skipQueue: true,
+    },
+    refetchQueries: [GetProjectsDocument],
+  });
+  const [deleteProject] = useDeleteProjectMutation({
+    context: {skipQueue: true},
+    refetchQueries: [GetProjectsDocument],
+  });
 
   const project = projects?.getProjects.find(
     item => item.id == route.params.projectId,
@@ -36,9 +47,28 @@ const ProjectDetailScreen: React.FC<
   const [addTaskModalIsVisible, setAddTaskModalIsVisible] = useState(false);
   const [theme] = useTheme();
 
+  const [text, setText] = useState(project?.text);
+  const [name, setName] = useState(project?.name || '');
+
   useLayoutEffect(() => {
     navigation.setOptions({
       title: project?.name,
+      headerLeft: () => (
+        <BackButton
+          onPress={() => {
+            navigation.goBack();
+            if (project) {
+              editProject({
+                variables: {
+                  id: project?.id,
+                  name,
+                  text,
+                },
+              });
+            }
+          }}
+        />
+      ),
       headerRight: () => (
         <Popup
           trigger={
@@ -58,6 +88,16 @@ const ProjectDetailScreen: React.FC<
                 })
               }
             />
+            <MenuItem
+              text={'Delete project'}
+              color="dangerous"
+              onPress={() => {
+                if (project) {
+                  deleteProject({variables: {id: project.id}});
+                  navigation.goBack();
+                }
+              }}
+            />
           </Menu>
         </Popup>
       ),
@@ -76,7 +116,24 @@ const ProjectDetailScreen: React.FC<
     <>
       <View style={styles.container}>
         <View style={styles.titleContainer}>
-          <BasicText textVariant="title">{project?.name}</BasicText>
+          <BasicTextInput
+            style={{flex: 1}}
+            spacing="none"
+            textVariant="title"
+            variant="unstyled"
+            onChangeText={setName}
+            defaultValue={project.name}
+            onEndEditing={() => {
+              editProject({
+                variables: {
+                  id: project.id,
+                  name,
+                  text,
+                },
+              });
+            }}
+          />
+
           <TouchableOpacity
             onPress={() => {
               setAddTaskModalIsVisible(true);
@@ -87,7 +144,24 @@ const ProjectDetailScreen: React.FC<
             />
           </TouchableOpacity>
         </View>
+        <BasicTextInput
+          placeholder="Description"
+          variant="unstyled"
+          multiline={true}
+          onChangeText={setText}
+          defaultValue={project.text || ''}
+          onEndEditing={() => {
+            editProject({
+              variables: {
+                id: project.id,
+                name,
+                text,
+              },
+            });
+          }}
+        />
         <FlatList
+          style={{marginTop: 5}}
           contentContainerStyle={{
             borderRadius: 15,
             overflow: 'hidden',

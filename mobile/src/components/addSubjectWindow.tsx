@@ -8,6 +8,7 @@ import {BasicTextInput} from './basicViews/BasicTextInput';
 import {ColorPicker} from './colorPicker';
 import {v4 as uuidv4} from 'uuid';
 import {useCreateSubject} from '../mutationHooks/subject/createSubject';
+import {ColorPickerPopup} from './colorPickerPopup';
 
 interface AddSubjectWindowProps {
   visible: boolean;
@@ -54,19 +55,28 @@ const AddSubjectWindow: React.FC<AddSubjectWindowProps> = ({
             flexDirection: 'row',
             alignItems: 'center',
           }}>
-          <Pressable
-            onPress={() => {
-              console.log('press');
-              setIsColorPickerVisible(true);
+          <ColorPickerPopup
+            initialColor={color}
+            onSubmit={color => {
+              setColor(color);
             }}
-            style={{
-              height: 20,
-              width: 20,
-              borderRadius: 10,
-              backgroundColor: theme.subjectColors[color].primary,
-            }}
+            trigger={
+              <Pressable
+                onPress={() => {
+                  setIsColorPickerVisible(true);
+                }}
+                style={{
+                  height: 20,
+                  width: 20,
+                  borderRadius: 10,
+                  backgroundColor: theme.subjectColors[color].primary,
+                }}
+              />
+            }
           />
+
           <BasicTextInput
+            autoFocus={true}
             variant="unstyled"
             style={{flex: 1, marginRight: 5}}
             placeholder={'Subject name'}

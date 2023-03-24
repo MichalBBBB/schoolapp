@@ -235,11 +235,13 @@ export const Popup: React.FC<PopupProps> = ({
                 ? children.map((childrenItem, index) => {
                     return React.cloneElement(childrenItem, {
                       closeModal: setModalToClosed,
+                      animateClose: closeModal,
                       key: index,
                     });
                   })
                 : React.cloneElement(children as any, {
                     closeModal: setModalToClosed,
+                    animateClose: closeModal,
                   })}
             </Animated.View>
           </View>

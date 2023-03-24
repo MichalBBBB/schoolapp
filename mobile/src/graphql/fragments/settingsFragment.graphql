@@ -7,4 +7,5 @@ fragment Settings on Settings {
   darkMode
   sortTasksBy
   showDoDate
+  showCompletedTasks
 }

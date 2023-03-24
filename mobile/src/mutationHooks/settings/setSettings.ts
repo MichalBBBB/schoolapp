@@ -43,9 +43,9 @@ export const useSetSettings: () => [
               variables.lengthOfRotation || settings.lengthOfRotation,
             skipWeekends: variables.skipWeekends || settings.skipWeekends,
             showDoDate: variables.showDoDate || settings.showDoDate,
-            tasksOrderAscending:
-              variables.tasksOrderAscending || settings.tasksOrderAscending,
             sortTasksBy: variables.sortTasksBy || settings.sortTasksBy,
+            showCompletedTasks:
+              variables.showCompletedTasks || settings.showCompletedTasks,
           },
         },
         update: (cache, {data}) => {

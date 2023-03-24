@@ -1,6 +1,7 @@
 fragment Project on Project {
   name
   id
+  text
   tasks {
     ...ProjectTask
   }

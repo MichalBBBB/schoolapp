@@ -107,7 +107,11 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
   const list: Array<TaskFragment | ProjectTaskWithProjectFragment> = (
     (
       (data?.getAllTasks.filter(item => {
-        return item.done == false;
+        if (settings?.showCompletedTasks) {
+          return true;
+        } else {
+          return item.done == false;
+        }
       }) as Array<TaskFragment | ProjectTaskWithProjectFragment>) || []
     ).concat(
       projectTasks?.getProjectTasksOfUser.filter(item => !item.done) || [],

@@ -8,6 +8,7 @@ import {
   useRemoveAssignedMemberMutation,
 } from '../generated/graphql';
 import {BasicButton} from './basicViews/BasicButton';
+import {BasicIcon} from './basicViews/BasicIcon';
 import {BasicModalCard} from './basicViews/BasicModalCard';
 import {BasicText} from './basicViews/BasicText';
 
@@ -64,9 +65,9 @@ export const AssignMembersWindow: React.FC<AssignMembersWindow> = ({
                       variables: {userId: item.id, taskId: taskId!},
                     });
                   }}>
-                  <Image
-                    source={require('../../assets/Delete.png')}
-                    style={styles.plusButton}
+                  <BasicIcon
+                    source={require('../../assets/Close.png')}
+                    style={{height: 15, width: 15, margin: 5}}
                   />
                 </BasicButton>
               </View>
@@ -109,7 +110,7 @@ export const AssignMembersWindow: React.FC<AssignMembersWindow> = ({
                     refetchQueries: [GetProjectTasksOfUserDocument],
                   });
                 }}>
-                <Image
+                <BasicIcon
                   source={require('../../assets/Plus.png')}
                   style={styles.plusButton}
                 />

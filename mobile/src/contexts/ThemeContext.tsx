@@ -54,7 +54,10 @@ export const LightTheme: MyTheme = {
       fontSize: 24,
       fontWeight: 'bold',
     },
-    subHeading: {},
+    subHeading: {
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
     body: {},
     subText: {},
     button: {

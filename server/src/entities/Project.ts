@@ -23,6 +23,10 @@ export class Project extends BaseEntity {
   @Field()
   name: string;
 
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  text?: string;
+
   @OneToMany(() => UserProject, (userProject) => userProject.project)
   @Field(() => [UserProject])
   userProjects: Relation<UserProject>[];

@@ -98,7 +98,16 @@ const ProjectTask: React.FC<{
                   style={styles.checkMark}
                 />
               </BasicButton>
-              <BasicText>{projectTask.name}</BasicText>
+              <View>
+                <BasicText>{projectTask.name}</BasicText>
+                {projectTask.publicUsers.length > 0 && (
+                  <BasicText numberOfLines={1} color="textSecondary">
+                    {projectTask.publicUsers.map(
+                      (item, index) => `${index == 0 ? '' : ', '}${item.name}`,
+                    )}
+                  </BasicText>
+                )}
+              </View>
             </View>
             <Popup
               trigger={

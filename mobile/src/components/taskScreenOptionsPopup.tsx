@@ -1,5 +1,10 @@
 import React from 'react';
-import {Pressable, View} from 'react-native';
+import {
+  LayoutAnimation,
+  Pressable,
+  TouchableHighlight,
+  View,
+} from 'react-native';
 import {useSetSettings} from '../mutationHooks/settings/setSettings';
 import {useSettings} from '../utils/useSettings';
 import {BasicCard} from './basicViews/BasicCard';
@@ -22,21 +27,31 @@ export const TaskScreenOptionsPopup: React.FC<{
   const showDoDateItem = (
     <Popup
       trigger={
-        <Pressable
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            padding: 5,
-          }}>
-          <BasicText>Show: </BasicText>
-          <BasicText color="textSecondary">
-            {settings?.showDoDate ? 'Do Date' : 'Due Date'}
-          </BasicText>
-        </Pressable>
+        <TouchableHighlight underlayColor={'#ddd'} style={{width: '100%'}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingHorizontal: 10,
+              paddingVertical: 5,
+              width: '100%',
+            }}>
+            <BasicText>Show: </BasicText>
+            <BasicText color="textSecondary">
+              {settings?.showDoDate ? 'Do Date' : 'Due Date'}
+            </BasicText>
+          </View>
+        </TouchableHighlight>
       }>
       <BasicCard
         backgroundColor="accentBackground2"
-        style={{shadowOpacity: 0.2}}>
+        style={{
+          elevation: 8,
+          shadowOpacity: 0.1,
+          shadowOffset: {width: 0, height: 0},
+          shadowRadius: 20,
+        }}>
         <Pressable
           style={{
             padding: 5,
@@ -76,20 +91,33 @@ export const TaskScreenOptionsPopup: React.FC<{
   const sortItem = (
     <Popup
       trigger={
-        <Pressable
-          style={{flexDirection: 'row', alignItems: 'center', padding: 5}}>
-          <BasicText>Sort by: </BasicText>
-          <BasicText color="textSecondary">
-            {
-              sortableParams[
-                settings?.sortTasksBy as keyof typeof sortableParams
-              ]
-            }
-          </BasicText>
-        </Pressable>
+        <TouchableHighlight underlayColor={'#ddd'} style={{width: '100%'}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingHorizontal: 10,
+              paddingVertical: 5,
+            }}>
+            <BasicText>Sort by: </BasicText>
+            <BasicText color="textSecondary">
+              {
+                sortableParams[
+                  settings?.sortTasksBy as keyof typeof sortableParams
+                ]
+              }
+            </BasicText>
+          </View>
+        </TouchableHighlight>
       }>
       <BasicCard
-        style={{shadowOpacity: 0.1}}
+        style={{
+          elevation: 8,
+          shadowOpacity: 0.1,
+          shadowOffset: {width: 0, height: 0},
+          shadowRadius: 20,
+        }}
         backgroundColor="accentBackground2">
         <Pressable
           style={{
@@ -99,6 +127,9 @@ export const TaskScreenOptionsPopup: React.FC<{
           }}
           onPress={() => {
             setSettings({sortTasksBy: 'DUE_DATE'});
+            LayoutAnimation.configureNext(
+              LayoutAnimation.Presets.easeInEaseOut,
+            );
           }}>
           <BasicRadio
             toggled={settings?.sortTasksBy == 'DUE_DATE'}
@@ -115,6 +146,9 @@ export const TaskScreenOptionsPopup: React.FC<{
           }}
           onPress={() => {
             setSettings({sortTasksBy: 'DO_DATE'});
+            LayoutAnimation.configureNext(
+              LayoutAnimation.Presets.easeInEaseOut,
+            );
           }}>
           <BasicRadio
             toggled={settings?.sortTasksBy == 'DO_DATE'}
@@ -131,6 +165,9 @@ export const TaskScreenOptionsPopup: React.FC<{
           }}
           onPress={() => {
             setSettings({sortTasksBy: 'DATE_ADDED'});
+            LayoutAnimation.configureNext(
+              LayoutAnimation.Presets.easeInEaseOut,
+            );
           }}>
           <BasicRadio
             toggled={settings?.sortTasksBy == 'DATE_ADDED'}
@@ -145,10 +182,42 @@ export const TaskScreenOptionsPopup: React.FC<{
 
   return (
     <Popup trigger={trigger}>
-      <BasicCard backgroundColor="accentBackground2">
-        <View style={{flexDirection: 'row'}}>{showDoDateItem}</View>
-        <View style={{flexDirection: 'row'}}>{sortItem}</View>
-      </BasicCard>
+      <View
+        style={{
+          elevation: 8,
+          shadowOpacity: 0.1,
+          shadowOffset: {width: 0, height: 0},
+          shadowRadius: 20,
+        }}>
+        <BasicCard
+          backgroundColor="accentBackground2"
+          spacing="none"
+          style={{
+            paddingVertical: 5,
+            width: 180,
+            overflow: 'hidden',
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: 10,
+              paddingVertical: 3,
+              justifyContent: 'space-between',
+            }}>
+            <BasicText>Show Completed</BasicText>
+            <BasicRadio
+              color="textSecondary"
+              toggled={settings?.showCompletedTasks || false}
+              onToggle={value => {
+                setSettings({showCompletedTasks: value});
+              }}
+            />
+          </View>
+          <View style={{flexDirection: 'row'}}>{showDoDateItem}</View>
+          <View style={{flexDirection: 'row'}}>{sortItem}</View>
+        </BasicCard>
+      </View>
     </Popup>
   );
 };

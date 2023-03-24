@@ -31,20 +31,18 @@ export const Project: React.FC<ProjectProps> = ({project}) => {
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
+              marginBottom: 5,
             }}>
-            <BasicText>{project.name}</BasicText>
-            <BasicButton
-              spacing="none"
-              variant="unstyled"
-              onPress={() =>
-                deleteProject({
-                  variables: {id: project.id},
-                  refetchQueries: [GetProjectsDocument],
-                })
-              }>
-              <Text style={{color: 'red'}}>Delete</Text>
-            </BasicButton>
+            <BasicText textVariant="subHeading">{project.name}</BasicText>
+            <BasicText color="textSecondary">{`${
+              project.members.length
+            } Member${project.members.length == 1 ? '' : 's'}`}</BasicText>
           </View>
+          {project.text && (
+            <BasicText numberOfLines={1} color="textSecondary">
+              {project.text}
+            </BasicText>
+          )}
         </BasicCard>
       </Pressable>
     </View>

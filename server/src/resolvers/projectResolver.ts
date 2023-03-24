@@ -129,6 +129,30 @@ export class projectResolver {
     });
   }
 
+  @Mutation(() => Project)
+  @UseMiddleware(isAuth)
+  async editProject(
+    @Arg("id") id: string,
+    @Arg("name") name: string,
+    @Arg("text", { nullable: true }) text: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    const project = await Project.findOne({
+      where: { id },
+      relations: { userProjects: true, tasks: true },
+    });
+    console.log("here1");
+    if (project?.userProjects.some((item) => item.userId == payload?.userId)) {
+      console.log("here2");
+      project.name = name;
+      project.text = text;
+      project.save();
+      return project;
+    } else {
+      throw new Error("you don't have authority");
+    }
+  }
+
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async deleteProject(@Arg("id") id: string, @Ctx() { payload }: MyContext) {
