@@ -92,6 +92,7 @@ export const useDeleteSubject: () => [
               }) || [],
           },
         });
+        cache.gc();
       },
     });
     return result;

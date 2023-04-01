@@ -23,7 +23,7 @@ export type QueueItem = {
 const queueStorageKey = 'queue';
 
 export class PersistentQueueLink extends ApolloLink {
-  private isOpen = true;
+  private isOpen = false;
   private queue: QueueItem[] = [];
   private client: ApolloClient<NormalizedCacheObject> | null = null;
 
@@ -31,10 +31,11 @@ export class PersistentQueueLink extends ApolloLink {
   public async open() {
     // storage.set(queueStorageKey, JSON.stringify([]));
     const savedQueue = storage.getString(queueStorageKey);
+    console.log('savedQueue', savedQueue);
     if (!savedQueue) {
       storage.set(queueStorageKey, JSON.stringify([]));
     }
-    this.queue = JSON.parse(storage.getString(queueStorageKey) as string);
+    this.queue = JSON.parse(savedQueue || '[]');
     this.isOpen = true;
     const promises: Promise<any>[] = [];
 
@@ -115,6 +116,9 @@ export class PersistentQueueLink extends ApolloLink {
           } else {
             observer.error?.(e);
           }
+        },
+        complete: () => {
+          observer.complete?.();
         },
       });
       return () => {

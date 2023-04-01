@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import React, {useEffect, useMemo} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {View, Text, SectionList, StyleSheet} from 'react-native';
 import {
   CalendarEventFragment,
@@ -19,6 +19,8 @@ import {getDayNumber} from '../../utils/lessonUtils';
 import {useTheme} from '../../contexts/ThemeContext';
 import {useNavigation} from '@react-navigation/native';
 import {CalendarNavigationProp} from '../../utils/types';
+import {replaceAllData} from '../../Content';
+import {useApolloClient} from '@apollo/client';
 
 interface DayEventsProps {
   date: dayjs.Dayjs;
@@ -35,6 +37,9 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
   const {data: lessons} = useGetAllLessonsQuery();
   const {data: tasks} = useGetAllTasksQuery();
 
+  const client = useApolloClient();
+
+  const [refreshing, setRefreshing] = useState(false);
   const settings = useSettings();
   const navigation = useNavigation<CalendarNavigationProp>();
 
@@ -113,6 +118,13 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
 
   return (
     <MySectionList
+      refreshing={refreshing}
+      onRefresh={() => {
+        setRefreshing(true);
+        replaceAllData(client).then(() => {
+          setRefreshing(false);
+        });
+      }}
       ListEmptyComponent={
         <View
           style={{

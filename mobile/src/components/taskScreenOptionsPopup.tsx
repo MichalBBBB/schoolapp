@@ -2,6 +2,7 @@ import React from 'react';
 import {
   LayoutAnimation,
   Pressable,
+  Touchable,
   TouchableHighlight,
   View,
 } from 'react-native';
@@ -26,6 +27,7 @@ export const TaskScreenOptionsPopup: React.FC<{
 
   const showDoDateItem = (
     <Popup
+      triggerContainerStyle={{width: '100%'}}
       trigger={
         <TouchableHighlight underlayColor={'#ddd'} style={{width: '100%'}}>
           <View
@@ -33,8 +35,8 @@ export const TaskScreenOptionsPopup: React.FC<{
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-              paddingHorizontal: 10,
-              paddingVertical: 5,
+              paddingHorizontal: 12,
+              paddingVertical: 8,
               width: '100%',
             }}>
             <BasicText>Show: </BasicText>
@@ -90,6 +92,7 @@ export const TaskScreenOptionsPopup: React.FC<{
 
   const sortItem = (
     <Popup
+      triggerContainerStyle={{width: '100%'}}
       trigger={
         <TouchableHighlight underlayColor={'#ddd'} style={{width: '100%'}}>
           <View
@@ -97,8 +100,8 @@ export const TaskScreenOptionsPopup: React.FC<{
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-              paddingHorizontal: 10,
-              paddingVertical: 5,
+              paddingHorizontal: 12,
+              paddingVertical: 8,
             }}>
             <BasicText>Sort by: </BasicText>
             <BasicText color="textSecondary">
@@ -194,26 +197,29 @@ export const TaskScreenOptionsPopup: React.FC<{
           spacing="none"
           style={{
             paddingVertical: 5,
-            width: 180,
+            width: 190,
             overflow: 'hidden',
           }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingHorizontal: 10,
-              paddingVertical: 3,
-              justifyContent: 'space-between',
+          <TouchableHighlight
+            underlayColor={'#ddd'}
+            onPress={() => {
+              setSettings({showCompletedTasks: !settings?.showCompletedTasks});
             }}>
-            <BasicText>Show Completed</BasicText>
-            <BasicRadio
-              color="textSecondary"
-              toggled={settings?.showCompletedTasks || false}
-              onToggle={value => {
-                setSettings({showCompletedTasks: value});
-              }}
-            />
-          </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+              }}>
+              <BasicText>Show Completed</BasicText>
+              <BasicRadio
+                color="textSecondary"
+                toggled={settings?.showCompletedTasks || false}
+              />
+            </View>
+          </TouchableHighlight>
           <View style={{flexDirection: 'row'}}>{showDoDateItem}</View>
           <View style={{flexDirection: 'row'}}>{sortItem}</View>
         </BasicCard>

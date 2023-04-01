@@ -3,6 +3,7 @@ import {
   ApolloLink,
   createHttpLink,
   InMemoryCache,
+  Reference,
 } from '@apollo/client';
 import {setContext} from '@apollo/client/link/context';
 import {TokenRefreshLink} from 'apollo-link-token-refresh';
@@ -23,8 +24,13 @@ import SerializingLink from 'apollo-link-serialize';
 import {PersistentQueueLink} from './persistentQueueLink';
 import {BatchHttpLink} from '@apollo/client/link/batch-http';
 
+// export const baseUri =
+//   Platform.OS == 'ios' ? 'http://localhost:5002' : 'http://10.0.2.2:5002';
+
 export const baseUri =
-  Platform.OS == 'ios' ? 'http://localhost:5002' : 'http://10.0.2.2:5002';
+  Platform.OS == 'ios'
+    ? 'http://198.199.72.132:8080'
+    : 'http://198.199.72.132:8080';
 
 export const uri = baseUri + '/graphql';
 
@@ -106,7 +112,38 @@ const refreshLink = new TokenRefreshLink({
 export const createApolloClient = async (
   persistentQueueLink: PersistentQueueLink,
 ) => {
-  const cache = new InMemoryCache();
+  const cache = new InMemoryCache({
+    typePolicies: {
+      Task: {
+        fields: {
+          subtasks(existingSubtasks: Reference[], {canRead}) {
+            return existingSubtasks ? existingSubtasks.filter(canRead) : [];
+          },
+        },
+      },
+      Query: {
+        fields: {
+          getAllTasks(existingTasks: Reference[], {canRead}) {
+            return existingTasks ? existingTasks.filter(canRead) : [];
+          },
+          getAllSubjects(existinSubjects: Reference[], {canRead}) {
+            return existinSubjects ? existinSubjects.filter(canRead) : [];
+          },
+          getAllLessonTimes(existingLessonTImes: Reference[], {canRead}) {
+            return existingLessonTImes
+              ? existingLessonTImes.filter(canRead)
+              : [];
+          },
+          getAllLessons(existingLessons: Reference[], {canRead}) {
+            return existingLessons ? existingLessons.filter(canRead) : [];
+          },
+          getAllEvents(existingEvents: Reference[], {canRead}) {
+            return existingEvents ? existingEvents.filter(canRead) : [];
+          },
+        },
+      },
+    },
+  });
 
   await persistCache({
     cache,

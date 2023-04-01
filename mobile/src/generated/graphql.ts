@@ -105,6 +105,7 @@ export type Mutation = {
   toggleProjectTask: ProjectTask;
   toggleSubtask: Subtask;
   toggleTask: Task;
+  userExists: UserExistsResponse;
 };
 
 
@@ -356,6 +357,11 @@ export type MutationToggleTaskArgs = {
   id: Scalars['String'];
 };
 
+
+export type MutationUserExistsArgs = {
+  email: Scalars['String'];
+};
+
 export type Project = {
   __typename?: 'Project';
   id: Scalars['String'];
@@ -407,17 +413,11 @@ export type Query = {
   getProjects: Array<Project>;
   hello: Scalars['String'];
   me: User;
-  userExists: Scalars['Boolean'];
 };
 
 
 export type QueryGetAllSubtasksOfTaskArgs = {
   id: Scalars['String'];
-};
-
-
-export type QueryUserExistsArgs = {
-  email: Scalars['String'];
 };
 
 export type RegisterResponse = UserFail | UserSucces;
@@ -518,6 +518,13 @@ export type UserError = {
   __typename?: 'UserError';
   field?: Maybe<Scalars['String']>;
   message: Scalars['String'];
+};
+
+export type UserExistsResponse = UserExistsSucces | UserFail;
+
+export type UserExistsSucces = {
+  __typename?: 'UserExistsSucces';
+  userExists: Scalars['Boolean'];
 };
 
 export type UserFail = {
@@ -885,6 +892,13 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null, message: string }> } | { __typename?: 'UserSucces', accessToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
 
+export type UserExistsMutationVariables = Exact<{
+  email: Scalars['String'];
+}>;
+
+
+export type UserExistsMutation = { __typename?: 'Mutation', userExists: { __typename?: 'UserExistsSucces', userExists: boolean } | { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null, message: string }> } };
+
 export type GetAllEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -939,13 +953,6 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, imageURL?: string | null, fullName: string, createdAt: any, updatedAt: any, tasks: Array<{ __typename?: 'Task', id: string, name: string, subject?: { __typename?: 'Subject', id: string, name: string } | null, subtasks: Array<{ __typename?: 'Subtask', id: string, name: string }> }>, subjects: Array<{ __typename?: 'Subject', id: string, name: string }>, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean } } };
-
-export type UserExistsQueryVariables = Exact<{
-  email: Scalars['String'];
-}>;
-
-
-export type UserExistsQuery = { __typename?: 'Query', userExists: boolean };
 
 export const SubjectFragmentDoc = gql`
     fragment Subject on Subject {
@@ -2457,6 +2464,47 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const UserExistsDocument = gql`
+    mutation UserExists($email: String!) {
+  userExists(email: $email) {
+    ... on UserExistsSucces {
+      userExists
+    }
+    ... on UserFail {
+      errors {
+        field
+        message
+      }
+    }
+  }
+}
+    `;
+export type UserExistsMutationFn = Apollo.MutationFunction<UserExistsMutation, UserExistsMutationVariables>;
+
+/**
+ * __useUserExistsMutation__
+ *
+ * To run a mutation, you first call `useUserExistsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUserExistsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [userExistsMutation, { data, loading, error }] = useUserExistsMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useUserExistsMutation(baseOptions?: Apollo.MutationHookOptions<UserExistsMutation, UserExistsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UserExistsMutation, UserExistsMutationVariables>(UserExistsDocument, options);
+      }
+export type UserExistsMutationHookResult = ReturnType<typeof useUserExistsMutation>;
+export type UserExistsMutationResult = Apollo.MutationResult<UserExistsMutation>;
+export type UserExistsMutationOptions = Apollo.BaseMutationOptions<UserExistsMutation, UserExistsMutationVariables>;
 export const GetAllEventsDocument = gql`
     query GetAllEvents {
   getAllEvents {
@@ -2853,36 +2901,3 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
-export const UserExistsDocument = gql`
-    query UserExists($email: String!) {
-  userExists(email: $email)
-}
-    `;
-
-/**
- * __useUserExistsQuery__
- *
- * To run a query within a React component, call `useUserExistsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserExistsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserExistsQuery({
- *   variables: {
- *      email: // value for 'email'
- *   },
- * });
- */
-export function useUserExistsQuery(baseOptions: Apollo.QueryHookOptions<UserExistsQuery, UserExistsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<UserExistsQuery, UserExistsQueryVariables>(UserExistsDocument, options);
-      }
-export function useUserExistsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserExistsQuery, UserExistsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<UserExistsQuery, UserExistsQueryVariables>(UserExistsDocument, options);
-        }
-export type UserExistsQueryHookResult = ReturnType<typeof useUserExistsQuery>;
-export type UserExistsLazyQueryHookResult = ReturnType<typeof useUserExistsLazyQuery>;
-export type UserExistsQueryResult = Apollo.QueryResult<UserExistsQuery, UserExistsQueryVariables>;

@@ -9,6 +9,7 @@ import {
   FlatList,
   Image,
   Pressable,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import {useNavigation} from '@react-navigation/native';
@@ -148,6 +149,22 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
     weekRow.value = row;
   };
 
+  const toggleMonthView = () => {
+    if (isMonthView) {
+      setIsMonthView(false);
+      y.value = withTiming(-(calendarHeight - weekHeight), {}, () => {
+        monthViewOpacity.value = 0;
+        runOnJS(setIsWeekView)(true);
+      });
+    } else {
+      setIsWeekView(false);
+      monthViewOpacity.value = 1;
+      y.value = withTiming(0, {}, () => {
+        runOnJS(setIsMonthView)(true);
+      });
+    }
+  };
+
   const monthView = (
     <Animated.View
       style={[
@@ -216,19 +233,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
             backgroundColor={'accentBackground1'}
             style={{paddingHorizontal: 15}}
             onPress={() => {
-              if (isMonthView) {
-                setIsMonthView(false);
-                y.value = withTiming(-(calendarHeight - weekHeight), {}, () => {
-                  monthViewOpacity.value = 0;
-                  runOnJS(setIsWeekView)(true);
-                });
-              } else {
-                setIsWeekView(false);
-                monthViewOpacity.value = 1;
-                y.value = withTiming(0, {}, () => {
-                  runOnJS(setIsMonthView)(true);
-                });
-              }
+              toggleMonthView();
             }}
             spacing="s">
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -307,7 +312,24 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
           dayEventsAnimatedStyle,
           {zIndex: 10, backgroundColor: theme.colors.background},
         ]}>
-        <DayEvents date={selectedDay} scrollEnabled={isWeekView} />
+        <View style={{height: '100%'}}>
+          <DayEvents date={selectedDay} scrollEnabled={isWeekView} />
+          {isMonthView && (
+            <View
+              style={{
+                position: 'absolute',
+                height: '100%',
+                width: '100%',
+              }}>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  toggleMonthView();
+                }}>
+                <View style={{width: '100%', height: '100%'}} />
+              </TouchableWithoutFeedback>
+            </View>
+          )}
+        </View>
       </Animated.View>
     </View>
   );

@@ -39,6 +39,8 @@ import TaskListProjectTask from '../../components/taskListProjectTask';
 import {TaskScreenOptionsPopup} from '../../components/taskScreenOptionsPopup';
 import {useTheme} from '../../contexts/ThemeContext';
 import {
+  GetAllLessonsQuery,
+  GetAllLessonTimesDocument,
   ProjectTaskFragment,
   ProjectTaskWithProjectFragment,
   TaskFragment,
@@ -53,6 +55,8 @@ import {
   TaskStackScreenProps,
 } from '../../utils/types';
 import {useSettings} from '../../utils/useSettings';
+import {replaceAllData} from '../../Content';
+import {NormalizedCacheObject, useApolloClient} from '@apollo/client';
 
 if (
   Platform.OS === 'android' &&
@@ -71,7 +75,9 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
   const [setSettings] = useSetSettings();
   const [addTaskOpen, setAddTaskOpen] = useState(false);
   const [theme] = useTheme();
+  const [refreshing, setRefreshing] = useState(false);
   const settings = useSettings();
+  const client = useApolloClient();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -149,11 +155,44 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
   return (
     <View style={{flex: 1}}>
       <MyFlatList
-        contentContainerStyle={{
-          borderRadius: 15,
-          overflow: 'hidden',
-          backgroundColor: theme.colors.accentBackground1,
+        ListEmptyComponent={() => (
+          <View
+            style={{
+              height: '100%',
+              width: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <BasicText textVariant="heading" style={{marginBottom: 10}}>
+              No tasks yet
+            </BasicText>
+            <BasicButton
+              spacing="m"
+              onPress={() => {
+                setAddTaskOpen(true);
+              }}>
+              <BasicText color="textContrast" textVariant="button">
+                Create a new one
+              </BasicText>
+            </BasicButton>
+          </View>
+        )}
+        onRefresh={() => {
+          setRefreshing(true);
+          replaceAllData(client).then(() => {
+            setRefreshing(false);
+          });
         }}
+        refreshing={refreshing}
+        contentContainerStyle={
+          data?.getAllTasks.length == 0
+            ? {flexGrow: 1}
+            : {
+                borderRadius: 15,
+                overflow: 'hidden',
+                backgroundColor: theme.colors.accentBackground1,
+              }
+        }
         style={{padding: 10}}
         data={list}
         renderItem={({item, index}) => {

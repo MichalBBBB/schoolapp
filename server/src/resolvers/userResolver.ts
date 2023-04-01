@@ -85,6 +85,12 @@ class UserSucces {
   accessToken: string;
 }
 
+@ObjectType()
+class UserExistsSucces {
+  @Field()
+  userExists: Boolean;
+}
+
 const RegisterUnion = createUnionType({
   name: "RegisterResponse",
   types: () => [UserSucces, UserFail] as const,
@@ -108,6 +114,22 @@ const LoginUnion = createUnionType({
     }
   },
 });
+
+const UserExistsUnion = createUnionType({
+  name: "UserExistsResponse",
+  types: () => [UserExistsSucces, UserFail] as const,
+  resolveType: (value) => {
+    if ("message" in value) {
+      return UserFail;
+    } else {
+      return Boolean;
+    }
+  },
+});
+
+const isEmailValid = (_email: string) => {
+  return true;
+};
 
 @Resolver(User)
 export class userResolver {
@@ -153,6 +175,16 @@ export class userResolver {
     @Arg("password") password: string,
     @Ctx() { res }: MyContext
   ): Promise<typeof LoginUnion> {
+    if (!isEmailValid(email)) {
+      return {
+        errors: [
+          {
+            field: "email",
+            message: "Enter a valid email",
+          },
+        ],
+      };
+    }
     const user = await User.findOne({ where: { email } });
     // Check if user exists
     if (!user) {
@@ -263,14 +295,30 @@ export class userResolver {
     }
   }
 
-  @Query(() => Boolean)
-  async userExists(@Arg("email") email: string) {
+  @Mutation(() => UserExistsUnion)
+  async userExists(
+    @Arg("email") email: string
+  ): Promise<typeof UserExistsUnion> {
+    if (!isEmailValid(email)) {
+      return {
+        errors: [
+          {
+            field: "email",
+            message: "Enter a valid email",
+          },
+        ],
+      };
+    }
     const user = await User.findOne({ where: { email } });
     console.log(user);
     if (user) {
-      return true;
+      return {
+        userExists: true,
+      };
     } else {
-      return false;
+      return {
+        userExists: false,
+      };
     }
   }
 

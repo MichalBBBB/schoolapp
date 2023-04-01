@@ -93,7 +93,10 @@ const ProjectDetailScreen: React.FC<
               color="dangerous"
               onPress={() => {
                 if (project) {
-                  deleteProject({variables: {id: project.id}});
+                  deleteProject({
+                    variables: {id: project.id},
+                    refetchQueries: [GetProjectsDocument],
+                  });
                   navigation.goBack();
                 }
               }}

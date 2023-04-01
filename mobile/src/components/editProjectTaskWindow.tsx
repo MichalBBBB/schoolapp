@@ -15,7 +15,6 @@ import {BasicText} from './basicViews/BasicText';
 import {BasicTextInput} from './basicViews/BasicTextInput';
 import EditDateModal from './editDateWindow';
 import {calendarConfigWithoutTime} from './task';
-import {v4 as uuidv4} from 'uuid';
 
 interface EditProjectTaskWindowProps {
   onClose: () => void;
@@ -78,7 +77,7 @@ const EditProjectTaskWindow: React.FC<EditProjectTaskWindowProps> = ({
           spacing="m"
           variant="unstyled"
           placeholder="Task name"
-          value={name}
+          defaultValue={name}
           onChangeText={setName}
           autoFocus={true}
         />

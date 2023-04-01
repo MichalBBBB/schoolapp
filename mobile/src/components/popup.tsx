@@ -25,6 +25,7 @@ export interface PopupProps {
   trigger: React.ReactElement;
   forceSide?: 'right' | 'left';
   extraOnPress?: () => void;
+  triggerContainerStyle?: ViewStyle;
 }
 
 const {width: layoutWidth, height: layoutHeight} = Dimensions.get('window');
@@ -34,6 +35,7 @@ export const Popup: React.FC<PopupProps> = ({
   children,
   forceSide,
   extraOnPress,
+  triggerContainerStyle,
 }) => {
   const {keyboardHeight} = useKeyboardHeight();
   const triggerWrapperRef = useRef<View>(null);
@@ -196,15 +198,17 @@ export const Popup: React.FC<PopupProps> = ({
         ref={triggerWrapperRef}>
         <View>{trigger}</View>
       </Pressable> */}
-      {React.cloneElement(trigger, {
-        onPress: () => {
-          measureTrigger();
-          setPopupVisible(true);
-          setShouldAnimate(true);
-          extraOnPress?.();
-        },
-        ref: triggerWrapperRef,
-      })}
+      <View ref={triggerWrapperRef} style={triggerContainerStyle}>
+        {React.cloneElement(trigger, {
+          onPress: () => {
+            setContentVisible(false);
+            measureTrigger();
+            setPopupVisible(true);
+            setShouldAnimate(true);
+            extraOnPress?.();
+          },
+        })}
+      </View>
       <Portal>
         {popupVisible && (
           <View style={styles.modalWrapper}>

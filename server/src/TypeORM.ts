@@ -1,3 +1,4 @@
+import "dotenv-safe/config";
 import { DataSource } from "typeorm";
 import { Subject } from "./entities/Subject";
 import { CalendarEvent } from "./entities/CalendarEvent";
@@ -14,11 +15,14 @@ import { Settings } from "./entities/Settings";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
-  username: "postgres",
-  password: "postgres",
-  database: "schoolapp",
+  url: process.env.DATABASE_URL,
+  // username: "postgres",
+  // password: "postgres",
+  // database: "schoolappEmpty",
+  migrations: ["dist/migrations/*.ts"],
+
   logging: true,
-  synchronize: true,
+  synchronize: false,
   entities: [
     User,
     Task,

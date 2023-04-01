@@ -42,13 +42,23 @@ const AuthHomeScreen: React.FC<
   return (
     <View style={styles.container}>
       <BasicButton
-        onPress={() => navigation.navigate('Login')}
+        onPress={() => navigation.navigate('LoginScreen')}
         style={{marginBottom: 5, width: 250}}>
         <BasicText
           color="textContrast"
           spacing="s"
           style={{fontWeight: 'bold'}}>
-          Sign in with email
+          Log in
+        </BasicText>
+      </BasicButton>
+      <BasicButton
+        onPress={() => navigation.navigate('RegisterScreen')}
+        style={{marginBottom: 5, width: 250}}>
+        <BasicText
+          color="textContrast"
+          spacing="s"
+          style={{fontWeight: 'bold'}}>
+          Register
         </BasicText>
       </BasicButton>
       <BasicButton

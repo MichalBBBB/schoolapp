@@ -1,0 +1,13 @@
+mutation UserExists($email: String!) {
+  userExists(email: $email) {
+    ... on UserExistsSucces {
+      userExists
+    }
+    ... on UserFail {
+      errors {
+        field
+        message
+      }
+    }
+  }
+}

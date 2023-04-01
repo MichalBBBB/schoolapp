@@ -1,14 +1,10 @@
 import dayjs from 'dayjs';
 import React, {useState} from 'react';
+import {View, Text, Image, StyleSheet, Pressable} from 'react-native';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  StyleSheet,
-  Pressable,
   TouchableHighlight,
-} from 'react-native';
+  TouchableOpacity,
+} from 'react-native-gesture-handler';
 import {CalendarEventFragment} from '../../generated/graphql';
 import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
 import {useCreateTask} from '../../mutationHooks/task/createTask';
@@ -51,17 +47,17 @@ const Event: React.FC<EventProps> = ({event}) => {
         ]}>
         <BasicText>{event.name}</BasicText>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <BasicText color="textSecondary" style={{marginRight: 5}}>
+          <BasicText color="textSecondary" style={{marginRight: 8}}>
             {dayjs(event.startDate).format('HH:mm')}
           </BasicText>
           <Popup
             trigger={
-              <Pressable>
+              <TouchableOpacity>
                 <BasicIcon
                   source={require('../../../assets/Options.png')}
                   style={styles.options}
                 />
-              </Pressable>
+              </TouchableOpacity>
             }>
             <Menu>
               <MenuItem
@@ -144,8 +140,8 @@ const styles = StyleSheet.create({
   },
   options: {
     resizeMode: 'stretch',
-    height: 15,
-    width: 15,
+    height: 20,
+    width: 20,
   },
 });
 

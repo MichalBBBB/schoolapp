@@ -1,4 +1,4 @@
-import "dotenv/config";
+import "dotenv-safe/config";
 import "reflect-metadata";
 import express from "express";
 import { buildSchema } from "type-graphql";
@@ -51,6 +51,8 @@ const main = async () => {
   //Task.delete({});
 
   const app = express();
+
+  app.set("proxy", 1);
 
   app.use(cookieParser());
 
@@ -131,7 +133,7 @@ const main = async () => {
     res.send(true);
   });
 
-  app.listen(5002, () => {
+  app.listen(process.env.PORT, () => {
     console.log("Server running");
   });
 };

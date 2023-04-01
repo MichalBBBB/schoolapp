@@ -4,6 +4,8 @@ import {
   TextInput,
   TextInputProps,
   TextStyle,
+  View,
+  ViewStyle,
 } from 'react-native';
 import {useTheme} from '../../contexts/ThemeContext';
 import {
@@ -11,6 +13,7 @@ import {
   SpacingObject,
   TextVariantsObject,
 } from '../../types/Theme';
+import {BasicText} from './BasicText';
 
 interface BasicTextInputProps extends TextInputProps {
   spacing?: keyof SpacingObject;
@@ -21,6 +24,8 @@ interface BasicTextInputProps extends TextInputProps {
   marginBottom?: number;
   borderWidth?: number;
   textVariant?: keyof TextVariantsObject;
+  error?: string;
+  containerStyle?: ViewStyle;
 }
 
 export const BasicTextInput = forwardRef<TextInput, BasicTextInputProps>(
@@ -36,29 +41,44 @@ export const BasicTextInput = forwardRef<TextInput, BasicTextInputProps>(
       borderWidth = 3,
       marginBottom,
       textVariant = 'body',
+      error,
+      containerStyle,
       ...restProps
     } = props;
     return (
-      <TextInput
-        ref={ref}
-        placeholderTextColor={theme.colors.textSecondary}
-        style={[
-          {
-            backgroundColor:
-              variant == 'filled' ? theme.colors[backgroundColor] : undefined,
-            borderRadius: borderRadius,
-            padding: theme.spacing[spacing],
-            color: theme.colors[color],
-            borderColor:
-              variant == 'outlined' ? theme.colors[backgroundColor] : undefined,
-            borderWidth: variant == 'outlined' ? borderWidth : undefined,
-            marginBottom,
-            ...theme.textVariants[textVariant],
-          },
-          style,
-        ]}
-        {...restProps}
-      />
+      <View style={containerStyle}>
+        <TextInput
+          ref={ref}
+          placeholderTextColor={theme.colors.textSecondary}
+          style={[
+            {
+              backgroundColor:
+                variant == 'filled'
+                  ? error
+                    ? '#fcb7b7'
+                    : theme.colors[backgroundColor]
+                  : undefined,
+              borderRadius: borderRadius,
+              padding: theme.spacing[spacing],
+              color: theme.colors[color],
+              borderColor:
+                variant == 'outlined'
+                  ? theme.colors[backgroundColor]
+                  : undefined,
+              borderWidth: variant == 'outlined' ? borderWidth : undefined,
+              marginBottom,
+              ...theme.textVariants[textVariant],
+            },
+            style,
+          ]}
+          {...restProps}
+        />
+        {error && (
+          <BasicText style={{marginLeft: 5, marginTop: 5}} color="dangerous">
+            {error}
+          </BasicText>
+        )}
+      </View>
     );
   },
 );

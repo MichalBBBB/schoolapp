@@ -21,8 +21,12 @@ import {baseUri} from './utils/createApolloClient';
 import {setRemindersFromApollo} from './utils/reminderUtils';
 import {useSettings} from './utils/useSettings';
 import dayjs from 'dayjs';
+import {
+  GetAllLessonTimesDocument,
+  GetAllTasksDocument,
+} from './generated/graphql';
 
-const replaceAllData = async (client: ApolloClient<any>) => {
+export const replaceAllData = async (client: ApolloClient<any>) => {
   const promises: Array<Promise<any>> = [];
   allQueries.forEach(item => {
     promises.push(
@@ -37,9 +41,15 @@ const replaceAllData = async (client: ApolloClient<any>) => {
 };
 
 const openQueue = async (client: ApolloClient<any>) => {
-  await persistentQueueLink.open();
-  await replaceAllData(client);
-  console.log('all loaded');
+  // check if the server is actually reachable
+  try {
+    await fetch(baseUri + '/check');
+    await persistentQueueLink.open();
+    await replaceAllData(client);
+  } catch {
+    persistentQueueLink.close();
+    isOnlineVar(false);
+  }
 };
 
 export const Content: React.FC = () => {
@@ -49,7 +59,6 @@ export const Content: React.FC = () => {
   const settings = useSettings();
 
   const [theme, setTheme] = useTheme();
-
   useEffect(() => {
     if (isOnline && isLoggedIn) {
       openQueue(client);
@@ -58,12 +67,14 @@ export const Content: React.FC = () => {
     }
   }, [isOnline, isLoggedIn]);
 
+  // if the user is logged out, delete all the data from this device
   useEffect(() => {
     if (!isLoggedIn) {
       client.resetStore();
     }
   }, [isLoggedInVar]);
 
+  // set the locale based on settings
   useEffect(() => {
     dayjs.updateLocale('en', {
       weekStart:
@@ -83,6 +94,8 @@ export const Content: React.FC = () => {
     }
   }, [settings]);
 
+  // if we the server is down or something similar,
+  // set a timer that checks connectivity every 10 seconds
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
     (async () => {
@@ -103,6 +116,20 @@ export const Content: React.FC = () => {
       clearInterval(interval);
     }; // cleanup function
   }, [isOnline]);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      if (state.isConnected) {
+        isOnlineVar(true);
+      } else if (!state.isConnected) {
+        isOnlineVar(false);
+      }
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <PortalProvider>

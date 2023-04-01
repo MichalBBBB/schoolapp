@@ -58,6 +58,10 @@ const App = () => {
     createRemindersChannel();
   }, []);
 
+  useEffect(() => {
+    console.log('storage', storage.getString('queue'));
+  }, []);
+
   if (!client) {
     return (
       <View>

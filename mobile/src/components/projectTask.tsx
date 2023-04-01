@@ -129,7 +129,7 @@ const ProjectTask: React.FC<{
                   }}
                 />
                 <MenuItem
-                  text="edit"
+                  text="Edit"
                   onPress={() => {
                     setIsEditProjectTaskVisible(true);
                   }}

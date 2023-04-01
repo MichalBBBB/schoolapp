@@ -14,26 +14,21 @@ import {
   useLoginMutation,
   useRegisterMutation,
   UserError,
-  useUserExistsLazyQuery,
-  useUserExistsQuery,
+  useUserExistsMutation,
 } from '../../generated/graphql';
 import {getAccessToken, setAccessToken} from '../../utils/AccessToken';
 const EmailLoginScreen = () => {
   const [registerMutation] = useRegisterMutation();
   const [loginMutation] = useLoginMutation();
-  const [checkUserExists, {data: UserExistsResult, error}] =
-    useUserExistsLazyQuery({fetchPolicy: 'network-only'});
-
+  const [userExistsMutation] = useUserExistsMutation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordControl, setPasswordControl] = useState('');
   const [fullName, setFullName] = useState('');
 
-  const [errors, setErrors] = useState<Array<UserError>>([]);
+  const [userExists, setUserExists] = useState<null | Boolean>(null);
 
-  useEffect(() => {
-    console.log(UserExistsResult, JSON.stringify(error));
-  }, [error]);
+  const [errors, setErrors] = useState<Array<UserError>>([]);
 
   const login = async () => {
     const response = await loginMutation({variables: {password, email}});
@@ -59,6 +54,15 @@ const EmailLoginScreen = () => {
     }
   };
 
+  const checkIfUserExists = async () => {
+    const result = await userExistsMutation();
+    if (result.data?.userExists.__typename == 'UserExistsSucces') {
+      setUserExists(result.data.userExists.userExists);
+    } else if (result.data?.userExists.__typename == 'UserFail') {
+      setErrors(result.data?.userExists.errors);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <BasicTextInput
@@ -71,7 +75,7 @@ const EmailLoginScreen = () => {
         variant="filled"
         spacing="m"
       />
-      {UserExistsResult && !UserExistsResult.userExists && (
+      {userExists == false && (
         <BasicTextInput
           style={styles.inputField}
           onChangeText={setFullName}
@@ -79,7 +83,7 @@ const EmailLoginScreen = () => {
           spacing="m"
         />
       )}
-      {UserExistsResult && (
+      {userExists !== null && (
         <BasicTextInput
           style={styles.inputField}
           onChangeText={setPassword}
@@ -88,7 +92,7 @@ const EmailLoginScreen = () => {
           spacing="m"
         />
       )}
-      {UserExistsResult && !UserExistsResult.userExists && (
+      {userExists == false && (
         <BasicTextInput
           style={styles.inputField}
           onChangeText={setPasswordControl}
@@ -97,17 +101,17 @@ const EmailLoginScreen = () => {
           spacing="m"
         />
       )}
-      {!UserExistsResult ? (
+      {userExists == null ? (
         <BasicButton
           onPress={() => {
-            checkUserExists({variables: {email}});
+            checkIfUserExists();
           }}
           spacing="m">
           <BasicText color="textContrast" textVariant="button">
             Next
           </BasicText>
         </BasicButton>
-      ) : UserExistsResult.userExists ? (
+      ) : userExists ? (
         <BasicButton onPress={() => login()} spacing="m">
           <BasicText textVariant="button" color="textContrast">
             Login

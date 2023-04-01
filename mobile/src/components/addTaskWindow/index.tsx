@@ -2,10 +2,6 @@ import dayjs from 'dayjs';
 import React, {createRef, useEffect, useRef, useState} from 'react';
 import {View, TextInput, Text, StyleSheet} from 'react-native';
 import {
-  GetAllEventsDocument,
-  GetAllTasksDocument,
-  GetAllTasksQuery,
-  GetAllTasksQueryResult,
   SubjectFragment,
   useCreateTaskMutation,
   useGetAllLessonsQuery,
@@ -16,12 +12,10 @@ import {calendarConfigWithoutTime} from '../task';
 import {BasicModalCard} from '../basicViews/BasicModalCard';
 import {BasicTextInput} from '../basicViews/BasicTextInput';
 import {BasicButton} from '../basicViews/BasicButton';
-import SelectSubjectWindow from '../selectSubject';
 import {getCurrentLesson} from '../../utils/lessonUtils';
 import {BasicText} from '../basicViews/BasicText';
 import {v4 as uuidv4} from 'uuid';
 import {useCreateTask} from '../../mutationHooks/task/createTask';
-import {BasicCard} from '../basicViews/BasicCard';
 import {SelectSubjectPopup} from '../selectSubject/selectSubjectPopup';
 import {useTheme} from '../../contexts/ThemeContext';
 import {SubjectColorsObject} from '../../types/Theme';
@@ -44,7 +38,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
   const [name, setName] = useState('');
   const [subject, setSubject] = useState<SubjectFragment | null>(null);
   const [viewVisible, setViewVisible] = useState<'main' | 'editDate'>('main');
-  const [taskDate, setTaskDate] = useState<dayjs.Dayjs | null>();
+  const [taskDate, setTaskDate] = useState<dayjs.Dayjs | null>(null);
 
   useEffect(() => {
     // automatically set subject to current lesson
@@ -77,12 +71,13 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
           spacing="m"
           variant="unstyled"
           placeholder="Task name"
-          value={name}
+          defaultValue={name}
           onChangeText={setName}
           autoFocus={true}
         />
         <View style={styles.bottomContainer}>
           <SelectSubjectPopup
+            triggerContainerStyle={styles.button}
             backgroundColor="accentBackground1"
             onSubmit={subject => {
               setSubject(subject);
@@ -97,9 +92,11 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
                     ? (subject.colorName as keyof SubjectColorsObject)
                     : undefined
                 }
-                style={styles.button}>
+                style={{flex: 1, paddingHorizontal: 20}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <BasicText>{subject?.name || 'Subject'}</BasicText>
+                  <BasicText numberOfLines={1}>
+                    {subject?.name || 'Subject'}
+                  </BasicText>
                 </View>
               </BasicButton>
             }
@@ -107,7 +104,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
 
           <BasicButton
             backgroundColor="accentBackground2"
-            style={styles.button}
+            style={[styles.button]}
             onPress={() => {
               setViewVisible('editDate');
             }}>
@@ -150,7 +147,6 @@ const styles = StyleSheet.create({
   bottomContainer: {flexDirection: 'row', justifyContent: 'space-between'},
   button: {
     flex: 1,
-    paddingHorizontal: 20,
     marginRight: 10,
   },
 });

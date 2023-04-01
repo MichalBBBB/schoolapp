@@ -7,6 +7,7 @@ import {
   GetAllTasksDocument,
   GetInvitesDocument,
   GetProjectsDocument,
+  GetProjectTasksOfUserDocument,
   MeDocument,
 } from '../generated/graphql';
 
@@ -19,5 +20,6 @@ export const allQueries = [
   GetInvitesDocument,
   GetProjectsDocument,
   GetAllRemindersDocument,
+  GetProjectTasksOfUserDocument,
   MeDocument,
 ];

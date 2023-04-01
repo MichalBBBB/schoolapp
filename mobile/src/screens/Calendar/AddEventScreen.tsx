@@ -1,7 +1,14 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import React, {useState} from 'react';
-import {Pressable, StyleSheet, Text, View, TextInput} from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Keyboard,
+} from 'react-native';
 import {
   GetAllEventsDocument,
   Subject,
@@ -43,7 +50,6 @@ const AddEventScreen: React.FC<CalendarStackScreenProps<'AddEventScreen'>> = ({
   const [endDateHasBeenChanged, setEndDateHasBeenChanged] = useState(false);
   const [startDateModalVisible, setStartDateModalVisible] = useState(false);
   const [endDateModalVisible, setEndDateModalVisible] = useState(false);
-  const [subjectModalVisible, setSubjectModalVisible] = useState(false);
   const [subject, setSubject] = useState<SubjectFragment | null>(null);
   const [text, setText] = useState<string | null>(null);
 
@@ -54,22 +60,22 @@ const AddEventScreen: React.FC<CalendarStackScreenProps<'AddEventScreen'>> = ({
         placeholder="Name"
         onChangeText={setName}
         marginBottom={10}
+        autoFocus={true}
       />
       <BasicCard
         spacing="m"
         marginBottom={10}
         backgroundColor={'accentBackground1'}>
         <SelectSubjectPopup
+          extraOnPress={() => {
+            Keyboard.dismiss();
+          }}
           forceSide="right"
           onSubmit={subject => {
             setSubject(subject);
           }}
           trigger={
-            <Pressable
-              style={styles.listItem}
-              onPress={() => {
-                setSubjectModalVisible(true);
-              }}>
+            <Pressable style={styles.listItem}>
               <BasicText>Subject</BasicText>
               <BasicText>{subject ? subject.name : 'None'}</BasicText>
             </Pressable>
@@ -82,6 +88,7 @@ const AddEventScreen: React.FC<CalendarStackScreenProps<'AddEventScreen'>> = ({
           <BasicButton
             onPress={() => {
               setStartDateModalVisible(true);
+              Keyboard.dismiss();
             }}
             backgroundColor="lightBorder"
             borderWidth={1}
@@ -101,6 +108,7 @@ const AddEventScreen: React.FC<CalendarStackScreenProps<'AddEventScreen'>> = ({
           <BasicButton
             onPress={() => {
               setEndDateModalVisible(true);
+              Keyboard.dismiss();
             }}
             backgroundColor="lightBorder"
             borderWidth={1}
