@@ -37,6 +37,7 @@ import {useTheme} from '../../contexts/ThemeContext';
 import {useSettings} from '../../utils/useSettings';
 import {getWeekday} from '../../utils/dateUtils';
 import {BasicIcon} from '../basicViews/BasicIcon';
+import {DayEventsList} from './dayEventsList';
 
 // constants
 export const calendarWidth = Dimensions.get('screen').width;
@@ -69,10 +70,10 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
   const settings = useSettings();
 
   const [selectedDay, setSelectedDay] = useState(dayjs());
-  const [isWeekView, setIsWeekView] = useState(false);
-  const [isMonthView, setIsMonthView] = useState(true);
+  const [isWeekView, setIsWeekView] = useState(true);
+  const [isMonthView, setIsMonthView] = useState(false);
   const y = useSharedValue(0);
-  const monthViewOpacity = useSharedValue(1);
+  const monthViewOpacity = useSharedValue(0);
   const weekRow = useSharedValue(0);
   const navigation = useNavigation();
   const [monthString, setMonthString] = useState(dayjs().format('MMMM YYYY'));
@@ -85,23 +86,16 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
   });
 
   useEffect(() => {
+    const row = findRowOfDate(selectedDay);
     weekRow.value = findRowOfDate(selectedDay);
-  }, []);
-
-  useEffect(() => {
-    console.log(
-      dayjs()
-        .subtract(pastScrollRange, 'month')
-        .startOf('month')
-        .startOf('week')
-        .diff(dayjs(), 'week'),
-    );
+    y.value = -(calendarHeight - weekHeight);
   }, []);
 
   // animated style for day events
   const dayEventsAnimatedStyle = useAnimatedStyle(() => {
     return {
-      height: screenHeight - (calendarHeight + weekHeaderHeight + 34) - y.value,
+      // height: screenHeight - (calendarHeight + weekHeaderHeight + 34) - y.value,
+      top: calendarHeight + y.value,
     };
   });
 
@@ -300,6 +294,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
             } else {
               newSelectedDay = newWeek.startOf('week');
             }
+            weekRow.value = findRowOfDate(newSelectedDay);
             setSelectedDay(newSelectedDay);
             setMonthString(newWeek.format('MMMM YYYY'));
           }}
@@ -308,6 +303,55 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
       {monthView}
 
       <Animated.View
+        style={[
+          dayEventsAnimatedStyle,
+          {zIndex: 10, backgroundColor: theme.colors.background},
+        ]}>
+        <View style={{height: '100%'}}>
+          <DayEventsList
+            scrollEnabled={isWeekView}
+            pastScrollRange={Math.abs(
+              dayjs()
+                .subtract(pastScrollRange, 'month')
+                .startOf('month')
+                .startOf('week')
+                .diff(dayjs(), 'day'),
+            )}
+            futureScrollRange={dayjs()
+              .add(futureScrollRange, 'month')
+              .endOf('month')
+              .endOf('week')
+              .diff(dayjs(), 'day')}
+            day={selectedDay}
+            onScroll={newDay => {
+              weekRow.value = findRowOfDate(newDay);
+              setSelectedDay(newDay);
+            }}
+          />
+
+          {isMonthView && (
+            <View
+              style={{
+                position: 'absolute',
+                height: '100%',
+                width: '100%',
+              }}>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  toggleMonthView();
+                }}>
+                <View style={{width: '100%', height: '100%'}} />
+              </TouchableWithoutFeedback>
+            </View>
+          )}
+        </View>
+      </Animated.View>
+    </View>
+  );
+};
+
+{
+  /* <Animated.View
         style={[
           dayEventsAnimatedStyle,
           {zIndex: 10, backgroundColor: theme.colors.background},
@@ -330,9 +374,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
             </View>
           )}
         </View>
-      </Animated.View>
-    </View>
-  );
-};
+      </Animated.View> */
+}
 
 export default CalendarView;

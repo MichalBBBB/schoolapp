@@ -1,5 +1,5 @@
 import {useApolloClient} from '@apollo/client';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   ScrollView,
@@ -12,6 +12,7 @@ import {isLoggedInVar} from '../../App';
 import {BasicCard} from '../../components/basicViews/BasicCard';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {SettingsItem} from '../../components/settingsItem';
+import {SubjectModal} from '../../components/subjectModal';
 import {DarkTheme, LightTheme, useTheme} from '../../contexts/ThemeContext';
 import {useLogoutMutation, useMeQuery} from '../../generated/graphql';
 import {useSetSettings} from '../../mutationHooks/settings/setSettings';
@@ -26,6 +27,8 @@ const SettingsHomeScreen: React.FC<
   const client = useApolloClient();
   const [theme, setTheme] = useTheme();
   const [setSettings] = useSetSettings();
+
+  const [subjectModalVisible, setSubjectModalVisible] = useState(false);
 
   const profile = (
     <View style={styles.profileContainer}>
@@ -55,70 +58,78 @@ const SettingsHomeScreen: React.FC<
   );
 
   return (
-    <ScrollView style={styles.container}>
-      {profile}
-      <View style={styles.listContainer}>
-        <BasicCard
-          backgroundColor="accentBackground1"
-          marginBottom={10}
-          spacing="m"
-          gap={10}>
-          <SettingsItem
-            text="TimeTable"
-            onPress={() => {
-              navigation.navigate('LessonTimesScreen');
-            }}
-          />
-          <SettingsItem
-            text="Subjects"
-            onPress={() => {
-              navigation.navigate('SubjectScreen');
-            }}
-          />
-        </BasicCard>
-        <BasicCard
-          backgroundColor="accentBackground1"
-          marginBottom={10}
-          spacing="m"
-          gap={10}>
-          <SettingsItem
-            text="Date and time"
-            onPress={() => {
-              navigation.navigate('DateSettingsScreen');
-            }}
-          />
-        </BasicCard>
-        <BasicCard marginBottom={10} backgroundColor="accentBackground1">
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingHorizontal: 5,
-            }}>
-            <BasicText>Dark mode</BasicText>
-            <Switch
-              value={theme.dark}
-              onValueChange={value => {
-                setSettings({darkMode: value});
+    <>
+      <ScrollView style={styles.container}>
+        {profile}
+        <View style={styles.listContainer}>
+          <BasicCard
+            backgroundColor="accentBackground1"
+            marginBottom={10}
+            spacing="m"
+            gap={10}>
+            <SettingsItem
+              text="TimeTable"
+              onPress={() => {
+                navigation.navigate('LessonTimesScreen');
               }}
             />
-          </View>
-        </BasicCard>
-        <BasicCard backgroundColor="accentBackground1" spacing="m">
-          <Pressable
-            style={styles.listItem}
-            onPress={() => {
-              logout();
-              client.resetStore();
-              setAccessToken('');
-              isLoggedInVar(false);
-            }}>
-            <BasicText color="dangerous">Log out</BasicText>
-          </Pressable>
-        </BasicCard>
-      </View>
-    </ScrollView>
+            <SettingsItem
+              text="Subjects"
+              onPress={() => {
+                // navigation.navigate('SubjectScreen');
+                setSubjectModalVisible(true);
+              }}
+            />
+          </BasicCard>
+          <BasicCard
+            backgroundColor="accentBackground1"
+            marginBottom={10}
+            spacing="m"
+            gap={10}>
+            <SettingsItem
+              text="Date and time"
+              onPress={() => {
+                navigation.navigate('DateSettingsScreen');
+              }}
+            />
+          </BasicCard>
+          <BasicCard marginBottom={10} backgroundColor="accentBackground1">
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingHorizontal: 5,
+              }}>
+              <BasicText>Dark mode</BasicText>
+              <Switch
+                value={theme.dark}
+                onValueChange={value => {
+                  setSettings({darkMode: value});
+                }}
+              />
+            </View>
+          </BasicCard>
+          <BasicCard backgroundColor="accentBackground1" spacing="m">
+            <Pressable
+              style={styles.listItem}
+              onPress={() => {
+                logout();
+                setAccessToken('');
+                isLoggedInVar(false);
+              }}>
+              <BasicText color="dangerous">Log out</BasicText>
+            </Pressable>
+          </BasicCard>
+        </View>
+      </ScrollView>
+      <SubjectModal
+        isVisible={subjectModalVisible}
+        onClose={() => {
+          setSubjectModalVisible(false);
+        }}
+      />
+    </>
   );
 };
 

@@ -1,5 +1,13 @@
 import React, {useEffect} from 'react';
-import {FlatList, Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import {
+  FlatList,
+  Image,
+  LayoutAnimation,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {
   GetProjectTasksOfUserDocument,
   ProjectFragment,
@@ -61,8 +69,11 @@ export const AssignMembersWindow: React.FC<AssignMembersWindow> = ({
                   spacing="none"
                   variant="unstyled"
                   onPress={() => {
+                    LayoutAnimation.configureNext(
+                      LayoutAnimation.Presets.easeInEaseOut,
+                    );
                     removeAssignedMember({
-                      variables: {userId: item.id, taskId: taskId!},
+                      variables: {userId: item.userId, taskId: taskId!},
                     });
                   }}>
                   <BasicIcon
@@ -89,7 +100,7 @@ export const AssignMembersWindow: React.FC<AssignMembersWindow> = ({
         <FlatList
           data={project?.members.filter(member => {
             return !task?.publicUsers.some(item => {
-              return member.id == item.id;
+              return member.userId == item.userId;
             });
           })}
           renderItem={({item}) => (
@@ -99,14 +110,18 @@ export const AssignMembersWindow: React.FC<AssignMembersWindow> = ({
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 paddingHorizontal: 10,
+                paddingVertical: 5,
               }}>
               <BasicText>{item.name}</BasicText>
               <BasicButton
                 variant="unstyled"
                 spacing="none"
                 onPress={() => {
+                  LayoutAnimation.configureNext(
+                    LayoutAnimation.Presets.easeInEaseOut,
+                  );
                   assignMember({
-                    variables: {userId: item.id, taskId: taskId!},
+                    variables: {userId: item.userId, taskId: taskId!},
                     refetchQueries: [GetProjectTasksOfUserDocument],
                   });
                 }}>
@@ -134,5 +149,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingVertical: 5,
   },
 });

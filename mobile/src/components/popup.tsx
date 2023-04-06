@@ -64,8 +64,8 @@ export const Popup: React.FC<PopupProps> = ({
   };
 
   const setModalToClosed = () => {
-    setPopupVisible(false);
     setContentVisible(false);
+    setPopupVisible(false);
     setShouldClose(false);
   };
 
@@ -78,7 +78,7 @@ export const Popup: React.FC<PopupProps> = ({
   }, [shouldClose]);
 
   useEffect(() => {
-    if (shouldAnimate && !contentVisible) {
+    if (shouldAnimate && !contentVisible && popupVisible) {
       setContentVisible(true);
       scale.value = 0;
       scale.value = withTiming(1, {duration: 300});
@@ -201,10 +201,10 @@ export const Popup: React.FC<PopupProps> = ({
       <View ref={triggerWrapperRef} style={triggerContainerStyle}>
         {React.cloneElement(trigger, {
           onPress: () => {
-            setContentVisible(false);
+            // setContentVisible(false);
             measureTrigger();
             setPopupVisible(true);
-            setShouldAnimate(true);
+            // setShouldAnimate(true);
             extraOnPress?.();
           },
         })}

@@ -29,6 +29,7 @@ import 'dayjs/locale/en';
 
 export const isLoggedInVar = makeVar(true);
 export const isOnlineVar = makeVar(true);
+export const isLoadingVar = makeVar(false);
 export const persistentQueueLink = new PersistentQueueLink();
 dayjs.extend(weekday);
 dayjs.extend(updateLocale);

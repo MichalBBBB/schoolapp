@@ -100,9 +100,8 @@ const refreshLink = new TokenRefreshLink({
         !state.isConnected ||
         (err instanceof TypeError && err.message == 'Network request failed')
       ) {
-        console.warn('you are offline');
+        isOnlineVar(false);
       } else {
-        console.warn('Your refresh token is invalid. Try to relogin');
         isLoggedInVar(false);
       }
     });
@@ -113,6 +112,8 @@ export const createApolloClient = async (
   persistentQueueLink: PersistentQueueLink,
 ) => {
   const cache = new InMemoryCache({
+    // if an object is removed from the cache, it is not automatically removed from its references
+    // here we specifify read functions, that filter out all unreachable objects
     typePolicies: {
       Task: {
         fields: {
@@ -154,8 +155,6 @@ export const createApolloClient = async (
     link: ApolloLink.from([
       errorLink,
       persistentQueueLink,
-      // serializingLink as any as ApolloLink,
-      // retryLink,
       refreshLink,
       authLink,
       batchHttpLink,

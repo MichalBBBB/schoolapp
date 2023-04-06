@@ -7,7 +7,12 @@ import {
 import {PortalHost, PortalProvider} from '@gorhom/portal';
 import React, {useEffect} from 'react';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {isLoggedInVar, isOnlineVar, persistentQueueLink} from './App';
+import {
+  isLoadingVar,
+  isLoggedInVar,
+  isOnlineVar,
+  persistentQueueLink,
+} from './App';
 import {
   DarkTheme,
   LightTheme,
@@ -27,17 +32,23 @@ import {
 } from './generated/graphql';
 
 export const replaceAllData = async (client: ApolloClient<any>) => {
-  const promises: Array<Promise<any>> = [];
-  allQueries.forEach(item => {
-    promises.push(
-      client.query({
-        query: item,
-        fetchPolicy: 'network-only',
-      }),
-    );
-  });
-  await Promise.all(promises);
-  setRemindersFromApollo(client);
+  try {
+    await fetch(baseUri + '/check');
+    isOnlineVar(true);
+    const promises: Array<Promise<any>> = [];
+    allQueries.forEach(item => {
+      promises.push(
+        client.query({
+          query: item,
+          fetchPolicy: 'network-only',
+        }),
+      );
+    });
+    await Promise.all(promises);
+    setRemindersFromApollo(client);
+  } catch (e) {
+    isOnlineVar(false);
+  }
 };
 
 const openQueue = async (client: ApolloClient<any>) => {
@@ -45,7 +56,9 @@ const openQueue = async (client: ApolloClient<any>) => {
   try {
     await fetch(baseUri + '/check');
     await persistentQueueLink.open();
+    isLoadingVar(true);
     await replaceAllData(client);
+    isLoadingVar(false);
   } catch {
     persistentQueueLink.close();
     isOnlineVar(false);
@@ -64,6 +77,8 @@ export const Content: React.FC = () => {
       openQueue(client);
     } else if (!isOnline) {
       persistentQueueLink.close();
+    } else if (!isLoggedIn) {
+      client.resetStore();
     }
   }, [isOnline, isLoggedIn]);
 
@@ -108,7 +123,7 @@ export const Content: React.FC = () => {
             await fetch(baseUri + '/check');
             isOnlineVar(true);
           } catch (e) {}
-        }, 10000);
+        }, 30000);
       }
     })();
 

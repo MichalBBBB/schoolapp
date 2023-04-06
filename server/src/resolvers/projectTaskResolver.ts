@@ -11,7 +11,8 @@ import {
 } from "type-graphql";
 import { Project } from "../entities/Project";
 import { ProjectTask } from "../entities/ProjectTask";
-import { User } from "../entities/User";
+import { PublicUser, User } from "../entities/User";
+import { UserProjectTask } from "../entities/UserProjectTask";
 import { isAuth } from "../middleware/isAuth";
 import { isUserInProject } from "../utils/isUserInProject";
 import { MyContext } from "../utils/MyContext";
@@ -21,11 +22,41 @@ const projectLoader = new DataLoader((keys) => loadProjects(keys as [string]), {
 });
 
 const loadProjects = async (keys: [string]) => {
-  const result = await Project.createQueryBuilder("subject")
+  const result = await Project.createQueryBuilder("project")
     .select()
-    .where("id IN (:...ids)", { ids: keys })
+    .where("project.id IN (:...ids)", { ids: keys })
     .getMany();
-  return keys.map((key) => result.find((subject) => subject.id === key));
+  return keys.map((key) => result.find((project) => project.id === key));
+};
+
+const usersLoader = new DataLoader((keys) => loadUsers(keys as string[]), {
+  cache: false,
+});
+
+// loading subtasks for all tasks at once
+const loadUsers: (keys: string[]) => Promise<PublicUser[][]> = async (
+  keys: string[]
+) => {
+  const result = await UserProjectTask.createQueryBuilder("userProjectTask")
+    .select()
+    .where("userProjectTask.projectTaskId IN (:...ids)", { ids: keys })
+    .leftJoinAndSelect("userProjectTask.user", "user")
+    .getMany();
+  // mapping loaded subtasks to task ids
+  return keys.map((key) =>
+    result
+      .filter((userProject) => userProject.projectTaskId === key)
+      .map((item) => {
+        const publicUser: PublicUser = {
+          // create a unique id for this public user object (it is unique for the projectTask)
+          id: `${item.projectTaskId}:${item.user.id}`,
+          name: item.user.fullName,
+          email: item.user.email,
+          userId: item.user.id,
+        };
+        return publicUser;
+      })
+  );
 };
 
 @Resolver(ProjectTask)
@@ -37,17 +68,7 @@ export class projectTaskResolver {
 
   @FieldResolver()
   async publicUsers(@Root() root: ProjectTask) {
-    const fetchedProjectTask = await ProjectTask.findOne({
-      where: { id: root.id },
-      relations: { users: true },
-    });
-    return fetchedProjectTask?.users.map((item) => {
-      return {
-        name: item.fullName,
-        email: item.email,
-        id: item.id,
-      };
-    });
+    return usersLoader.load(root.id);
   }
 
   @Mutation(() => ProjectTask)
@@ -137,11 +158,8 @@ export class projectTaskResolver {
         (await isUserInProject(projectTask.projectId, userId)) &&
         (await isUserInProject(projectTask.projectId, payload?.userId || ""))
       ) {
-        await ProjectTask.createQueryBuilder()
-          .relation("users")
-          .of(projectTask)
-          .add(user);
-        return projectTask;
+        await UserProjectTask.create({ userId, projectTaskId: taskId }).save();
+        return ProjectTask.findOne({ where: { id: taskId } });
       } else {
         throw new Error("user is not a member of the project");
       }
@@ -158,16 +176,15 @@ export class projectTaskResolver {
     @Ctx() { payload }: MyContext
   ) {
     const projectTask = await ProjectTask.findOne({ where: { id: taskId } });
-    const user = await User.findOne({ where: { id: userId } });
     if (projectTask) {
       if (
         (await isUserInProject(projectTask.projectId, userId)) &&
         (await isUserInProject(projectTask.projectId, payload?.userId || ""))
       ) {
-        await ProjectTask.createQueryBuilder()
-          .relation("users")
-          .of(projectTask)
-          .remove(user);
+        const userProjectTask = await UserProjectTask.findOne({
+          where: { userId, projectTaskId: taskId },
+        });
+        await userProjectTask?.remove();
         return projectTask;
       } else {
         throw new Error("user is not a member of the project");
@@ -180,17 +197,16 @@ export class projectTaskResolver {
   @Query(() => [ProjectTask])
   @UseMiddleware(isAuth)
   async getProjectTasksOfUser(@Ctx() { payload }: MyContext) {
-    console.log("here2");
-    const result = await User.findOne({
-      where: { id: payload?.userId },
-      relations: { projectTasks: true },
-    });
-    console.log(
-      (await ProjectTask.find({ relations: { users: true } })).map(
-        (item) => item.users
+    const projectTasks = await ProjectTask.createQueryBuilder("projectTask")
+      .select()
+      .innerJoin(
+        "projectTask.userProjectTasks",
+        "userProjectTask",
+        '"userProjectTask"."userId" = :id',
+        { id: payload?.userId }
       )
-    );
-    console.log("result", result);
-    return result?.projectTasks;
+      .getMany();
+    console.log(projectTasks);
+    return projectTasks;
   }
 }

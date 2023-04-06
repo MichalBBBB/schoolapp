@@ -7,7 +7,6 @@ import {DateSettingsScreen} from '../screens/Settings/DateAndTime';
 import {StartOfWeekScreen} from '../screens/Settings/DateAndTime/StartOfWeekScreen';
 
 import SettingsHomeScreen from '../screens/Settings/SettingsHomeScreen';
-import {SubjectScreen} from '../screens/Settings/SubjectScreen';
 import {AdvancedTimeTableScreen} from '../screens/Settings/Timetable/AdvancedTimeTableScreen';
 import LessonTimesScreen from '../screens/Settings/Timetable/LessonTimesScreen';
 import TimeTableScreen from '../screens/Settings/Timetable/TimeTableScreen';
@@ -43,11 +42,6 @@ const SettingsStack: React.FC<
         name="TimeTableScreen"
         options={{title: 'Timetable'}}
         component={TimeTableScreen}
-      />
-      <Stack.Screen
-        name="SubjectScreen"
-        options={{title: 'Subjects'}}
-        component={SubjectScreen}
       />
       <Stack.Screen
         name="DateSettingsScreen"

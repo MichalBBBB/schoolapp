@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import React, {createRef, useEffect, useRef, useState} from 'react';
-import {View, TextInput, Text, StyleSheet} from 'react-native';
+import {View, TextInput, Text, StyleSheet, LayoutAnimation} from 'react-native';
 import {
   SubjectFragment,
   useCreateTaskMutation,
@@ -20,6 +20,7 @@ import {SelectSubjectPopup} from '../selectSubject/selectSubjectPopup';
 import {useTheme} from '../../contexts/ThemeContext';
 import {SubjectColorsObject} from '../../types/Theme';
 import {useSettings} from '../../utils/useSettings';
+import {SubjectModal} from '../subjectModal';
 
 interface addTaskWindowProps {
   onClose: () => void;
@@ -37,7 +38,9 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
   const taskInputRef = useRef<TextInput>(null);
   const [name, setName] = useState('');
   const [subject, setSubject] = useState<SubjectFragment | null>(null);
-  const [viewVisible, setViewVisible] = useState<'main' | 'editDate'>('main');
+  const [viewVisible, setViewVisible] = useState<
+    'main' | 'editDate' | 'subject'
+  >('main');
   const [taskDate, setTaskDate] = useState<dayjs.Dayjs | null>(null);
 
   useEffect(() => {
@@ -77,6 +80,9 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
         />
         <View style={styles.bottomContainer}>
           <SelectSubjectPopup
+            onAddSubjects={() => {
+              setViewVisible('subject');
+            }}
             triggerContainerStyle={styles.button}
             backgroundColor="accentBackground1"
             onSubmit={subject => {
@@ -116,6 +122,9 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
           </BasicButton>
           <AddButton
             onPress={() => {
+              LayoutAnimation.configureNext(
+                LayoutAnimation.Presets.easeInEaseOut,
+              );
               createTask({
                 id: uuidv4(),
                 name,
@@ -136,6 +145,12 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
         }}
         onSubmit={date => {
           setTaskDate(date);
+          setViewVisible('main');
+        }}
+      />
+      <SubjectModal
+        isVisible={visible && viewVisible == 'subject'}
+        onClose={() => {
           setViewVisible('main');
         }}
       />

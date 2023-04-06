@@ -7592,10 +7592,10 @@ react-native-table-component@^1.2.2:
   resolved "https://registry.yarnpkg.com/react-native-table-component/-/react-native-table-component-1.2.2.tgz#1c9bdcd8f1fd7edf10d1e93ebc3b7877ecd74def"
   integrity sha512-7bbsi5431iWcjj3toASh8lFHGi6AG/+MTd4M7GuksXKxx/CFs/Qwv1Ys7D2wgyuYKe3hxWNfSVrteFj0tOYXYw==
 
-react-native@0.69.8:
-  version "0.69.8"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.69.8.tgz#3d9b47c42c100455850b47859ff12b66c5ffb689"
-  integrity sha512-sHaIypVD9avdHQpvmVXz4vPy6IECKNfWCz2E5DmiC6NWKxGd+tkNMBMIOl7dATdpAiD19FUiu3EyBVdO1vqTUw==
+react-native@0.69.9:
+  version "0.69.9"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.69.9.tgz#c988dfc2e21b3b586d35a8cc57b102537e760edc"
+  integrity sha512-I1xqIn47RWxBToO4E6yqyIPSaK9mZnMiscMfrFpWjQr3Gdkicr9y+twmtrRszxaLdQLjHzh/M3y4qOqc3hZnpg==
   dependencies:
     "@jest/create-cache-key-function" "^27.0.1"
     "@react-native-community/cli" "^8.0.4"

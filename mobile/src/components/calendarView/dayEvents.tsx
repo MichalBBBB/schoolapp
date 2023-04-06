@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import React, {useEffect, useMemo, useState} from 'react';
-import {View, Text, SectionList, StyleSheet} from 'react-native';
+import {View, Text, SectionList, StyleSheet, Dimensions} from 'react-native';
 import {
   CalendarEventFragment,
   LessonFragment,
@@ -21,6 +21,8 @@ import {useNavigation} from '@react-navigation/native';
 import {CalendarNavigationProp} from '../../utils/types';
 import {replaceAllData} from '../../Content';
 import {useApolloClient} from '@apollo/client';
+
+export const width = Dimensions.get('screen').width;
 
 interface DayEventsProps {
   date: dayjs.Dayjs;
@@ -135,7 +137,7 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
           <BasicText textVariant="heading">Nothing for this day</BasicText>
         </View>
       }
-      style={styles.sectionList}
+      style={[styles.sectionList, {width}]}
       sections={createSections()}
       renderSectionHeader={({section: {title}}) => (
         <BasicText color="textSecondary" style={styles.sectionTitle}>

@@ -11,6 +11,7 @@ import {
   View,
   TouchableOpacity,
   Keyboard,
+  LayoutAnimation,
 } from 'react-native';
 import BackButton from '../../components/backButton';
 import BasicInputWindow from '../../components/basicInputWindow';
@@ -182,8 +183,7 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
         <FlatList
           contentContainerStyle={{borderRadius: 15, overflow: 'hidden'}}
           data={task.subtasks}
-          renderItem={({item, index}) => <Subtask subtask={item} />}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          renderItem={({item, index}) => <Subtask subtask={item} key={index} />}
         />
       </View>
       <EditDateModal
@@ -247,7 +247,9 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
           setAddSubtaskModalIsVisible(false);
         }}
         onSubmit={value => {
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
           addSubtask({id: uuidv4(), name: value, taskId: task.id});
+          setAddSubtaskModalIsVisible(false);
         }}
       />
     </>

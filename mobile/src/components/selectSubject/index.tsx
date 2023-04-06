@@ -15,19 +15,24 @@ import AddSubjectWindow from '../addSubjectWindow';
 import {useTheme} from '../../contexts/ThemeContext';
 import {ColorsObject, SubjectColorsObject} from '../../types/Theme';
 import {BasicCard} from '../basicViews/BasicCard';
+import {BasicIcon} from '../basicViews/BasicIcon';
+import {SubjectModal} from '../subjectModal';
 
 interface SelectSubjectProps {
   onSubmit: (subject: SubjectFragment | null) => void;
-  closeModal?: () => void;
+  animateClose?: () => void;
   backgroundColor?: keyof ColorsObject;
+  onAddSubjects?: () => void;
 }
 
 const SelectSubjectWindow: React.FC<SelectSubjectProps> = ({
   onSubmit,
-  closeModal,
+  animateClose,
   backgroundColor = 'accentBackground1',
+  onAddSubjects,
 }) => {
   const {data} = useGetAllSubjectsQuery();
+  const [subjectModalVisible, setSubjectModalVisible] = useState(false);
 
   const [theme] = useTheme();
   return (
@@ -35,14 +40,34 @@ const SelectSubjectWindow: React.FC<SelectSubjectProps> = ({
       backgroundColor={backgroundColor}
       spacing="m"
       style={{
+        minWidth: 130,
         elevation: 8,
         shadowOpacity: 0.1,
         shadowOffset: {width: 0, height: 0},
         shadowRadius: 20,
-        maxHeight: 300,
+        maxHeight: 280,
+        // overflow: 'hidden',
       }}>
-      <View>
+      <View style={{flex: 1}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginBottom: 8,
+          }}>
+          <BasicText textVariant="button">Subject</BasicText>
+          <BasicButton
+            variant="unstyled"
+            spacing="none"
+            onPress={() => {
+              onSubmit(null);
+              if (animateClose) animateClose();
+            }}>
+            <BasicText>clear</BasicText>
+          </BasicButton>
+        </View>
         <FlatList
+          style={{flex: 1, paddingBottom: 5}}
           keyboardShouldPersistTaps="handled"
           data={data?.getAllSubjects}
           renderItem={({item}) => (
@@ -52,12 +77,13 @@ const SelectSubjectWindow: React.FC<SelectSubjectProps> = ({
               style={{marginBottom: 10, alignItems: 'flex-start'}}
               onPress={() => {
                 onSubmit(item);
-                if (closeModal) closeModal();
+                if (animateClose) animateClose();
               }}>
               <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-between',
+                  alignItems: 'center',
                 }}>
                 <View
                   style={{
@@ -75,37 +101,46 @@ const SelectSubjectWindow: React.FC<SelectSubjectProps> = ({
               </View>
             </BasicButton>
           )}
-          ListFooterComponent={
+          ListEmptyComponent={() => (
+            <BasicText color="textSecondary">No subjects</BasicText>
+          )}
+          ListFooterComponent={() => (
             <BasicButton
               variant="unstyled"
               spacing="none"
-              style={{marginBottom: 10, alignItems: 'flex-start'}}
               onPress={() => {
-                onSubmit(null);
+                if (onAddSubjects) {
+                  onAddSubjects();
+                } else {
+                  setSubjectModalVisible(true);
+                }
               }}>
-              <View style={{flexDirection: 'row'}}>
-                <View
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  width: '100%',
+                  marginTop: 5,
+                }}>
+                <BasicIcon
+                  source={require('../../../assets/Plus.png')}
                   style={{
-                    height: 20,
-                    width: 20,
-                    backgroundColor: 'trasparent',
-                    borderRadius: 10,
-                    marginRight: 10,
+                    height: 25,
+                    width: 25,
+                    marginRight: 5,
                   }}
                 />
-                <BasicText>None</BasicText>
+                <BasicText>Add</BasicText>
               </View>
             </BasicButton>
-          }
+          )}
         />
-
-        {/* <BasicButton
-          spacing="s"
-          onPress={() => {
-            setViewShouldAppear('AddSubject');
-          }}>
-          <BasicText color="background">Add</BasicText>
-        </BasicButton> */}
+        <SubjectModal
+          isVisible={subjectModalVisible}
+          onClose={() => {
+            setSubjectModalVisible(false);
+          }}
+        />
       </View>
     </BasicCard>
   );

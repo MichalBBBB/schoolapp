@@ -4,15 +4,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from "typeorm";
 import { Project } from "./Project";
-import { PublicUser, User } from "./User";
+import { PublicUser } from "./User";
+import { UserProjectTask } from "./UserProjectTask";
 
 @Entity()
 @ObjectType()
@@ -37,11 +37,12 @@ export class ProjectTask extends BaseEntity {
   @Field({ nullable: true })
   doDate?: Date;
 
-  @JoinTable()
-  @ManyToMany(() => User, (user) => user.projectTasks, {
-    onDelete: "SET NULL",
-  })
-  users: Relation<User>[];
+  @OneToMany(
+    () => UserProjectTask,
+    (userProjectTask) => userProjectTask.projectTask
+  )
+  @Field(() => [UserProjectTask])
+  userProjectTasks: Relation<UserProjectTask>[];
 
   @Field(() => [PublicUser])
   publicUsers: PublicUser[];

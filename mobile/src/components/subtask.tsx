@@ -1,5 +1,12 @@
 import React, {useRef} from 'react';
-import {Image, Text, View, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  Image,
+  Text,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  LayoutAnimation,
+} from 'react-native';
 import {useTheme} from '../contexts/ThemeContext';
 import {
   SubtaskFragment,
@@ -17,6 +24,7 @@ const Subtask: React.FC<{subtask: SubtaskFragment}> = ({subtask}) => {
   const [deleteSubtask] = useDeleteSubtask();
   const [toggleSubtask] = useToggleSubtask();
   const deleteSubtaskFunc = async () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     await deleteSubtask({
       id: subtask.id,
     });

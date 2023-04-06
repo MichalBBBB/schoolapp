@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   },
   options: {
     resizeMode: 'stretch',
-    height: 15,
-    width: 15,
+    height: 20,
+    width: 20,
   },
 });

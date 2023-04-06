@@ -46,7 +46,6 @@ export const useCreateTask: () => [
           __typename: 'Task',
           id: variables.id,
           name: variables.name,
-          userId: '',
           createdAt: new Date().toISOString(),
           done: false,
           updatedAt: new Date().toISOString(),

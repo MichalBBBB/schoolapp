@@ -62,7 +62,6 @@ export type ProjectStackScreenProps<T extends keyof ProjectStackParamList> =
 
 export type SettingsStackParamList = {
   SettingsHomeScreen: undefined;
-  SubjectScreen: undefined;
   TimeTableScreen: undefined;
   LessonTimesScreen: undefined;
   AdvancedTimeTableScreen: undefined;

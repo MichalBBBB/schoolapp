@@ -32,7 +32,7 @@ export const NewProjectScreen: React.FC<
         placeholder="Name"
         onChangeText={setName}
         spacing="m"
-        marginBottom={30}
+        marginBottom={20}
       />
       <View style={[styles.horizontalContainer, {marginBottom: 10}]}>
         <BasicTextInput
@@ -42,7 +42,7 @@ export const NewProjectScreen: React.FC<
           onChangeText={setEmail}
           textContentType="emailAddress"
           autoCapitalize="none"
-          style={{flex: 1, marginRight: 10}}
+          containerStyle={{flex: 1, marginRight: 10}}
         />
         <BasicButton
           onPress={() => {

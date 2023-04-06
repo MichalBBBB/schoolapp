@@ -34,18 +34,29 @@ export const useSetSettings: () => [
           __typename: 'Mutation',
           setSettings: {
             __typename: 'Settings',
-            darkMode: variables.darkMode || settings.darkMode,
+            darkMode:
+              variables.darkMode == null
+                ? settings.darkMode
+                : variables.darkMode,
             id: settings.id,
             startOfWeek: variables.startOfWeek || settings.startOfWeek,
             startOfRotationDate:
               variables.startOfRotationDate || settings.startOfRotationDate,
             lengthOfRotation:
               variables.lengthOfRotation || settings.lengthOfRotation,
-            skipWeekends: variables.skipWeekends || settings.skipWeekends,
-            showDoDate: variables.showDoDate || settings.showDoDate,
+            skipWeekends:
+              variables.skipWeekends == null
+                ? settings.skipWeekends
+                : variables.skipWeekends,
+            showDoDate:
+              variables.showDoDate == null
+                ? settings.showDoDate
+                : variables.showDoDate,
             sortTasksBy: variables.sortTasksBy || settings.sortTasksBy,
             showCompletedTasks:
-              variables.showCompletedTasks || settings.showCompletedTasks,
+              variables.showCompletedTasks == null
+                ? settings.showCompletedTasks
+                : variables.showCompletedTasks,
           },
         },
         update: (cache, {data}) => {

@@ -5,7 +5,7 @@ import {BasicIcon} from './basicViews/BasicIcon';
 
 const BackButton: React.FC<{onPress: () => void}> = ({onPress}) => {
   return (
-    <TouchableOpacity onPress={() => onPress()}>
+    <TouchableOpacity onPress={() => onPress()} style={{paddingRight: 10}}>
       <BasicIcon
         source={require('../../assets/Chevron-left.png')}
         style={styles.button}

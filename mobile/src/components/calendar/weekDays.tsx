@@ -3,11 +3,11 @@ import {View, Text} from 'react-native';
 import {useSettings} from '../../utils/useSettings';
 import {BasicText} from '../basicViews/BasicText';
 
-const weekDaysMon = ['m', 't', 'w', 't', 'f', 's', 's'];
+const weekDaysMon = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
-const weekDaysSun = ['s', 'm', 't', 'w', 't', 'f', 's'];
+const weekDaysSun = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
-const weekDaysSat = ['s', 's', 'm', 't', 'w', 't', 'f'];
+const weekDaysSat = ['S', 'S', 'M', 'T', 'W', 'T', 'F'];
 
 interface weekDaysProps {
   weekHeaderHeight: number;

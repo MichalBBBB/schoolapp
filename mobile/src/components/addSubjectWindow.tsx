@@ -78,7 +78,7 @@ const AddSubjectWindow: React.FC<AddSubjectWindowProps> = ({
           <BasicTextInput
             autoFocus={true}
             variant="unstyled"
-            style={{flex: 1, marginRight: 5}}
+            containerStyle={{flex: 1, marginRight: 5}}
             placeholder={'Subject name'}
             onChangeText={setText}
             ref={textInputRef}

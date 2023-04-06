@@ -7,11 +7,13 @@ import {Popup, PopupProps} from '../popup';
 interface SelectSubjectPopupProps extends PopupProps {
   onSubmit: (subject: SubjectFragment | null) => void;
   backgroundColor?: keyof ColorsObject;
+  onAddSubjects?: () => void;
 }
 
 export const SelectSubjectPopup: React.FC<SelectSubjectPopupProps> = ({
   backgroundColor,
   onSubmit,
+  onAddSubjects,
   ...rest
 }) => {
   return (
@@ -19,6 +21,7 @@ export const SelectSubjectPopup: React.FC<SelectSubjectPopupProps> = ({
       <SelectSubjectWindow
         onSubmit={onSubmit}
         backgroundColor={backgroundColor}
+        onAddSubjects={onAddSubjects}
       />
     </Popup>
   );

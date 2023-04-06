@@ -21,7 +21,7 @@ import {
   Platform,
   UIManager,
 } from 'react-native';
-import {isOnlineVar} from '../../App';
+import {isLoadingVar, isOnlineVar} from '../../App';
 import AddButton from '../../components/addButton';
 import AddTaskWindow from '../../components/addTaskWindow';
 import {BasicButton} from '../../components/basicViews/BasicButton';
@@ -56,7 +56,12 @@ import {
 } from '../../utils/types';
 import {useSettings} from '../../utils/useSettings';
 import {replaceAllData} from '../../Content';
-import {NormalizedCacheObject, useApolloClient} from '@apollo/client';
+import {
+  NormalizedCacheObject,
+  useApolloClient,
+  useReactiveVar,
+} from '@apollo/client';
+import {BasicLoading} from '../../components/basicViews/BasicLoading';
 
 if (
   Platform.OS === 'android' &&
@@ -72,6 +77,7 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
   const {data: projectTasks} = useGetProjectTasksOfUserQuery({
     fetchPolicy: 'network-only',
   });
+  const isLoading = useReactiveVar(isLoadingVar);
   const [setSettings] = useSetSettings();
   const [addTaskOpen, setAddTaskOpen] = useState(false);
   const [theme] = useTheme();
@@ -155,28 +161,44 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
   return (
     <View style={{flex: 1}}>
       <MyFlatList
-        ListEmptyComponent={() => (
-          <View
-            style={{
-              height: '100%',
-              width: '100%',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <BasicText textVariant="heading" style={{marginBottom: 10}}>
-              No tasks yet
-            </BasicText>
-            <BasicButton
-              spacing="m"
-              onPress={() => {
-                setAddTaskOpen(true);
-              }}>
-              <BasicText color="textContrast" textVariant="button">
-                Create a new one
-              </BasicText>
-            </BasicButton>
-          </View>
-        )}
+        ListEmptyComponent={() => {
+          if (isLoading) {
+            return (
+              <View
+                style={{
+                  height: 500,
+                  width: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <BasicLoading />
+              </View>
+            );
+          } else {
+            return (
+              <View
+                style={{
+                  height: 500,
+                  width: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <BasicText textVariant="heading" style={{marginBottom: 10}}>
+                  No tasks yet
+                </BasicText>
+                <BasicButton
+                  spacing="m"
+                  onPress={() => {
+                    setAddTaskOpen(true);
+                  }}>
+                  <BasicText color="textContrast" textVariant="button">
+                    Create a new one
+                  </BasicText>
+                </BasicButton>
+              </View>
+            );
+          }
+        }}
         onRefresh={() => {
           setRefreshing(true);
           replaceAllData(client).then(() => {
@@ -185,7 +207,7 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
         }}
         refreshing={refreshing}
         contentContainerStyle={
-          data?.getAllTasks.length == 0
+          list.length == 0
             ? {flexGrow: 1}
             : {
                 borderRadius: 15,
@@ -223,6 +245,7 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
         }}
         //ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
+
       <View style={{position: 'absolute', right: 0, bottom: 0, margin: 20}}>
         <AddButton
           onPress={() => {

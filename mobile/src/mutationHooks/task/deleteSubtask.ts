@@ -34,6 +34,7 @@ export const useDeleteSubtask: () => [
         }
         const normalizedSubtaskId = `Subtask:${variables.id}`;
         cache.evict({id: normalizedSubtaskId});
+        cache.gc();
       },
     });
     return result;

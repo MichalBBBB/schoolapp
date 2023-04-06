@@ -49,9 +49,11 @@ const loadMembers: (keys: string[]) => Promise<PublicUser[][]> = async (
       .filter((userProject) => userProject.projectId === key)
       .map((item) => {
         const publicUser: PublicUser = {
+          // create a unique id for this public user object (it is unique for the project)
+          id: `${item.projectId}:${item.user.id}`,
           name: item.user.fullName,
           email: item.user.email,
-          id: item.user.id,
+          userId: item.user.id,
           isAdmin: item.isAdmin,
         };
         return publicUser;

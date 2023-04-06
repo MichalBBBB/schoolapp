@@ -21,6 +21,7 @@ export const ColorPickerWindow: React.FC<ColorPickerPopupProps> = ({
   const [theme] = useTheme();
   return (
     <BasicCard
+      backgroundColor="accentBackground2"
       spacing="m"
       style={{
         elevation: 8,

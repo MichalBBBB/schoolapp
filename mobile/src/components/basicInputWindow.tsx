@@ -42,10 +42,11 @@ const BasicInputWindow: React.FC<addTaskWindowProps> = ({
         <View
           style={{
             flexDirection: 'row',
+            alignItems: 'center',
           }}>
           <BasicTextInput
             variant="unstyled"
-            style={{flex: 1, marginRight: 5}}
+            containerStyle={{flex: 1, marginRight: 5}}
             placeholder={placeholder || 'Name'}
             onChangeText={setText}
             autoFocus={true}

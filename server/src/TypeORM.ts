@@ -12,6 +12,7 @@ import { UserProject } from "./entities/UserProject";
 import { ProjectTask } from "./entities/ProjectTask";
 import { Reminder } from "./entities/Reminder";
 import { Settings } from "./entities/Settings";
+import { UserProjectTask } from "./entities/UserProjectTask";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -19,7 +20,7 @@ export const AppDataSource = new DataSource({
   // username: "postgres",
   // password: "postgres",
   // database: "schoolappEmpty",
-  migrations: ["dist/migrations/*.ts"],
+  migrations: ["dist/migrations/*.js"],
 
   logging: true,
   synchronize: false,
@@ -33,6 +34,7 @@ export const AppDataSource = new DataSource({
     Lesson,
     Project,
     UserProject,
+    UserProjectTask,
     ProjectTask,
     Reminder,
     Settings,

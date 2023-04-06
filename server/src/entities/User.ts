@@ -5,7 +5,6 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -17,16 +16,19 @@ import { CalendarEvent } from "./CalendarEvent";
 import { Lesson } from "./Lesson";
 import { LessonTime } from "./LessonTime";
 import { Project } from "./Project";
-import { ProjectTask } from "./ProjectTask";
 import { Reminder } from "./Reminder";
 import { Settings } from "./Settings";
 import { Task } from "./Task";
 import { UserProject } from "./UserProject";
+import { UserProjectTask } from "./UserProjectTask";
 
 @ObjectType()
 export class PublicUser {
   @Field()
   id: string;
+
+  @Field()
+  userId: string;
 
   @Field()
   email: string;
@@ -71,9 +73,9 @@ export class User extends BaseEntity {
   @OneToMany(() => Task, (task) => task.user)
   tasks: Task[];
 
-  @Field(() => [ProjectTask])
-  @ManyToMany(() => ProjectTask, (projectTask) => projectTask.users)
-  projectTasks: ProjectTask[];
+  @OneToMany(() => UserProjectTask, (userProjectTask) => userProjectTask.user)
+  @Field(() => [UserProjectTask])
+  userProjectTasks: Relation<UserProjectTask>[];
 
   @Field(() => [Subject])
   @OneToMany(() => Subject, (subject) => subject.user)

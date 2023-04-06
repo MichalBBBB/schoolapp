@@ -21,6 +21,7 @@ export const BasicModalCard: React.FC<BasicModalCardProps> = ({
   onBackdropPress,
   alignCard = 'center',
   shouldStretchWidth = true,
+  style,
   ...restProps
 }) => {
   const [theme] = useTheme();
@@ -43,7 +44,7 @@ export const BasicModalCard: React.FC<BasicModalCardProps> = ({
           flexDirection: shouldStretchWidth ? 'column' : 'row',
           justifyContent: 'center',
         }}>
-        <BasicCard {...restProps} style={{margin: 10}}>
+        <BasicCard {...restProps} style={[{margin: 10}, style]}>
           {children}
         </BasicCard>
       </View>
