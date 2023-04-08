@@ -28,9 +28,7 @@ import {BatchHttpLink} from '@apollo/client/link/batch-http';
 //   Platform.OS == 'ios' ? 'http://localhost:5002' : 'http://10.0.2.2:5002';
 
 export const baseUri =
-  Platform.OS == 'ios'
-    ? 'http://198.199.72.132:8080'
-    : 'http://198.199.72.132:8080';
+  Platform.OS == 'ios' ? 'https://api.dayto.app' : 'https://api.dayto.app';
 
 export const uri = baseUri + '/graphql';
 
