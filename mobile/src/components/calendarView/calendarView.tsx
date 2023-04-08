@@ -72,7 +72,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
   const [selectedDay, setSelectedDay] = useState(dayjs());
   const [isWeekView, setIsWeekView] = useState(true);
   const [isMonthView, setIsMonthView] = useState(false);
-  const y = useSharedValue(0);
+  const y = useSharedValue(-(calendarHeight - weekHeight));
   const monthViewOpacity = useSharedValue(0);
   const weekRow = useSharedValue(0);
   const navigation = useNavigation();
@@ -86,9 +86,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
   });
 
   useEffect(() => {
-    const row = findRowOfDate(selectedDay);
     weekRow.value = findRowOfDate(selectedDay);
-    y.value = -(calendarHeight - weekHeight);
   }, []);
 
   // animated style for day events
