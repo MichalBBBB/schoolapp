@@ -6,6 +6,7 @@ import {
   TouchableHighlight,
   View,
 } from 'react-native';
+import {useTheme} from '../contexts/ThemeContext';
 import {useSetSettings} from '../mutationHooks/settings/setSettings';
 import {useSettings} from '../utils/useSettings';
 import {BasicCard} from './basicViews/BasicCard';
@@ -25,11 +26,15 @@ export const TaskScreenOptionsPopup: React.FC<{
   const settings = useSettings();
   const [setSettings] = useSetSettings();
 
+  const [theme] = useTheme();
+
   const showDoDateItem = (
     <Popup
       triggerContainerStyle={{width: '100%'}}
       trigger={
-        <TouchableHighlight underlayColor={'#ddd'} style={{width: '100%'}}>
+        <TouchableHighlight
+          underlayColor={theme.dark ? '#444' : '#ddd'}
+          style={{width: '100%'}}>
           <View
             style={{
               flexDirection: 'row',
@@ -94,7 +99,9 @@ export const TaskScreenOptionsPopup: React.FC<{
     <Popup
       triggerContainerStyle={{width: '100%'}}
       trigger={
-        <TouchableHighlight underlayColor={'#ddd'} style={{width: '100%'}}>
+        <TouchableHighlight
+          underlayColor={theme.dark ? '#444' : '#ddd'}
+          style={{width: '100%'}}>
           <View
             style={{
               flexDirection: 'row',
@@ -201,7 +208,7 @@ export const TaskScreenOptionsPopup: React.FC<{
             overflow: 'hidden',
           }}>
           <TouchableHighlight
-            underlayColor={'#ddd'}
+            underlayColor={theme.dark ? '#444' : '#ddd'}
             onPress={() => {
               setSettings({showCompletedTasks: !settings?.showCompletedTasks});
             }}>

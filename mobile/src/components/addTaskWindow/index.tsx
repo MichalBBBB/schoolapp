@@ -84,7 +84,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
               setViewVisible('subject');
             }}
             triggerContainerStyle={styles.button}
-            backgroundColor="accentBackground1"
+            backgroundColor="accentBackground2"
             onSubmit={subject => {
               setSubject(subject);
             }}

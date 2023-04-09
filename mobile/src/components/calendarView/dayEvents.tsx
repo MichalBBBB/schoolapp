@@ -21,6 +21,7 @@ import {useNavigation} from '@react-navigation/native';
 import {CalendarNavigationProp} from '../../utils/types';
 import {replaceAllData} from '../../Content';
 import {useApolloClient} from '@apollo/client';
+import {BasicRefreshControl} from '../basicViews/BasicRefreshControl';
 
 export const width = Dimensions.get('screen').width;
 
@@ -120,13 +121,17 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
 
   return (
     <MySectionList
-      refreshing={refreshing}
-      onRefresh={() => {
-        setRefreshing(true);
-        replaceAllData(client).then(() => {
-          setRefreshing(false);
-        });
-      }}
+      refreshControl={
+        <BasicRefreshControl
+          refreshing={refreshing}
+          onRefresh={() => {
+            setRefreshing(true);
+            replaceAllData(client).then(() => {
+              setRefreshing(false);
+            });
+          }}
+        />
+      }
       ListEmptyComponent={
         <View
           style={{

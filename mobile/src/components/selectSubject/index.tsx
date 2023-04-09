@@ -40,7 +40,8 @@ const SelectSubjectWindow: React.FC<SelectSubjectProps> = ({
       backgroundColor={backgroundColor}
       spacing="m"
       style={{
-        minWidth: 130,
+        minWidth: 150,
+        maxWidth: 200,
         elevation: 8,
         shadowOpacity: 0.1,
         shadowOffset: {width: 0, height: 0},
@@ -53,7 +54,8 @@ const SelectSubjectWindow: React.FC<SelectSubjectProps> = ({
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
-            marginBottom: 8,
+            marginBottom: 10,
+            padding: 2,
           }}>
           <BasicText textVariant="button">Subject</BasicText>
           <BasicButton
@@ -97,7 +99,7 @@ const SelectSubjectWindow: React.FC<SelectSubjectProps> = ({
                     marginRight: 10,
                   }}
                 />
-                <BasicText>{item.name}</BasicText>
+                <BasicText numberOfLines={1}>{item.name}</BasicText>
               </View>
             </BasicButton>
           )}

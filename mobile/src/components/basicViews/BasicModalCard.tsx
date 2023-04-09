@@ -30,10 +30,7 @@ export const BasicModalCard: React.FC<BasicModalCardProps> = ({
       isVisible={isVisible}
       backdropOpacity={0.3}
       avoidKeyboard={avoidKeyboard}
-      style={{
-        flexDirection: 'column',
-        justifyContent: alignCard,
-      }}
+      alignContent={alignCard}
       onBackdropPress={() => {
         if (onBackdropPress) {
           onBackdropPress();

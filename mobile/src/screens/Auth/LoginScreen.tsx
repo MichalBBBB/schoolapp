@@ -56,6 +56,7 @@ export const LoginScreen: React.FC<
           setPassword(value);
         }}
         placeholder="Password"
+        textContentType="password"
         secureTextEntry={true}
         spacing="m"
         error={errors.find(item => item.field == 'password')?.message}

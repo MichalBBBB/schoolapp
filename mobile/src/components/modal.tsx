@@ -9,6 +9,7 @@ import {
   ViewStyle,
   TouchableWithoutFeedback,
   BackHandler,
+  View,
 } from 'react-native';
 import Animated, {
   FadeIn,
@@ -25,6 +26,7 @@ interface ModalProps {
   style?: ViewStyle;
   avoidKeyboard?: boolean;
   backdropOpacity?: number;
+  alignContent?: 'flex-end' | 'center' | 'flex-start' | undefined;
 }
 export const Modal: React.FC<ModalProps> = ({
   isVisible,
@@ -33,6 +35,7 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   avoidKeyboard = false,
   backdropOpacity = 0,
+  alignContent = 'center',
 }) => {
   const content = (
     <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
@@ -58,18 +61,25 @@ export const Modal: React.FC<ModalProps> = ({
   return (
     <Portal>
       {isVisible && (
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={onBackdropPress}
-          style={[styles.modalWrapper]}>
+        <View style={styles.modalWrapper}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={onBackdropPress}
+            style={[
+              styles.modalWrapper,
+              {backgroundColor: `rgba(0,0,0,${backdropOpacity})`},
+            ]}
+          />
           <Animated.View
             entering={FadeIn}
             exiting={FadeOut}
+            pointerEvents="box-none"
             style={[
               {
                 flex: 1,
                 width: '100%',
-                backgroundColor: `rgba(0,0,0,${backdropOpacity})`,
+                zIndex: 99,
+                justifyContent: alignContent,
               },
               style,
             ]}>
@@ -82,7 +92,7 @@ export const Modal: React.FC<ModalProps> = ({
               content
             )}
           </Animated.View>
-        </TouchableOpacity>
+        </View>
       )}
     </Portal>
   );
@@ -92,5 +102,6 @@ const styles = StyleSheet.create({
   modalWrapper: {
     ...StyleSheet.absoluteFillObject,
     zIndex: 10,
+    flex: 1,
   },
 });

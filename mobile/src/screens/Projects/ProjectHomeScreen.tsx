@@ -6,6 +6,7 @@ import {FlatList, Pressable, Text, View} from 'react-native';
 import {BaseButton} from 'react-native-gesture-handler';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicCard} from '../../components/basicViews/BasicCard';
+import {BasicRefreshControl} from '../../components/basicViews/BasicRefreshControl';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {Invite} from '../../components/invite';
 import {Project} from '../../components/project';
@@ -82,13 +83,17 @@ const ProjectHomeScreen: React.FC<
             </BasicButton>
           </View>
         )}
-        refreshing={refreshing}
-        onRefresh={() => {
-          setRefreshing(true);
-          replaceAllData(client).then(() => {
-            setRefreshing(false);
-          });
-        }}
+        refreshControl={
+          <BasicRefreshControl
+            refreshing={refreshing}
+            onRefresh={() => {
+              setRefreshing(true);
+              replaceAllData(client).then(() => {
+                setRefreshing(false);
+              });
+            }}
+          />
+        }
         data={[...(invites?.getInvites || []), ...(data?.getProjects || [])]}
         renderItem={({item}) => {
           if (item.__typename == 'Project') {

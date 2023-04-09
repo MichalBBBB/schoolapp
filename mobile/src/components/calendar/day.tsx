@@ -22,7 +22,7 @@ const Day: React.FC<DayProps> = ({day, isSelected, monthNum, onPress}) => {
         alignItems: 'center',
         borderRadius: isSelected ? 15 : undefined,
         backgroundColor: isSelected
-          ? theme.colors.accentBackground1
+          ? theme.colors.accentBackground2
           : undefined,
         marginVertical: 2,
       }}

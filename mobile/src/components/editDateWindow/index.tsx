@@ -44,12 +44,21 @@ interface EditDateWindowProps {
 type SpecialDate = {
   name: string;
   date: dayjs.Dayjs;
+  iconSrc: any;
 };
 
 const specialDates: SpecialDate[] = [
-  {name: 'Today', date: dayjs()},
-  {name: 'Tommorow', date: dayjs().add(1, 'day')},
-  {name: 'Next week', date: dayjs().add(1, 'week')},
+  {name: 'Today', date: dayjs(), iconSrc: require('../../../assets/Today.png')},
+  {
+    name: 'Tommorow',
+    date: dayjs().add(1, 'day'),
+    iconSrc: require('../../../assets/Tomorrow.png'),
+  },
+  {
+    name: 'Next week',
+    date: dayjs().add(1, 'week'),
+    iconSrc: require('../../../assets/NextWeek.png'),
+  },
 ];
 
 const windowWidth = Dimensions.get('screen').width - 30;
@@ -101,8 +110,12 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             date: dayjs(
               closestLesson(lessons?.getAllLessons || [], subject, settings),
             ),
+            iconSrc: require('../../../assets/NextClass.png'),
           },
         ]);
+      } else if (!subject && specialDays.length == 4) {
+        console.log('here');
+        setSpecialDays(specialDays.filter((item, index) => index !== 3));
       }
     }
   }, [subject, settings]);
@@ -139,16 +152,14 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             }}
             style={{width: '100%'}}>
             <View style={{alignItems: 'center', width: '100%'}}>
-              <View
-                style={{
-                  height: 30,
-                  width: 30,
-                  backgroundColor: 'white',
-                  borderRadius: 10,
-                  marginBottom: 5,
-                }}
+              <BasicIcon
+                source={item.iconSrc}
+                style={{height: 25, width: 25, marginBottom: 10}}
+                color="primary"
               />
-              <BasicText style={{textAlign: 'center'}}>{item.name}</BasicText>
+              <BasicText style={{textAlign: 'center'}} numberOfLines={2}>
+                {item.name}
+              </BasicText>
             </View>
           </BasicButton>
         </View>

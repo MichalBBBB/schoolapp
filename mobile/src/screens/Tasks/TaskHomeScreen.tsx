@@ -62,6 +62,7 @@ import {
   useReactiveVar,
 } from '@apollo/client';
 import {BasicLoading} from '../../components/basicViews/BasicLoading';
+import {BasicRefreshControl} from '../../components/basicViews/BasicRefreshControl';
 
 if (
   Platform.OS === 'android' &&
@@ -199,13 +200,17 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
             );
           }
         }}
-        onRefresh={() => {
-          setRefreshing(true);
-          replaceAllData(client).then(() => {
-            setRefreshing(false);
-          });
-        }}
-        refreshing={refreshing}
+        refreshControl={
+          <BasicRefreshControl
+            refreshing={refreshing}
+            onRefresh={() => {
+              setRefreshing(true);
+              replaceAllData(client).then(() => {
+                setRefreshing(false);
+              });
+            }}
+          />
+        }
         contentContainerStyle={
           list.length == 0
             ? {flexGrow: 1}

@@ -135,7 +135,7 @@ android {
 
     defaultConfig {
         manifestPlaceholders = [appAuthRedirectScheme: 'com.googleusercontent.apps.1073547053227-8unebat1npl554u7sficsagpmpdkb08j']
-        applicationId "com.mobile"
+        applicationId "app.dayto.dayto"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

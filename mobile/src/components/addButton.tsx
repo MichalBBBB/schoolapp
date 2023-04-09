@@ -21,7 +21,7 @@ const AddButton: React.FC<addButtonProps> = ({onPress}) => {
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-        <BasicText color="background" style={{fontWeight: 'bold'}}>
+        <BasicText color="textContrast" style={{fontWeight: 'bold'}}>
           Add
         </BasicText>
       </View>
