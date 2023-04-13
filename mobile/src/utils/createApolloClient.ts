@@ -24,11 +24,11 @@ import SerializingLink from 'apollo-link-serialize';
 import {PersistentQueueLink} from './persistentQueueLink';
 import {BatchHttpLink} from '@apollo/client/link/batch-http';
 
-// export const baseUri =
-//   Platform.OS == 'ios' ? 'http://localhost:5002' : 'http://10.0.2.2:5002';
-
 export const baseUri =
-  Platform.OS == 'ios' ? 'https://api.dayto.app' : 'https://api.dayto.app';
+  Platform.OS == 'ios' ? 'http://localhost:5002' : 'http://10.0.2.2:5002';
+
+// export const baseUri =
+//   Platform.OS == 'ios' ? 'https://api.dayto.app' : 'https://api.dayto.app';
 
 export const uri = baseUri + '/graphql';
 
@@ -45,7 +45,7 @@ const retryLink = new RetryLink();
 const serializingLink = new SerializingLink();
 
 const errorLink = onError(error => {
-  console.log(error.graphQLErrors, error.networkError);
+  console.log(error.graphQLErrors, JSON.stringify(error.networkError?.stack));
   if (error.networkError) {
     isOnlineVar(false);
     persistentQueueLink.close();
@@ -117,6 +117,15 @@ export const createApolloClient = async (
         fields: {
           subtasks(existingSubtasks: Reference[], {canRead}) {
             return existingSubtasks ? existingSubtasks.filter(canRead) : [];
+          },
+        },
+      },
+      Project: {
+        fields: {
+          tasks(existingProjectTasks: Reference[], {canRead}) {
+            return existingProjectTasks
+              ? existingProjectTasks.filter(canRead)
+              : [];
           },
         },
       },

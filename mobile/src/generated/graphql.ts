@@ -33,7 +33,7 @@ export type CalendarEvent = {
 
 export type Invite = {
   __typename?: 'Invite';
-  ownerName: Scalars['String'];
+  adminName: Scalars['String'];
   projectId: Scalars['String'];
   projectName: Scalars['String'];
 };
@@ -123,6 +123,7 @@ export type MutationAddMemberToProjectArgs = {
 export type MutationAddProjectTaskArgs = {
   doDate?: InputMaybe<Scalars['DateTime']>;
   dueDate?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   projectId: Scalars['String'];
 };
@@ -162,6 +163,7 @@ export type MutationCreateLessonTimeArgs = {
 
 
 export type MutationCreateProjectArgs = {
+  id?: InputMaybe<Scalars['String']>;
   memberEmails: Array<Scalars['String']>;
   name: Scalars['String'];
 };
@@ -367,8 +369,6 @@ export type Project = {
   id: Scalars['String'];
   members: Array<PublicUser>;
   name: Scalars['String'];
-  owner: User;
-  ownerId: Scalars['String'];
   tasks: Array<ProjectTask>;
   text?: Maybe<Scalars['String']>;
   userProjects: Array<UserProject>;
@@ -505,7 +505,6 @@ export type User = {
   imageURL?: Maybe<Scalars['String']>;
   lessonTimes: Array<LessonTime>;
   lessons: Array<Lesson>;
-  ownedProjects: Array<Project>;
   reminders: Array<Reminder>;
   settings: Settings;
   settingsId: Scalars['String'];
@@ -560,7 +559,7 @@ export type UserSucces = {
 
 export type CalendarEventFragment = { __typename?: 'CalendarEvent', id: string, name: string, text?: string | null, startDate: any, endDate?: any | null, wholeDay: boolean, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> };
 
-export type InviteFragment = { __typename?: 'Invite', ownerName: string, projectName: string, projectId: string };
+export type InviteFragment = { __typename?: 'Invite', adminName: string, projectName: string, projectId: string };
 
 export type LessonFragment = { __typename?: 'Lesson', id: string, dayNumber: number, subject: { __typename?: 'Subject', id: string, name: string, colorName: string }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } };
 
@@ -687,6 +686,7 @@ export type AddMemberToProjectMutation = { __typename?: 'Mutation', addMemberToP
 export type CreateProjectMutationVariables = Exact<{
   name: Scalars['String'];
   memberEmails: Array<Scalars['String']> | Scalars['String'];
+  id: Scalars['String'];
 }>;
 
 
@@ -724,6 +724,7 @@ export type RemoveMemberFromProjectMutationVariables = Exact<{
 export type RemoveMemberFromProjectMutation = { __typename?: 'Mutation', removeMemberFromProject: { __typename?: 'Project', name: string, id: string, text?: string | null, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, doDate?: any | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
 
 export type AddProjectTaskMutationVariables = Exact<{
+  id: Scalars['String'];
   name: Scalars['String'];
   dueDate?: InputMaybe<Scalars['DateTime']>;
   doDate?: InputMaybe<Scalars['DateTime']>;
@@ -942,7 +943,7 @@ export type GetAllTasksQuery = { __typename?: 'Query', getAllTasks: Array<{ __ty
 export type GetInvitesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetInvitesQuery = { __typename?: 'Query', getInvites: Array<{ __typename?: 'Invite', ownerName: string, projectName: string, projectId: string }> };
+export type GetInvitesQuery = { __typename?: 'Query', getInvites: Array<{ __typename?: 'Invite', adminName: string, projectName: string, projectId: string }> };
 
 export type GetProjectTasksOfUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1001,7 +1002,7 @@ export const CalendarEventFragmentDoc = gql`
 ${ReminderFragmentDoc}`;
 export const InviteFragmentDoc = gql`
     fragment Invite on Invite {
-  ownerName
+  adminName
   projectName
   projectId
 }
@@ -1535,8 +1536,8 @@ export type AddMemberToProjectMutationHookResult = ReturnType<typeof useAddMembe
 export type AddMemberToProjectMutationResult = Apollo.MutationResult<AddMemberToProjectMutation>;
 export type AddMemberToProjectMutationOptions = Apollo.BaseMutationOptions<AddMemberToProjectMutation, AddMemberToProjectMutationVariables>;
 export const CreateProjectDocument = gql`
-    mutation CreateProject($name: String!, $memberEmails: [String!]!) {
-  createProject(name: $name, memberEmails: $memberEmails) {
+    mutation CreateProject($name: String!, $memberEmails: [String!]!, $id: String!) {
+  createProject(name: $name, memberEmails: $memberEmails, id: $id) {
     ...Project
   }
 }
@@ -1558,6 +1559,7 @@ export type CreateProjectMutationFn = Apollo.MutationFunction<CreateProjectMutat
  *   variables: {
  *      name: // value for 'name'
  *      memberEmails: // value for 'memberEmails'
+ *      id: // value for 'id'
  *   },
  * });
  */
@@ -1700,12 +1702,13 @@ export type RemoveMemberFromProjectMutationHookResult = ReturnType<typeof useRem
 export type RemoveMemberFromProjectMutationResult = Apollo.MutationResult<RemoveMemberFromProjectMutation>;
 export type RemoveMemberFromProjectMutationOptions = Apollo.BaseMutationOptions<RemoveMemberFromProjectMutation, RemoveMemberFromProjectMutationVariables>;
 export const AddProjectTaskDocument = gql`
-    mutation AddProjectTask($name: String!, $dueDate: DateTime, $doDate: DateTime, $projectId: String!) {
+    mutation AddProjectTask($id: String!, $name: String!, $dueDate: DateTime, $doDate: DateTime, $projectId: String!) {
   addProjectTask(
     name: $name
     dueDate: $dueDate
     projectId: $projectId
     doDate: $doDate
+    id: $id
   ) {
     ...ProjectTask
   }
@@ -1726,6 +1729,7 @@ export type AddProjectTaskMutationFn = Apollo.MutationFunction<AddProjectTaskMut
  * @example
  * const [addProjectTaskMutation, { data, loading, error }] = useAddProjectTaskMutation({
  *   variables: {
+ *      id: // value for 'id'
  *      name: // value for 'name'
  *      dueDate: // value for 'dueDate'
  *      doDate: // value for 'doDate'

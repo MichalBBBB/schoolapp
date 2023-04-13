@@ -14,6 +14,7 @@ import { ProjectTask } from "../entities/ProjectTask";
 import { PublicUser, User } from "../entities/User";
 import { UserProjectTask } from "../entities/UserProjectTask";
 import { isAuth } from "../middleware/isAuth";
+import { queueMiddleware } from "../middleware/queueMiddleware";
 import { isUserInProject } from "../utils/isUserInProject";
 import { MyContext } from "../utils/MyContext";
 
@@ -73,13 +74,16 @@ export class projectTaskResolver {
 
   @Mutation(() => ProjectTask)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async addProjectTask(
     @Arg("name") name: string,
     @Arg("projectId") projectId: string,
     @Arg("dueDate", { nullable: true }) dueDate?: Date,
-    @Arg("doDate", { nullable: true }) doDate?: Date
+    @Arg("doDate", { nullable: true }) doDate?: Date,
+    @Arg("id", { nullable: true }) id?: string
   ) {
     return ProjectTask.create({
+      id,
       projectId: projectId,
       name,
       dueDate,
@@ -89,6 +93,7 @@ export class projectTaskResolver {
 
   @Mutation(() => ProjectTask)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async editProjectTask(
     @Arg("id") id: string,
     @Arg("name") name: string,
@@ -109,6 +114,7 @@ export class projectTaskResolver {
 
   @Mutation(() => ProjectTask)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async toggleProjectTask(
     @Arg("id") id: string,
     @Ctx() { payload }: MyContext
@@ -128,6 +134,7 @@ export class projectTaskResolver {
 
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async deleteProjectTask(
     @Arg("id") id: string,
     @Ctx() { payload }: MyContext
@@ -146,6 +153,7 @@ export class projectTaskResolver {
 
   @Mutation(() => ProjectTask)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async assignMember(
     @Arg("userId") userId: string,
     @Arg("taskId") taskId: string,
@@ -170,6 +178,7 @@ export class projectTaskResolver {
 
   @Mutation(() => ProjectTask)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async removeAssignedMember(
     @Arg("userId") userId: string,
     @Arg("taskId") taskId: string,
@@ -196,6 +205,7 @@ export class projectTaskResolver {
 
   @Query(() => [ProjectTask])
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async getProjectTasksOfUser(@Ctx() { payload }: MyContext) {
     const projectTasks = await ProjectTask.createQueryBuilder("projectTask")
       .select()

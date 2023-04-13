@@ -1,6 +1,6 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
-import React, {useState} from 'react';
+import React, {useLayoutEffect, useState} from 'react';
 import {
   Pressable,
   StyleSheet,
@@ -8,6 +8,7 @@ import {
   View,
   TextInput,
   Keyboard,
+  ScrollView,
 } from 'react-native';
 import {
   GetAllEventsDocument,
@@ -26,6 +27,7 @@ import {useCreateEvent} from '../../mutationHooks/calendarEvent/createEvent';
 import {Popup} from '../../components/popup';
 import {SelectSubjectPopup} from '../../components/selectSubject/selectSubjectPopup';
 import {CalendarStackScreenProps} from '../../utils/types';
+import BackButton from '../../components/backButton';
 
 let hours: number[] = [];
 for (var i = 0; i < 24; i++) {
@@ -52,6 +54,19 @@ const AddEventScreen: React.FC<CalendarStackScreenProps<'AddEventScreen'>> = ({
   const [endDateModalVisible, setEndDateModalVisible] = useState(false);
   const [subject, setSubject] = useState<SubjectFragment | null>(null);
   const [text, setText] = useState<string | null>(null);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <BackButton
+          onPress={() => {
+            Keyboard.dismiss();
+            navigation.goBack();
+          }}
+        />
+      ),
+    });
+  });
 
   return (
     <View style={styles.container}>

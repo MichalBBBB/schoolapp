@@ -1,4 +1,4 @@
-package com.mobile.newarchitecture.components;
+package app.dayto.dayto.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import {useState} from 'react';
@@ -10,6 +10,8 @@ import Task, {calendarConfigWithoutTime} from '../../components/task';
 import {TaskFragment, useGetAllTasksQuery} from '../../generated/graphql';
 import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {TaskStackScreenProps} from '../../utils/types';
+import AddButton from '../../components/addButton';
+import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
 
 export const PlanDayScreen: React.FC<
   TaskStackScreenProps<'PlanDayScreen'>
@@ -29,10 +31,11 @@ export const PlanDayScreen: React.FC<
       return dayjs(a.dueDate).diff(b.dueDate, 'minute');
     });
   return (
-    <View style={{padding: 10}}>
+    <View style={{padding: 10, flex: 1}}>
       <FlatList
         ListHeaderComponent={
           <BasicCard backgroundColor="accentBackground1">
+            <BasicTextInput />
             <View style={styles.topContainer}>
               <BasicButton
                 variant="unstyled"
@@ -84,6 +87,9 @@ export const PlanDayScreen: React.FC<
         data={unassignedTasks}
         renderItem={({item}) => <Task task={item} planning planningDay={day} />}
       />
+      <View style={{position: 'absolute', right: 0, bottom: 0, margin: 20}}>
+        <AddButton onPress={() => {}} />
+      </View>
     </View>
   );
 };

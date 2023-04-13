@@ -317,7 +317,7 @@ const LessonTimesScreen: React.FC<
                 onPress={() => {
                   addLessonTime(item);
                 }}>
-                <Image
+                <BasicIcon
                   style={{resizeMode: 'stretch', height: 35, width: 35}}
                   source={require('../../../../assets/Plus.png')}
                 />

@@ -175,3 +175,22 @@ export const getDayNumber = (date: dayjs.Dayjs, settings: SettingsFragment) => {
     }
   }
 };
+
+export const getTimeOfLessonThisDay = (
+  subject: SubjectFragment,
+  date: dayjs.Dayjs,
+  lessons: LessonFragment[],
+  settings: SettingsFragment,
+) => {
+  const dayNumber = getDayNumber(date, settings);
+  const lesson = lessons.find(item => {
+    if (item.subject.id == subject.id && dayNumber == item.dayNumber) {
+      return true;
+    }
+  });
+  if (lesson) {
+    return lesson.lessonTime.startTime;
+  } else {
+    return null;
+  }
+};

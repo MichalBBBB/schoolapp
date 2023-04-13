@@ -15,6 +15,9 @@ import {BasicText} from './basicViews/BasicText';
 import {BasicTextInput} from './basicViews/BasicTextInput';
 import EditDateModal from './editDateWindow';
 import {calendarConfigWithoutTime} from './task';
+import {v4 as uuidv4} from 'uuid';
+import {useAddProjectTask} from '../mutationHooks/projectTask/addProjectTask';
+import {useEditProjectTask} from '../mutationHooks/projectTask/editProjectTask';
 
 interface EditProjectTaskWindowProps {
   onClose: () => void;
@@ -29,16 +32,8 @@ const EditProjectTaskWindow: React.FC<EditProjectTaskWindowProps> = ({
   projectTask,
   projectId,
 }) => {
-  const [createProjectTask] = useAddProjectTaskMutation({
-    context: {
-      skipQueue: true,
-    },
-  });
-  const [editProjectTask] = useEditProjectTaskMutation({
-    context: {
-      skipQueue: true,
-    },
-  });
+  const [createProjectTask] = useAddProjectTask();
+  const [editProjectTask] = useEditProjectTask();
 
   const [name, setName] = useState('');
   const [viewVisible, setViewVisible] = useState<
@@ -112,22 +107,18 @@ const EditProjectTaskWindow: React.FC<EditProjectTaskWindowProps> = ({
             onPress={() => {
               if (projectTask) {
                 editProjectTask({
-                  variables: {
-                    id: projectTask.id,
-                    name,
-                    doDate,
-                    dueDate,
-                  },
+                  id: projectTask.id,
+                  name,
+                  doDate,
+                  dueDate,
                 });
               } else {
                 createProjectTask({
-                  variables: {
-                    projectId,
-                    name,
-                    doDate,
-                    dueDate,
-                  },
-                  refetchQueries: [GetProjectsDocument],
+                  id: uuidv4(),
+                  projectId,
+                  name,
+                  doDate,
+                  dueDate,
                 });
               }
               closeWindow();

@@ -20,6 +20,7 @@ import {
   Pressable,
   Platform,
   UIManager,
+  RefreshControl,
 } from 'react-native';
 import {isLoadingVar, isOnlineVar} from '../../App';
 import AddButton from '../../components/addButton';
@@ -115,7 +116,7 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
     });
   });
 
-  const MyFlatList = FlatList<TaskFragment | ProjectTaskWithProjectFragment>;
+  // const MyFlatList = FlatList<TaskFragment | ProjectTaskWithProjectFragment>;
 
   const list: Array<TaskFragment | ProjectTaskWithProjectFragment> = (
     (
@@ -161,7 +162,7 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
 
   return (
     <View style={{flex: 1}}>
-      <MyFlatList
+      <FlatList
         ListEmptyComponent={() => {
           if (isLoading) {
             return (

@@ -130,8 +130,8 @@ const TimeTableScreen: React.FC<
                   flexDirection: 'row',
                 }}>
                 <Col
-                  data={dayNumbers.map(item => item + 1)}
-                  width={40}
+                  data={dayNumbers.map(item => `Day ${item + 1}`)}
+                  width={50}
                   heightArr={Array(settings?.lengthOfRotation).fill(80)}
                   textStyle={{color: theme.colors.text}}
                 />

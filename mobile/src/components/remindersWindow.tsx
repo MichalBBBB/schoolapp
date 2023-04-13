@@ -7,7 +7,6 @@ import {BasicRadio} from './basicViews/BasicRadio';
 import {BasicCardProps} from './basicViews/BasicCard';
 import {BasicText} from './basicViews/BasicText';
 import {BasicButton} from './basicViews/BasicButton';
-import {sendNotification, setNotificationTrigger} from '../utils/notifications';
 
 interface RemindersWindowProps {
   onSubmit: (reminderTImes: number[]) => void;
@@ -28,15 +27,15 @@ const reminderTimes: ReminderTime[] = [
   },
   {
     title: '10 minutes early',
-    minutesBefore: 1,
+    minutesBefore: 10,
   },
   {
     title: '30 minutes early',
-    minutesBefore: 2,
+    minutesBefore: 30,
   },
   {
     title: '1 hour early',
-    minutesBefore: 3,
+    minutesBefore: 60,
   },
   {
     title: '2 hours early',

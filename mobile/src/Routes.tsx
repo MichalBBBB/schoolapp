@@ -6,7 +6,7 @@ import AuthStack from './routes/AuthStack';
 import {useReactiveVar} from '@apollo/client';
 import TaskStack from './routes/TaskStack';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {Image, StatusBar, View} from 'react-native';
+import {Image, Platform, StatusBar, View} from 'react-native';
 import CalendarStack from './routes/CalendarStack';
 import {useTheme} from './contexts/ThemeContext';
 import SettingsStack from './routes/SettingsStack';
@@ -30,7 +30,7 @@ const Routes = () => {
   screens = (
     <Tab.Navigator
       screenOptions={{
-        tabBarHideOnKeyboard: true,
+        tabBarHideOnKeyboard: Platform.OS == 'ios' ? false : true,
         header: () => null,
         tabBarStyle: {borderTopWidth: 0},
       }}>

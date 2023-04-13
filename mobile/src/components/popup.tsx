@@ -2,10 +2,7 @@ import {Portal} from '@gorhom/portal';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
   Dimensions,
-  NativeModules,
-  Pressable,
   StyleSheet,
-  TouchableHighlight,
   TouchableOpacity,
   View,
   ViewStyle,
@@ -15,7 +12,6 @@ import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
   withTiming,
 } from 'react-native-reanimated';
 import {ColorsObject} from '../types/Theme';
@@ -101,12 +97,15 @@ export const Popup: React.FC<PopupProps> = ({
     let left = 0;
     let top = 0;
 
+    // console.log(triggerDimensions, contentDimensions);
+
     // if the popup is outside the screen from the left
     if (
       triggerDimensions.left - contentDimensions.width < 0 &&
       forceSide !== 'right'
     ) {
       left = triggerDimensions.left;
+
       setisRight(false);
     } else {
       left =
@@ -131,10 +130,8 @@ export const Popup: React.FC<PopupProps> = ({
       }
     } else {
       const initialTriggerTop =
-        triggerDimensions.top +
-        triggerDimensions.height +
-        NativeModules.StatusBarManager.HEIGHT;
-
+        triggerDimensions.top + triggerDimensions.height;
+      // + NativeModules.StatusBarManager.HEIGHT;
       if (
         initialTriggerTop + contentDimensions.height >
         layoutHeight - keyboardHeight
@@ -198,7 +195,10 @@ export const Popup: React.FC<PopupProps> = ({
         ref={triggerWrapperRef}>
         <View>{trigger}</View>
       </Pressable> */}
-      <View ref={triggerWrapperRef} style={triggerContainerStyle}>
+      <View
+        ref={triggerWrapperRef}
+        style={triggerContainerStyle}
+        collapsable={false}>
         {React.cloneElement(trigger, {
           onPress: () => {
             // setContentVisible(false);

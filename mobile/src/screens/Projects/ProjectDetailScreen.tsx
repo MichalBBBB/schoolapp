@@ -1,8 +1,6 @@
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {
   FlatList,
-  Image,
   Pressable,
   StyleSheet,
   Text,
@@ -18,28 +16,17 @@ import {MenuItem} from '../../components/menu/MenuItem';
 import {Popup} from '../../components/popup';
 import ProjectTask from '../../components/projectTask';
 import {useTheme} from '../../contexts/ThemeContext';
-import {
-  GetProjectsDocument,
-  useDeleteProjectMutation,
-  useEditProjectMutation,
-  useGetProjectsQuery,
-} from '../../generated/graphql';
+import {useGetProjectsQuery} from '../../generated/graphql';
+import {useDeleteProject} from '../../mutationHooks/project/deleteProject';
+import {useEditProject} from '../../mutationHooks/project/editProject';
 import {ProjectStackScreenProps} from '../../utils/types';
 
 const ProjectDetailScreen: React.FC<
   ProjectStackScreenProps<'ProjectDetailScreen'>
 > = ({route, navigation}) => {
   const {data: projects} = useGetProjectsQuery();
-  const [editProject] = useEditProjectMutation({
-    context: {
-      skipQueue: true,
-    },
-    refetchQueries: [GetProjectsDocument],
-  });
-  const [deleteProject] = useDeleteProjectMutation({
-    context: {skipQueue: true},
-    refetchQueries: [GetProjectsDocument],
-  });
+  const [editProject] = useEditProject();
+  const [deleteProject] = useDeleteProject();
 
   const project = projects?.getProjects.find(
     item => item.id == route.params.projectId,
@@ -59,11 +46,9 @@ const ProjectDetailScreen: React.FC<
             navigation.goBack();
             if (project) {
               editProject({
-                variables: {
-                  id: project?.id,
-                  name,
-                  text,
-                },
+                id: project?.id,
+                name,
+                text,
               });
             }
           }}
@@ -93,10 +78,7 @@ const ProjectDetailScreen: React.FC<
               color="dangerous"
               onPress={() => {
                 if (project) {
-                  deleteProject({
-                    variables: {id: project.id},
-                    refetchQueries: [GetProjectsDocument],
-                  });
+                  deleteProject({id: project.id});
                   navigation.goBack();
                 }
               }}
@@ -128,11 +110,9 @@ const ProjectDetailScreen: React.FC<
             defaultValue={project.name}
             onEndEditing={() => {
               editProject({
-                variables: {
-                  id: project.id,
-                  name,
-                  text,
-                },
+                id: project.id,
+                name,
+                text,
               });
             }}
           />
@@ -155,11 +135,9 @@ const ProjectDetailScreen: React.FC<
           defaultValue={project.text || ''}
           onEndEditing={() => {
             editProject({
-              variables: {
-                id: project.id,
-                name,
-                text,
-              },
+              id: project.id,
+              name,
+              text,
             });
           }}
         />

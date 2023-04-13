@@ -15,6 +15,8 @@ import {
   useDeleteProjectTaskMutation,
   useToggleProjectTaskMutation,
 } from '../generated/graphql';
+import {useDeleteProjectTask} from '../mutationHooks/projectTask/deleteProjectTask';
+import {useToggleProjectTask} from '../mutationHooks/projectTask/toggleProjectTask';
 import {ColorsObject} from '../types/Theme';
 import {AssignMembersWindow} from './assignMembersWindow';
 import {BasicButton} from './basicViews/BasicButton';
@@ -30,12 +32,8 @@ const ProjectTask: React.FC<{
   projectTask: ProjectTaskFragment;
   backgroundColor?: keyof ColorsObject;
 }> = ({projectTask, backgroundColor = 'background'}) => {
-  const [deleteProjectTask] = useDeleteProjectTaskMutation({
-    context: {skipQeue: true},
-  });
-  const [toggleProjectTask] = useToggleProjectTaskMutation({
-    context: {skipQeue: true},
-  });
+  const [deleteProjectTask] = useDeleteProjectTask();
+  const [toggleProjectTask] = useToggleProjectTask();
 
   const [isAssignMembersVisible, setIsAssignMembersVisible] = useState(false);
   const [isEditProjectTaskVisible, setIsEditProjectTaskVisible] =
@@ -46,10 +44,7 @@ const ProjectTask: React.FC<{
   const back = (
     <TouchableOpacity
       onPress={() => {
-        deleteProjectTask({
-          variables: {id: projectTask.id},
-          refetchQueries: [GetProjectsDocument],
-        });
+        deleteProjectTask({id: projectTask.id});
       }}>
       <View
         style={{
@@ -84,10 +79,7 @@ const ProjectTask: React.FC<{
                 variant="unstyled"
                 spacing="none"
                 onPress={() => {
-                  toggleProjectTask({
-                    variables: {id: projectTask.id},
-                    refetchQueries: [GetProjectsDocument],
-                  });
+                  toggleProjectTask({id: projectTask.id});
                 }}>
                 <BasicIcon
                   source={

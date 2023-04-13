@@ -16,7 +16,7 @@ import {
   SubjectFragment,
   useGetAllLessonsQuery,
 } from '../../generated/graphql';
-import {closestLesson} from '../../utils/lessonUtils';
+import {closestLesson, getTimeOfLessonThisDay} from '../../utils/lessonUtils';
 import {BasicButton} from '../basicViews/BasicButton';
 import {BasicCard} from '../basicViews/BasicCard';
 import {BasicModalCard} from '../basicViews/BasicModalCard';
@@ -256,15 +256,35 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
         <WeekDays weekHeaderHeight={30} width={windowWidth - 20} />
         <View style={{height: calendarHeight}}>
           <Calendar
+            ref={calendarRef}
             weekHeight={weekHeight}
             calendarWidth={windowWidth - 20}
             pastScrollRange={2}
             futureScrollRange={20}
             selectedDay={selectedDay}
             onChangeSelectedDay={date => {
-              setSelectedDay(
-                date.hour(selectedDay.hour()).minute(selectedDay.minute()),
-              );
+              if (subject && settings) {
+                const timeOfLesson = getTimeOfLessonThisDay(
+                  subject,
+                  date,
+                  lessons?.getAllLessons || [],
+                  settings,
+                );
+                if (timeOfLesson) {
+                  const [hours, minutes] = timeOfLesson.split(':');
+                  setSelectedDay(
+                    date.hour(parseInt(hours)).minute(parseInt(minutes)),
+                  );
+                } else {
+                  setSelectedDay(
+                    date.hour(selectedDay.hour()).minute(selectedDay.minute()),
+                  );
+                }
+              } else {
+                setSelectedDay(
+                  date.hour(selectedDay.hour()).minute(selectedDay.minute()),
+                );
+              }
               setSelectedSpecialDay(null);
             }}
             onChangeActiveMonth={newMonth => {

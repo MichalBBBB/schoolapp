@@ -37,6 +37,7 @@ import SelectSubjectWindow from '../../components/selectSubject';
 import {Popup} from '../../components/popup';
 import {SelectSubjectPopup} from '../../components/selectSubject/selectSubjectPopup';
 import {TaskStackScreenProps} from '../../utils/types';
+import {BasicIcon} from '../../components/basicViews/BasicIcon';
 
 const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
   navigation,
@@ -73,7 +74,7 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
           onPress={() => {
             setAddSubtaskModalIsVisible(true);
           }}>
-          <Image
+          <BasicIcon
             source={require('../../../assets/Plus.png')}
             style={styles.plusButton}
           />

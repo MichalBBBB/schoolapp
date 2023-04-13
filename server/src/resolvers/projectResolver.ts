@@ -15,13 +15,14 @@ import { Project } from "../entities/Project";
 import { PublicUser, User } from "../entities/User";
 import { UserProject } from "../entities/UserProject";
 import { isAuth } from "../middleware/isAuth";
+import { queueMiddleware } from "../middleware/queueMiddleware";
 import { AppDataSource } from "../TypeORM";
 import { MyContext } from "../utils/MyContext";
 
 @ObjectType()
 class Invite {
   @Field()
-  ownerName: string;
+  adminName: string;
 
   @Field()
   projectName: string;
@@ -92,14 +93,16 @@ export class projectResolver {
 
   @Mutation(() => Project)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async createProject(
     @Ctx() { payload }: MyContext,
     @Arg("name") name: string,
-    @Arg("memberEmails", () => [String]) memberEmails: string[]
+    @Arg("memberEmails", () => [String]) memberEmails: string[],
+    @Arg("id", { nullable: true }) id?: string
   ) {
     const project = await Project.create({
-      ownerId: payload?.userId,
       name,
+      id,
     }).save();
     await AppDataSource.transaction(async (transactionEntityManager) => {
       memberEmails.forEach(async (item) => {
@@ -133,6 +136,7 @@ export class projectResolver {
 
   @Mutation(() => Project)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async editProject(
     @Arg("id") id: string,
     @Arg("name") name: string,
@@ -143,9 +147,7 @@ export class projectResolver {
       where: { id },
       relations: { userProjects: true, tasks: true },
     });
-    console.log("here1");
     if (project?.userProjects.some((item) => item.userId == payload?.userId)) {
-      console.log("here2");
       project.name = name;
       project.text = text;
       project.save();
@@ -157,11 +159,17 @@ export class projectResolver {
 
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async deleteProject(@Arg("id") id: string, @Ctx() { payload }: MyContext) {
     const project = await Project.findOne({
-      where: { id, ownerId: payload?.userId },
+      where: { id },
     });
-    if (project) {
+    if (
+      project &&
+      project?.userProjects.some(
+        (item) => item.userId == payload?.userId && item.isAdmin
+      )
+    ) {
       await project.remove();
       return true;
     } else {
@@ -171,6 +179,7 @@ export class projectResolver {
 
   @Mutation(() => Project)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async addMemberToProject(
     @Arg("projectId") projectId: string,
     @Arg("memberEmail") memberEmail: string,
@@ -178,7 +187,13 @@ export class projectResolver {
   ) {
     const project = await Project.findOne({ where: { id: projectId } });
     const user = await User.findOne({ where: { email: memberEmail } });
-    if (project?.ownerId == payload?.userId && user) {
+    if (
+      user &&
+      project &&
+      project?.userProjects.some(
+        (item) => item.userId == payload?.userId && item.isAdmin
+      )
+    ) {
       await UserProject.create({
         userId: user.id,
         projectId,
@@ -193,6 +208,7 @@ export class projectResolver {
 
   @Mutation(() => Project)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async removeMemberFromProject(
     @Arg("projectId") projectId: string,
     @Arg("memberId") memberId: string,
@@ -202,7 +218,13 @@ export class projectResolver {
       where: { userId: memberId, projectId },
     });
     const project = await Project.findOne({ where: { id: projectId } });
-    if (memberId == payload?.userId || payload?.userId == project?.ownerId) {
+    if (
+      project &&
+      project?.userProjects.some(
+        (item) => item.userId == payload?.userId && item.isAdmin
+      ) &&
+      memberId !== payload?.userId
+    ) {
       await userProject?.remove();
     }
     return Project.findOne({
@@ -212,6 +234,7 @@ export class projectResolver {
   }
   @Mutation(() => Project)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async acceptProjectInvite(
     @Arg("id") id: string,
     @Ctx() { payload }: MyContext
@@ -230,6 +253,7 @@ export class projectResolver {
 
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async declineProjectInvite(
     @Arg("id") id: string,
     @Ctx() { payload }: MyContext
@@ -254,14 +278,15 @@ export class projectResolver {
     });
     const invites: Invite[] = await Promise.all(
       userProjects.map(async (item) => {
-        const owner = await User.findOne({
-          where: { id: item.project.ownerId },
+        const admin = await UserProject.findOne({
+          where: { projectId: item.project.id, isAdmin: true },
+          relations: { user: true },
         });
-        if (owner) {
+        if (admin) {
           return {
             projectId: item.project.id,
             projectName: item.project.name,
-            ownerName: owner.fullName,
+            adminName: admin.user.fullName,
           };
         } else {
           throw new Error("project owner hasn't been found");

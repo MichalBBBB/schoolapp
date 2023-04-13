@@ -1,5 +1,9 @@
-mutation CreateProject($name: String!, $memberEmails: [String!]!) {
-  createProject(name: $name, memberEmails: $memberEmails) {
+mutation CreateProject(
+  $name: String!
+  $memberEmails: [String!]!
+  $id: String!
+) {
+  createProject(name: $name, memberEmails: $memberEmails, id: $id) {
     ...Project
   }
 }

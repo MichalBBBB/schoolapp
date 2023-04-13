@@ -1,5 +1,5 @@
 fragment Invite on Invite {
-  ownerName
+  adminName
   projectName
   projectId
 }

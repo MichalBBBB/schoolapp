@@ -1,4 +1,4 @@
-package com.mobile;
+package app.dayto.dayto;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

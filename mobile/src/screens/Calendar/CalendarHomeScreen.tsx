@@ -18,7 +18,15 @@ const CalendarHomeScreen: React.FC<
       style={{flex: 1}}
       onLayout={event => findDimensions(event.nativeEvent.layout)}>
       <CalendarView screenHeight={screenHeight} />
-      <View style={{position: 'absolute', right: 0, bottom: 0, margin: 20}}>
+      <View
+        style={{
+          position: 'absolute',
+          right: 0,
+          bottom: 0,
+          margin: 20,
+          marginBottom: 20,
+          zIndex: 200,
+        }}>
         <AddButton
           onPress={() => {
             navigation.navigate('AddEventScreen');

@@ -12,6 +12,8 @@ import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {BasicCard} from '../../components/basicViews/BasicCard';
 import {ProjectStackScreenProps} from '../../utils/types';
+import {useCreateProject} from '../../mutationHooks/project/createProject';
+import {v4 as uuidv4} from 'uuid';
 
 export const NewProjectScreen: React.FC<
   ProjectStackScreenProps<'NewProjectScreen'>
@@ -19,9 +21,7 @@ export const NewProjectScreen: React.FC<
   const [name, setName] = useState('');
   const [members, setMembers] = useState<string[]>([]);
   const [email, setEmail] = useState('');
-  const [createProject, {error}] = useCreateProjectMutation({
-    context: {skipQeue: true},
-  });
+  const [createProject, {error}] = useCreateProject();
 
   useEffect(() => {
     console.log(JSON.stringify(error));
@@ -81,8 +81,9 @@ export const NewProjectScreen: React.FC<
           spacing="m"
           onPress={() => {
             createProject({
-              variables: {name: name, memberEmails: members},
-              refetchQueries: [GetProjectsDocument],
+              name: name,
+              memberEmails: members,
+              id: uuidv4(),
             });
             navigation.goBack();
           }}>
