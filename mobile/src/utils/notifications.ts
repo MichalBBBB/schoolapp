@@ -1,5 +1,6 @@
 import notifee, {
   AndroidImportance,
+  AndroidNotificationSetting,
   TimestampTrigger,
   TriggerType,
 } from '@notifee/react-native';
@@ -21,6 +22,18 @@ interface SendNotificationProps {
   title: string;
   body?: string;
 }
+
+export const checkPermissions = async () => {
+  const settings = await notifee.getNotificationSettings();
+  if (settings.android.alarm == AndroidNotificationSetting.ENABLED) {
+    return true;
+  } else {
+    // Show some user information to educate them on what exact alarm permission is,
+    // and why it is necessary for your app functionality, then send them to system preferences:
+    await notifee.openAlarmPermissionSettings();
+    return false;
+  }
+};
 
 export const sendNotification = async ({
   title,

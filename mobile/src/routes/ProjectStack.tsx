@@ -40,7 +40,13 @@ const ProjectStack: React.FC<
         name="ProjectMembersScreen"
         component={ProjectMembersScreen}
       />
-      <Stack.Screen name="NewProjectScreen" component={NewProjectScreen} />
+      <Stack.Screen
+        name="NewProjectScreen"
+        component={NewProjectScreen}
+        options={{
+          title: 'New Project',
+        }}
+      />
     </Stack.Navigator>
   );
 };

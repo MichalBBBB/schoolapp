@@ -36,8 +36,7 @@ export type TaskStackScreenProps<T extends keyof TaskStackParamList> =
 
 export type CalendarStackParamList = {
   CalendarHomeScreen: undefined;
-  AddEventScreen: undefined;
-  EventDetailScreen: {event: CalendarEventFragment};
+  EventDetailScreen: {event?: CalendarEventFragment};
   TaskDetailScreen: {task: TaskFragment};
 };
 

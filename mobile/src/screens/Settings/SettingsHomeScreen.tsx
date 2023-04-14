@@ -66,7 +66,7 @@ const SettingsHomeScreen: React.FC<
             backgroundColor="accentBackground1"
             marginBottom={10}
             spacing="m"
-            gap={10}>
+            gap={18}>
             <SettingsItem
               text="TimeTable"
               onPress={() => {
@@ -85,7 +85,7 @@ const SettingsHomeScreen: React.FC<
             backgroundColor="accentBackground1"
             marginBottom={10}
             spacing="m"
-            gap={10}>
+            gap={18}>
             <SettingsItem
               text="Date and time"
               onPress={() => {

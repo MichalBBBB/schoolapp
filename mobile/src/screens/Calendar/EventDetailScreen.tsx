@@ -8,7 +8,11 @@ import {BasicText} from '../../components/basicViews/BasicText';
 import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
 import EditDateModal from '../../components/editDateWindow';
 
-import {RemindersInput, useGetAllEventsQuery} from '../../generated/graphql';
+import {
+  RemindersInput,
+  SubjectFragment,
+  useGetAllEventsQuery,
+} from '../../generated/graphql';
 
 import {v4 as uuidv4} from 'uuid';
 import {setRemindersFromApollo} from '../../utils/reminderUtils';
@@ -20,46 +24,94 @@ import {
   CalendarStackParamList,
   CalendarStackScreenProps,
 } from '../../utils/types';
+import {useCreateEvent} from '../../mutationHooks/calendarEvent/createEvent';
+import {RemindersWindow} from '../../components/remindersWindow';
+import {checkPermissions} from '../../utils/notifications';
 
 const EventDetailScreen: React.FC<
   CalendarStackScreenProps<'EventDetailScreen'>
 > = ({navigation, route}) => {
   const {data: events} = useGetAllEventsQuery();
   const event = events?.getAllEvents.find(
-    item => item.id == route.params.event.id,
-  )!;
+    item => item.id == route.params.event?.id,
+  );
+
+  const isNew = !route.params.event;
 
   const [editEvent] = useEditEvent();
 
   const client = useApolloClient();
 
-  const [name, setName] = useState(event.name);
-  const [text, setText] = useState(event.text);
+  const [createEvent] = useCreateEvent();
+
+  const [startDate, setStartDate] = useState(
+    dayjs(event?.startDate) || dayjs(),
+  );
+  const [endDate, setEndDate] = useState(
+    dayjs(event?.endDate) || dayjs().add(1, 'hour'),
+  );
+  const [subject, setSubject] = useState<SubjectFragment | null>(
+    event?.subject || null,
+  );
+  const [endDateHasBeenChanged, setEndDateHasBeenChanged] = useState(false);
+  const [name, setName] = useState(event?.name || '');
+  const [text, setText] = useState(event?.text || '');
   const [editStartDateModalIsVisible, setEditStartDateModalIsVisible] =
     useState(false);
   const [editEndDateModalIsVisible, setEditEndDateModalIsVisible] =
     useState(false);
-  const [selectSubjectModalIsVisible, setSelectSubjectModalIsVisible] =
-    useState(false);
+  const [remindersWindowOpen, setRemindersWindowOpen] = useState(false);
+  const [reminderTimes, setReminderTimes] = useState<number[] | undefined>(
+    event?.reminders.map(item => item.minutesBefore) || [],
+  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
+      title: isNew ? 'New Event' : 'Edit Event',
       headerRight: () => (
         <BasicButton
           variant="unstyled"
           onPress={() => {
-            editEvent({
-              id: event.id,
-              name,
-              text,
-              startDate: event.startDate,
-              endDate: event.endDate,
-              subjectId: event.subject?.id,
-              wholeDay: event.wholeDay,
-            });
+            let reminders: RemindersInput[] | undefined;
+            if (reminderTimes) {
+              reminders = reminderTimes.map(item => {
+                console.log('date', dayjs(startDate).subtract(item, 'minute'));
+                const id = uuidv4();
+                return {
+                  id,
+                  title: name,
+                  minutesBefore: item,
+                  date: dayjs(startDate).subtract(item, 'minute').toDate(),
+                };
+              });
+            }
+            console.log(reminders);
+            if (event) {
+              editEvent({
+                id: event.id,
+                name,
+                text,
+                startDate: startDate,
+                endDate: endDate,
+                subjectId: subject?.id,
+                wholeDay: event.wholeDay,
+                reminders,
+              });
+            } else {
+              createEvent({
+                id: uuidv4(),
+                startDate: startDate.toISOString(),
+                name: name,
+                endDate: endDate.toISOString(),
+                subjectId: subject?.id,
+                text,
+                reminders,
+              });
+            }
+            setRemindersFromApollo(client);
             navigation.goBack();
           }}>
-          <BasicText>Save</BasicText>
+          <BasicText textVariant="button">Save</BasicText>
         </BasicButton>
       ),
     });
@@ -83,22 +135,12 @@ const EventDetailScreen: React.FC<
           <SelectSubjectPopup
             forceSide="right"
             onSubmit={subject => {
-              editEvent({
-                id: event.id,
-                name,
-                text,
-                startDate: event.startDate,
-                endDate: event.endDate,
-                subjectId: subject?.id,
-                wholeDay: event.wholeDay,
-              });
+              setSubject(subject);
             }}
             trigger={
               <Pressable style={styles.listItem}>
                 <BasicText>Subject</BasicText>
-                <BasicText>
-                  {event.subject ? event.subject.name : 'None'}
-                </BasicText>
+                <BasicText>{subject?.name || 'None'}</BasicText>
               </Pressable>
             }
           />
@@ -120,9 +162,9 @@ const EventDetailScreen: React.FC<
               borderRadius={10}>
               <View style={styles.dateAndTimeContainer}>
                 <BasicText style={{marginRight: 5}}>
-                  {dayjs(event.startDate).format('DD/MM/YYYY')}
+                  {dayjs(startDate).format('DD/MM/YYYY')}
                 </BasicText>
-                <BasicText>{dayjs(event.startDate).format('HH:mm')}</BasicText>
+                <BasicText>{dayjs(startDate).format('HH:mm')}</BasicText>
               </View>
             </BasicButton>
           </View>
@@ -139,12 +181,29 @@ const EventDetailScreen: React.FC<
               borderRadius={10}>
               <View style={styles.dateAndTimeContainer}>
                 <BasicText style={{marginRight: 5}}>
-                  {dayjs(event.endDate).format('DD/MM/YYYY')}
+                  {dayjs(endDate).format('DD/MM/YYYY')}
                 </BasicText>
-                <BasicText>{dayjs(event.endDate).format('HH:mm')}</BasicText>
+                <BasicText>{dayjs(endDate).format('HH:mm')}</BasicText>
               </View>
             </BasicButton>
           </View>
+        </BasicCard>
+        <BasicCard
+          spacing="m"
+          marginBottom={10}
+          backgroundColor={'accentBackground1'}>
+          <Pressable
+            style={styles.listItem}
+            onPress={() => {
+              setRemindersWindowOpen(true);
+            }}>
+            <BasicText>Reminder</BasicText>
+            <BasicText>
+              {event?.reminders.length
+                ? `${event.reminders.length} selected`
+                : 'None'}
+            </BasicText>
+          </Pressable>
         </BasicCard>
         <BasicCard backgroundColor="accentBackground1">
           <BasicTextInput
@@ -159,59 +218,45 @@ const EventDetailScreen: React.FC<
         </BasicCard>
       </View>
       <EditDateModal
-        initialDate={event.startDate ? dayjs(event.startDate) : dayjs()}
-        subject={event.subject}
+        initialDate={startDate ? dayjs(startDate) : dayjs()}
+        subject={subject}
         onClose={() => {
           setEditStartDateModalIsVisible(false);
         }}
         onSubmit={date => {
-          editEvent({
-            id: event.id,
-            name,
-            text,
-            startDate: date.toDate(),
-            endDate: event.endDate,
-            subjectId: event.subject?.id,
-            wholeDay: event.wholeDay,
-          });
+          setStartDate(date);
+          if (isNew) {
+            if (!endDateHasBeenChanged) {
+              setEndDate(date.add(1, 'hour'));
+            }
+          }
           setEditStartDateModalIsVisible(false);
         }}
         isVisible={editStartDateModalIsVisible}
       />
       <EditDateModal
-        initialDate={event.endDate ? dayjs(event.endDate) : dayjs()}
-        // initialReminderTimes={task.reminders.map(item => item.minutesBefore)}
-        // reminders
+        initialDate={endDate ? dayjs(endDate) : dayjs()}
         onClose={() => {
           setEditEndDateModalIsVisible(false);
         }}
-        onSubmit={async (date, reminderTimes) => {
-          let reminders: RemindersInput[] | undefined;
-          if (reminderTimes) {
-            reminders = reminderTimes.map(item => {
-              console.log('date', dayjs(date).subtract(item, 'minute'));
-              const id = uuidv4();
-              return {
-                id,
-                title: event.name,
-                minutesBefore: item,
-                date: dayjs(date).subtract(item, 'minute').toDate(),
-              };
-            });
-          }
+        onSubmit={date => {
           setEditEndDateModalIsVisible(false);
-          editEvent({
-            id: event.id,
-            name,
-            text,
-            startDate: event.startDate,
-            endDate: date.toDate(),
-            subjectId: event.subject?.id,
-            wholeDay: event.wholeDay,
-          });
-          setRemindersFromApollo(client);
+          if (!endDate.isSame(date)) {
+            setEndDateHasBeenChanged(true);
+          }
+          setEndDate(date);
         }}
         isVisible={editEndDateModalIsVisible}
+      />
+      <RemindersWindow
+        initialReminderTimes={reminderTimes}
+        isVisible={remindersWindowOpen}
+        onClose={() => setRemindersWindowOpen(false)}
+        onSubmit={value => {
+          checkPermissions();
+          setReminderTimes(value);
+          setRemindersWindowOpen(false);
+        }}
       />
     </>
   );

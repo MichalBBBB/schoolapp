@@ -32,6 +32,8 @@ export const useAddProjectTask: () => [
           projectId: variables.projectId,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
+          doDate: variables.doDate || null,
+          dueDate: variables.dueDate || null,
           publicUsers: [],
           done: false,
         },

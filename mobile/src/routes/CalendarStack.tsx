@@ -4,7 +4,6 @@ import React from 'react';
 import BackButton from '../components/backButton';
 import {CalendarEventFragment} from '../generated/graphql';
 import {TabStackParamList} from '../Routes';
-import AddEventScreen from '../screens/Calendar/AddEventScreen';
 import CalendarHomeScreen from '../screens/Calendar/CalendarHomeScreen';
 import EventDetailScreen from '../screens/Calendar/EventDetailScreen';
 import TaskDetailScreen from '../screens/Tasks/TaskDetailScreen';
@@ -31,8 +30,13 @@ const CalendarStack: React.FC<
         options={{title: 'Calendar'}}
         component={CalendarHomeScreen}
       />
-      <Stack.Screen name="AddEventScreen" component={AddEventScreen} />
-      <Stack.Screen name="EventDetailScreen" component={EventDetailScreen} />
+      <Stack.Screen
+        name="EventDetailScreen"
+        component={EventDetailScreen}
+        options={{
+          title: 'Edit Event',
+        }}
+      />
       <Stack.Screen name="TaskDetailScreen" component={TaskDetailScreen} />
     </Stack.Navigator>
   );

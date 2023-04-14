@@ -38,6 +38,7 @@ import {Popup} from '../../components/popup';
 import {SelectSubjectPopup} from '../../components/selectSubject/selectSubjectPopup';
 import {TaskStackScreenProps} from '../../utils/types';
 import {BasicIcon} from '../../components/basicViews/BasicIcon';
+import {SubjectColorsObject} from '../../types/Theme';
 
 const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
   navigation,
@@ -66,6 +67,10 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
     useState(false);
   const [selectSubjectModalIsVisible, setSelectSubjectModalIsVisible] =
     useState(false);
+
+  useEffect(() => {
+    console.log(name);
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -144,6 +149,13 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
             }}
             trigger={
               <BasicButton
+                subjectColor={
+                  task.subject
+                    ? (task.subject.colorName as keyof SubjectColorsObject)
+                    : undefined
+                }
+                variant={task.subject ? 'subject' : 'filled'}
+                borderWidth={1}
                 backgroundColor="accentBackground1"
                 spacing="s"
                 borderRadius={10}>
@@ -243,6 +255,7 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
         isVisible={editDoDateModalIsVisible}
       />
       <BasicInputWindow
+        placeholder="New Subtask"
         visible={addSubtaskModalIsVisible}
         onClose={() => {
           setAddSubtaskModalIsVisible(false);
