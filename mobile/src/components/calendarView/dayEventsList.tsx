@@ -1,6 +1,8 @@
+import {FlashList} from '@shopify/flash-list';
 import dayjs from 'dayjs';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {Dimensions, FlatList, View} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import {BasicText} from '../basicViews/BasicText';
 import DayEvents from './dayEvents';
 
@@ -12,6 +14,7 @@ interface DayEventsListProps {
   pastScrollRange: number;
   futureScrollRange: number;
   scrollEnabled: boolean;
+  height: number;
 }
 
 const createList = (pastScrollRange: number, futureScrollRange: number) => {
@@ -38,11 +41,12 @@ export const DayEventsList: React.FC<DayEventsListProps> = ({
   pastScrollRange,
   futureScrollRange,
   scrollEnabled,
+  height,
 }) => {
   const [days, setDays] = useState<Array<string | dayjs.Dayjs>>([]);
   const [index, setIndex] = useState(pastScrollRange);
 
-  const flatListRef = useRef<FlatList>(null);
+  const flatListRef = useRef<FlashList<any>>(null);
 
   useEffect(() => {
     const newDays = createList(pastScrollRange, futureScrollRange);
@@ -105,55 +109,56 @@ export const DayEventsList: React.FC<DayEventsListProps> = ({
     return daysCopy;
   };
 
-  if (days.length == 1) {
+  if (days.length == 1 || days.length == 0 || !days) {
     return <View style={{height: '100%', width: width}} />;
   }
 
   return (
-    <FlatList
-      windowSize={3}
-      removeClippedSubviews={true}
-      scrollEnabled={scrollEnabled}
-      ref={flatListRef}
-      horizontal={true}
-      initialScrollIndex={pastScrollRange}
-      snapToOffsets={days.map((item, index) => index * width)}
-      decelerationRate={'fast'}
-      getItemLayout={(item, index) => ({
-        length: width,
-        offset: width * index,
-        index: index,
-      })}
-      onMomentumScrollEnd={item => {
-        const newIndex = Math.round(item.nativeEvent.contentOffset.x / width);
-        const newMonths = changeVisibility(newIndex);
-        if (newIndex !== index) {
-          onScroll(newMonths[newIndex] as dayjs.Dayjs);
-        }
-        setDays(newMonths);
-        setIndex(newIndex);
-      }}
-      data={days}
-      renderItem={({item, index}) => {
-        if (typeof item == 'string') {
-          return (
-            <View
-              key={index}
-              style={{
-                width: width,
-                height: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <BasicText>{item}</BasicText>
-            </View>
-          );
-        } else {
-          return (
-            <DayEvents date={item} scrollEnabled={scrollEnabled} key={index} />
-          );
-        }
-      }}
-    />
+    <View style={{width, height}}>
+      <FlashList
+        estimatedItemSize={width}
+        removeClippedSubviews={true}
+        scrollEnabled={scrollEnabled}
+        ref={flatListRef}
+        horizontal={true}
+        initialScrollIndex={pastScrollRange}
+        snapToOffsets={days.map((item, index) => index * width)}
+        decelerationRate={'fast'}
+        onMomentumScrollEnd={item => {
+          const newIndex = Math.round(item.nativeEvent.contentOffset.x / width);
+          const newMonths = changeVisibility(newIndex);
+          if (newIndex !== index) {
+            onScroll(newMonths[newIndex] as dayjs.Dayjs);
+          }
+          setDays(newMonths);
+          setIndex(newIndex);
+        }}
+        data={days}
+        renderItem={({item, index}) => {
+          if (typeof item == 'string') {
+            return (
+              <View
+                key={index}
+                style={{
+                  width: width,
+                  height: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <BasicText>{item}</BasicText>
+              </View>
+            );
+          } else {
+            return (
+              <DayEvents
+                date={item}
+                scrollEnabled={scrollEnabled}
+                key={index}
+              />
+            );
+          }
+        }}
+      />
+    </View>
   );
 };

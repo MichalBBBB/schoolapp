@@ -1,7 +1,14 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import BackButton from '../../components/backButton';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicText} from '../../components/basicViews/BasicText';
@@ -119,7 +126,11 @@ const EventDetailScreen: React.FC<
 
   return (
     <>
-      <View style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        onScrollBeginDrag={() => {
+          Keyboard.dismiss();
+        }}>
         <BasicTextInput
           value={name}
           spacing="m"
@@ -216,7 +227,7 @@ const EventDetailScreen: React.FC<
             multiline={true}
           />
         </BasicCard>
-      </View>
+      </ScrollView>
       <EditDateModal
         initialDate={startDate ? dayjs(startDate) : dayjs()}
         subject={subject}

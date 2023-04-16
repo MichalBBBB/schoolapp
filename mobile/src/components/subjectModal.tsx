@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, Image, Pressable, View} from 'react-native';
+import {
+  FlatList,
+  Image,
+  KeyboardAvoidingView,
+  Pressable,
+  View,
+} from 'react-native';
+import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 import {useTheme} from '../contexts/ThemeContext';
 import {useGetAllSubjectsQuery, SubjectFragment} from '../generated/graphql';
 import {useDeleteSubject} from '../mutationHooks/subject/deleteSubject';
@@ -51,6 +58,7 @@ export const SubjectModal: React.FC<SubjectModalProps> = ({
           </BasicButton>
         </View>
         <FlatList
+          keyboardDismissMode="on-drag"
           style={{
             flex: 1,
           }}

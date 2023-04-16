@@ -26,6 +26,7 @@ import notifee from '@notifee/react-native';
 import NetInfo from '@react-native-community/netinfo';
 import {createRemindersChannel} from './utils/notifications';
 import 'dayjs/locale/en';
+import KeyboardManager from 'react-native-keyboard-manager/dist';
 
 export const isLoggedInVar = makeVar(true);
 export const isOnlineVar = makeVar(true);
@@ -42,6 +43,11 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental
 ) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+if (Platform.OS === 'ios') {
+  KeyboardManager.setEnable(true);
+  KeyboardManager.setEnableAutoToolbar(false);
 }
 
 const App = () => {

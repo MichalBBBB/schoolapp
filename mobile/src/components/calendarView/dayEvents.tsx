@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {memo, useEffect, useMemo, useState} from 'react';
 import {View, Text, SectionList, StyleSheet, Dimensions} from 'react-native';
 import {
   CalendarEventFragment,
@@ -199,4 +199,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DayEvents;
+export default memo(DayEvents, (prevProps, nextProps) => {
+  if (prevProps.date.isSame(nextProps.date, 'day')) {
+    return true;
+  } else {
+    return false;
+  }
+});

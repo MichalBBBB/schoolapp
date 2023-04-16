@@ -78,6 +78,7 @@ PODS:
     - FlipperKit/FlipperKitNetworkPlugin
   - fmt (6.2.1)
   - glog (0.3.5)
+  - IQKeyboardManagerSwift (6.5.11)
   - libevent (2.1.12)
   - MMKV (1.2.15):
     - MMKVCore (~> 1.2.15)
@@ -376,6 +377,10 @@ PODS:
     - React-jsi (= 0.69.9)
     - React-logger (= 0.69.9)
     - React-perflogger (= 0.69.9)
+  - ReactNativeKeyboardManager (6.5.11-1):
+    - IQKeyboardManagerSwift (= 6.5.11)
+    - React-Core
+    - React-RCTText
   - RNCPicker (2.4.8):
     - React-Core
   - RNFlashList (1.4.1):
@@ -484,6 +489,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - ReactNativeKeyboardManager (from `../node_modules/react-native-keyboard-manager`)
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - "RNFlashList (from `../node_modules/@shopify/flash-list`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
@@ -506,6 +512,7 @@ SPEC REPOS:
     - Flipper-RSocket
     - FlipperKit
     - fmt
+    - IQKeyboardManagerSwift
     - libevent
     - MMKV
     - MMKVCore
@@ -588,6 +595,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/runtimeexecutor"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  ReactNativeKeyboardManager:
+    :path: "../node_modules/react-native-keyboard-manager"
   RNCPicker:
     :path: "../node_modules/@react-native-picker/picker"
   RNFlashList:
@@ -621,6 +630,7 @@ SPEC CHECKSUMS:
   FlipperKit: cbdee19bdd4e7f05472a66ce290f1b729ba3cb86
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 3d02b25ca00c2d456734d0bcff864cbc62f6ae1a
+  IQKeyboardManagerSwift: c7955c0bdbf7b2eb29bb7daaa44e3d90f55a9a85
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   MMKV: 7f34558bbb5a33b0eaefae2de4b6a20a2ffdad6f
   MMKVCore: ddf41b9d9262f058419f9ba7598719af56c02cd3
@@ -657,6 +667,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: ea899478e6f10ee526f476f769ab33211be2addd
   React-runtimeexecutor: df1518d092e8c74cafddc56690d1ac386ec24d7a
   ReactCommon: fac40473e2c4117522384027ab33ad0cb6717dc5
+  ReactNativeKeyboardManager: 30ef68551383d86d3ae044afc3d29f12629ec60b
   RNCPicker: 0bf8ef8f7800524f32d2bb2a8bcadd53eda0ecd1
   RNFlashList: 8ec7f7454721145fe84566bb9e88bcf58981c9fe
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39

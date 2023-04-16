@@ -303,10 +303,15 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
       <Animated.View
         style={[
           dayEventsAnimatedStyle,
-          {zIndex: 10, backgroundColor: theme.colors.background},
+          {
+            zIndex: 10,
+            backgroundColor: theme.colors.background,
+            height: screenHeight - (weekHeight + weekHeaderHeight),
+          },
         ]}>
         <View style={{height: '100%'}}>
           <DayEventsList
+            height={screenHeight - (weekHeight + weekHeaderHeight)}
             scrollEnabled={isWeekView}
             pastScrollRange={Math.abs(
               dayjs()

@@ -1,4 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
+import {FlashList} from '@shopify/flash-list';
 import dayjs from 'dayjs';
 import React, {
   createRef,
@@ -72,7 +73,7 @@ const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
 
   const [weeks, setWeeks] = useState<Array<dayjs.Dayjs | string>>([week]);
   const [index, setIndex] = useState(pastScrollRange);
-  const flatListRef = createRef<FlatList>();
+  const flatListRef = createRef<FlashList<any>>();
 
   const createDateFromString = (string: string) => {
     const date = string
@@ -164,15 +165,16 @@ const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
   }
 
   return (
-    <FlatList
+    <FlashList
       ref={flatListRef}
       data={weeks}
       renderItem={renderItem}
-      getItemLayout={(item, index) => ({
-        length: calendarWidth,
-        offset: calendarWidth * index,
-        index: index,
-      })}
+      estimatedItemSize={calendarWidth}
+      // getItemLayout={(item, index) => ({
+      //   length: calendarWidth,
+      //   offset: calendarWidth * index,
+      //   index: index,
+      // })}
       horizontal={true}
       initialScrollIndex={pastScrollRange}
       snapToOffsets={weeks.map((item, index) => index * calendarWidth)}
