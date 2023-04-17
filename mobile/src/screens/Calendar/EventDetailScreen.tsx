@@ -221,6 +221,7 @@ const EventDetailScreen: React.FC<
             value={text || ''}
             variant="unstyled"
             placeholder="Description"
+            textAlignVertical="top"
             onChangeText={setText}
             marginBottom={10}
             style={{minHeight: 150}}

@@ -1,17 +1,11 @@
 import React, {useState} from 'react';
 import {View, FlatList, TouchableOpacity, Text, Pressable} from 'react-native';
 import {
-  GetAllSubjectsDocument,
   SubjectFragment,
-  useCreateSubjectMutation,
   useGetAllSubjectsQuery,
 } from '../../../generated/graphql';
 import {BasicButton} from '../../basicViews/BasicButton';
-import {BasicModalCard} from '../../basicViews/BasicModalCard';
 import {BasicText} from '../../basicViews/BasicText';
-import {v4 as uuidv4} from 'uuid';
-import {useCreateSubject} from '../../../mutationHooks/subject/createSubject';
-import AddSubjectWindow from '../../modals/addSubjectWindow';
 import {useTheme} from '../../../contexts/ThemeContext';
 import {ColorsObject, SubjectColorsObject} from '../../../types/Theme';
 import {BasicCard} from '../../basicViews/BasicCard';
@@ -42,7 +36,7 @@ const SelectSubjectWindow: React.FC<SelectSubjectProps> = ({
       style={{
         minWidth: 150,
         maxWidth: 200,
-        elevation: 8,
+        elevation: 20,
         shadowOpacity: 0.1,
         shadowOffset: {width: 0, height: 0},
         shadowRadius: 20,
