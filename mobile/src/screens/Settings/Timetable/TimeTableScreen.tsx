@@ -17,7 +17,7 @@ import {
 } from 'react-native-table-component';
 import {BasicButton} from '../../../components/basicViews/BasicButton';
 import {BasicText} from '../../../components/basicViews/BasicText';
-import SelectSubjectWindow from '../../../components/selectSubject';
+import SelectSubjectWindow from '../../../components/popups/selectSubject';
 import {
   LessonFragment,
   useGetAllLessonsQuery,
@@ -30,7 +30,7 @@ import {useEditLesson} from '../../../mutationHooks/lesson/editLesson';
 import {useDeleteLesson} from '../../../mutationHooks/lesson/deleteLesson';
 import {useTheme} from '../../../contexts/ThemeContext';
 import {SubjectColorsObject} from '../../../types/Theme';
-import {SelectSubjectPopup} from '../../../components/selectSubject/selectSubjectPopup';
+import {SelectSubjectPopup} from '../../../components/popups/selectSubject/selectSubjectPopup';
 import {Popup} from '../../../components/popup';
 import {BasicCard} from '../../../components/basicViews/BasicCard';
 import {useSettings} from '../../../utils/useSettings';

@@ -6,7 +6,7 @@ import {FlatList, Image, SectionList, StyleSheet, View} from 'react-native';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicCard} from '../../components/basicViews/BasicCard';
 import {BasicText} from '../../components/basicViews/BasicText';
-import Task, {calendarConfigWithoutTime} from '../../components/task';
+import Task, {calendarConfigWithoutTime} from '../../components/listItems/task';
 import {TaskFragment, useGetAllTasksQuery} from '../../generated/graphql';
 import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {TaskStackScreenProps} from '../../utils/types';

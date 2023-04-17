@@ -13,7 +13,7 @@ import BackButton from '../../components/backButton';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
-import EditDateModal from '../../components/editDateWindow';
+import EditDateModal from '../../components/modals/editDateWindow';
 
 import {
   RemindersInput,
@@ -24,7 +24,7 @@ import {
 import {v4 as uuidv4} from 'uuid';
 import {setRemindersFromApollo} from '../../utils/reminderUtils';
 import {useApolloClient} from '@apollo/client';
-import {SelectSubjectPopup} from '../../components/selectSubject/selectSubjectPopup';
+import {SelectSubjectPopup} from '../../components/popups/selectSubject/selectSubjectPopup';
 import {useEditEvent} from '../../mutationHooks/calendarEvent/editEvent';
 import {BasicCard} from '../../components/basicViews/BasicCard';
 import {
@@ -32,7 +32,7 @@ import {
   CalendarStackScreenProps,
 } from '../../utils/types';
 import {useCreateEvent} from '../../mutationHooks/calendarEvent/createEvent';
-import {RemindersWindow} from '../../components/remindersWindow';
+import {RemindersWindow} from '../../components/modals/remindersWindow';
 import {checkPermissions} from '../../utils/notifications';
 
 const EventDetailScreen: React.FC<

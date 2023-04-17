@@ -9,7 +9,7 @@ import {CalendarEventFragment} from '../../generated/graphql';
 import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
 import {useCreateTask} from '../../mutationHooks/task/createTask';
 import {BasicText} from '../basicViews/BasicText';
-import EditDateModal from '../editDateWindow';
+import EditDateModal from '../modals/editDateWindow';
 import {Menu} from '../menu';
 import {MenuItem} from '../menu/MenuItem';
 import SlidingView from '../slidingView';

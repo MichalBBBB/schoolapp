@@ -11,8 +11,8 @@ import {
 import {isLoggedInVar} from '../../App';
 import {BasicCard} from '../../components/basicViews/BasicCard';
 import {BasicText} from '../../components/basicViews/BasicText';
-import {SettingsItem} from '../../components/settingsItem';
-import {SubjectModal} from '../../components/subjectModal';
+import {SettingsItem} from '../../components/listItems/settingsItem';
+import {SubjectModal} from '../../components/modals/subjectModal';
 import {DarkTheme, LightTheme, useTheme} from '../../contexts/ThemeContext';
 import {useLogoutMutation, useMeQuery} from '../../generated/graphql';
 import {useSetSettings} from '../../mutationHooks/settings/setSettings';

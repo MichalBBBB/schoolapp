@@ -24,20 +24,20 @@ import {
 } from 'react-native';
 import {isLoadingVar, isOnlineVar} from '../../App';
 import AddButton from '../../components/addButton';
-import AddTaskWindow from '../../components/addTaskWindow';
+import AddTaskWindow from '../../components/modals/addTaskWindow';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicCard} from '../../components/basicViews/BasicCard';
 import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {BasicRadio} from '../../components/basicViews/BasicRadio';
 import {BasicText} from '../../components/basicViews/BasicText';
-import EditDateModal from '../../components/editDateWindow';
+import EditDateModal from '../../components/modals/editDateWindow';
 import {Menu} from '../../components/menu';
 import {MenuItem} from '../../components/menu/MenuItem';
 import {Popup} from '../../components/popup';
-import {SelectSubjectPopup} from '../../components/selectSubject/selectSubjectPopup';
-import Task from '../../components/task';
-import TaskListProjectTask from '../../components/taskListProjectTask';
-import {TaskScreenOptionsPopup} from '../../components/taskScreenOptionsPopup';
+import {SelectSubjectPopup} from '../../components/popups/selectSubject/selectSubjectPopup';
+import Task from '../../components/listItems/task';
+import TaskListProjectTask from '../../components/listItems/taskListProjectTask';
+import {TaskScreenOptionsPopup} from '../../components/popups/taskScreenOptionsPopup';
 import {useTheme} from '../../contexts/ThemeContext';
 import {
   GetAllLessonsQuery,

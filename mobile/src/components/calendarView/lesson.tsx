@@ -20,7 +20,7 @@ import {
 } from '../../generated/graphql';
 import {BasicCard} from '../basicViews/BasicCard';
 import {BasicText} from '../basicViews/BasicText';
-import EditDateModal from '../editDateWindow';
+import EditDateModal from '../modals/editDateWindow';
 import {Menu} from '../menu';
 import {MenuItem} from '../menu/MenuItem';
 import {v4 as uuidv4} from 'uuid';

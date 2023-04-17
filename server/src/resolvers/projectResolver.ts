@@ -73,6 +73,17 @@ export class projectResolver {
   async members(@Root() root: Project) {
     return membersLoader.load(root.id);
   }
+  @FieldResolver()
+  async isAdmin(@Root() root: Project, @Ctx() { payload }: MyContext) {
+    const members = await membersLoader.load(root.id);
+    if (
+      members.some((item) => item.userId == payload?.userId && item.isAdmin)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   @Query(() => [Project])
   @UseMiddleware(isAuth)
@@ -163,6 +174,7 @@ export class projectResolver {
   async deleteProject(@Arg("id") id: string, @Ctx() { payload }: MyContext) {
     const project = await Project.findOne({
       where: { id },
+      relations: { userProjects: true },
     });
     if (
       project &&
@@ -185,8 +197,12 @@ export class projectResolver {
     @Arg("memberEmail") memberEmail: string,
     @Ctx() { payload }: MyContext
   ) {
-    const project = await Project.findOne({ where: { id: projectId } });
+    const project = await Project.findOne({
+      where: { id: projectId },
+      relations: { userProjects: true },
+    });
     const user = await User.findOne({ where: { email: memberEmail } });
+    console.log(project);
     if (
       user &&
       project &&
@@ -217,7 +233,10 @@ export class projectResolver {
     const userProject = await UserProject.findOne({
       where: { userId: memberId, projectId },
     });
-    const project = await Project.findOne({ where: { id: projectId } });
+    const project = await Project.findOne({
+      where: { id: projectId },
+      relations: { userProjects: true },
+    });
     if (
       project &&
       project?.userProjects.some(
@@ -232,6 +251,32 @@ export class projectResolver {
       relations: { tasks: true },
     });
   }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
+  async makeMemberAdmin(
+    @Arg("memberId") memberId: string,
+    @Arg("projectId") projectId: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    const currentAdmin = await UserProject.findOne({
+      where: { userId: payload?.userId, isAdmin: true, projectId },
+    });
+    const newAdmin = await UserProject.findOne({
+      where: { userId: memberId, projectId },
+    });
+    if (currentAdmin && newAdmin) {
+      currentAdmin.isAdmin = false;
+      await currentAdmin.save();
+      newAdmin.isAdmin = true;
+      await newAdmin?.save();
+      return true;
+    } else {
+      throw new Error("An error occured");
+    }
+  }
+
   @Mutation(() => Project)
   @UseMiddleware(isAuth)
   @UseMiddleware(queueMiddleware)

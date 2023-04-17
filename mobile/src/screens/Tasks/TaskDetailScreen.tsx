@@ -14,13 +14,13 @@ import {
   LayoutAnimation,
 } from 'react-native';
 import BackButton from '../../components/backButton';
-import BasicInputWindow from '../../components/basicInputWindow';
+import BasicInputWindow from '../../components/modals/basicInputWindow';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
-import EditDateModal from '../../components/editDateWindow';
-import Subtask from '../../components/subtask';
-import {calendarConfigWithoutTime} from '../../components/task';
+import EditDateModal from '../../components/modals/editDateWindow';
+import Subtask from '../../components/listItems/subtask';
+import {calendarConfigWithoutTime} from '../../components/listItems/task';
 import {
   GetAllTasksDocument,
   RemindersInput,
@@ -33,9 +33,9 @@ import {useCreateSubtask} from '../../mutationHooks/task/createSubtask';
 import {useEditTask} from '../../mutationHooks/task/editTask';
 import {setRemindersFromApollo} from '../../utils/reminderUtils';
 import {useApolloClient} from '@apollo/client';
-import SelectSubjectWindow from '../../components/selectSubject';
+import SelectSubjectWindow from '../../components/popups/selectSubject';
 import {Popup} from '../../components/popup';
-import {SelectSubjectPopup} from '../../components/selectSubject/selectSubjectPopup';
+import {SelectSubjectPopup} from '../../components/popups/selectSubject/selectSubjectPopup';
 import {TaskStackScreenProps} from '../../utils/types';
 import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {SubjectColorsObject} from '../../types/Theme';

@@ -2,7 +2,7 @@ import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import BackButton from '../components/backButton';
-import {Project} from '../components/project';
+import {Project} from '../components/listItems/project';
 import {TaskFragment} from '../generated/graphql';
 import {TabStackParamList} from '../Routes';
 import {NewProjectScreen} from '../screens/Projects/NewProjectScreen';

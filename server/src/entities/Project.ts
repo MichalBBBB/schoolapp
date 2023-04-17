@@ -33,6 +33,9 @@ export class Project extends BaseEntity {
   @Field(() => [PublicUser])
   members: PublicUser[];
 
+  @Field(() => Boolean)
+  isAdmin: Boolean;
+
   // @ManyToOne(() => User, (user) => user.ownedProjects)
   // @Field(() => User)
   // owner: Relation<User>;

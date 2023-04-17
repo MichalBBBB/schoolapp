@@ -10,11 +10,11 @@ import {
 import BackButton from '../../components/backButton';
 import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
-import EditProjectTaskWindow from '../../components/editProjectTaskWindow';
+import EditProjectTaskWindow from '../../components/modals/editProjectTaskWindow';
 import {Menu} from '../../components/menu';
 import {MenuItem} from '../../components/menu/MenuItem';
 import {Popup} from '../../components/popup';
-import ProjectTask from '../../components/projectTask';
+import ProjectTask from '../../components/listItems/projectTask';
 import {useTheme} from '../../contexts/ThemeContext';
 import {useGetProjectsQuery} from '../../generated/graphql';
 import {useDeleteProject} from '../../mutationHooks/project/deleteProject';
@@ -73,16 +73,18 @@ const ProjectDetailScreen: React.FC<
                 })
               }
             />
-            <MenuItem
-              text={'Delete project'}
-              color="dangerous"
-              onPress={() => {
-                if (project) {
-                  deleteProject({id: project.id});
-                  navigation.goBack();
-                }
-              }}
-            />
+            {project?.isAdmin && (
+              <MenuItem
+                text={'Delete project'}
+                color="dangerous"
+                onPress={() => {
+                  if (project) {
+                    deleteProject({id: project.id});
+                    navigation.goBack();
+                  }
+                }}
+              />
+            )}
           </Menu>
         </Popup>
       ),

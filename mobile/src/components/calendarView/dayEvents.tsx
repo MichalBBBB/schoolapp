@@ -12,7 +12,7 @@ import {
 import Event from './event';
 import {WEEK_DAY_NUMBERS} from '../../types/weekDays';
 import {Lesson} from './lesson';
-import Task from '../task';
+import Task from '../listItems/task';
 import {BasicText} from '../basicViews/BasicText';
 import {useSettings} from '../../utils/useSettings';
 import {getDayNumber} from '../../utils/lessonUtils';

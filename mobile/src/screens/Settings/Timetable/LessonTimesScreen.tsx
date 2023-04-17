@@ -13,7 +13,7 @@ import {
 import {useTheme} from '../../../contexts/ThemeContext';
 import RelativeTime from 'dayjs/plugin/relativeTime';
 import CustomParseFormat from 'dayjs/plugin/customParseFormat';
-import SelectTimeModal from '../../../components/selectTimeView/selectTimeModal';
+import SelectTimeModal from '../../../components/modals/selectTimeView/selectTimeModal';
 import {
   GetAllLessonTimesDocument,
   LessonTimeFragment,

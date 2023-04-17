@@ -1,8 +1,8 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useLayoutEffect, useState} from 'react';
 import {FlatList, Image, Pressable, StyleSheet, Text, View} from 'react-native';
-import {AddProjectMemberWindow} from '../../components/addProjectMemberWindow';
-import BasicInputWindow from '../../components/basicInputWindow';
+import {AddProjectMemberWindow} from '../../components/modals/addProjectMemberWindow';
+import BasicInputWindow from '../../components/modals/basicInputWindow';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {BasicLoading} from '../../components/basicViews/BasicLoading';
@@ -12,8 +12,10 @@ import {MenuItem} from '../../components/menu/MenuItem';
 import {Popup} from '../../components/popup';
 import {useTheme} from '../../contexts/ThemeContext';
 import {
+  GetProjectsDocument,
   useAddMemberToProjectMutation,
   useGetProjectsQuery,
+  useMakeMemberAdminMutation,
   useRemoveMemberFromProjectMutation,
 } from '../../generated/graphql';
 import {ProjectStackScreenProps} from '../../utils/types';
@@ -28,8 +30,16 @@ export const ProjectMembersScreen: React.FC<
   });
   const [removeMember] = useRemoveMemberFromProjectMutation({
     context: {skipQeue: true},
+    refetchQueries: [GetProjectsDocument],
   });
-  const [addMember] = useAddMemberToProjectMutation();
+  const [addMember] = useAddMemberToProjectMutation({
+    context: {skipQueue: true},
+    refetchQueries: [GetProjectsDocument],
+  });
+  const [makeMemberAdmin] = useMakeMemberAdminMutation({
+    context: {skipQueue: true},
+    refetchQueries: [GetProjectsDocument],
+  });
   const [addProjectMemberWindowVisible, setAddProjectMemberWindowVisible] =
     useState(false);
 
@@ -89,7 +99,7 @@ export const ProjectMembersScreen: React.FC<
                   </BasicText>
                 )}
               </View>
-              {!item.isAdmin && (
+              {!item.isAdmin && project.isAdmin && (
                 <Popup
                   trigger={
                     <Pressable>
@@ -100,6 +110,17 @@ export const ProjectMembersScreen: React.FC<
                     </Pressable>
                   }>
                   <Menu>
+                    <MenuItem
+                      text="Make admin"
+                      onPress={() => {
+                        makeMemberAdmin({
+                          variables: {
+                            memberId: item.userId,
+                            projectId: route.params.projectId,
+                          },
+                        });
+                      }}
+                    />
                     <MenuItem
                       color="dangerous"
                       text="Remove member"

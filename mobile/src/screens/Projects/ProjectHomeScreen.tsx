@@ -8,8 +8,8 @@ import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicCard} from '../../components/basicViews/BasicCard';
 import {BasicRefreshControl} from '../../components/basicViews/BasicRefreshControl';
 import {BasicText} from '../../components/basicViews/BasicText';
-import {Invite} from '../../components/invite';
-import {Project} from '../../components/project';
+import {Invite} from '../../components/listItems/invite';
+import {Project} from '../../components/listItems/project';
 import {replaceAllData} from '../../Content';
 import {
   GetInvitesDocument,
