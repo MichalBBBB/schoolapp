@@ -11,6 +11,7 @@ import {
   BackHandler,
   View,
 } from 'react-native';
+import KeyboardManager from 'react-native-keyboard-manager/dist';
 import Animated, {
   FadeIn,
   FadeInDown,
@@ -57,6 +58,14 @@ export const Modal: React.FC<ModalProps> = ({
     );
     return () => backHandler.remove();
   });
+
+  useEffect(() => {
+    if (isVisible && avoidKeyboard) {
+      KeyboardManager.setEnable(false);
+    } else {
+      KeyboardManager.setEnable(true);
+    }
+  }, [isVisible]);
 
   return (
     <Portal>

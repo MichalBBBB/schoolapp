@@ -18,6 +18,10 @@ export class Lesson extends BaseEntity {
   @Field()
   id!: string;
 
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  extraInfo?: string;
+
   @Column()
   @Field()
   dayNumber!: number;

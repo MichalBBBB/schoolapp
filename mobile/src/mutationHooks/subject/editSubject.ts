@@ -42,6 +42,7 @@ export const useEditSubject: () => [
             id: variables.id,
             name: variables.name,
             colorName: variables.colorName,
+            extraInfo: variables.extraInfo || null,
           },
         },
         update: (cache, {data}) => {

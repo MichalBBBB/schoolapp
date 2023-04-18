@@ -48,6 +48,7 @@ export const SubjectModal: React.FC<SubjectModalProps> = ({
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
+            paddingBottom: 5,
           }}>
           <BasicText textVariant="heading">Subjects</BasicText>
           <BasicButton

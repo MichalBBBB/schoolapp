@@ -14,6 +14,7 @@ export type ColorsObject = {
   card: string;
   text: string;
   textSecondary: string;
+  textTerciary: string;
   border: string;
   notification: string;
   accentBackground1: string;
@@ -41,6 +42,10 @@ export type SubjectColorsObject = {
   yellow: SubjectColor;
   green: SubjectColor;
   red: SubjectColor;
+  purple: SubjectColor;
+  darkBlue: SubjectColor;
+  darkGreen: SubjectColor;
+  orange: SubjectColor;
 };
 
 export type SpacingObject = {

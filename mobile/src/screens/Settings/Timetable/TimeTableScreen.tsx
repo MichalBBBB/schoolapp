@@ -36,6 +36,8 @@ import {BasicCard} from '../../../components/basicViews/BasicCard';
 import {useSettings} from '../../../utils/useSettings';
 import {BasicIcon} from '../../../components/basicViews/BasicIcon';
 import {SettingsStackScreenProps} from '../../../utils/types';
+import {BasicTextInput} from '../../../components/basicViews/BasicTextInput';
+import {TimeTableLesson} from '../../../components/listItems/timetableLesson';
 
 const TimeTableScreen: React.FC<
   SettingsStackScreenProps<'TimeTableScreen'>
@@ -43,8 +45,6 @@ const TimeTableScreen: React.FC<
   const {data, loading: lessonsLoading} = useGetAllLessonsQuery();
   const {data: lessonTimes} = useGetAllLessonTimesQuery();
   const [createLesson] = useCreateLesson();
-  const [editLesson] = useEditLesson();
-  const [deleteLesson] = useDeleteLesson();
 
   const [theme] = useTheme();
 
@@ -148,45 +148,7 @@ const TimeTableScreen: React.FC<
                           key={itemIndex}
                           data={
                             item ? (
-                              <View
-                                style={{
-                                  width: '100%',
-                                  height: '100%',
-                                  padding: 2,
-                                }}>
-                                <SelectSubjectPopup
-                                  onSubmit={subject => {
-                                    if (subject == null) {
-                                      deleteLesson({
-                                        id: item.id,
-                                      });
-                                    } else {
-                                      editLesson({
-                                        subjectId: subject.id,
-                                        id: item.id,
-                                      });
-                                    }
-                                  }}
-                                  trigger={
-                                    <BasicButton
-                                      variant="subject"
-                                      subjectColor={
-                                        item.subject
-                                          .colorName as keyof SubjectColorsObject
-                                      }
-                                      borderWidth={1}
-                                      style={{
-                                        width: '100%',
-                                        height: '100%',
-                                      }}
-                                      spacing="s">
-                                      <BasicText numberOfLines={1}>
-                                        {item.subject.name}
-                                      </BasicText>
-                                    </BasicButton>
-                                  }
-                                />
-                              </View>
+                              <TimeTableLesson lesson={item} />
                             ) : (
                               <View
                                 style={{

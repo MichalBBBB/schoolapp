@@ -67,9 +67,13 @@ export class lessonResolver {
   async editLesson(
     @Arg("subjectId") subjectId: string,
     @Arg("id") id: string,
-    @Ctx() { payload }: MyContext
+    @Ctx() { payload }: MyContext,
+    @Arg("extraInfo", { nullable: true }) extraInfo?: string
   ) {
-    await Lesson.update({ id, userId: payload?.userId }, { subjectId });
+    await Lesson.update(
+      { id, userId: payload?.userId },
+      { subjectId, extraInfo }
+    );
     const lesson = Lesson.findOne({
       where: { id, userId: payload?.userId },
       relations: { subject: true, lessonTime: true },

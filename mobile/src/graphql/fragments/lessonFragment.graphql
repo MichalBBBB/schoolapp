@@ -1,6 +1,7 @@
 fragment Lesson on Lesson {
   id
   dayNumber
+  extraInfo
   subject {
     ...Subject
   }

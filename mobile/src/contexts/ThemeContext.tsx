@@ -10,14 +10,18 @@ import {TextStyle} from 'react-native';
 import {MyTheme, SubjectColorsObject} from '../types/Theme';
 
 const lightSubjectColors: SubjectColorsObject = {
-  blue: {primary: '#a2cffe', secondary: '#a2cffe55'},
-  beige: {primary: '#efc5b5', secondary: '#efc5b555'},
-  grey: {primary: '#a5a49f', secondary: '#a5a49f55'},
-  brown: {primary: '#ad8d56', secondary: '#ad8d5655'},
+  purple: {primary: '#b981da', secondary: '#b981da55'},
   pink: {primary: '#efa7cf', secondary: '#efa7cf55'},
-  yellow: {primary: '#e9d32a', secondary: '#e9d32a55'},
+  darkBlue: {primary: '#698de8', secondary: '#698de855'},
+  blue: {primary: '#a2cffe', secondary: '#a2cffe55'},
+  darkGreen: {primary: '#479253', secondary: '#47925355'},
   green: {primary: '#95e3c0', secondary: '#95e3c055'},
-  red: {primary: '#ffa180', secondary: '#ffa18055'},
+  yellow: {primary: '#e9d32a', secondary: '#e9d32a55'},
+  beige: {primary: '#efc5b5', secondary: '#efc5b555'},
+  orange: {primary: '#f6a265', secondary: '#f6a26555'},
+  red: {primary: '#f66565', secondary: '#f6656555'},
+  brown: {primary: '#ad8d56', secondary: '#ad8d5655'},
+  grey: {primary: '#a5a49f', secondary: '#a5a49f55'},
 };
 
 export const LightTheme: MyTheme = {
@@ -31,6 +35,7 @@ export const LightTheme: MyTheme = {
     accentBackground2: 'white',
     modal: '#eee',
     textSecondary: 'grey',
+    textTerciary: '#c8c8c8',
     cardView: '#eee',
     accent: 'black',
     textContrast: 'white',
@@ -80,6 +85,7 @@ export const DarkTheme: MyTheme = {
     accentBackground2: '#232323',
     modal: '#181818',
     textSecondary: 'grey',
+    textTerciary: '#535353',
     cardView: '#eee',
     accent: '#c4c4c4',
     textContrast: 'black',

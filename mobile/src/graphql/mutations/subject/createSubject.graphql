@@ -1,5 +1,15 @@
-mutation CreateSubject($name: String!, $id: String!, $colorName: String!) {
-  createSubject(name: $name, id: $id, colorName: $colorName) {
+mutation CreateSubject(
+  $name: String!
+  $id: String!
+  $colorName: String!
+  $extraInfo: String
+) {
+  createSubject(
+    name: $name
+    id: $id
+    colorName: $colorName
+    extraInfo: $extraInfo
+  ) {
     ...Subject
   }
 }

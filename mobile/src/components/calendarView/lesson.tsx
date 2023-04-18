@@ -31,6 +31,7 @@ import {Popup} from '../popup';
 import {useNavigation} from '@react-navigation/native';
 import {CalendarNavigationProp} from '../../utils/types';
 import {BasicIcon} from '../basicViews/BasicIcon';
+import {useTheme} from '../../contexts/ThemeContext';
 
 interface LessonProps {
   lesson: LessonFragment;
@@ -42,6 +43,7 @@ export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
   const [addTask] = useCreateTask();
   const [deleteEvent] = useDeleteEvent();
   const navigation = useNavigation<CalendarNavigationProp>();
+  const [theme] = useTheme();
   return (
     <>
       <BasicCard
@@ -49,7 +51,35 @@ export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
         borderWidth={1}
         style={styles.container}>
         <View style={styles.horizontalContainer}>
-          <BasicText>{lesson.subject.name}</BasicText>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <BasicText>{lesson.subject.name}</BasicText>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginLeft: 5,
+              }}>
+              <BasicText color="textSecondary" style={{marginLeft: 5}}>
+                {lesson.subject.extraInfo}
+              </BasicText>
+              {lesson.extraInfo && lesson.subject.extraInfo && (
+                <View
+                  style={{
+                    backgroundColor: theme.colors.textSecondary,
+                    height: 5,
+                    width: 5,
+                    borderRadius: 10,
+                    marginLeft: 5,
+                  }}
+                />
+              )}
+              {lesson.extraInfo && (
+                <BasicText style={{marginLeft: 5}} color={'textSecondary'}>
+                  {lesson.extraInfo}
+                </BasicText>
+              )}
+            </View>
+          </View>
           <BasicText color="textSecondary">
             {dayjs(lesson.lessonTime.startTime, 'HH:mm').format('HH:mm')}
           </BasicText>
@@ -80,6 +110,7 @@ export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
                     }}
                   />
                   <MenuItem
+                    color="dangerous"
                     text={'Delete'}
                     onPress={() => {
                       deleteEvent({id: event.id});

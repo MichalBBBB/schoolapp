@@ -18,6 +18,7 @@ import {BasicText} from './BasicText';
 interface BasicTextInputProps extends TextInputProps {
   spacing?: keyof SpacingObject;
   color?: keyof ColorsObject;
+  placeholderColor?: keyof ColorsObject;
   variant?: 'filled' | 'unstyled' | 'outlined';
   backgroundColor?: keyof ColorsObject;
   borderRadius?: number;
@@ -43,13 +44,14 @@ export const BasicTextInput = forwardRef<TextInput, BasicTextInputProps>(
       textVariant = 'body',
       error,
       containerStyle,
+      placeholderColor = 'textSecondary',
       ...restProps
     } = props;
     return (
       <View style={containerStyle}>
         <TextInput
           ref={ref}
-          placeholderTextColor={theme.colors.textSecondary}
+          placeholderTextColor={theme.colors[placeholderColor]}
           style={[
             {
               backgroundColor:
