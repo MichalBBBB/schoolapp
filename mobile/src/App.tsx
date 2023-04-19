@@ -13,6 +13,7 @@ import {ThemeProvider} from './contexts/ThemeContext';
 import dayjs from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
 import updateLocale from 'dayjs/plugin/updateLocale';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
 import 'dayjs/locale/sk';
 import {PortalHost, PortalProvider} from '@gorhom/portal';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
@@ -34,6 +35,7 @@ export const isLoadingVar = makeVar(false);
 export const persistentQueueLink = new PersistentQueueLink();
 dayjs.extend(weekday);
 dayjs.extend(updateLocale);
+dayjs.extend(localizedFormat);
 dayjs.locale('en');
 
 export const storage = new MMKV();

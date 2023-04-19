@@ -25,15 +25,24 @@ import {Subject} from '../listItems/subject';
 interface SubjectModalProps {
   isVisible: boolean;
   onClose: () => void;
+  addSubjectOpen?: boolean;
 }
 
 export const SubjectModal: React.FC<SubjectModalProps> = ({
   isVisible,
   onClose,
+  addSubjectOpen = false,
 }) => {
   const {data: subjects} = useGetAllSubjectsQuery();
 
-  const [addSubjectWindowVisible, setAddSubjectWindowVisible] = useState(false);
+  const [addSubjectWindowVisible, setAddSubjectWindowVisible] =
+    useState(addSubjectOpen);
+
+  useEffect(() => {
+    if (isVisible) {
+      setAddSubjectWindowVisible(addSubjectOpen);
+    }
+  }, [isVisible]);
 
   return (
     <BasicModalCard

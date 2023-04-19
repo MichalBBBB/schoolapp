@@ -346,6 +346,7 @@ export type MutationRemoveMemberFromProjectArgs = {
 
 export type MutationSetSettingsArgs = {
   darkMode?: InputMaybe<Scalars['Boolean']>;
+  isFirstTime?: InputMaybe<Scalars['Boolean']>;
   lengthOfRotation?: InputMaybe<Scalars['Float']>;
   showCompletedTasks?: InputMaybe<Scalars['Boolean']>;
   showDoDate?: InputMaybe<Scalars['Boolean']>;
@@ -461,6 +462,7 @@ export type Settings = {
   __typename?: 'Settings';
   darkMode: Scalars['Boolean'];
   id: Scalars['String'];
+  isFirstTime: Scalars['Boolean'];
   lengthOfRotation: Scalars['Float'];
   showCompletedTasks: Scalars['Boolean'];
   showDoDate: Scalars['Boolean'];
@@ -588,7 +590,7 @@ export type PublicUserFragment = { __typename?: 'PublicUser', name: string, emai
 
 export type ReminderFragment = { __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null };
 
-export type SettingsFragment = { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean };
+export type SettingsFragment = { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean };
 
 export type SimpleProjectFragment = { __typename?: 'Project', id: string, name: string };
 
@@ -805,10 +807,11 @@ export type SetSettingsMutationVariables = Exact<{
   sortTasksBy?: InputMaybe<Scalars['String']>;
   showDoDate?: InputMaybe<Scalars['Boolean']>;
   showCompletedTasks?: InputMaybe<Scalars['Boolean']>;
+  isFirstTime?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type SetSettingsMutation = { __typename?: 'Mutation', setSettings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean } };
+export type SetSettingsMutation = { __typename?: 'Mutation', setSettings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } };
 
 export type CreateSubjectMutationVariables = Exact<{
   name: Scalars['String'];
@@ -987,7 +990,7 @@ export type HelloQuery = { __typename?: 'Query', hello: string };
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, imageURL?: string | null, fullName: string, createdAt: any, updatedAt: any, tasks: Array<{ __typename?: 'Task', id: string, name: string, subject?: { __typename?: 'Subject', id: string, name: string } | null, subtasks: Array<{ __typename?: 'Subtask', id: string, name: string }> }>, subjects: Array<{ __typename?: 'Subject', id: string, name: string }>, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean } } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, imageURL?: string | null, fullName: string, createdAt: any, updatedAt: any, tasks: Array<{ __typename?: 'Task', id: string, name: string, subject?: { __typename?: 'Subject', id: string, name: string } | null, subtasks: Array<{ __typename?: 'Subtask', id: string, name: string }> }>, subjects: Array<{ __typename?: 'Subject', id: string, name: string }>, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } } };
 
 export const SubjectFragmentDoc = gql`
     fragment Subject on Subject {
@@ -1128,6 +1131,7 @@ export const SettingsFragmentDoc = gql`
   sortTasksBy
   showDoDate
   showCompletedTasks
+  isFirstTime
 }
     `;
 export const SubtaskFragmentDoc = gql`
@@ -1973,7 +1977,7 @@ export type ToggleProjectTaskMutationHookResult = ReturnType<typeof useTogglePro
 export type ToggleProjectTaskMutationResult = Apollo.MutationResult<ToggleProjectTaskMutation>;
 export type ToggleProjectTaskMutationOptions = Apollo.BaseMutationOptions<ToggleProjectTaskMutation, ToggleProjectTaskMutationVariables>;
 export const SetSettingsDocument = gql`
-    mutation SetSettings($startOfWeek: String, $startOfRotationDate: DateTime, $lengthOfRotation: Float, $skipWeekends: Boolean, $darkMode: Boolean, $sortTasksBy: String, $showDoDate: Boolean, $showCompletedTasks: Boolean) {
+    mutation SetSettings($startOfWeek: String, $startOfRotationDate: DateTime, $lengthOfRotation: Float, $skipWeekends: Boolean, $darkMode: Boolean, $sortTasksBy: String, $showDoDate: Boolean, $showCompletedTasks: Boolean, $isFirstTime: Boolean) {
   setSettings(
     startOfWeek: $startOfWeek
     startOfRotationDate: $startOfRotationDate
@@ -1983,6 +1987,7 @@ export const SetSettingsDocument = gql`
     sortTasksBy: $sortTasksBy
     showDoDate: $showDoDate
     showCompletedTasks: $showCompletedTasks
+    isFirstTime: $isFirstTime
   ) {
     ...Settings
   }
@@ -2011,6 +2016,7 @@ export type SetSettingsMutationFn = Apollo.MutationFunction<SetSettingsMutation,
  *      sortTasksBy: // value for 'sortTasksBy'
  *      showDoDate: // value for 'showDoDate'
  *      showCompletedTasks: // value for 'showCompletedTasks'
+ *      isFirstTime: // value for 'isFirstTime'
  *   },
  * });
  */

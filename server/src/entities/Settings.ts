@@ -50,4 +50,8 @@ export class Settings extends BaseEntity {
   @Column({ default: false })
   @Field()
   showCompletedTasks: boolean;
+
+  @Column({ default: true })
+  @Field()
+  isFirstTime: boolean;
 }

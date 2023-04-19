@@ -57,6 +57,10 @@ export const useSetSettings: () => [
               variables.showCompletedTasks == null
                 ? settings.showCompletedTasks
                 : variables.showCompletedTasks,
+            isFirstTime:
+              variables.isFirstTime == null
+                ? settings.isFirstTime
+                : variables.isFirstTime,
           },
         },
         update: (cache, {data}) => {

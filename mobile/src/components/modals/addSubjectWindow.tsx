@@ -8,6 +8,7 @@ import {BasicTextInput} from '../basicViews/BasicTextInput';
 import {v4 as uuidv4} from 'uuid';
 import {useCreateSubject} from '../../mutationHooks/subject/createSubject';
 import {ColorPickerPopup} from '../popups/colorPickerPopup';
+import {useGetAllSubjectsQuery} from '../../generated/graphql';
 
 interface AddSubjectWindowProps {
   visible: boolean;
@@ -19,18 +20,25 @@ const AddSubjectWindow: React.FC<AddSubjectWindowProps> = ({
   visible,
 }) => {
   const [addSubject] = useCreateSubject();
+  const {data: subjects} = useGetAllSubjectsQuery();
+
+  const colorsUsed =
+    subjects?.getAllSubjects.map(item => {
+      return item.colorName;
+    }) || [];
 
   const textInputRef = createRef<TextInput>();
   const [text, setText] = useState('');
-  const [isColorPickerVisible, setIsColorPickerVisible] = useState(false);
   const [color, setColor] = useState<keyof SubjectColorsObject>('blue');
 
   const [theme] = useTheme();
 
   useEffect(() => {
-    if (visible == true) {
-      textInputRef.current?.focus();
-    }
+    setColor(
+      (Object.keys(theme.subjectColors).find(item => {
+        return !colorsUsed?.includes(item);
+      }) || theme.subjectColors.blue) as keyof SubjectColorsObject,
+    );
   }, [visible]);
 
   const closeWindow = () => {

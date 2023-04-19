@@ -11,7 +11,6 @@ import React, {
 import {View, FlatList} from 'react-native';
 import {CalendarHandle} from '.';
 import {SettingsFragment} from '../../generated/graphql';
-import {getStartOfWeek} from '../../utils/dateUtils';
 import Week from './week';
 
 interface weekViewProps {

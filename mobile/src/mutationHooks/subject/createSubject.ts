@@ -31,7 +31,7 @@ export const useCreateSubject: () => [
           name: variables.name,
           id: variables.id,
           colorName: variables.colorName,
-          extraInfo: variables.extraInfo,
+          extraInfo: variables.extraInfo || null,
         },
       },
       update: (cache, {data}) => {

@@ -47,6 +47,7 @@ export const Subject: React.FC<SubjectProps> = ({subject}) => {
               id: subject.id,
               name: subject.name,
               colorName: color,
+              extraInfo: subject.extraInfo,
             });
           }}
           initialColor={subject.colorName as keyof SubjectColorsObject}
@@ -58,6 +59,7 @@ export const Subject: React.FC<SubjectProps> = ({subject}) => {
               name: subjectName,
               id: subject.id,
               colorName: subject.colorName,
+              extraInfo: extraInfo,
             });
           }}
           onChangeText={value => {

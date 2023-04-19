@@ -40,6 +40,7 @@ export const useCreateProject: () => [
           members: [],
           tasks: [],
           text: '',
+          isAdmin: true,
         },
       },
       update: (cache, {data}) => {

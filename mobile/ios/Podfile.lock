@@ -383,6 +383,8 @@ PODS:
     - React-RCTText
   - RNCPicker (2.4.8):
     - React-Core
+  - RNDeviceTimeFormat (2.0.0):
+    - React-Core
   - RNFlashList (1.4.1):
     - React-Core
   - RNGestureHandler (2.9.0):
@@ -491,6 +493,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeKeyboardManager (from `../node_modules/react-native-keyboard-manager`)
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
+  - RNDeviceTimeFormat (from `../node_modules/react-native-device-time-format`)
   - "RNFlashList (from `../node_modules/@shopify/flash-list`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNNotifee (from `../node_modules/@notifee/react-native`)"
@@ -599,6 +602,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-keyboard-manager"
   RNCPicker:
     :path: "../node_modules/@react-native-picker/picker"
+  RNDeviceTimeFormat:
+    :path: "../node_modules/react-native-device-time-format"
   RNFlashList:
     :path: "../node_modules/@shopify/flash-list"
   RNGestureHandler:
@@ -669,6 +674,7 @@ SPEC CHECKSUMS:
   ReactCommon: fac40473e2c4117522384027ab33ad0cb6717dc5
   ReactNativeKeyboardManager: 30ef68551383d86d3ae044afc3d29f12629ec60b
   RNCPicker: 0bf8ef8f7800524f32d2bb2a8bcadd53eda0ecd1
+  RNDeviceTimeFormat: a66bbc4c86e0e683c006b90095687c7bb351c983
   RNFlashList: 8ec7f7454721145fe84566bb9e88bcf58981c9fe
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
   RNNotifee: 053c0ace9c73634709a0214fd9c436a5777a562f

@@ -253,7 +253,9 @@ const LessonTimesScreen: React.FC<
                     setActiveLesson({index, time: 'start'});
                     setTimeModalVisible(true);
                   }}>
-                  <BasicText>{item.startTime}</BasicText>
+                  <BasicText>
+                    {dayjs(item.startTime, 'HH:mm').format('LT')}
+                  </BasicText>
                 </BasicButton>
                 <BasicText>To: </BasicText>
                 <BasicButton
@@ -265,7 +267,9 @@ const LessonTimesScreen: React.FC<
                     setActiveLesson({index, time: 'end'});
                     setTimeModalVisible(true);
                   }}>
-                  <BasicText>{item.endTime}</BasicText>
+                  <BasicText>
+                    {dayjs(item.endTime, 'HH:mm').format('LT')}
+                  </BasicText>
                 </BasicButton>
               </View>
               {index == (data?.getAllLessonTimes.length || 1) - 1 && (

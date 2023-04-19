@@ -7,6 +7,7 @@ mutation SetSettings(
   $sortTasksBy: String
   $showDoDate: Boolean
   $showCompletedTasks: Boolean
+  $isFirstTime: Boolean
 ) {
   setSettings(
     startOfWeek: $startOfWeek
@@ -17,6 +18,7 @@ mutation SetSettings(
     sortTasksBy: $sortTasksBy
     showDoDate: $showDoDate
     showCompletedTasks: $showCompletedTasks
+    isFirstTime: $isFirstTime
   ) {
     ...Settings
   }

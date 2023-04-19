@@ -7518,6 +7518,11 @@ react-native-date-picker@^4.2.7:
   dependencies:
     prop-types "^15.8.1"
 
+react-native-device-time-format@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-device-time-format/-/react-native-device-time-format-2.4.0.tgz#821e49f5c03dcfe0a8a945f2845397ec7023d127"
+  integrity sha512-jp3Q+ZnJ01st/yK2PUaX0I5EYJchL7l3ZvIPCxiRxSpPFbskf4Pep18fmOwLyM/NlQ9C9Xk9RQk7LTAVMSHx0A==
+
 react-native-gesture-handler@^2.2.0:
   version "2.9.0"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.9.0.tgz#2f63812e523c646f25b9ad660fc6f75948e51241"

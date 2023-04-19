@@ -8,4 +8,5 @@ fragment Settings on Settings {
   sortTasksBy
   showDoDate
   showCompletedTasks
+  isFirstTime
 }

@@ -132,6 +132,7 @@ const SelectSubjectWindow: React.FC<SelectSubjectProps> = ({
           )}
         />
         <SubjectModal
+          addSubjectOpen={true}
           isVisible={subjectModalVisible}
           onClose={() => {
             setSubjectModalVisible(false);

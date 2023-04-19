@@ -5,7 +5,7 @@ import {
   useReactiveVar,
 } from '@apollo/client';
 import {PortalHost, PortalProvider} from '@gorhom/portal';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {
   isLoadingVar,
@@ -30,6 +30,39 @@ import {
   GetAllLessonTimesDocument,
   GetAllTasksDocument,
 } from './generated/graphql';
+import {is24HourFormat} from 'react-native-device-time-format';
+import {useSetSettings} from './mutationHooks/settings/setSettings';
+import {v4 as uuidv4} from 'uuid';
+
+const is12hourConfig = {
+  // abbreviated format options allowing localization
+  LTS: 'h:mm:ss A',
+  LT: 'h:mm A',
+  L: 'MM/DD/YYYY',
+  LL: 'MMMM D, YYYY',
+  LLL: 'MMMM D, YYYY h:mm A',
+  LLLL: 'dddd, MMMM D, YYYY h:mm A',
+  // lowercase/short, optional formats for localization
+  l: 'D/M/YYYY',
+  ll: 'D MMM, YYYY',
+  lll: 'D MMM, YYYY h:mm A',
+  llll: 'ddd, MMM D, YYYY h:mm A',
+};
+
+const is24hourConfig = {
+  // abbreviated format options allowing localization
+  LTS: 'H:mm:ss',
+  LT: 'H:mm',
+  L: 'MM/DD/YYYY',
+  LL: 'MMMM D, YYYY',
+  LLL: 'MMMM D, YYYY H:mm',
+  LLLL: 'dddd, MMMM D, YYYY H:mm',
+  // lowercase/short, optional formats for localization
+  l: 'D/M/YYYY',
+  ll: 'D MMM, YYYY',
+  lll: 'D MMM, YYYY H:mm',
+  llll: 'ddd, MMM D, YYYY H:mm',
+};
 
 export const replaceAllData = async (client: ApolloClient<any>) => {
   try {
@@ -66,15 +99,42 @@ const openQueue = async (client: ApolloClient<any>) => {
 };
 
 export const Content: React.FC = () => {
+  // when we change global dayjs settings, the components don't automatically update
+  // here we just make sure the whole app rerenders
+  const [_forceRerenderingValue, setForceRerenderingValue] = useState('');
   const client = useApolloClient();
   const isOnline = useReactiveVar(isOnlineVar);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const settings = useSettings();
 
+  const [setSettings] = useSetSettings();
+
+  const updateLocale = async () => {
+    const is24hour = await is24HourFormat();
+    dayjs.updateLocale('en', {
+      weekStart:
+        settings?.startOfWeek == 'MON'
+          ? 1
+          : settings?.startOfWeek == 'SAT'
+          ? 6
+          : 0,
+      formats: is24hour ? is24hourConfig : is12hourConfig,
+    });
+    // rerendering the whole app - the components won't automatically update when the locale changes
+    setForceRerenderingValue(uuidv4());
+  };
+
+  const onFirstSignIn = async () => {
+    // do things that happen when the user starts their account
+  };
+
   const [theme, setTheme] = useTheme();
   useEffect(() => {
     if (isOnline && isLoggedIn) {
       openQueue(client);
+      if (settings?.isFirstTime) {
+        onFirstSignIn();
+      }
     } else if (!isOnline) {
       persistentQueueLink.close();
     } else if (!isLoggedIn) {
@@ -91,14 +151,7 @@ export const Content: React.FC = () => {
 
   // set the locale based on settings
   useEffect(() => {
-    dayjs.updateLocale('en', {
-      weekStart:
-        settings?.startOfWeek == 'MON'
-          ? 1
-          : settings?.startOfWeek == 'SAT'
-          ? 5
-          : 0,
-    });
+    updateLocale();
     // if settings darkmode is different than theme, update the theme
     if (theme.dark !== settings?.darkMode) {
       if (settings?.darkMode) {
@@ -109,7 +162,7 @@ export const Content: React.FC = () => {
     }
   }, [settings]);
 
-  // if we the server is down or something similar,
+  // if the server is down or something similar,
   // set a timer that checks connectivity every 10 seconds
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -129,7 +182,7 @@ export const Content: React.FC = () => {
 
     return () => {
       clearInterval(interval);
-    }; // cleanup function
+    };
   }, [isOnline]);
 
   useEffect(() => {
