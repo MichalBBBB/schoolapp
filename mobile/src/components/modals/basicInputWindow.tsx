@@ -10,6 +10,7 @@ interface addTaskWindowProps {
   visible: boolean;
   onClose?: () => void;
   onSubmit?: (text: string) => void;
+  defaultValue?: string;
   placeholder?: string;
   buttonText?: string;
 }
@@ -19,6 +20,7 @@ const BasicInputWindow: React.FC<addTaskWindowProps> = ({
   visible,
   onSubmit,
   placeholder,
+  defaultValue,
   buttonText = 'Add',
 }) => {
   const [text, setText] = useState('');
@@ -45,6 +47,7 @@ const BasicInputWindow: React.FC<addTaskWindowProps> = ({
             alignItems: 'center',
           }}>
           <BasicTextInput
+            defaultValue={defaultValue}
             variant="unstyled"
             containerStyle={{flex: 1, marginRight: 5}}
             placeholder={placeholder || 'Name'}

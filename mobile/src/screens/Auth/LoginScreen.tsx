@@ -46,7 +46,7 @@ export const LoginScreen: React.FC<
         variant="filled"
         spacing="m"
         error={errors.find(item => item.field == 'email')?.message}
-        containerStyle={{marginBottom: 10}}
+        marginBottom={10}
       />
 
       <BasicTextInput
@@ -60,7 +60,7 @@ export const LoginScreen: React.FC<
         secureTextEntry={true}
         spacing="m"
         error={errors.find(item => item.field == 'password')?.message}
-        containerStyle={{marginBottom: 10}}
+        marginBottom={10}
       />
 
       <BasicButton onPress={() => login()} spacing="m">

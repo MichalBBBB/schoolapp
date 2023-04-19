@@ -66,6 +66,8 @@ export type SettingsStackParamList = {
   AdvancedTimeTableScreen: undefined;
   DateSettingsScreen: undefined;
   StartOfWeekScreen: undefined;
+  ProfileScreen: undefined;
+  ChangePasswordScreen: undefined;
 };
 
 export type TabNavigationProp = BottomTabNavigationProp<TabParamList>;

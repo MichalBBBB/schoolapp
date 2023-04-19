@@ -7,9 +7,11 @@ import {
   Pressable,
   Image,
   Switch,
+  TouchableHighlight,
 } from 'react-native';
 import {isLoggedInVar} from '../../App';
 import {BasicCard} from '../../components/basicViews/BasicCard';
+import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {SettingsItem} from '../../components/listItems/settingsItem';
 import {SubjectModal} from '../../components/modals/subjectModal';
@@ -31,30 +33,47 @@ const SettingsHomeScreen: React.FC<
   const [subjectModalVisible, setSubjectModalVisible] = useState(false);
 
   const profile = (
-    <View style={styles.profileContainer}>
-      {me?.me.imageURL ? (
-        <Image
-          source={{uri: me?.me.imageURL}}
-          style={{width: 80, height: 80, marginRight: 20, borderRadius: 40}}
-        />
-      ) : (
+    <Pressable
+      onPress={() => {
+        navigation.navigate('ProfileScreen');
+      }}>
+      <View style={styles.profileContainer}>
+        {me?.me.imageURL ? (
+          <Image
+            source={{uri: me?.me.imageURL}}
+            style={{width: 80, height: 80, marginRight: 20, borderRadius: 40}}
+          />
+        ) : (
+          <View
+            style={{
+              backgroundColor: '#ccc',
+              width: 80,
+              height: 80,
+              borderRadius: 40,
+              marginRight: 20,
+            }}></View>
+        )}
+
         <View
           style={{
-            backgroundColor: '#ccc',
-            width: 80,
-            height: 80,
-            borderRadius: 40,
-            marginRight: 20,
-          }}></View>
-      )}
-
-      <View>
-        <BasicText textVariant="heading">{me?.me.fullName}</BasicText>
-        <BasicText textVariant="subText" color="textSecondary">
-          Change your profile info
-        </BasicText>
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            flex: 1,
+            alignItems: 'center',
+          }}>
+          <View>
+            <BasicText textVariant="heading">{me?.me.fullName}</BasicText>
+            <BasicText textVariant="subText" color="textSecondary">
+              Change your profile info
+            </BasicText>
+          </View>
+          <BasicIcon
+            source={require('../../../assets/Chevron-right.png')}
+            style={{height: 20, width: 20}}
+          />
+        </View>
       </View>
-    </View>
+    </Pressable>
   );
 
   return (

@@ -64,6 +64,9 @@ export class User extends BaseEntity {
   @Field({ nullable: true })
   googleId: string;
 
+  @Field()
+  usesOAuth: boolean;
+
   @Column({ nullable: true })
   @Field({ nullable: true })
   imageURL: string;

@@ -6,12 +6,14 @@ import {BasicIcon} from '../basicViews/BasicIcon';
 
 interface SettingsItemProps {
   text: string;
+  rightText?: string;
   onPress?: () => void;
+  showArrow?: boolean;
 }
 
 export const SettingsItem = forwardRef<View, SettingsItemProps>(
   (props, ref) => {
-    const {text, onPress} = props;
+    const {text, onPress, rightText, showArrow = true} = props;
     return (
       <Pressable
         ref={ref}
@@ -22,10 +24,17 @@ export const SettingsItem = forwardRef<View, SettingsItemProps>(
           justifyContent: 'space-between',
         }}>
         <BasicText>{text}</BasicText>
-        <BasicIcon
-          source={require('../../../assets/Chevron-right.png')}
-          style={{height: 15, width: 15}}
-        />
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <BasicText color="textSecondary" style={{marginRight: 5}}>
+            {rightText}
+          </BasicText>
+          {showArrow && (
+            <BasicIcon
+              source={require('../../../assets/Chevron-right.png')}
+              style={{height: 15, width: 15}}
+            />
+          )}
+        </View>
       </Pressable>
     );
   },

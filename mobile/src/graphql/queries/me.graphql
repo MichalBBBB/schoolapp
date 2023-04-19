@@ -1,29 +1,5 @@
 query Me {
   me {
-    id
-    email
-    imageURL
-    tasks {
-      id
-      name
-      subject {
-        id
-        name
-      }
-      subtasks {
-        id
-        name
-      }
-    }
-    subjects {
-      id
-      name
-    }
-    fullName
-    createdAt
-    updatedAt
-    settings {
-      ...Settings
-    }
+    ...User
   }
 }

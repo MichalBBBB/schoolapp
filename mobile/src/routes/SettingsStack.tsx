@@ -5,6 +5,8 @@ import BackButton from '../components/backButton';
 import {TabStackParamList} from '../Routes';
 import {DateSettingsScreen} from '../screens/Settings/DateAndTime';
 import {StartOfWeekScreen} from '../screens/Settings/DateAndTime/StartOfWeekScreen';
+import {ProfileScreen} from '../screens/Settings/Profile';
+import {ChangePasswordScreen} from '../screens/Settings/Profile/ChangePasswordScreen';
 
 import SettingsHomeScreen from '../screens/Settings/SettingsHomeScreen';
 import {AdvancedTimeTableScreen} from '../screens/Settings/Timetable/AdvancedTimeTableScreen';
@@ -57,6 +59,16 @@ const SettingsStack: React.FC<
         name="AdvancedTimeTableScreen"
         options={{title: 'Advanced'}}
         component={AdvancedTimeTableScreen}
+      />
+      <Stack.Screen
+        name="ProfileScreen"
+        component={ProfileScreen}
+        options={{title: 'Profile'}}
+      />
+      <Stack.Screen
+        name="ChangePasswordScreen"
+        component={ChangePasswordScreen}
+        options={{title: 'Change Password'}}
       />
     </Stack.Navigator>
   );

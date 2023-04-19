@@ -27,6 +27,7 @@ interface BasicTextInputProps extends TextInputProps {
   textVariant?: keyof TextVariantsObject;
   error?: string;
   containerStyle?: ViewStyle;
+  title?: string;
 }
 
 export const BasicTextInput = forwardRef<TextInput, BasicTextInputProps>(
@@ -45,10 +46,18 @@ export const BasicTextInput = forwardRef<TextInput, BasicTextInputProps>(
       error,
       containerStyle,
       placeholderColor = 'textSecondary',
+      title,
       ...restProps
     } = props;
     return (
-      <View style={containerStyle}>
+      <View style={[{marginBottom}, containerStyle]}>
+        {title && (
+          <BasicText
+            style={{marginLeft: 5, marginBottom: 5}}
+            color="textSecondary">
+            {title}
+          </BasicText>
+        )}
         <TextInput
           ref={ref}
           placeholderTextColor={theme.colors[placeholderColor]}
@@ -68,7 +77,6 @@ export const BasicTextInput = forwardRef<TextInput, BasicTextInputProps>(
                   ? theme.colors[backgroundColor]
                   : undefined,
               borderWidth: variant == 'outlined' ? borderWidth : undefined,
-              marginBottom,
               ...theme.textVariants[textVariant],
             },
             style,

@@ -26,6 +26,7 @@ import { Subject } from "../entities/Subject";
 import { OAuth2Client } from "google-auth-library";
 import { Settings } from "../entities/Settings";
 import dayjs from "dayjs";
+import { queueMiddleware } from "../middleware/queueMiddleware";
 
 const client = new OAuth2Client({
   clientId: process.env.GOOGLE_CLIENT_ID,
@@ -86,9 +87,9 @@ class UserSucces {
 }
 
 @ObjectType()
-class UserExistsSucces {
+class ChangePasswordSucces {
   @Field()
-  userExists: Boolean;
+  changePassword: Boolean;
 }
 
 const RegisterUnion = createUnionType({
@@ -115,14 +116,14 @@ const LoginUnion = createUnionType({
   },
 });
 
-const UserExistsUnion = createUnionType({
-  name: "UserExistsResponse",
-  types: () => [UserExistsSucces, UserFail] as const,
+const ChangePasswordUnion = createUnionType({
+  name: "ChangePasswordResponse",
+  types: () => [ChangePasswordSucces, UserFail] as const,
   resolveType: (value) => {
-    if ("message" in value) {
+    if ("errors" in value) {
       return UserFail;
     } else {
-      return Boolean;
+      return ChangePasswordSucces;
     }
   },
 });
@@ -133,6 +134,11 @@ const isEmailValid = (_email: string) => {
 
 @Resolver(User)
 export class userResolver {
+  @FieldResolver()
+  async usesOAuth(@Root() root: User) {
+    return Boolean(root.googleId);
+  }
+
   // !!!! Remove !!!!
   @Query(() => [User])
   getAllUsers() {
@@ -295,31 +301,43 @@ export class userResolver {
     }
   }
 
-  @Mutation(() => UserExistsUnion)
-  async userExists(
-    @Arg("email") email: string
-  ): Promise<typeof UserExistsUnion> {
-    if (!isEmailValid(email)) {
-      return {
-        errors: [
-          {
-            field: "email",
-            message: "Enter a valid email",
-          },
-        ],
-      };
+  @Mutation(() => User)
+  @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
+  async editUser(
+    @Ctx() { payload }: MyContext,
+    @Arg("fullName", { nullable: true }) fullName?: string,
+    @Arg("email", { nullable: true }) email?: string
+  ) {
+    await User.update({ id: payload?.userId }, { fullName, email });
+    return User.findOne({
+      where: { id: payload?.userId },
+      relations: { settings: true },
+    });
+  }
+
+  @Mutation(() => ChangePasswordUnion)
+  @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
+  async changePassword(
+    @Arg("oldPassword") oldPassword: string,
+    @Arg("newPassword") newPassword: string,
+    @Ctx() { payload }: MyContext
+  ): Promise<ChangePasswordSucces | UserFail> {
+    const user = await User.findOne({ where: { id: payload?.userId } });
+    if (!user) {
+      throw new Error("This user doesn't exist");
     }
-    const user = await User.findOne({ where: { email } });
-    console.log(user);
-    if (user) {
-      return {
-        userExists: true,
-      };
-    } else {
-      return {
-        userExists: false,
-      };
+    const valid = await argon2.verify(user.password, oldPassword);
+    if (!valid) {
+      return { errors: [{ field: "password", message: "Incorrect password" }] };
     }
+    const hashedPassword = await argon2.hash(newPassword);
+    user.password = hashedPassword;
+    user.save();
+    return {
+      changePassword: true,
+    };
   }
 
   @Mutation(() => Boolean)

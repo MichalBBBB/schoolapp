@@ -31,6 +31,13 @@ export type CalendarEvent = {
   wholeDay: Scalars['Boolean'];
 };
 
+export type ChangePasswordResponse = ChangePasswordSucces | UserFail;
+
+export type ChangePasswordSucces = {
+  __typename?: 'ChangePasswordSucces';
+  changePassword: Scalars['Boolean'];
+};
+
 export type Invite = {
   __typename?: 'Invite';
   adminName: Scalars['String'];
@@ -71,6 +78,7 @@ export type Mutation = {
   addMemberToProject: Project;
   addProjectTask: ProjectTask;
   assignMember: ProjectTask;
+  changePassword: ChangePasswordResponse;
   createEvent: CalendarEvent;
   createLesson: Lesson;
   createLessonTime: LessonTime;
@@ -96,6 +104,7 @@ export type Mutation = {
   editProjectTask: ProjectTask;
   editSubject: Subject;
   editTask: Task;
+  editUser: User;
   googleSignIn: UserSucces;
   login: LoginResponse;
   logout: Scalars['Boolean'];
@@ -107,7 +116,6 @@ export type Mutation = {
   toggleProjectTask: ProjectTask;
   toggleSubtask: Subtask;
   toggleTask: Task;
-  userExists: UserExistsResponse;
 };
 
 
@@ -134,6 +142,12 @@ export type MutationAddProjectTaskArgs = {
 export type MutationAssignMemberArgs = {
   taskId: Scalars['String'];
   userId: Scalars['String'];
+};
+
+
+export type MutationChangePasswordArgs = {
+  newPassword: Scalars['String'];
+  oldPassword: Scalars['String'];
 };
 
 
@@ -308,6 +322,12 @@ export type MutationEditTaskArgs = {
 };
 
 
+export type MutationEditUserArgs = {
+  email?: InputMaybe<Scalars['String']>;
+  fullName?: InputMaybe<Scalars['String']>;
+};
+
+
 export type MutationGoogleSignInArgs = {
   idToken: Scalars['String'];
 };
@@ -369,11 +389,6 @@ export type MutationToggleSubtaskArgs = {
 
 export type MutationToggleTaskArgs = {
   id: Scalars['String'];
-};
-
-
-export type MutationUserExistsArgs = {
-  email: Scalars['String'];
 };
 
 export type Project = {
@@ -528,19 +543,13 @@ export type User = {
   updatedAt: Scalars['DateTime'];
   userProjectTasks: Array<UserProjectTask>;
   userProjects: Array<UserProject>;
+  usesOAuth: Scalars['Boolean'];
 };
 
 export type UserError = {
   __typename?: 'UserError';
   field?: Maybe<Scalars['String']>;
   message: Scalars['String'];
-};
-
-export type UserExistsResponse = UserExistsSucces | UserFail;
-
-export type UserExistsSucces = {
-  __typename?: 'UserExistsSucces';
-  userExists: Scalars['Boolean'];
 };
 
 export type UserFail = {
@@ -571,6 +580,8 @@ export type UserSucces = {
   accessToken: Scalars['String'];
   user: User;
 };
+
+export type UserFragment = { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } };
 
 export type CalendarEventFragment = { __typename?: 'CalendarEvent', id: string, name: string, text?: string | null, startDate: any, endDate?: any | null, wholeDay: boolean, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> };
 
@@ -901,6 +912,22 @@ export type ToggleTaskMutationVariables = Exact<{
 
 export type ToggleTaskMutation = { __typename?: 'Mutation', toggleTask: { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, doDate?: any | null, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> } };
 
+export type ChangePasswordMutationVariables = Exact<{
+  oldPassword: Scalars['String'];
+  newPassword: Scalars['String'];
+}>;
+
+
+export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'ChangePasswordSucces' } | { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null, message: string }> } };
+
+export type EditUserMutationVariables = Exact<{
+  email?: InputMaybe<Scalars['String']>;
+  fullName?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type EditUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } } };
+
 export type GoogleSignInMutationVariables = Exact<{
   idToken: Scalars['String'];
 }>;
@@ -929,13 +956,6 @@ export type RegisterMutationVariables = Exact<{
 
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null, message: string }> } | { __typename?: 'UserSucces', accessToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
-
-export type UserExistsMutationVariables = Exact<{
-  email: Scalars['String'];
-}>;
-
-
-export type UserExistsMutation = { __typename?: 'Mutation', userExists: { __typename?: 'UserExistsSucces', userExists: boolean } | { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null, message: string }> } };
 
 export type GetAllEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -990,8 +1010,36 @@ export type HelloQuery = { __typename?: 'Query', hello: string };
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, imageURL?: string | null, fullName: string, createdAt: any, updatedAt: any, tasks: Array<{ __typename?: 'Task', id: string, name: string, subject?: { __typename?: 'Subject', id: string, name: string } | null, subtasks: Array<{ __typename?: 'Subtask', id: string, name: string }> }>, subjects: Array<{ __typename?: 'Subject', id: string, name: string }>, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } } };
 
+export const SettingsFragmentDoc = gql`
+    fragment Settings on Settings {
+  id
+  startOfWeek
+  startOfRotationDate
+  lengthOfRotation
+  skipWeekends
+  darkMode
+  sortTasksBy
+  showDoDate
+  showCompletedTasks
+  isFirstTime
+}
+    `;
+export const UserFragmentDoc = gql`
+    fragment User on User {
+  id
+  email
+  imageURL
+  usesOAuth
+  fullName
+  createdAt
+  updatedAt
+  settings {
+    ...Settings
+  }
+}
+    ${SettingsFragmentDoc}`;
 export const SubjectFragmentDoc = gql`
     fragment Subject on Subject {
   id
@@ -1120,20 +1168,6 @@ export const ProjectTaskWithProjectFragmentDoc = gql`
 }
     ${SimpleProjectFragmentDoc}
 ${PublicUserFragmentDoc}`;
-export const SettingsFragmentDoc = gql`
-    fragment Settings on Settings {
-  id
-  startOfWeek
-  startOfRotationDate
-  lengthOfRotation
-  skipWeekends
-  darkMode
-  sortTasksBy
-  showDoDate
-  showCompletedTasks
-  isFirstTime
-}
-    `;
 export const SubtaskFragmentDoc = gql`
     fragment Subtask on Subtask {
   name
@@ -2388,6 +2422,79 @@ export function useToggleTaskMutation(baseOptions?: Apollo.MutationHookOptions<T
 export type ToggleTaskMutationHookResult = ReturnType<typeof useToggleTaskMutation>;
 export type ToggleTaskMutationResult = Apollo.MutationResult<ToggleTaskMutation>;
 export type ToggleTaskMutationOptions = Apollo.BaseMutationOptions<ToggleTaskMutation, ToggleTaskMutationVariables>;
+export const ChangePasswordDocument = gql`
+    mutation ChangePassword($oldPassword: String!, $newPassword: String!) {
+  changePassword(oldPassword: $oldPassword, newPassword: $newPassword) {
+    ... on UserFail {
+      errors {
+        field
+        message
+      }
+    }
+  }
+}
+    `;
+export type ChangePasswordMutationFn = Apollo.MutationFunction<ChangePasswordMutation, ChangePasswordMutationVariables>;
+
+/**
+ * __useChangePasswordMutation__
+ *
+ * To run a mutation, you first call `useChangePasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangePasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changePasswordMutation, { data, loading, error }] = useChangePasswordMutation({
+ *   variables: {
+ *      oldPassword: // value for 'oldPassword'
+ *      newPassword: // value for 'newPassword'
+ *   },
+ * });
+ */
+export function useChangePasswordMutation(baseOptions?: Apollo.MutationHookOptions<ChangePasswordMutation, ChangePasswordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(ChangePasswordDocument, options);
+      }
+export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswordMutation>;
+export type ChangePasswordMutationResult = Apollo.MutationResult<ChangePasswordMutation>;
+export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePasswordMutation, ChangePasswordMutationVariables>;
+export const EditUserDocument = gql`
+    mutation EditUser($email: String, $fullName: String) {
+  editUser(email: $email, fullName: $fullName) {
+    ...User
+  }
+}
+    ${UserFragmentDoc}`;
+export type EditUserMutationFn = Apollo.MutationFunction<EditUserMutation, EditUserMutationVariables>;
+
+/**
+ * __useEditUserMutation__
+ *
+ * To run a mutation, you first call `useEditUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editUserMutation, { data, loading, error }] = useEditUserMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      fullName: // value for 'fullName'
+ *   },
+ * });
+ */
+export function useEditUserMutation(baseOptions?: Apollo.MutationHookOptions<EditUserMutation, EditUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditUserMutation, EditUserMutationVariables>(EditUserDocument, options);
+      }
+export type EditUserMutationHookResult = ReturnType<typeof useEditUserMutation>;
+export type EditUserMutationResult = Apollo.MutationResult<EditUserMutation>;
+export type EditUserMutationOptions = Apollo.BaseMutationOptions<EditUserMutation, EditUserMutationVariables>;
 export const GoogleSignInDocument = gql`
     mutation GoogleSignIn($idToken: String!) {
   googleSignIn(idToken: $idToken) {
@@ -2551,47 +2658,6 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
-export const UserExistsDocument = gql`
-    mutation UserExists($email: String!) {
-  userExists(email: $email) {
-    ... on UserExistsSucces {
-      userExists
-    }
-    ... on UserFail {
-      errors {
-        field
-        message
-      }
-    }
-  }
-}
-    `;
-export type UserExistsMutationFn = Apollo.MutationFunction<UserExistsMutation, UserExistsMutationVariables>;
-
-/**
- * __useUserExistsMutation__
- *
- * To run a mutation, you first call `useUserExistsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUserExistsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [userExistsMutation, { data, loading, error }] = useUserExistsMutation({
- *   variables: {
- *      email: // value for 'email'
- *   },
- * });
- */
-export function useUserExistsMutation(baseOptions?: Apollo.MutationHookOptions<UserExistsMutation, UserExistsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UserExistsMutation, UserExistsMutationVariables>(UserExistsDocument, options);
-      }
-export type UserExistsMutationHookResult = ReturnType<typeof useUserExistsMutation>;
-export type UserExistsMutationResult = Apollo.MutationResult<UserExistsMutation>;
-export type UserExistsMutationOptions = Apollo.BaseMutationOptions<UserExistsMutation, UserExistsMutationVariables>;
 export const GetAllEventsDocument = gql`
     query GetAllEvents {
   getAllEvents {
@@ -2933,34 +2999,10 @@ export type HelloQueryResult = Apollo.QueryResult<HelloQuery, HelloQueryVariable
 export const MeDocument = gql`
     query Me {
   me {
-    id
-    email
-    imageURL
-    tasks {
-      id
-      name
-      subject {
-        id
-        name
-      }
-      subtasks {
-        id
-        name
-      }
-    }
-    subjects {
-      id
-      name
-    }
-    fullName
-    createdAt
-    updatedAt
-    settings {
-      ...Settings
-    }
+    ...User
   }
 }
-    ${SettingsFragmentDoc}`;
+    ${UserFragmentDoc}`;
 
 /**
  * __useMeQuery__

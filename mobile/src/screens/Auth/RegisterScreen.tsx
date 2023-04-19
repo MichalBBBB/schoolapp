@@ -72,6 +72,7 @@ export const RegisterScreen: React.FC<
         placeholder="Full Name"
         spacing="m"
         containerStyle={{marginBottom: 10}}
+        autoCapitalize="words"
       />
       <BasicTextInput
         textContentType="newPassword"
