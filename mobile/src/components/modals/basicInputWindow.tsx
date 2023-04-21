@@ -62,7 +62,9 @@ const BasicInputWindow: React.FC<addTaskWindowProps> = ({
                 onSubmit(text);
               }
             }}>
-            <BasicText color="textContrast">{buttonText}</BasicText>
+            <BasicText color="textContrast" textVariant="button">
+              {buttonText}
+            </BasicText>
           </BasicButton>
         </View>
       </BasicModalCard>

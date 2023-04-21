@@ -2,7 +2,6 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import {Text, View} from 'react-native';
 import AuthHomeScreen from '../screens/Auth/AuthHomeScreen';
-import EmailLoginScreen from '../screens/Auth/EmailLoginScreen';
 import {LoginScreen} from '../screens/Auth/LoginScreen';
 import {RegisterScreen} from '../screens/Auth/RegisterScreen';
 

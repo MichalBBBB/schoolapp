@@ -22,6 +22,7 @@ export const SettingsItem = forwardRef<View, SettingsItemProps>(
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
+          padding: 6,
         }}>
         <BasicText>{text}</BasicText>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>

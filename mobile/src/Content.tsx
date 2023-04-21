@@ -33,6 +33,7 @@ import {
 import {is24HourFormat} from 'react-native-device-time-format';
 import {useSetSettings} from './mutationHooks/settings/setSettings';
 import {v4 as uuidv4} from 'uuid';
+import {AlertProvider} from './contexts/AlertContext';
 
 const is12hourConfig = {
   // abbreviated format options allowing localization

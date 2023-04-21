@@ -49,6 +49,7 @@ const main = async () => {
     });
   //User.delete({});
   //Task.delete({});
+  AppDataSource.runMigrations();
 
   const app = express();
 

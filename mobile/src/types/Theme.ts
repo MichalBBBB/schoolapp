@@ -25,6 +25,7 @@ export type ColorsObject = {
   accent: string;
   textContrast: string;
   dangerous: string;
+  dangerousBackground: string;
   lightBorder: string;
 };
 

@@ -1,13 +1,24 @@
 import dayjs from 'dayjs';
 import React, {memo, useMemo} from 'react';
 import {Text, View} from 'react-native';
+import {DayWithDot} from '.';
+import {
+  CalendarEventFragment,
+  TaskFragment,
+  useGetAllEventsQuery,
+  useGetAllTasksQuery,
+} from '../../generated/graphql';
 import {useSettings} from '../../utils/useSettings';
 import {BasicText} from '../basicViews/BasicText';
 import Week from './week';
 
 // ctreate table of days in 6 weeks
-export const createMatrix = (year: number, month: number) => {
-  const matrix: dayjs.Dayjs[][] = [];
+export const createMatrix = (
+  year: number,
+  month: number,
+  daysWithDots: dayjs.Dayjs[] = [],
+) => {
+  const matrix: DayWithDot[][] = [];
   const date = dayjs(new Date(year, month, 1));
 
   // get the day of the week of the first day of the month (0 - 6)
@@ -20,7 +31,10 @@ export const createMatrix = (year: number, month: number) => {
     matrix.push([]);
     for (var col = 0; col < 7; col++) {
       //add day to current row
-      matrix[row].push(day);
+      matrix[row].push({
+        date: day,
+        dot: daysWithDots.some(item => item.isSame(day, 'day')),
+      });
 
       //add 1 day to the date
       day = day.add(1, 'day');
@@ -36,6 +50,7 @@ interface MonthProps {
   calendarWidth: number;
   weekHeight: number;
   startOfWeek: string;
+  daysWithDots?: dayjs.Dayjs[];
 }
 
 const Month: React.FC<MonthProps> = ({
@@ -45,6 +60,7 @@ const Month: React.FC<MonthProps> = ({
   calendarWidth,
   weekHeight,
   startOfWeek,
+  daysWithDots,
 }) => {
   // if month is far away from being visible, only a simple view will appear with the string date
   if (typeof month == 'string') {
@@ -61,8 +77,8 @@ const Month: React.FC<MonthProps> = ({
   }
 
   const matrix = useMemo(() => {
-    return createMatrix(month.get('year'), month.get('month'));
-  }, [month, startOfWeek]);
+    return createMatrix(month.get('year'), month.get('month'), daysWithDots);
+  }, [month, startOfWeek, daysWithDots]);
 
   return (
     <View style={{width: calendarWidth}}>

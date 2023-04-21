@@ -36,7 +36,7 @@ export const BasicCard = forwardRef<View, BasicCardProps>((props, ref) => {
 
   const content = Array.isArray(children)
     ? children.map((item, index) => {
-        if (index !== children.length - 1) {
+        if (index !== children.length - 1 && item) {
           return (
             <View style={{marginBottom: gap}} key={index}>
               {item}

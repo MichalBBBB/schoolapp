@@ -1,5 +1,11 @@
 import dayjs from 'dayjs';
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   Button,
   Dimensions,
@@ -26,6 +32,7 @@ import WeekDays from '../calendar/weekDays';
 import {
   useGetAllEventsQuery,
   useGetAllLessonsQuery,
+  useGetAllTasksQuery,
 } from '../../generated/graphql';
 import Event from './event';
 import {WEEK_DAY_NUMBERS} from '../../types/weekDays';
@@ -62,11 +69,10 @@ interface calendarProps {
 }
 
 const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
-  const {data: lessons} = useGetAllLessonsQuery();
-  const {data} = useGetAllEventsQuery();
+  const {data: events} = useGetAllEventsQuery();
+  const {data: tasks} = useGetAllTasksQuery();
 
   const [theme] = useTheme();
-  const settings = useSettings();
 
   const [selectedDay, setSelectedDay] = useState(dayjs());
   const [isWeekView, setIsWeekView] = useState(true);
@@ -80,9 +86,23 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
   const calendarRef = useRef<CalendarHandle>(null);
   const weekViewRef = useRef<CalendarHandle>(null);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({});
-  });
+  const daysWithDots = useMemo(() => {
+    const list: dayjs.Dayjs[] = [];
+    tasks?.getAllTasks.forEach(item => {
+      if (item.doDate && !list.some(day => day.isSame(item.doDate, 'day'))) {
+        list.push(dayjs(item.doDate));
+      }
+    });
+    events?.getAllEvents.forEach(item => {
+      if (
+        item.startDate &&
+        !list.some(day => day.isSame(item.startDate, 'day'))
+      ) {
+        list.push(dayjs(item.startDate));
+      }
+    });
+    return list;
+  }, [tasks, events]);
 
   useEffect(() => {
     weekRow.value = findRowOfDate(selectedDay);
@@ -169,6 +189,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
       <View>
         <Calendar
           ref={calendarRef}
+          daysWithDots={daysWithDots}
           weekHeight={34}
           onChangeSelectedDay={onDayPress}
           calendarWidth={calendarWidth}
@@ -263,6 +284,7 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
           weekViewAnimatedStyle,
         ]}>
         <WeekView
+          daysWithDots={daysWithDots}
           futureScrollRange={dayjs()
             .add(futureScrollRange, 'month')
             .endOf('month')

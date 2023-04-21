@@ -12,6 +12,7 @@ import {View, FlatList} from 'react-native';
 import {CalendarHandle} from '.';
 import {SettingsFragment} from '../../generated/graphql';
 import Week from './week';
+import {WeekViewItem} from './weekViewItem';
 
 interface weekViewProps {
   week: dayjs.Dayjs;
@@ -22,20 +23,8 @@ interface weekViewProps {
   onChangeActiveWeek?: (newWeek: dayjs.Dayjs) => void | undefined;
   pastScrollRange: number;
   futureScrollRange: number;
+  daysWithDots?: dayjs.Dayjs[];
 }
-
-const createWeek = (date: dayjs.Dayjs | string) => {
-  if (typeof date == 'string') {
-    return date;
-  }
-  let day = date.startOf('week');
-  let week = [];
-  for (var i = 0; i < 7; i++) {
-    week.push(day);
-    day = day.add(1, 'day');
-  }
-  return week;
-};
 
 const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
   const {
@@ -47,6 +36,7 @@ const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
     onChangeActiveWeek,
     pastScrollRange,
     futureScrollRange,
+    daysWithDots,
   } = props;
 
   useImperativeHandle(ref, () => {
@@ -146,8 +136,9 @@ const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
   const renderItem = ({item}: {item: dayjs.Dayjs | string}) => {
     return (
       <View style={{width: calendarWidth}}>
-        <Week
-          week={createWeek(item)}
+        <WeekViewItem
+          daysWithDots={daysWithDots || []}
+          week={item}
           selectedDay={selectedDay}
           onDayPress={date => {
             onDayPress(date);
@@ -197,6 +188,7 @@ const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
         setIndex(newIndex);
         setWeeks(weeksCopy);
       }}
+      extraData={daysWithDots}
     />
   );
 });

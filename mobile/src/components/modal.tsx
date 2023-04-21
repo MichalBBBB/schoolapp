@@ -71,16 +71,8 @@ export const Modal: React.FC<ModalProps> = ({
     <Portal>
       {isVisible && (
         <View style={styles.modalWrapper}>
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={onBackdropPress}
-            style={[
-              styles.modalWrapper,
-              {backgroundColor: `rgba(0,0,0,${backdropOpacity})`},
-            ]}
-          />
           <Animated.View
-            entering={FadeIn}
+            entering={FadeIn.duration(100)}
             exiting={FadeOut}
             pointerEvents="box-none"
             style={[
@@ -92,14 +84,24 @@ export const Modal: React.FC<ModalProps> = ({
               },
               style,
             ]}>
-            {avoidKeyboard ? (
-              <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-                {content}
-              </KeyboardAvoidingView>
-            ) : (
-              content
-            )}
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={onBackdropPress}
+              style={[
+                styles.modalWrapper,
+                {backgroundColor: `rgba(0,0,0,${backdropOpacity})`},
+              ]}
+            />
+            <View style={{zIndex: 99}}>
+              {avoidKeyboard ? (
+                <KeyboardAvoidingView
+                  behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+                  {content}
+                </KeyboardAvoidingView>
+              ) : (
+                content
+              )}
+            </View>
           </Animated.View>
         </View>
       )}

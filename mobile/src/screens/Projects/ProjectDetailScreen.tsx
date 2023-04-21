@@ -20,6 +20,8 @@ import {useGetProjectsQuery} from '../../generated/graphql';
 import {useDeleteProject} from '../../mutationHooks/project/deleteProject';
 import {useEditProject} from '../../mutationHooks/project/editProject';
 import {ProjectStackScreenProps} from '../../utils/types';
+import {AlertObject, useAlert} from '../../contexts/AlertContext';
+import {Alert} from '../../components/modals/alert';
 
 const ProjectDetailScreen: React.FC<
   ProjectStackScreenProps<'ProjectDetailScreen'>
@@ -36,6 +38,10 @@ const ProjectDetailScreen: React.FC<
 
   const [text, setText] = useState(project?.text);
   const [name, setName] = useState(project?.name || '');
+
+  const showAlert = useAlert();
+
+  const [alertVisible, setAlertVisible] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -73,14 +79,24 @@ const ProjectDetailScreen: React.FC<
                 })
               }
             />
-            {project?.isAdmin && (
+            {false && (
               <MenuItem
                 text={'Delete project'}
                 color="dangerous"
                 onPress={() => {
                   if (project) {
-                    deleteProject({id: project.id});
-                    navigation.goBack();
+                    showAlert(
+                      new AlertObject({
+                        text: 'Are you sure you want to delete this project?',
+                        submitText: 'Delete',
+                        cancelText: 'Cancel',
+                        submitDangerous: true,
+                      }).onSubmit(() => {
+                        deleteProject({id: project.id});
+                        navigation.goBack();
+                      }),
+                    );
+                    setAlertVisible(true);
                   }
                 }}
               />
@@ -166,6 +182,16 @@ const ProjectDetailScreen: React.FC<
           setAddTaskModalIsVisible(false);
         }}
       />
+      {/* <Alert
+        isVisible
+        onClose={() => {
+          setAlertVisible(false);
+        }}
+        onSubmit={() => {
+          setAlertVisible(false);
+        }}
+        text={'Are you sure?'}
+      /> */}
     </>
   );
 };

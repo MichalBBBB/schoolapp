@@ -8,6 +8,9 @@ import {
   GetProjectsQuery,
   CreateEventMutation,
   GetAllSubjectsQuery,
+  useMeQuery,
+  MeDocument,
+  MeQuery,
 } from '../../generated/graphql';
 import {CreateProjectMutationVariables} from '../../generated/graphql';
 import {FetchResult, MutationResult, useApolloClient} from '@apollo/client';
@@ -25,6 +28,9 @@ export const useCreateProject: () => [
   const [createProject, data] = useCreateProjectMutation();
 
   const func = async (variables: CreateProjectMutationVariables) => {
+    const {data: me} = await client.query<MeQuery>({
+      query: MeDocument,
+    });
     const result = await createProject({
       context: {
         serializationKey: 'MUTATION',
@@ -37,7 +43,16 @@ export const useCreateProject: () => [
           __typename: 'Project',
           id: variables.id,
           name: variables.name,
-          members: [],
+          members: [
+            {
+              __typename: 'PublicUser',
+              name: me.me.fullName,
+              email: me.me.email,
+              userId: me.me.id,
+              id: `${variables.id}:${me.me.id}`,
+              isAdmin: true,
+            },
+          ],
           tasks: [],
           text: '',
           isAdmin: true,

@@ -7,11 +7,10 @@ import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicCard} from '../../components/basicViews/BasicCard';
 import {BasicText} from '../../components/basicViews/BasicText';
 import Task, {calendarConfigWithoutTime} from '../../components/listItems/task';
-import {TaskFragment, useGetAllTasksQuery} from '../../generated/graphql';
+import {useGetAllTasksQuery} from '../../generated/graphql';
 import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {TaskStackScreenProps} from '../../utils/types';
 import AddButton from '../../components/addButton';
-import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
 
 export const PlanDayScreen: React.FC<
   TaskStackScreenProps<'PlanDayScreen'>
@@ -35,7 +34,6 @@ export const PlanDayScreen: React.FC<
       <FlatList
         ListHeaderComponent={
           <BasicCard backgroundColor="accentBackground1">
-            <BasicTextInput />
             <View style={styles.topContainer}>
               <BasicButton
                 variant="unstyled"
@@ -47,7 +45,7 @@ export const PlanDayScreen: React.FC<
                   source={require('../../../assets/Chevron-left.png')}
                 />
               </BasicButton>
-              <BasicText>
+              <BasicText textVariant="button">
                 {day.calendar(null, calendarConfigWithoutTime)}
               </BasicText>
               <BasicButton
@@ -69,7 +67,9 @@ export const PlanDayScreen: React.FC<
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                <BasicText textVariant="button">No tasks planned</BasicText>
+                <BasicText textVariant="button" color="textSecondary">
+                  No tasks planned
+                </BasicText>
               </View>
             ) : (
               todayTasks?.map((item, index) => (
@@ -87,9 +87,6 @@ export const PlanDayScreen: React.FC<
         data={unassignedTasks}
         renderItem={({item}) => <Task task={item} planning planningDay={day} />}
       />
-      <View style={{position: 'absolute', right: 0, bottom: 0, margin: 20}}>
-        <AddButton onPress={() => {}} />
-      </View>
     </View>
   );
 };

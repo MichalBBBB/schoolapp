@@ -84,8 +84,8 @@ const SettingsHomeScreen: React.FC<
           <BasicCard
             backgroundColor="accentBackground1"
             marginBottom={10}
-            spacing="m"
-            gap={18}>
+            spacing="s"
+            gap={6}>
             <SettingsItem
               text="TimeTable"
               onPress={() => {
@@ -103,7 +103,7 @@ const SettingsHomeScreen: React.FC<
           <BasicCard
             backgroundColor="accentBackground1"
             marginBottom={10}
-            spacing="m"
+            spacing="s"
             gap={18}>
             <SettingsItem
               text="Date and time"

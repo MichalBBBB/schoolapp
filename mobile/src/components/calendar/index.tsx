@@ -24,6 +24,7 @@ interface CalendarProps {
   onChangeSelectedDay: (day: dayjs.Dayjs) => void;
   weekHeight: number;
   onChangeActiveMonth?: (newMonth: dayjs.Dayjs) => void | undefined;
+  daysWithDots?: dayjs.Dayjs[];
 }
 
 const calendarHeight = 204;
@@ -31,6 +32,11 @@ const calendarHeight = 204;
 export type CalendarHandle = {
   goForward: () => void;
   goBackwards: () => void;
+};
+
+export type DayWithDot = {
+  date: dayjs.Dayjs;
+  dot: boolean;
 };
 
 const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
@@ -42,6 +48,7 @@ const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
     onChangeSelectedDay,
     weekHeight,
     onChangeActiveMonth,
+    daysWithDots,
   } = props;
   const settings = useSettings();
   const [month, setMonth] = useState(dayjs());
@@ -170,12 +177,12 @@ const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
 
   const updateMonths = (newIndex: number) => {
     const monthsCopy = changeVisibility(newIndex);
-    if (
-      index !== newIndex &&
-      onChangeActiveMonth &&
-      typeof months[newIndex] !== 'string'
-    ) {
-      onChangeActiveMonth(months[newIndex] as dayjs.Dayjs);
+    if (index !== newIndex && onChangeActiveMonth) {
+      if (typeof months[newIndex] !== 'string') {
+        onChangeActiveMonth(months[newIndex] as dayjs.Dayjs);
+      } else {
+        onChangeActiveMonth(createDateFromString(months[newIndex] as string));
+      }
     }
     setIndex(newIndex);
     setMonths(monthsCopy);
@@ -191,6 +198,11 @@ const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
           month={item}
           selectedDay={selectedDay}
           onDayPress={onDayPress}
+          daysWithDots={
+            typeof item !== 'string'
+              ? daysWithDots?.filter(day => day.isSame(item, 'month'))
+              : undefined
+          }
         />
       </View>
     );
@@ -231,7 +243,7 @@ const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
         }}
         ref={flatListRef}
         // rerender when index changes
-        extraData={[index, selectedDay]}
+        extraData={[index, selectedDay, daysWithDots]}
       />
     </View>
   );

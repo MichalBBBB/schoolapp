@@ -12,6 +12,7 @@ import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
+  withSpring,
   withTiming,
 } from 'react-native-reanimated';
 import {ColorsObject} from '../types/Theme';
@@ -53,7 +54,7 @@ export const Popup: React.FC<PopupProps> = ({
   const [isTop, setIsTop] = useState(false);
   const [isRight, setisRight] = useState(true);
 
-  const scale = useSharedValue(1);
+  const scale = useSharedValue(0);
 
   const closeModal = () => {
     setShouldClose(true);
@@ -67,9 +68,13 @@ export const Popup: React.FC<PopupProps> = ({
 
   useEffect(() => {
     if (shouldClose) {
-      scale.value = withTiming(0, {duration: 300}, () => {
-        runOnJS(setModalToClosed)();
-      });
+      scale.value = withSpring(
+        0,
+        {damping: 10, mass: 0.7, stiffness: 150, overshootClamping: true},
+        () => {
+          runOnJS(setModalToClosed)();
+        },
+      );
     }
   }, [shouldClose]);
 
@@ -77,7 +82,7 @@ export const Popup: React.FC<PopupProps> = ({
     if (shouldAnimate && !contentVisible && popupVisible) {
       setContentVisible(true);
       scale.value = 0;
-      scale.value = withTiming(1, {duration: 300});
+      scale.value = withSpring(1, {damping: 10, mass: 0.7, stiffness: 180});
       setShouldAnimate(false);
     }
   }, [contentDimensions]);
@@ -183,18 +188,23 @@ export const Popup: React.FC<PopupProps> = ({
     };
   });
 
+  const content = Array.isArray(children)
+    ? children.map((childrenItem, index) => {
+        if (childrenItem) {
+          return React.cloneElement(childrenItem, {
+            closeModal: setModalToClosed,
+            animateClose: closeModal,
+            key: index,
+          });
+        }
+      })
+    : React.cloneElement(children as any, {
+        closeModal: setModalToClosed,
+        animateClose: closeModal,
+      });
+
   return (
     <>
-      {/* <Pressable
-        style={triggerContainerStyle}
-        onPress={() => {
-          measureTrigger();
-          setPopupVisible(true);
-          setShouldAnimate(true);
-        }}
-        ref={triggerWrapperRef}>
-        <View>{trigger}</View>
-      </Pressable> */}
       <View
         ref={triggerWrapperRef}
         style={triggerContainerStyle}
@@ -217,36 +227,28 @@ export const Popup: React.FC<PopupProps> = ({
               onPress={closeModal}
               style={styles.modalWrapper}
             />
-            <Animated.View
+            <View
+              style={{position: 'absolute', top: 0, left: 0, opacity: 0}}
               onLayout={event => {
                 setContentDimensions({
                   height: event.nativeEvent.layout.height,
                   width: event.nativeEvent.layout.width,
                 });
                 setShouldAnimate(true);
-              }}
+              }}>
+              {content}
+            </View>
+            <Animated.View
               style={[
                 {
                   alignSelf: 'flex-start',
                   zIndex: 99,
-                  opacity: contentVisible ? 1 : 0,
                   top,
                   left,
                 },
                 contentAnimatedStyle,
               ]}>
-              {Array.isArray(children)
-                ? children.map((childrenItem, index) => {
-                    return React.cloneElement(childrenItem, {
-                      closeModal: setModalToClosed,
-                      animateClose: closeModal,
-                      key: index,
-                    });
-                  })
-                : React.cloneElement(children as any, {
-                    closeModal: setModalToClosed,
-                    animateClose: closeModal,
-                  })}
+              {content}
             </Animated.View>
           </View>
         )}

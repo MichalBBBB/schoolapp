@@ -23,10 +23,12 @@ export const Menu: React.FC<MenuProps> = ({
       }}>
       {Array.isArray(children)
         ? children.map((childrenItem, index) => {
-            return React.cloneElement(childrenItem, {
-              closeModal,
-              key: index,
-            });
+            if (childrenItem) {
+              return React.cloneElement(childrenItem, {
+                closeModal,
+                key: index,
+              });
+            }
           })
         : React.cloneElement(children as any, {
             closeModal,

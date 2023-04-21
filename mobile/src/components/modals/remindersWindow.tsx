@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import dayjs from 'dayjs';
 import {useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Pressable, StyleSheet, View} from 'react-native';
 import {
   BasicModalCard,
   BasicModalCardProps,
@@ -82,27 +82,29 @@ export const RemindersWindow: React.FC<RemindersWindowProps> = ({
           <BasicText>None</BasicText>
         </View>
         {reminderTimes.map((item, index) => (
-          <View key={index} style={{flexDirection: 'row', marginBottom: 10}}>
+          <Pressable
+            key={index}
+            style={{flexDirection: 'row', marginBottom: 10}}
+            onPress={() => {
+              if (!selectedReminderTimes.includes(item.minutesBefore)) {
+                setSelectedReminderTimes([
+                  ...selectedReminderTimes,
+                  item.minutesBefore,
+                ]);
+              } else {
+                setSelectedReminderTimes(
+                  selectedReminderTimes.filter(
+                    time => time !== item.minutesBefore,
+                  ),
+                );
+              }
+            }}>
             <BasicRadio
               style={{marginRight: 10}}
               toggled={selectedReminderTimes.includes(item.minutesBefore)}
-              onToggle={toggled => {
-                if (toggled) {
-                  setSelectedReminderTimes([
-                    ...selectedReminderTimes,
-                    item.minutesBefore,
-                  ]);
-                } else {
-                  setSelectedReminderTimes(
-                    selectedReminderTimes.filter(
-                      time => time !== item.minutesBefore,
-                    ),
-                  );
-                }
-              }}
             />
             <BasicText>{item.title}</BasicText>
-          </View>
+          </Pressable>
         ))}
       </View>
       <View style={styles.submitButtonContainer}>

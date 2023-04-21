@@ -39,7 +39,7 @@ export const AdvancedTimeTableScreen: React.FC<
     <View style={{padding: 10}}>
       <BasicCard
         backgroundColor="accentBackground1"
-        spacing="m"
+        spacing="s"
         marginBottom={10}>
         <Popup
           trigger={<SettingsItem text={'Lenght of rotation'} />}
@@ -69,8 +69,8 @@ export const AdvancedTimeTableScreen: React.FC<
                     style={{
                       marginBottom: 5,
                       alignItems: 'center',
-                      paddingHorizontal: 20,
-                      padding: 5,
+                      paddingHorizontal: 30,
+                      padding: 10,
                     }}
                     onPress={() => {
                       setSettings({

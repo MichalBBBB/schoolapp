@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   container: {
     margin: 5,
     marginHorizontal: 10,
-    borderRadius: 10,
+    borderRadius: 15,
     overflow: 'hidden',
   },
   image: {
@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
     padding: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   options: {
     resizeMode: 'stretch',

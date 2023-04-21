@@ -12,6 +12,7 @@ import {useTheme} from './contexts/ThemeContext';
 import SettingsStack from './routes/SettingsStack';
 import ProjectStack from './routes/ProjectStack';
 import {BasicIcon} from './components/basicViews/BasicIcon';
+import {AlertProvider} from './contexts/AlertContext';
 
 export type TabStackParamList = {
   TaskStack: undefined;
@@ -116,10 +117,12 @@ const Routes = () => {
 
   return (
     <>
-      <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
-      <NavigationContainer theme={theme}>
-        {isLoggedIn ? screens : <AuthStack />}
-      </NavigationContainer>
+      <AlertProvider>
+        <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
+        <NavigationContainer theme={theme}>
+          {isLoggedIn ? screens : <AuthStack />}
+        </NavigationContainer>
+      </AlertProvider>
     </>
   );
 };

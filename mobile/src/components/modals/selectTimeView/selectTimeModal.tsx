@@ -4,8 +4,8 @@ import {BasicModalCard} from '../../basicViews/BasicModalCard';
 
 interface SelectTimeModalProps {
   isVisible: boolean;
-  onSubmit?: (time: string) => void;
-  onClose?: () => void | undefined;
+  onSubmit: (time: string) => void;
+  onClose: () => void;
   initialTime?: string | undefined;
 }
 
@@ -18,18 +18,14 @@ const SelectTimeModal: React.FC<SelectTimeModalProps> = ({
   return (
     <BasicModalCard
       onBackdropPress={() => {
-        if (onClose) {
-          onClose();
-        }
+        onClose();
       }}
       isVisible={isVisible}
       alignCard="center">
       <SelectTimeView
         initialTime={initialTime}
         onSubmit={time => {
-          if (onSubmit) {
-            onSubmit(time);
-          }
+          onSubmit(time);
         }}
       />
     </BasicModalCard>

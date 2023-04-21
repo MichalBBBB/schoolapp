@@ -44,8 +44,8 @@ export const ProfileScreen: React.FC<
         </View>
         <BasicCard
           backgroundColor="accentBackground1"
-          spacing="m"
-          gap={18}
+          spacing="s"
+          gap={6}
           marginBottom={10}>
           <SettingsItem
             text="Name"
@@ -66,7 +66,7 @@ export const ProfileScreen: React.FC<
           />
         </BasicCard>
         {!me?.me.usesOAuth && (
-          <BasicCard spacing="m" backgroundColor="accentBackground1">
+          <BasicCard spacing="s" backgroundColor="accentBackground1">
             <SettingsItem
               text="Change Password"
               onPress={() => {
@@ -77,6 +77,7 @@ export const ProfileScreen: React.FC<
         )}
       </ScrollView>
       <BasicInputWindow
+        buttonText="Change"
         defaultValue={me?.me.fullName}
         visible={nameModalVisible}
         onClose={() => {
@@ -88,6 +89,7 @@ export const ProfileScreen: React.FC<
         }}
       />
       <BasicInputWindow
+        buttonText="Change"
         defaultValue={me?.me.email}
         visible={emailModalVisible}
         onClose={() => {
