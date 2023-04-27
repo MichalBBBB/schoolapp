@@ -11,7 +11,7 @@ export const DateSettingsScreen: React.FC<
     <ScrollView style={styles.container}>
       <BasicCard
         backgroundColor="accentBackground1"
-        spacing="m"
+        spacing="s"
         gap={10}
         marginBottom={10}>
         <SettingsItem

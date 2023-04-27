@@ -97,6 +97,7 @@ const Task: React.FC<{
             resizeMode: 'stretch',
             height: 25,
             width: 25,
+            tintColor: 'white',
           }}
         />
       </View>
@@ -161,7 +162,7 @@ const Task: React.FC<{
                 )}
               </TouchableOpacity>
               <View style={{flex: 1}}>
-                <BasicText>{task.name}</BasicText>
+                <BasicText numberOfLines={1}>{task.name}</BasicText>
                 {task.subject?.name && (
                   <View style={{alignItems: 'center', flexDirection: 'row'}}>
                     <View
@@ -176,7 +177,10 @@ const Task: React.FC<{
                           ].primary,
                       }}
                     />
-                    <BasicText textVariant="subText" color="textSecondary">
+                    <BasicText
+                      textVariant="subText"
+                      color="textSecondary"
+                      numberOfLines={1}>
                       {task.subject?.name}
                     </BasicText>
                   </View>
@@ -184,7 +188,10 @@ const Task: React.FC<{
               </View>
               {((task.dueDate && !showDoDate) ||
                 (task.doDate && showDoDate)) && (
-                <BasicText textVariant="subText" color="textSecondary">
+                <BasicText
+                  textVariant="subText"
+                  color="textSecondary"
+                  numberOfLines={1}>
                   {dayjs(showDoDate ? task.doDate : task.dueDate).calendar(
                     null,
                     calendarConfigWithoutTime,

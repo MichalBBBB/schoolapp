@@ -70,7 +70,7 @@ export const Popup: React.FC<PopupProps> = ({
     if (shouldClose) {
       scale.value = withSpring(
         0,
-        {damping: 10, mass: 0.7, stiffness: 150, overshootClamping: true},
+        {damping: 10, mass: 0.5, stiffness: 150, overshootClamping: true},
         () => {
           runOnJS(setModalToClosed)();
         },
@@ -82,7 +82,7 @@ export const Popup: React.FC<PopupProps> = ({
     if (shouldAnimate && !contentVisible && popupVisible) {
       setContentVisible(true);
       scale.value = 0;
-      scale.value = withSpring(1, {damping: 10, mass: 0.7, stiffness: 180});
+      scale.value = withSpring(1, {damping: 10, mass: 0.3, stiffness: 180});
       setShouldAnimate(false);
     }
   }, [contentDimensions]);

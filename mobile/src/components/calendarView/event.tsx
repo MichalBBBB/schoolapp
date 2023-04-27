@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
     resizeMode: 'stretch',
     height: 25,
     width: 25,
+    tintColor: 'white',
   },
   backViewContainer: {
     backgroundColor: 'red',

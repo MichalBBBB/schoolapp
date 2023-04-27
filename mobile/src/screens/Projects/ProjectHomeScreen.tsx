@@ -24,17 +24,10 @@ const ProjectHomeScreen: React.FC<
   const isOnline = useReactiveVar(isOnlineVar);
   const {data, error} = useGetProjectsQuery();
   const {data: invites} = useGetInvitesQuery();
-  const [deleteProject, {error: deleteError}] = useDeleteProjectMutation({
-    context: {skipQeue: true},
-  });
   const [theme] = useTheme();
 
   const client = useApolloClient();
   const [refreshing, setRefreshing] = useState(false);
-
-  useEffect(() => {
-    console.log(JSON.stringify(error), JSON.stringify(deleteError));
-  }, [error, deleteError]);
 
   useLayoutEffect(() => {
     navigation.setOptions({

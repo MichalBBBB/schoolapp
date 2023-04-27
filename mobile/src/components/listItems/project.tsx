@@ -25,13 +25,12 @@ export const Project: React.FC<ProjectProps> = ({project}) => {
             projectId: project.id,
           });
         }}>
-        <BasicCard backgroundColor="accentBackground1" spacing="m">
+        <BasicCard backgroundColor="accentBackground1" spacing="l">
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
-              marginBottom: 5,
             }}>
             <BasicText textVariant="subHeading">{project.name}</BasicText>
             <BasicText color="textSecondary">{`${
@@ -39,7 +38,10 @@ export const Project: React.FC<ProjectProps> = ({project}) => {
             } Member${project.members.length == 1 ? '' : 's'}`}</BasicText>
           </View>
           {project.text && (
-            <BasicText numberOfLines={1} color="textSecondary">
+            <BasicText
+              numberOfLines={1}
+              color="textSecondary"
+              style={{marginTop: 5}}>
               {project.text}
             </BasicText>
           )}

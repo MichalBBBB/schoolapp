@@ -69,7 +69,6 @@ const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
         }
       },
       goBackwards() {
-        console.log('here');
         if (index - 1 >= 0) {
           flatListRef.current?.scrollToIndex({
             index: index - 1,

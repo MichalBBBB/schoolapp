@@ -59,6 +59,7 @@ const ProjectTask: React.FC<{
             resizeMode: 'stretch',
             height: 25,
             width: 25,
+            tintColor: 'white',
           }}
         />
       </View>

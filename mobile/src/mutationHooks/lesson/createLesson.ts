@@ -35,7 +35,7 @@ export const useCreateLesson: () => [
       })
     ).data.getAllLessonTimes.find(item => item.id == variables.lessonTimeId);
     if (subject && lessonTime) {
-      const result = await createLesson({
+      await createLesson({
         context: {
           serializationKey: 'MUTATION',
         },
@@ -48,6 +48,7 @@ export const useCreateLesson: () => [
             dayNumber: variables.dayNumber,
             lessonTime: lessonTime,
             subject: subject,
+            extraInfo: null,
           },
         },
         update: (cache, {data}) => {

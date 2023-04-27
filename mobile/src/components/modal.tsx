@@ -1,13 +1,12 @@
 import {Portal} from '@gorhom/portal';
 import React from 'react';
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useEffect} from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
   TouchableOpacity,
   ViewStyle,
-  TouchableWithoutFeedback,
   BackHandler,
   View,
 } from 'react-native';
@@ -39,7 +38,10 @@ export const Modal: React.FC<ModalProps> = ({
   alignContent = 'center',
 }) => {
   const content = (
-    <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
+    <Animated.View
+      style={{zIndex: 99}}
+      entering={FadeInDown.springify().stiffness(180).mass(0.3)}
+      exiting={FadeOutDown.springify().stiffness(150).mass(0.7)}>
       {children}
     </Animated.View>
   );
@@ -60,10 +62,12 @@ export const Modal: React.FC<ModalProps> = ({
   });
 
   useEffect(() => {
-    if (isVisible && avoidKeyboard) {
-      KeyboardManager.setEnable(false);
-    } else {
-      KeyboardManager.setEnable(true);
+    if (avoidKeyboard) {
+      if (isVisible) {
+        KeyboardManager.setEnable(false);
+      } else {
+        KeyboardManager.setEnable(true);
+      }
     }
   }, [isVisible]);
 
@@ -72,7 +76,7 @@ export const Modal: React.FC<ModalProps> = ({
       {isVisible && (
         <View style={styles.modalWrapper}>
           <Animated.View
-            entering={FadeIn.duration(100)}
+            entering={FadeIn}
             exiting={FadeOut}
             pointerEvents="box-none"
             style={[
@@ -92,16 +96,15 @@ export const Modal: React.FC<ModalProps> = ({
                 {backgroundColor: `rgba(0,0,0,${backdropOpacity})`},
               ]}
             />
-            <View style={{zIndex: 99}}>
-              {avoidKeyboard ? (
-                <KeyboardAvoidingView
-                  behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-                  {content}
-                </KeyboardAvoidingView>
-              ) : (
-                content
-              )}
-            </View>
+            {avoidKeyboard ? (
+              <KeyboardAvoidingView
+                style={{zIndex: 99}}
+                behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+                {content}
+              </KeyboardAvoidingView>
+            ) : (
+              content
+            )}
           </Animated.View>
         </View>
       )}
