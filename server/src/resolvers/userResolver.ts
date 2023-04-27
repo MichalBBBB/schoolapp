@@ -27,6 +27,10 @@ import { OAuth2Client } from "google-auth-library";
 import { Settings } from "../entities/Settings";
 import dayjs from "dayjs";
 import { queueMiddleware } from "../middleware/queueMiddleware";
+import {
+  EMAIL_VERIFICATION_PREFIX,
+  sendVerificationEmail,
+} from "../utils/email/verifyEmail";
 
 const client = new OAuth2Client({
   clientId: process.env.GOOGLE_CLIENT_ID,
@@ -201,9 +205,17 @@ export class userResolver {
       };
     }
     // Verify password
-    const valid = await argon2.verify(user.password, password);
-    if (!valid) {
-      return { errors: [{ field: "password", message: "Incorrect password" }] };
+    if (user.password) {
+      const valid = await argon2.verify(user.password, password);
+      if (!valid) {
+        return {
+          errors: [{ field: "password", message: "Incorrect password" }],
+        };
+      }
+    } else {
+      return {
+        errors: [{ field: "password", message: "Incorrect password" }],
+      };
     }
     // Send refresh token cookie
     sendRefreshToken(res, createRefreshToken(user));
@@ -220,7 +232,7 @@ export class userResolver {
     @Arg("email") email: string,
     @Arg("password") password: string,
     @Arg("name") name: string,
-    @Ctx() { res }: MyContext
+    @Ctx() { res, redis }: MyContext
   ): Promise<typeof RegisterUnion> {
     const errors = validateRegister(email, password);
     if (errors) {
@@ -260,6 +272,7 @@ export class userResolver {
     }
     if (user) {
       // Send refresh token cookie
+      sendVerificationEmail({ email: user.email, userId: user.id, redis });
       sendRefreshToken(res, createRefreshToken(user));
       return {
         user,
@@ -267,6 +280,19 @@ export class userResolver {
       };
     } else {
       throw new Error("an error occured");
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async verifyEmail(@Arg("token") token: string, @Ctx() { redis }: MyContext) {
+    const key = EMAIL_VERIFICATION_PREFIX + token;
+    const userId = await redis.get(key);
+    if (userId) {
+      console.log("verify email successful");
+      await User.update({ id: userId }, { emailVerified: true });
+      return true;
+    } else {
+      throw new Error("An error occured");
     }
   }
 
@@ -287,6 +313,7 @@ export class userResolver {
         fullName: response.name,
         googleId: response.userId,
         imageURL: response.pictureURL,
+        emailVerified: true,
         settings,
       }).save();
     }
@@ -328,7 +355,7 @@ export class userResolver {
     if (!user) {
       throw new Error("This user doesn't exist");
     }
-    const valid = await argon2.verify(user.password, oldPassword);
+    const valid = await argon2.verify(user.password || "", oldPassword);
     if (!valid) {
       return { errors: [{ field: "password", message: "Incorrect password" }] };
     }
@@ -338,6 +365,19 @@ export class userResolver {
     return {
       changePassword: true,
     };
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async deleteAccount(@Ctx() { payload }: MyContext) {
+    const user = await User.findOne({ where: { id: payload?.userId } });
+    if (user) {
+      await user.remove();
+
+      return true;
+    } else {
+      throw new Error("User doesn't exist");
+    }
   }
 
   @Mutation(() => Boolean)

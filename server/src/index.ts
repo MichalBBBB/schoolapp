@@ -30,6 +30,8 @@ import { json } from "body-parser";
 import { DefferedObject } from "./middleware/queueMiddleware";
 import { reminderResolver } from "./resolvers/reminderResolver";
 import { settingsResolver } from "./resolvers/settingsResolver";
+import { createClient } from "redis";
+import { MyContext } from "./utils/MyContext";
 
 export type UserQueueObject = {
   resolveObject: DefferedObject;
@@ -50,6 +52,12 @@ const main = async () => {
   //User.delete({});
   //Task.delete({});
   AppDataSource.runMigrations();
+
+  const redis = createClient();
+
+  redis.on("error", (err) => console.log("Redis Client Error", err));
+
+  await redis.connect();
 
   const app = express();
 
@@ -126,7 +134,7 @@ const main = async () => {
     cors<cors.CorsRequest>(),
     json(),
     expressMiddleware(apolloServer, {
-      context: async ({ res, req }) => ({ res, req }),
+      context: async ({ res, req }) => ({ res, req, redis } as MyContext),
     })
   );
 

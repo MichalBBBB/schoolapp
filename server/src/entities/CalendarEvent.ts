@@ -54,7 +54,7 @@ export class CalendarEvent extends BaseEntity {
   @Field(() => [Reminder])
   reminders: Relation<Reminder>[];
 
-  @ManyToOne(() => User, (user) => user.events)
+  @ManyToOne(() => User, (user) => user.events, { onDelete: "CASCADE" })
   @Field(() => User)
   user: User;
 

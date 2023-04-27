@@ -46,7 +46,7 @@ export class Lesson extends BaseEntity {
   @Field()
   subjectId: string;
 
-  @ManyToOne(() => User, (user) => user.lessons)
+  @ManyToOne(() => User, (user) => user.lessons, { onDelete: "CASCADE" })
   user: Relation<User>;
 
   @Column()

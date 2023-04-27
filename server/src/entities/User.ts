@@ -57,8 +57,12 @@ export class User extends BaseEntity {
   @Field()
   email: string;
 
+  @Column({ default: false })
+  @Field()
+  emailVerified: boolean;
+
   @Column({ nullable: true })
-  password: string;
+  password?: string;
 
   @Column({ nullable: true })
   @Field({ nullable: true })

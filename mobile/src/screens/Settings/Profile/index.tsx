@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {Image, ScrollView, StyleSheet, View} from 'react-native';
+import {Image, Pressable, ScrollView, StyleSheet, View} from 'react-native';
+import {isLoggedInVar} from '../../../App';
 import {BasicCard} from '../../../components/basicViews/BasicCard';
 import {BasicIcon} from '../../../components/basicViews/BasicIcon';
 import {BasicText} from '../../../components/basicViews/BasicText';
@@ -7,8 +8,9 @@ import {BasicTextInput} from '../../../components/basicViews/BasicTextInput';
 import {SettingsItem} from '../../../components/listItems/settingsItem';
 import BasicInputWindow from '../../../components/modals/basicInputWindow';
 import {Popup} from '../../../components/popup';
-import {useMeQuery} from '../../../generated/graphql';
+import {useDeleteAccountMutation, useMeQuery} from '../../../generated/graphql';
 import {useEditUser} from '../../../mutationHooks/user/edituser';
+import {setAccessToken} from '../../../utils/AccessToken';
 import {SettingsStackScreenProps} from '../../../utils/types';
 
 export const ProfileScreen: React.FC<
@@ -18,6 +20,11 @@ export const ProfileScreen: React.FC<
   const [editUser] = useEditUser();
   const [nameModalVisible, setNameModalVisible] = useState(false);
   const [emailModalVisible, setEmailModalVisible] = useState(false);
+  const [deleteAccount] = useDeleteAccountMutation({
+    context: {
+      skipQueue: true,
+    },
+  });
   return (
     <>
       <ScrollView style={{padding: 20}}>
@@ -66,7 +73,10 @@ export const ProfileScreen: React.FC<
           />
         </BasicCard>
         {!me?.me.usesOAuth && (
-          <BasicCard spacing="s" backgroundColor="accentBackground1">
+          <BasicCard
+            spacing="s"
+            backgroundColor="accentBackground1"
+            marginBottom={10}>
             <SettingsItem
               text="Change Password"
               onPress={() => {
@@ -75,6 +85,19 @@ export const ProfileScreen: React.FC<
             />
           </BasicCard>
         )}
+        <BasicCard backgroundColor="accentBackground1" spacing="s">
+          <SettingsItem
+            text={'Delete Account'}
+            showArrow={false}
+            textColor={'dangerous'}
+            onPress={() => {
+              deleteAccount().finally(() => {
+                setAccessToken('');
+                isLoggedInVar(false);
+              });
+            }}
+          />
+        </BasicCard>
       </ScrollView>
       <BasicInputWindow
         buttonText="Change"

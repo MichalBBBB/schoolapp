@@ -24,11 +24,11 @@ import SerializingLink from 'apollo-link-serialize';
 import {PersistentQueueLink} from './persistentQueueLink';
 import {BatchHttpLink} from '@apollo/client/link/batch-http';
 
-// export const baseUri =
-//   Platform.OS == 'ios' ? 'http://localhost:5002' : 'http://10.0.2.2:5002';
-
 export const baseUri =
-  Platform.OS == 'ios' ? 'https://api.dayto.app' : 'https://api.dayto.app';
+  Platform.OS == 'ios' ? 'http://localhost:5002' : 'http://10.0.2.2:5002';
+
+// export const baseUri =
+//   Platform.OS == 'ios' ? 'https://api.dayto.app' : 'https://api.dayto.app';
 
 export const uri = baseUri + '/graphql';
 

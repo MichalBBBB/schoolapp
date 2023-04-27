@@ -1,8 +1,11 @@
+import { ApolloProvider } from "@apollo/client";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import React from "react";
+import { createApolloClient } from "../utils/createApolloClient";
 
 export default function App({ Component, pageProps }: AppProps) {
+  const client = createApolloClient();
   return (
     <>
       <Head>
@@ -25,7 +28,9 @@ export default function App({ Component, pageProps }: AppProps) {
         />
         <meta name="theme-color" content="#000" />
       </Head>
-      <Component {...pageProps} />
+      <ApolloProvider client={client}>
+        <Component {...pageProps} />
+      </ApolloProvider>
     </>
   );
 }

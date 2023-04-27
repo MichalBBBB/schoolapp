@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import React from "react";
 
-const AppAssociation: NextPage<{}> = () => {
+const AppAssociation: NextPage = () => {
   return <></>;
 };
 
