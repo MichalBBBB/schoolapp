@@ -14,6 +14,7 @@ interface AlertProps {
   submitText?: string;
   cancelText?: string;
   submitDangerous?: boolean;
+  cancelButton?: boolean;
 }
 export const Alert: React.FC<AlertProps> = ({
   isVisible,
@@ -24,19 +25,28 @@ export const Alert: React.FC<AlertProps> = ({
   submitText = 'Ok',
   cancelText = 'cancel',
   submitDangerous = false,
+  cancelButton = true,
 }) => {
   return (
     <BasicModalCard
+      spacing="m"
       isVisible={isVisible}
       onBackdropPress={onClose}
       alignCard={'center'}
       shouldStretchWidth={false}
-      style={{maxWidth: 300}}>
+      style={{maxWidth: 300, minWidth: 250}}>
       <BasicText
         textVariant="subHeading"
-        style={{padding: 20, textAlign: 'center'}}>
+        style={{paddingHorizontal: 20, textAlign: 'center', paddingTop: 10}}>
         {text}
       </BasicText>
+      {subtext && (
+        <BasicText
+          color="textSecondary"
+          style={{padding: 10, textAlign: 'center'}}>
+          {subtext}
+        </BasicText>
+      )}
       <View
         style={{
           flexDirection: 'row',
@@ -44,17 +54,19 @@ export const Alert: React.FC<AlertProps> = ({
           alignItems: 'center',
           paddingHorizontal: 20,
         }}>
-        <BasicButton
-          style={{flex: 1}}
-          spacing="m"
-          onPress={() => {
-            onClose();
-          }}
-          variant={'unstyled'}>
-          <BasicText color="textSecondary" style={{fontWeight: 'bold'}}>
-            {cancelText}
-          </BasicText>
-        </BasicButton>
+        {cancelButton && (
+          <BasicButton
+            style={{flex: 1}}
+            spacing="m"
+            onPress={() => {
+              onClose();
+            }}
+            variant={'unstyled'}>
+            <BasicText color="textSecondary" style={{fontWeight: 'bold'}}>
+              {cancelText}
+            </BasicText>
+          </BasicButton>
+        )}
         <BasicButton
           style={{flex: 1}}
           spacing="m"

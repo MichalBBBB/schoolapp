@@ -1,12 +1,9 @@
 import { User } from "../entities/User";
 import {
   Arg,
-  createUnionType,
   Ctx,
-  Field,
   FieldResolver,
   Mutation,
-  ObjectType,
   Query,
   Resolver,
   Root,
@@ -31,6 +28,20 @@ import {
   EMAIL_VERIFICATION_PREFIX,
   sendVerificationEmail,
 } from "../utils/email/verifyEmail";
+import {
+  RESET_PASSWORD_PREFIX,
+  sendResetPasswordEmail,
+} from "../utils/email/resetPassword";
+import {
+  LoginUnion,
+  RegisterUnion,
+  UserSuccess,
+  ChangePasswordUnion,
+  ChangePasswordSuccess,
+  UserFail,
+  ForgotPasswordUnion,
+  ForgotPasswordSuccess,
+} from "../types/userResponseTypes";
 
 const client = new OAuth2Client({
   clientId: process.env.GOOGLE_CLIENT_ID,
@@ -65,72 +76,6 @@ const verify = async (
     pictureURL,
   };
 };
-
-@ObjectType()
-export class UserError {
-  @Field({ nullable: true })
-  field?: "email" | "password";
-
-  @Field()
-  message: string;
-}
-
-@ObjectType()
-class UserFail {
-  @Field(() => [UserError])
-  errors: UserError[];
-}
-
-@ObjectType()
-class UserSucces {
-  @Field(() => User)
-  user: User;
-
-  @Field()
-  accessToken: string;
-}
-
-@ObjectType()
-class ChangePasswordSucces {
-  @Field()
-  changePassword: Boolean;
-}
-
-const RegisterUnion = createUnionType({
-  name: "RegisterResponse",
-  types: () => [UserSucces, UserFail] as const,
-  resolveType: (value) => {
-    if ("user" in value) {
-      return UserSucces;
-    } else {
-      return UserFail;
-    }
-  },
-});
-
-const LoginUnion = createUnionType({
-  name: "LoginResponse",
-  types: () => [UserSucces, UserFail] as const,
-  resolveType: (value) => {
-    if ("user" in value) {
-      return UserSucces;
-    } else {
-      return UserFail;
-    }
-  },
-});
-
-const ChangePasswordUnion = createUnionType({
-  name: "ChangePasswordResponse",
-  types: () => [ChangePasswordSucces, UserFail] as const,
-  resolveType: (value) => {
-    if ("errors" in value) {
-      return UserFail;
-    } else {
-      return ChangePasswordSucces;
-    }
-  },
-});
 
 const isEmailValid = (_email: string) => {
   return true;
@@ -296,11 +241,11 @@ export class userResolver {
     }
   }
 
-  @Mutation(() => UserSucces)
+  @Mutation(() => UserSuccess)
   async googleSignIn(
     @Arg("idToken") idToken: string,
     @Ctx() { res }: MyContext
-  ): Promise<UserSucces> {
+  ): Promise<UserSuccess> {
     const response = await verify(idToken);
     let user;
     user = await User.findOne({ where: { email: response.email } });
@@ -350,7 +295,7 @@ export class userResolver {
     @Arg("oldPassword") oldPassword: string,
     @Arg("newPassword") newPassword: string,
     @Ctx() { payload }: MyContext
-  ): Promise<ChangePasswordSucces | UserFail> {
+  ): Promise<ChangePasswordSuccess | UserFail> {
     const user = await User.findOne({ where: { id: payload?.userId } });
     if (!user) {
       throw new Error("This user doesn't exist");
@@ -365,6 +310,56 @@ export class userResolver {
     return {
       changePassword: true,
     };
+  }
+
+  @Mutation(() => ForgotPasswordUnion)
+  async forgotPassword(
+    @Arg("email") email: string,
+    @Ctx() { redis }: MyContext
+  ): Promise<ForgotPasswordSuccess | UserFail> {
+    const user = await User.findOne({ where: { email } });
+    if (user) {
+      sendResetPasswordEmail({
+        email,
+        userId: user?.id,
+        redis,
+        name: user.fullName,
+      });
+      return {
+        forgotPassword: true,
+      };
+    } else {
+      return {
+        errors: [
+          {
+            field: "email",
+            message: "An account with this email doesn't exist",
+          },
+        ],
+      };
+    }
+  }
+
+  @Mutation(() => ChangePasswordUnion)
+  async resetPassword(
+    @Arg("newPassword") newPassword: string,
+    @Arg("token") token: string,
+    @Ctx() { redis }: MyContext
+  ): Promise<ChangePasswordSuccess | UserFail> {
+    console.log("here");
+    const key = RESET_PASSWORD_PREFIX + token;
+    const userId = await redis.get(key);
+    console.log(userId, newPassword);
+    if (userId) {
+      const hashedPassword = await argon2.hash(newPassword);
+      await User.update({ id: userId }, { password: hashedPassword });
+      redis.del(key);
+      return {
+        changePassword: true,
+      };
+    } else {
+      throw new Error("An error occured");
+    }
   }
 
   @Mutation(() => Boolean)

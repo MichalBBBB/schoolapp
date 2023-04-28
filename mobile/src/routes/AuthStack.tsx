@@ -2,6 +2,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import {Text, View} from 'react-native';
 import AuthHomeScreen from '../screens/Auth/AuthHomeScreen';
+import {ForgotPasswordScreen} from '../screens/Auth/ForgotPasswordScreen';
 import {LoginScreen} from '../screens/Auth/LoginScreen';
 import {RegisterScreen} from '../screens/Auth/RegisterScreen';
 
@@ -30,6 +31,11 @@ const AuthStack = () => {
           title: 'Register',
         }}
       />
+      <Stack.Screen
+        name="ForgotPasswordScreen"
+        component={ForgotPasswordScreen}
+        options={{title: 'Reset password'}}
+      />
     </Stack.Navigator>
   );
 };
@@ -37,6 +43,7 @@ export type AuthStackParamList = {
   AuthHome: undefined;
   LoginScreen: undefined;
   RegisterScreen: undefined;
+  ForgotPasswordScreen: {email?: string};
 };
 
 export default AuthStack;

@@ -26,7 +26,7 @@ export const RegisterScreen: React.FC<
       variables: {email, password, name: fullName},
     });
     console.log('register', response);
-    if (response.data?.register.__typename === 'UserSucces') {
+    if (response.data?.register.__typename === 'UserSuccess') {
       setAccessToken(response.data.register.accessToken);
       isLoggedInVar(true);
     } else if (response.data?.register.__typename === 'UserFail') {

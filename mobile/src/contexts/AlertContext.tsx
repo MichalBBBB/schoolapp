@@ -15,6 +15,7 @@ interface AlertObjectConstructorProps {
   submitText?: string;
   cancelText?: string;
   submitDangerous?: boolean;
+  cancelButton?: boolean;
 }
 
 export class AlertObject {
@@ -25,6 +26,7 @@ export class AlertObject {
   public subtext?: string;
   public submitText: string;
   public cancelText: string;
+  public cancelButton: boolean;
   public submitDangerous: boolean;
 
   constructor({
@@ -33,6 +35,7 @@ export class AlertObject {
     submitText = 'Ok',
     cancelText = 'Cancel',
     submitDangerous = false,
+    cancelButton = true,
   }: AlertObjectConstructorProps) {
     this.id = uuidv4();
     this.text = text;
@@ -40,6 +43,7 @@ export class AlertObject {
     this.submitText = submitText;
     this.cancelText = cancelText;
     this.submitDangerous = submitDangerous;
+    this.cancelButton = cancelButton;
   }
 
   public onSubmit(func: () => void) {
@@ -93,6 +97,7 @@ export const AlertProvider: React.FC<{}> = ({children}) => {
             submitDangerous={item.submitDangerous}
             submitText={item.submitText}
             cancelText={item.cancelText}
+            cancelButton={item.cancelButton}
           />
         ))}
         {children}

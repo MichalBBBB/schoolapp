@@ -11,7 +11,7 @@ import {setAccessToken} from '../../utils/AccessToken';
 
 export const LoginScreen: React.FC<
   NativeStackScreenProps<AuthStackParamList, 'LoginScreen'>
-> = () => {
+> = ({navigation}) => {
   const [loginMutation] = useLoginMutation();
 
   const [email, setEmail] = useState('');
@@ -21,7 +21,7 @@ export const LoginScreen: React.FC<
   const login = async () => {
     const response = await loginMutation({variables: {password, email}});
     console.log('login', response);
-    if (response.data?.login.__typename === 'UserSucces') {
+    if (response.data?.login.__typename === 'UserSuccess') {
       setAccessToken(response.data.login.accessToken);
       isLoggedInVar(true);
     } else if (response.data?.login.__typename === 'UserFail') {
@@ -32,7 +32,6 @@ export const LoginScreen: React.FC<
   return (
     <View style={styles.container}>
       <BasicTextInput
-        style={styles.inputField}
         onChangeText={value => {
           if (errors.find(item => item.field == 'email')) {
             setErrors(errors.filter(item => item.field !== 'email') || []);
@@ -50,7 +49,6 @@ export const LoginScreen: React.FC<
       />
 
       <BasicTextInput
-        style={styles.inputField}
         onChangeText={value => {
           setErrors(errors.filter(item => item.field !== 'password') || []);
           setPassword(value);
@@ -62,6 +60,21 @@ export const LoginScreen: React.FC<
         error={errors.find(item => item.field == 'password')?.message}
         marginBottom={10}
       />
+      <View style={{alignItems: 'flex-start'}}>
+        <BasicButton
+          onPress={() => {
+            navigation.navigate('ForgotPasswordScreen', {email});
+          }}
+          variant="unstyled"
+          spacing="none"
+          style={{marginBottom: 20, marginLeft: 10}}>
+          <BasicText
+            color="textSecondary"
+            style={{textDecorationLine: 'underline'}}>
+            Forgot password
+          </BasicText>
+        </BasicButton>
+      </View>
 
       <BasicButton onPress={() => login()} spacing="m">
         <BasicText textVariant="button" color="textContrast">
@@ -74,11 +87,8 @@ export const LoginScreen: React.FC<
 const styles = StyleSheet.create({
   container: {
     paddingTop: 100,
-    alignItems: 'center',
     flex: 1,
-  },
-  inputField: {
-    width: 250,
+    marginHorizontal: 50,
   },
   loginButton: {
     padding: 10,

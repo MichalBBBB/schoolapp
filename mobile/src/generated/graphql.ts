@@ -31,11 +31,18 @@ export type CalendarEvent = {
   wholeDay: Scalars['Boolean'];
 };
 
-export type ChangePasswordResponse = ChangePasswordSucces | UserFail;
+export type ChangePasswordResponse = ChangePasswordSuccess | UserFail;
 
-export type ChangePasswordSucces = {
-  __typename?: 'ChangePasswordSucces';
+export type ChangePasswordSuccess = {
+  __typename?: 'ChangePasswordSuccess';
   changePassword: Scalars['Boolean'];
+};
+
+export type ForgotPasswordResponse = ForgotPasswordSuccess | UserFail;
+
+export type ForgotPasswordSuccess = {
+  __typename?: 'ForgotPasswordSuccess';
+  forgotPassword: Scalars['Boolean'];
 };
 
 export type Invite = {
@@ -70,7 +77,7 @@ export type LessonTimeInput = {
   startTime: Scalars['String'];
 };
 
-export type LoginResponse = UserFail | UserSucces;
+export type LoginResponse = UserFail | UserSuccess;
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -106,13 +113,15 @@ export type Mutation = {
   editSubject: Subject;
   editTask: Task;
   editUser: User;
-  googleSignIn: UserSucces;
+  forgotPassword: ForgotPasswordResponse;
+  googleSignIn: UserSuccess;
   login: LoginResponse;
   logout: Scalars['Boolean'];
   makeMemberAdmin: Scalars['Boolean'];
   register: RegisterResponse;
   removeAssignedMember: ProjectTask;
   removeMemberFromProject: Project;
+  resetPassword: ChangePasswordResponse;
   setSettings: Settings;
   toggleProjectTask: ProjectTask;
   toggleSubtask: Subtask;
@@ -330,6 +339,11 @@ export type MutationEditUserArgs = {
 };
 
 
+export type MutationForgotPasswordArgs = {
+  email: Scalars['String'];
+};
+
+
 export type MutationGoogleSignInArgs = {
   idToken: Scalars['String'];
 };
@@ -363,6 +377,12 @@ export type MutationRemoveAssignedMemberArgs = {
 export type MutationRemoveMemberFromProjectArgs = {
   memberId: Scalars['String'];
   projectId: Scalars['String'];
+};
+
+
+export type MutationResetPasswordArgs = {
+  newPassword: Scalars['String'];
+  token: Scalars['String'];
 };
 
 
@@ -457,7 +477,7 @@ export type QueryGetAllSubtasksOfTaskArgs = {
   id: Scalars['String'];
 };
 
-export type RegisterResponse = UserFail | UserSucces;
+export type RegisterResponse = UserFail | UserSuccess;
 
 export type Reminder = {
   __typename?: 'Reminder';
@@ -583,8 +603,8 @@ export type UserProjectTask = {
   userId: Scalars['String'];
 };
 
-export type UserSucces = {
-  __typename?: 'UserSucces';
+export type UserSuccess = {
+  __typename?: 'UserSuccess';
   accessToken: Scalars['String'];
   user: User;
 };
@@ -926,7 +946,7 @@ export type ChangePasswordMutationVariables = Exact<{
 }>;
 
 
-export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'ChangePasswordSucces' } | { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null, message: string }> } };
+export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'ChangePasswordSuccess' } | { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null, message: string }> } };
 
 export type DeleteAccountMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -941,12 +961,19 @@ export type EditUserMutationVariables = Exact<{
 
 export type EditUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } } };
 
+export type ForgotPasswordMutationVariables = Exact<{
+  email: Scalars['String'];
+}>;
+
+
+export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: { __typename?: 'ForgotPasswordSuccess' } | { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null, message: string }> } };
+
 export type GoogleSignInMutationVariables = Exact<{
   idToken: Scalars['String'];
 }>;
 
 
-export type GoogleSignInMutation = { __typename?: 'Mutation', googleSignIn: { __typename?: 'UserSucces', accessToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
+export type GoogleSignInMutation = { __typename?: 'Mutation', googleSignIn: { __typename?: 'UserSuccess', accessToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
 
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
@@ -954,7 +981,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null, message: string }> } | { __typename?: 'UserSucces', accessToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null, message: string }> } | { __typename?: 'UserSuccess', accessToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -968,7 +995,7 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null, message: string }> } | { __typename?: 'UserSucces', accessToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null, message: string }> } | { __typename?: 'UserSuccess', accessToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
 
 export type GetAllEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2538,6 +2565,44 @@ export function useEditUserMutation(baseOptions?: Apollo.MutationHookOptions<Edi
 export type EditUserMutationHookResult = ReturnType<typeof useEditUserMutation>;
 export type EditUserMutationResult = Apollo.MutationResult<EditUserMutation>;
 export type EditUserMutationOptions = Apollo.BaseMutationOptions<EditUserMutation, EditUserMutationVariables>;
+export const ForgotPasswordDocument = gql`
+    mutation ForgotPassword($email: String!) {
+  forgotPassword(email: $email) {
+    ... on UserFail {
+      errors {
+        field
+        message
+      }
+    }
+  }
+}
+    `;
+export type ForgotPasswordMutationFn = Apollo.MutationFunction<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
+
+/**
+ * __useForgotPasswordMutation__
+ *
+ * To run a mutation, you first call `useForgotPasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useForgotPasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [forgotPasswordMutation, { data, loading, error }] = useForgotPasswordMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useForgotPasswordMutation(baseOptions?: Apollo.MutationHookOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ForgotPasswordMutation, ForgotPasswordMutationVariables>(ForgotPasswordDocument, options);
+      }
+export type ForgotPasswordMutationHookResult = ReturnType<typeof useForgotPasswordMutation>;
+export type ForgotPasswordMutationResult = Apollo.MutationResult<ForgotPasswordMutation>;
+export type ForgotPasswordMutationOptions = Apollo.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
 export const GoogleSignInDocument = gql`
     mutation GoogleSignIn($idToken: String!) {
   googleSignIn(idToken: $idToken) {
@@ -2579,7 +2644,7 @@ export type GoogleSignInMutationOptions = Apollo.BaseMutationOptions<GoogleSignI
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
-    ... on UserSucces {
+    ... on UserSuccess {
       accessToken
       user {
         id
@@ -2656,7 +2721,7 @@ export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, L
 export const RegisterDocument = gql`
     mutation Register($email: String!, $password: String!, $name: String!) {
   register(email: $email, password: $password, name: $name) {
-    ... on UserSucces {
+    ... on UserSuccess {
       accessToken
       user {
         id
