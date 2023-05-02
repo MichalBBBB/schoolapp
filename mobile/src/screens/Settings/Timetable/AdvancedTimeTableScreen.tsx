@@ -132,6 +132,7 @@ export const AdvancedTimeTableScreen: React.FC<
         </View>
       </BasicCard>
       <EditDateModal
+        clearButton={false}
         showTime={false}
         showSpecialDays={false}
         initialDate={dayjs(settings.startOfRotationDate)}
@@ -141,7 +142,7 @@ export const AdvancedTimeTableScreen: React.FC<
         }}
         onSubmit={date => {
           setSettings({
-            startOfRotationDate: date.toDate(),
+            startOfRotationDate: date!.toDate(),
           });
           setStartDateModalVisible(false);
         }}

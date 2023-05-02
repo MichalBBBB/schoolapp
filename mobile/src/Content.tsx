@@ -139,6 +139,7 @@ export const Content: React.FC = () => {
     } else if (!isOnline) {
       persistentQueueLink.close();
     } else if (!isLoggedIn) {
+      console.log('delete store');
       client.resetStore();
     }
   }, [isOnline, isLoggedIn]);

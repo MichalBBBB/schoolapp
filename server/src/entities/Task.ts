@@ -31,11 +31,11 @@ export class Task extends BaseEntity {
   text: string;
 
   @Column({ nullable: true })
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   dueDate?: Date;
 
   @Column({ nullable: true })
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   doDate?: Date;
 
   @ManyToOne(() => User, (user) => user.tasks, {
@@ -64,7 +64,7 @@ export class Task extends BaseEntity {
   subject: Relation<Subject>;
 
   @Column({ nullable: true })
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   subjectId?: string;
 
   @OneToMany(() => Reminder, (reminder) => reminder.task)

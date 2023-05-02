@@ -6,6 +6,8 @@ import {CalendarEventFragment} from '../generated/graphql';
 import {TabStackParamList} from '../Routes';
 import CalendarHomeScreen from '../screens/Calendar/CalendarHomeScreen';
 import EventDetailScreen from '../screens/Calendar/EventDetailScreen';
+import ProjectDetailScreen from '../screens/Projects/ProjectDetailScreen';
+import {ProjectMembersScreen} from '../screens/Projects/ProjectMembersScreen';
 import TaskDetailScreen from '../screens/Tasks/TaskDetailScreen';
 import {CalendarStackParamList} from '../utils/types';
 
@@ -38,6 +40,14 @@ const CalendarStack: React.FC<
         }}
       />
       <Stack.Screen name="TaskDetailScreen" component={TaskDetailScreen} />
+      <Stack.Screen
+        name="ProjectDetailScreen"
+        component={ProjectDetailScreen}
+      />
+      <Stack.Screen
+        name="ProjectMembersScreen"
+        component={ProjectMembersScreen}
+      />
     </Stack.Navigator>
   );
 };

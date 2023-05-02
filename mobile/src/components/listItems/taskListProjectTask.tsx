@@ -1,18 +1,13 @@
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import React, {useEffect, useState} from 'react';
-import {Image, StyleSheet, Text, View, LayoutAnimation} from 'react-native';
+import {Image, StyleSheet, View, LayoutAnimation} from 'react-native';
 import {
-  ProjectTaskFragment,
+  GetProjectsDocument,
+  GetProjectTasksOfUserDocument,
   ProjectTaskWithProjectFragment,
-  TaskFragment,
   useDeleteProjectTaskMutation,
-  useDeleteTaskMutation,
   useToggleProjectTaskMutation,
-  useToggleTaskMutation,
 } from '../../generated/graphql';
-import {TaskNavigationProp} from '../../utils/types';
 import SlidingView from '../slidingView';
 import calendar from 'dayjs/plugin/calendar';
 import {BasicText} from '../basicViews/BasicText';
@@ -20,10 +15,8 @@ import {
   TouchableHighlight,
   TouchableOpacity,
 } from 'react-native-gesture-handler';
-import {useToggleTask} from '../../mutationHooks/task/toggleTask';
-import {useDeleteTask} from '../../mutationHooks/task/deleteTask';
 import {useTheme} from '../../contexts/ThemeContext';
-import {ColorsObject, SubjectColorsObject} from '../../types/Theme';
+import {ColorsObject} from '../../types/Theme';
 import {BasicIcon} from '../basicViews/BasicIcon';
 
 dayjs.extend(calendar);
@@ -57,6 +50,7 @@ const TaskListProjectTask: React.FC<{
       variables: {
         id: projectTask.id,
       },
+      refetchQueries: [GetProjectTasksOfUserDocument, GetProjectsDocument],
     });
   };
   const back = (
@@ -77,6 +71,7 @@ const TaskListProjectTask: React.FC<{
             resizeMode: 'stretch',
             height: 25,
             width: 25,
+            tintColor: 'white',
           }}
         />
       </View>

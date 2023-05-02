@@ -121,6 +121,7 @@ export type Mutation = {
   register: RegisterResponse;
   removeAssignedMember: ProjectTask;
   removeMemberFromProject: Project;
+  resendVerificationEmail: Scalars['Boolean'];
   resetPassword: ChangePasswordResponse;
   setSettings: Settings;
   toggleProjectTask: ProjectTask;
@@ -609,7 +610,7 @@ export type UserSuccess = {
   user: User;
 };
 
-export type UserFragment = { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } };
+export type UserFragment = { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, emailVerified: boolean, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } };
 
 export type CalendarEventFragment = { __typename?: 'CalendarEvent', id: string, name: string, text?: string | null, startDate: any, endDate?: any | null, wholeDay: boolean, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> };
 
@@ -959,7 +960,7 @@ export type EditUserMutationVariables = Exact<{
 }>;
 
 
-export type EditUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } } };
+export type EditUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, emailVerified: boolean, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
@@ -996,6 +997,11 @@ export type RegisterMutationVariables = Exact<{
 
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null, message: string }> } | { __typename?: 'UserSuccess', accessToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
+
+export type ResendVerificationEmailMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ResendVerificationEmailMutation = { __typename?: 'Mutation', resendVerificationEmail: boolean };
 
 export type GetAllEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1050,7 +1056,7 @@ export type HelloQuery = { __typename?: 'Query', hello: string };
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, emailVerified: boolean, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } } };
 
 export const SettingsFragmentDoc = gql`
     fragment Settings on Settings {
@@ -1075,6 +1081,7 @@ export const UserFragmentDoc = gql`
   fullName
   createdAt
   updatedAt
+  emailVerified
   settings {
     ...Settings
   }
@@ -2766,6 +2773,36 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const ResendVerificationEmailDocument = gql`
+    mutation ResendVerificationEmail {
+  resendVerificationEmail
+}
+    `;
+export type ResendVerificationEmailMutationFn = Apollo.MutationFunction<ResendVerificationEmailMutation, ResendVerificationEmailMutationVariables>;
+
+/**
+ * __useResendVerificationEmailMutation__
+ *
+ * To run a mutation, you first call `useResendVerificationEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useResendVerificationEmailMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [resendVerificationEmailMutation, { data, loading, error }] = useResendVerificationEmailMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useResendVerificationEmailMutation(baseOptions?: Apollo.MutationHookOptions<ResendVerificationEmailMutation, ResendVerificationEmailMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ResendVerificationEmailMutation, ResendVerificationEmailMutationVariables>(ResendVerificationEmailDocument, options);
+      }
+export type ResendVerificationEmailMutationHookResult = ReturnType<typeof useResendVerificationEmailMutation>;
+export type ResendVerificationEmailMutationResult = Apollo.MutationResult<ResendVerificationEmailMutation>;
+export type ResendVerificationEmailMutationOptions = Apollo.BaseMutationOptions<ResendVerificationEmailMutation, ResendVerificationEmailMutationVariables>;
 export const GetAllEventsDocument = gql`
     query GetAllEvents {
   getAllEvents {

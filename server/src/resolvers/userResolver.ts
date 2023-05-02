@@ -235,9 +235,21 @@ export class userResolver {
     if (userId) {
       console.log("verify email successful");
       await User.update({ id: userId }, { emailVerified: true });
+      redis.del(key);
       return true;
     } else {
       throw new Error("An error occured");
+    }
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async resendVerificationEmail(@Ctx() { payload, redis }: MyContext) {
+    const user = await User.findOne({ where: { id: payload?.userId } });
+    if (user) {
+      sendVerificationEmail({ email: user.email, userId: user.id, redis });
+    } else {
+      throw new Error("This account doesn't exist");
     }
   }
 

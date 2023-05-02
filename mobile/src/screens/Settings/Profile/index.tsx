@@ -8,6 +8,7 @@ import {BasicTextInput} from '../../../components/basicViews/BasicTextInput';
 import {SettingsItem} from '../../../components/listItems/settingsItem';
 import BasicInputWindow from '../../../components/modals/basicInputWindow';
 import {Popup} from '../../../components/popup';
+import {AlertObject, useAlert} from '../../../contexts/AlertContext';
 import {useDeleteAccountMutation, useMeQuery} from '../../../generated/graphql';
 import {useEditUser} from '../../../mutationHooks/user/edituser';
 import {setAccessToken} from '../../../utils/AccessToken';
@@ -25,6 +26,7 @@ export const ProfileScreen: React.FC<
       skipQueue: true,
     },
   });
+  const showAlert = useAlert();
   return (
     <>
       <ScrollView style={{padding: 20}}>
@@ -91,10 +93,19 @@ export const ProfileScreen: React.FC<
             showArrow={false}
             textColor={'dangerous'}
             onPress={() => {
-              deleteAccount().finally(() => {
-                setAccessToken('');
-                isLoggedInVar(false);
-              });
+              showAlert(
+                new AlertObject({
+                  text: 'Are you sure you want to delete your account?',
+                  subtext: 'This action is not reversible',
+                  submitText: 'Delete',
+                  submitDangerous: true,
+                }).onSubmit(() => {
+                  deleteAccount().finally(() => {
+                    setAccessToken('');
+                    isLoggedInVar(false);
+                  });
+                }),
+              );
             }}
           />
         </BasicCard>

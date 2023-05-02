@@ -34,7 +34,7 @@ import {BasicIcon} from '../../basicViews/BasicIcon';
 import {checkPermissions} from '../../../utils/notifications';
 
 interface EditDateWindowProps {
-  onSubmit: (date: dayjs.Dayjs, reminderTimes?: number[]) => void;
+  onSubmit: (date: dayjs.Dayjs | null, reminderTimes?: number[]) => void;
   initialDate?: dayjs.Dayjs | null;
   subject?: SubjectFragment | undefined | null;
   onClose: () => void;
@@ -43,6 +43,7 @@ interface EditDateWindowProps {
   initialReminderTimes?: number[];
   showTime?: boolean;
   showSpecialDays?: boolean;
+  clearButton?: boolean;
 }
 
 type SpecialDate = {
@@ -83,6 +84,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
   showSpecialDays = true,
   showTime = true,
   showReminders = false,
+  clearButton = true,
 }) => {
   const {data: lessons} = useGetAllLessonsQuery();
 
@@ -216,8 +218,23 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
         onClose();
       }}>
       <View style={{alignItems: 'center'}}>
-        <View style={{width: '100%', padding: 10, paddingLeft: 20}}>
+        <View
+          style={{
+            width: '100%',
+            padding: 10,
+            paddingLeft: 20,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
           <BasicText textVariant="heading">Select Date</BasicText>
+          <BasicButton
+            variant="unstyled"
+            onPress={() => {
+              onSubmit(null);
+            }}>
+            <BasicText>Clear</BasicText>
+          </BasicButton>
         </View>
         <View
           style={{

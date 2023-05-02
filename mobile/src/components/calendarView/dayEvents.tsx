@@ -4,10 +4,13 @@ import {View, Text, SectionList, StyleSheet, Dimensions} from 'react-native';
 import {
   CalendarEventFragment,
   LessonFragment,
+  ProjectTaskFragment,
+  ProjectTaskWithProjectFragment,
   TaskFragment,
   useGetAllEventsQuery,
   useGetAllLessonsQuery,
   useGetAllTasksQuery,
+  useGetProjectTasksOfUserQuery,
 } from '../../generated/graphql';
 import Event from './event';
 import {WEEK_DAY_NUMBERS} from '../../types/weekDays';
@@ -22,6 +25,7 @@ import {CalendarNavigationProp} from '../../utils/types';
 import {replaceAllData} from '../../Content';
 import {useApolloClient} from '@apollo/client';
 import {BasicRefreshControl} from '../basicViews/BasicRefreshControl';
+import TaskListProjectTask from '../listItems/taskListProjectTask';
 
 export const width = Dimensions.get('screen').width;
 
@@ -32,13 +36,17 @@ interface DayEventsProps {
 
 type section = {
   title: string;
-  data: LessonFragment[] | CalendarEventFragment[] | TaskFragment[];
+  data:
+    | LessonFragment[]
+    | CalendarEventFragment[]
+    | Array<TaskFragment | ProjectTaskWithProjectFragment>;
 };
 
 const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
   const {data} = useGetAllEventsQuery();
   const {data: lessons} = useGetAllLessonsQuery();
   const {data: tasks} = useGetAllTasksQuery();
+  const {data: projectTasks} = useGetProjectTasksOfUserQuery();
 
   const client = useApolloClient();
 
@@ -65,10 +73,14 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
             dayjs(b.lessonTime.startTime, 'HH:mm'),
           );
         }) || [];
-    const tasksThisDay =
-      tasks?.getAllTasks.filter(item => {
-        return dayjs(item.doDate).isSame(dayjs(date), 'date');
-      }) || [];
+    const tasksThisDay: Array<TaskFragment | ProjectTaskWithProjectFragment> =
+      (
+        (tasks?.getAllTasks.filter(item => {
+          return dayjs(item.doDate).isSame(dayjs(date), 'date');
+        }) as Array<TaskFragment | ProjectTaskWithProjectFragment>) || []
+      ).concat(
+        projectTasks?.getProjectTasksOfUser.filter(item => !item.done) || [],
+      ) || [];
     const eventsThisDay =
       data?.getAllEvents
         .filter(item => dayjs(item.startDate).isSame(date, 'day'))
@@ -116,7 +128,10 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
   };
 
   const MySectionList = SectionList<
-    LessonFragment | CalendarEventFragment | TaskFragment
+    | LessonFragment
+    | CalendarEventFragment
+    | TaskFragment
+    | ProjectTaskWithProjectFragment
   >;
 
   return (
@@ -166,6 +181,17 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
           );
         } else if (item.__typename == 'CalendarEvent') {
           return <Event event={item} />;
+        } else if (item.__typename == 'ProjectTask') {
+          return (
+            <TaskListProjectTask
+              projectTask={item}
+              onPress={() => {
+                navigation.navigate('ProjectDetailScreen', {
+                  projectId: item.projectId,
+                });
+              }}
+            />
+          );
         } else {
           return (
             <Task

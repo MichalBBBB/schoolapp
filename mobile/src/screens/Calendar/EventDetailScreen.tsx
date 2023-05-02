@@ -230,16 +230,17 @@ const EventDetailScreen: React.FC<
         </BasicCard>
       </ScrollView>
       <EditDateModal
+        clearButton={false}
         initialDate={startDate ? dayjs(startDate) : dayjs()}
         subject={subject}
         onClose={() => {
           setEditStartDateModalIsVisible(false);
         }}
         onSubmit={date => {
-          setStartDate(date);
+          setStartDate(date!);
           if (isNew) {
             if (!endDateHasBeenChanged) {
-              setEndDate(date.add(1, 'hour'));
+              setEndDate(date!.add(1, 'hour'));
             }
           }
           setEditStartDateModalIsVisible(false);
@@ -247,6 +248,7 @@ const EventDetailScreen: React.FC<
         isVisible={editStartDateModalIsVisible}
       />
       <EditDateModal
+        clearButton={false}
         initialDate={endDate ? dayjs(endDate) : dayjs()}
         onClose={() => {
           setEditEndDateModalIsVisible(false);
@@ -256,7 +258,7 @@ const EventDetailScreen: React.FC<
           if (!endDate.isSame(date)) {
             setEndDateHasBeenChanged(true);
           }
-          setEndDate(date);
+          setEndDate(date!);
         }}
         isVisible={editEndDateModalIsVisible}
       />

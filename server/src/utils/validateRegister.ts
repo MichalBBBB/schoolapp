@@ -1,4 +1,4 @@
-import { UserError } from "../resolvers/userResolver";
+import { UserError } from "../types/userResponseTypes";
 
 // TODO - fix validation
 

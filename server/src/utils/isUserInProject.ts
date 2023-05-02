@@ -5,7 +5,6 @@ export const isUserInProject = async (id: string, userId: string) => {
     where: { id },
     relations: { userProjects: true },
   });
-  console.log(project);
   return project?.userProjects.some((userProject) => {
     return userProject.userId == userId;
   });

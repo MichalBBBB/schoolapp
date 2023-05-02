@@ -6,6 +6,7 @@ import { useState } from "react";
 import { InputField } from "../../components/InputField";
 import { Layout } from "../../components/Layout";
 import { UserError, useResetPasswordMutation } from "../../generated/graphql";
+import { toErrorMap } from "../../utils/toErrorMap";
 
 const ResetPassword: NextPage = () => {
   const router = useRouter();
@@ -20,7 +21,7 @@ const ResetPassword: NextPage = () => {
           newPassword: "",
           passwordControl: "",
         }}
-        onSubmit={async (values) => {
+        onSubmit={async (values, { setErrors }) => {
           if (values.newPassword == values.passwordControl) {
             const reponse = await resetPassword({
               variables: {
@@ -29,15 +30,12 @@ const ResetPassword: NextPage = () => {
               },
             });
             if (reponse.errors) {
-              setErrors(errors);
+              setErrors(toErrorMap(errors));
             } else {
               router.push("/reset-password/success");
             }
           } else {
-            setErrors([
-              ...errors,
-              { field: "passwordControl", message: "Passwords do not match" },
-            ]);
+            setErrors({ passwordControl: "Passwords do not match" });
           }
         }}
       >

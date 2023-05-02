@@ -7,10 +7,6 @@ app.get("/", (_req, res) => {
   res.send("Hello world");
 });
 
-app.get("/test", (_req, res) => {
-  res.send("Chod do pice hotdog");
-});
-
 app.get("/apple-app-site-association", (_req, res) => {
   res.json({
     webcredentials: {

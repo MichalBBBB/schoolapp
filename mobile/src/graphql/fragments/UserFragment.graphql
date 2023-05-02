@@ -6,6 +6,7 @@ fragment User on User {
   fullName
   createdAt
   updatedAt
+  emailVerified
   settings {
     ...Settings
   }

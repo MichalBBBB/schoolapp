@@ -87,7 +87,7 @@ const SettingsHomeScreen: React.FC<
             spacing="s"
             gap={6}>
             <SettingsItem
-              text="TimeTable"
+              text="Timetable"
               onPress={() => {
                 navigation.navigate('LessonTimesScreen');
               }}

@@ -123,6 +123,7 @@ export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
         )}
       </BasicCard>
       <EditDateModal
+        clearButton={false}
         isVisible={studyTimeModalVisible}
         onClose={() => {
           setStudyTimeModalVisible(false);
@@ -134,7 +135,7 @@ export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
             name: `Study for ${event?.name}`,
             subjectId: lesson.subject.id,
             dueDate: event?.startDate,
-            doDate: date.toDate(),
+            doDate: date!.toDate(),
           });
         }}
       />

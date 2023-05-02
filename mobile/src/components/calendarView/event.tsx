@@ -96,6 +96,7 @@ const Event: React.FC<EventProps> = ({event}) => {
         />
       </View>
       <EditDateModal
+        clearButton={false}
         isVisible={studyTimeModalVisible}
         onClose={() => {
           setStudyTimeModalVisible(false);
@@ -107,7 +108,7 @@ const Event: React.FC<EventProps> = ({event}) => {
             name: `Study for ${event?.name}`,
             subjectId: event.subject?.id,
             dueDate: event?.startDate,
-            doDate: date.toDate(),
+            doDate: date!.toDate(),
           });
         }}
       />

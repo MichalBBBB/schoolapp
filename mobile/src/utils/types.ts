@@ -38,6 +38,8 @@ export type CalendarStackParamList = {
   CalendarHomeScreen: undefined;
   EventDetailScreen: {event?: CalendarEventFragment};
   TaskDetailScreen: {task: TaskFragment};
+  ProjectDetailScreen: {projectId: string};
+  ProjectMembersScreen: {projectId: string};
 };
 
 export type CalendarStackScreenProps<T extends keyof CalendarStackParamList> =

@@ -171,7 +171,7 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
                 text,
                 dueDate: task.dueDate,
                 doDate: task.doDate,
-                subjectId: subject?.id,
+                subjectId: subject?.id || null,
               });
               setSelectSubjectModalIsVisible(false);
             }}
@@ -211,7 +211,7 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
             id: task.id,
             name,
             text,
-            dueDate: date.toDate(),
+            dueDate: date?.toDate() || null,
             doDate: task.doDate,
             subjectId: task.subject?.id,
           });
@@ -246,7 +246,7 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
             name,
             text,
             dueDate: task.dueDate,
-            doDate: date.toDate(),
+            doDate: date?.toDate() || null,
             reminders,
             subjectId: task.subject?.id,
           });
