@@ -72,6 +72,17 @@ export type SettingsStackParamList = {
   ChangePasswordScreen: undefined;
 };
 
+export type OnboardingStackParamList = {
+  WelcomeScreen: undefined;
+  AddSubjectsScreen: undefined;
+  LessonTimeScreen: undefined;
+  TimeTableScreen: undefined;
+};
+
+export type OnboardingStackScreenProps<
+  T extends keyof OnboardingStackParamList,
+> = NativeStackScreenProps<OnboardingStackParamList, T>;
+
 export type TabNavigationProp = BottomTabNavigationProp<TabParamList>;
 
 export type SettingsStackScreenProps<T extends keyof SettingsStackParamList> =

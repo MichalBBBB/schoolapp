@@ -24,6 +24,8 @@ import {BasicText} from './components/basicViews/BasicText';
 import {BasicButton} from './components/basicViews/BasicButton';
 import {setAccessToken} from './utils/AccessToken';
 import {replaceAllData} from './Content';
+import {useSettings} from './utils/useSettings';
+import {OnboardingStack} from './routes/OnboardingStack';
 
 export type TabStackParamList = {
   TaskStack: undefined;
@@ -33,12 +35,12 @@ export type TabStackParamList = {
 };
 
 const Routes = () => {
-  let screens;
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   const client = useApolloClient();
 
   const {data: me} = useMeQuery();
+  const settings = useSettings();
   const [logout] = useLogoutMutation();
   const [resendVerificationEmail] = useResendVerificationEmailMutation();
 
@@ -110,7 +112,7 @@ const Routes = () => {
 
   const Tab = createBottomTabNavigator<TabStackParamList>();
 
-  screens = (
+  const screens = (
     <Tab.Navigator
       screenOptions={{
         tabBarHideOnKeyboard: Platform.OS == 'ios' ? false : true,
@@ -197,12 +199,28 @@ const Routes = () => {
     </Tab.Navigator>
   );
 
+  const getContent = () => {
+    if (isLoggedIn) {
+      if (me?.me.emailVerified) {
+        if (settings?.isFirstTime) {
+          return <OnboardingStack />;
+        } else {
+          return screens;
+        }
+      } else {
+        return verifyEmailScreen;
+      }
+    } else {
+      return <AuthStack />;
+    }
+  };
+
   return (
     <>
       <AlertProvider>
         <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
         <NavigationContainer theme={theme}>
-          {isLoggedIn ? (
+          {/* {isLoggedIn ? (
             me?.me.emailVerified ? (
               screens
             ) : (
@@ -210,7 +228,8 @@ const Routes = () => {
             )
           ) : (
             <AuthStack />
-          )}
+          )} */}
+          {getContent()}
         </NavigationContainer>
       </AlertProvider>
     </>

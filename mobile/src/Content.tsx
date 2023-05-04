@@ -29,6 +29,7 @@ import dayjs from 'dayjs';
 import {
   GetAllLessonTimesDocument,
   GetAllTasksDocument,
+  useMeQuery,
 } from './generated/graphql';
 import {is24HourFormat} from 'react-native-device-time-format';
 import {useSetSettings} from './mutationHooks/settings/setSettings';
@@ -107,6 +108,7 @@ export const Content: React.FC = () => {
   const isOnline = useReactiveVar(isOnlineVar);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const settings = useSettings();
+  const {data: me} = useMeQuery();
 
   const [setSettings] = useSetSettings();
 
@@ -133,7 +135,7 @@ export const Content: React.FC = () => {
   useEffect(() => {
     if (isOnline && isLoggedIn) {
       openQueue(client);
-      if (settings?.isFirstTime) {
+      if (settings?.isFirstTime && me?.me.emailVerified) {
         onFirstSignIn();
       }
     } else if (!isOnline) {
