@@ -54,8 +54,6 @@ export const weekHeaderHeight = 30;
 const pastScrollRange = 10;
 const futureScrollRange = 20;
 
-dayjs.extend(relativeTime);
-
 const maxCalendarZIndex = 8;
 
 // function to find the row of given day in active month

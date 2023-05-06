@@ -14,8 +14,6 @@ import {FlashList} from '@shopify/flash-list';
 import {BasicText} from '../basicViews/BasicText';
 import {useSettings} from '../../utils/useSettings';
 
-dayjs.extend(relativeTime);
-
 interface CalendarProps {
   calendarWidth: number;
   pastScrollRange: number;

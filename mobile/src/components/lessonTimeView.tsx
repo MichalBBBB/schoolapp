@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import dayjs from 'dayjs';
 import {useState, useLayoutEffect} from 'react';
 import {Pressable, Text, FlatList, View, Image, StyleSheet} from 'react-native';
@@ -25,8 +25,6 @@ export type LessonTime = {
   startTime: string;
   endTime: string;
 };
-dayjs.extend(CustomParseFormat);
-dayjs.extend(RelativeTime);
 
 export const LessonTimesView: React.FC = () => {
   const {data, loading: getLessonTimesLoading} = useGetAllLessonTimesQuery();
@@ -45,6 +43,14 @@ export const LessonTimesView: React.FC = () => {
     time: 'start' | 'end';
   } | null>(null);
   const [changingValue, setChangingValue] = useState<number | string>(0);
+
+  useEffect(() => {
+    console.log(
+      dayjs(data?.getAllLessonTimes[0].startTime, 'HH:mm'),
+      data?.getAllLessonTimes[0].startTime,
+      dayjs('18:32', 'HH:mm'),
+    );
+  });
 
   const getInitialTime = () => {
     let time;

@@ -3612,7 +3612,7 @@ dataloader@2.2.2, dataloader@^2.2.2:
   resolved "https://registry.yarnpkg.com/dataloader/-/dataloader-2.2.2.tgz#216dc509b5abe39d43a9b9d97e6e5e473dfbe3e0"
   integrity sha512-8YnDaaf7N3k/q5HnTJVuzSyLETjoZjVmHc4AeKAzOvKHEFQKcn64OKBfzHYtE9zGjctNM7V9I0MfnUVLpi7M5g==
 
-dayjs@^1.10.7, dayjs@^1.8.15:
+dayjs@^1.11.7, dayjs@^1.8.15:
   version "1.11.7"
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.7.tgz#4b296922642f70999544d1144a2c25730fce63e2"
   integrity sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==
@@ -7511,10 +7511,10 @@ react-native-codegen@^0.69.2:
     jscodeshift "^0.13.1"
     nullthrows "^1.1.1"
 
-react-native-date-picker@^4.2.7:
-  version "4.2.9"
-  resolved "https://registry.yarnpkg.com/react-native-date-picker/-/react-native-date-picker-4.2.9.tgz#c916231025dac1fd8f90783d06b092e74ec12948"
-  integrity sha512-msx877/ULxaoceqOV3GKx/A93ninYmOp46w5DOCh3pQGPbgL4ZmbglvXJ3mOp2h/j5scuYf9+NetCRLqj1pODA==
+react-native-date-picker@^4.2.13:
+  version "4.2.13"
+  resolved "https://registry.yarnpkg.com/react-native-date-picker/-/react-native-date-picker-4.2.13.tgz#b5b894ee6c5a154a752f9094342170515e169ea6"
+  integrity sha512-cQ3k+ExXggAnytomeNGNrtV/l2a7WzVUeWKo7Gs2pv/z3TCjjlmKn0ZBMPgcThrFAgFMxgYI0XzKVKT7TPsOmw==
   dependencies:
     prop-types "^15.8.1"
 

@@ -15,7 +15,7 @@ const VerifyEmail: NextPage = () => {
         setIsVerified(true);
       }
     })();
-  });
+  }, [token]);
   if (!isVerified) {
     return <h1>Loading...</h1>;
   }

@@ -3,7 +3,7 @@ import React, {memo} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {BasicText} from '../basicViews/BasicText';
 import Day from './day';
-import weekOfYear from 'dayjs/plugin/weekOfYear';
+
 import {DayWithDot} from '.';
 
 interface WeekProps {
@@ -14,8 +14,6 @@ interface WeekProps {
   calendarWidth: number;
   weekHeight: number;
 }
-
-dayjs.extend(weekOfYear);
 
 const Week: React.FC<WeekProps> = ({
   week,

@@ -107,7 +107,11 @@ export class PersistentQueueLink extends ApolloLink {
           // if there is an optimistic response - the operation should be put into queue,
           // add it to queue and return optimistic response
           const optimisticResponse = operation.getContext().optimisticResponse;
-          if (optimisticResponse && !operation.getContext().skipQueue) {
+          if (
+            optimisticResponse &&
+            !operation.getContext().skipQueue &&
+            e.networkError
+          ) {
             this.addRequestToQueue(operation);
             observer.next?.({data: optimisticResponse} as MutationResult);
             // tell the app it is offline

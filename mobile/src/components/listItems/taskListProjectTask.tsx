@@ -19,8 +19,6 @@ import {useTheme} from '../../contexts/ThemeContext';
 import {ColorsObject} from '../../types/Theme';
 import {BasicIcon} from '../basicViews/BasicIcon';
 
-dayjs.extend(calendar);
-
 export const calendarConfigWithoutTime = {
   sameDay: '[Today]',
   nextDay: '[Tomorrow]',

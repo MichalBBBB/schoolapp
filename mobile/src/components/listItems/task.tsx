@@ -14,7 +14,7 @@ import {
   TaskNavigationProp,
 } from '../../utils/types';
 import SlidingView from '../slidingView';
-import calendar from 'dayjs/plugin/calendar';
+
 import {BasicText} from '../basicViews/BasicText';
 import {
   TouchableHighlight,
@@ -26,8 +26,6 @@ import {useTheme} from '../../contexts/ThemeContext';
 import {ColorsObject, SubjectColorsObject} from '../../types/Theme';
 import {useEditTask} from '../../mutationHooks/task/editTask';
 import {BasicIcon} from '../basicViews/BasicIcon';
-
-dayjs.extend(calendar);
 
 export const calendarConfigWithoutTime = {
   sameDay: '[Today]',

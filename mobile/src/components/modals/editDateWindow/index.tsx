@@ -177,7 +177,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
       }}>
       <BasicText>Time</BasicText>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <BasicText>{selectedDay.format('HH:mm')}</BasicText>
+        <BasicText>{selectedDay.format('LT')}</BasicText>
         <BasicIcon
           source={require('../../../../assets/Chevron-right.png')}
           style={{height: 20, width: 20}}
