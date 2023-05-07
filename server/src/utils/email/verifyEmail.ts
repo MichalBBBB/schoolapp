@@ -1,6 +1,7 @@
 import { RedisClientType } from "@redis/client";
 import sgMail from "@sendgrid/mail";
 import { v4 } from "uuid";
+import { WEB_APP_URI } from "../constants";
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -20,7 +21,7 @@ export const sendVerificationEmail = async ({
   const token = v4();
   const key = EMAIL_VERIFICATION_PREFIX + token;
   redis.set(key, userId);
-  const url = `http://localhost:3000/email-verification/${token}`;
+  const url = `${WEB_APP_URI}/email-verification/${token}`;
   const msg: sgMail.MailDataRequired = {
     to: email,
     from: {

@@ -1,12 +1,12 @@
 import React, {createRef, useEffect, useRef, useState} from 'react';
-import {View, TextInput, Text, StyleSheet} from 'react-native';
+import {View, TextInput, Text, StyleSheet, TextInputProps} from 'react-native';
 import AddButton from '../addButton';
 import {BasicButton} from '../basicViews/BasicButton';
 import {BasicModalCard} from '../basicViews/BasicModalCard';
 import {BasicText} from '../basicViews/BasicText';
 import {BasicTextInput} from '../basicViews/BasicTextInput';
 
-interface addTaskWindowProps {
+interface addTaskWindowProps extends TextInputProps {
   visible: boolean;
   onClose?: () => void;
   onSubmit?: (text: string) => void;
@@ -22,8 +22,13 @@ const BasicInputWindow: React.FC<addTaskWindowProps> = ({
   placeholder,
   defaultValue,
   buttonText = 'Add',
+  ...props
 }) => {
   const [text, setText] = useState('');
+
+  useEffect(() => {
+    setText(defaultValue || '');
+  }, [visible]);
 
   const closeWindow = () => {
     setText('');
@@ -53,6 +58,7 @@ const BasicInputWindow: React.FC<addTaskWindowProps> = ({
             placeholder={placeholder || 'Name'}
             onChangeText={setText}
             autoFocus={true}
+            {...props}
           />
           <BasicButton
             spacing="m"

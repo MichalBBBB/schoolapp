@@ -44,14 +44,6 @@ export const LessonTimesView: React.FC = () => {
   } | null>(null);
   const [changingValue, setChangingValue] = useState<number | string>(0);
 
-  useEffect(() => {
-    console.log(
-      dayjs(data?.getAllLessonTimes[0].startTime, 'HH:mm'),
-      data?.getAllLessonTimes[0].startTime,
-      dayjs('18:32', 'HH:mm'),
-    );
-  });
-
   const getInitialTime = () => {
     let time;
     if (activeLesson) {

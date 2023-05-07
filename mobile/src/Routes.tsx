@@ -26,6 +26,8 @@ import {setAccessToken} from './utils/AccessToken';
 import {replaceAllData} from './Content';
 import {useSettings} from './utils/useSettings';
 import {OnboardingStack} from './routes/OnboardingStack';
+import BasicInputWindow from './components/modals/basicInputWindow';
+import {VerifyEmailScreen} from './screens/VerifyEmailScreen';
 
 export type TabStackParamList = {
   TaskStack: undefined;
@@ -41,74 +43,8 @@ const Routes = () => {
 
   const {data: me} = useMeQuery();
   const settings = useSettings();
-  const [logout] = useLogoutMutation();
-  const [resendVerificationEmail] = useResendVerificationEmailMutation();
 
   const [theme] = useTheme();
-
-  const reloadMe = () => {
-    client.query({query: MeDocument, fetchPolicy: 'network-only'});
-  };
-  useEffect(() => {
-    let interval: ReturnType<typeof setInterval>;
-    if (isLoggedIn && !me?.me.emailVerified) {
-      interval = setInterval(() => {
-        reloadMe();
-      }, 10000);
-    }
-    return () => {
-      clearInterval(interval);
-    };
-  }, [isLoggedIn, me]);
-
-  const verifyEmailScreen = (
-    <View
-      style={{
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: theme.colors.background,
-        justifyContent: 'center',
-        padding: 20,
-      }}>
-      <BasicText textVariant="heading" style={{textAlign: 'center'}}>
-        Please verify your email
-      </BasicText>
-      <BasicText
-        style={{marginBottom: 20, textAlign: 'center'}}
-        textVariant="subHeading"
-        color="textSecondary">{`We sent you a link to ${me?.me.email}`}</BasicText>
-      <BasicButton
-        style={{marginBottom: 10}}
-        spacing="m"
-        onPress={() => {
-          resendVerificationEmail();
-        }}>
-        <BasicText color="textContrast" textVariant="button">
-          Resend email
-        </BasicText>
-      </BasicButton>
-      <BasicButton
-        style={{marginBottom: 10}}
-        spacing="m"
-        onPress={() => {
-          reloadMe();
-        }}>
-        <BasicText color="textContrast" textVariant="button">
-          Refresh
-        </BasicText>
-      </BasicButton>
-      <BasicButton
-        backgroundColor="accentBackground1"
-        spacing="m"
-        onPress={() => {
-          logout().finally(() => {
-            setAccessToken('');
-            isLoggedInVar(false);
-          });
-        }}>
-        <BasicText textVariant="button">Log out</BasicText>
-      </BasicButton>
-    </View>
-  );
 
   const Tab = createBottomTabNavigator<TabStackParamList>();
 
@@ -208,7 +144,7 @@ const Routes = () => {
           return screens;
         }
       } else {
-        return verifyEmailScreen;
+        return <VerifyEmailScreen />;
       }
     } else {
       return <AuthStack />;

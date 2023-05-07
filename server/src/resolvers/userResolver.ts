@@ -94,6 +94,18 @@ export class userResolver {
     return User.find();
   }
 
+  // !!!! Remove !!!!
+  @Mutation(() => Boolean)
+  async verifyUsersEmail(@Arg("email") email: string) {
+    const user = await User.findOne({ where: { email } });
+    if (user) {
+      user.emailVerified = true;
+      await user.save();
+    } else {
+      throw new Error("user wasn't found");
+    }
+  }
+
   @Mutation(() => Boolean)
   deleteAllGoogleUsers(@Arg("id") id: string) {
     User.delete({ id });
@@ -248,6 +260,7 @@ export class userResolver {
     const user = await User.findOne({ where: { id: payload?.userId } });
     if (user) {
       sendVerificationEmail({ email: user.email, userId: user.id, redis });
+      return true;
     } else {
       throw new Error("This account doesn't exist");
     }
@@ -289,15 +302,26 @@ export class userResolver {
   @UseMiddleware(isAuth)
   @UseMiddleware(queueMiddleware)
   async editUser(
-    @Ctx() { payload }: MyContext,
+    @Ctx() { payload, redis }: MyContext,
     @Arg("fullName", { nullable: true }) fullName?: string,
     @Arg("email", { nullable: true }) email?: string
   ) {
-    await User.update({ id: payload?.userId }, { fullName, email });
-    return User.findOne({
-      where: { id: payload?.userId },
-      relations: { settings: true },
-    });
+    const user = await User.findOne({ where: { id: payload?.userId } });
+    if (user) {
+      if (email && user?.email !== email) {
+        sendVerificationEmail({ email: email, userId: user.id, redis });
+      }
+      await User.update(
+        { id: payload?.userId },
+        { fullName, email, emailVerified: false }
+      );
+      return User.findOne({
+        where: { id: payload?.userId },
+        relations: { settings: true },
+      });
+    } else {
+      throw new Error("User doesn't exist");
+    }
   }
 
   @Mutation(() => ChangePasswordUnion)

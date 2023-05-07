@@ -34,11 +34,10 @@ const AddSubjectWindow: React.FC<AddSubjectWindowProps> = ({
   const [theme] = useTheme();
 
   useEffect(() => {
-    setColor(
-      (Object.keys(theme.subjectColors).find(item => {
-        return !colorsUsed?.includes(item);
-      }) || theme.subjectColors.blue) as keyof SubjectColorsObject,
-    );
+    const color = Object.keys(theme.subjectColors).find(item => {
+      return !colorsUsed?.includes(item);
+    });
+    setColor((color || 'blue') as keyof SubjectColorsObject);
   }, [visible]);
 
   const closeWindow = () => {

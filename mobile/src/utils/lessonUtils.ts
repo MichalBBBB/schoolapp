@@ -22,12 +22,14 @@ export const closestLesson = (
   if (subjectLessons.length == 0) {
     return null;
   }
+  console.log(subjectLessons);
   subjectLessons.sort((a, b) => {
     return dayjs(getDateOfClosestInstanceOfLesson(a, settings)).diff(
       getDateOfClosestInstanceOfLesson(b, settings),
       'minute',
     );
   });
+  console.log(getDateOfClosestInstanceOfLesson(subjectLessons[0], settings));
   return getDateOfClosestInstanceOfLesson(subjectLessons[0], settings);
 };
 
@@ -35,8 +37,21 @@ const getDateOfClosestInstanceOfLesson = (
   lesson: LessonFragment,
   settings: SettingsFragment,
 ) => {
-  const dayNumber = getDayNumber(dayjs(), settings);
+  let dayNumber = getDayNumber(dayjs(), settings);
   // if the lesson hasn't yet been in this rotation
+
+  const isItWeekend = dayNumber == -1;
+  if (dayNumber == -1) {
+    dayNumber = getDayNumber(dayjs().locale('sk').weekday(4), settings);
+  }
+  console.log(
+    'daynumber',
+    dayNumber,
+    lesson.dayNumber,
+    lesson.dayNumber > dayNumber,
+    dayjs().isBefore(dayjs(lesson.lessonTime.startTime, 'HH:mm')),
+  );
+
   if (lesson.dayNumber > dayNumber) {
     if (settings.skipWeekends) {
       const date = addWorkDays(
@@ -53,8 +68,10 @@ const getDateOfClosestInstanceOfLesson = (
     // if the lesson is today, and it hasn't started yet
   } else if (
     lesson.dayNumber == dayNumber &&
-    dayjs().isBefore(lesson.lessonTime.startTime)
+    dayjs().isBefore(dayjs(lesson.lessonTime.startTime, 'HH:mm')) &&
+    !isItWeekend
   ) {
+    console.log('here');
     return dayjs(lesson.lessonTime.startTime, 'HH:mm');
     // if the lesson already happened in this rotation
   } else {
@@ -105,9 +122,12 @@ export const addWorkDays = (date: dayjs.Dayjs, workdays: number) => {
 };
 
 // get dayNumber of a specific date
-export const getDayNumber = (date: dayjs.Dayjs, settings: SettingsFragment) => {
+export const getDayNumber: (
+  date: dayjs.Dayjs,
+  settings: SettingsFragment,
+) => number = (date, settings) => {
   if (settings?.skipWeekends) {
-    // if the date is on the weekend, just return -1 - meaning no dayNumber of the schedule
+    // if the date is on the weekend, just return -1
     if (date.locale('sk').weekday() == 6 || date.locale('sk').weekday() == 5) {
       return -1;
     }
