@@ -1,3 +1,4 @@
+import {GOOGLE_CLIENT_ID, GOOGLE_REDIRECT_URL} from '@env';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useEffect} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
@@ -12,10 +13,10 @@ import {setAccessToken} from '../../utils/AccessToken';
 
 const config = {
   issuer: 'https://accounts.google.com',
-  clientId:
-    '1073547053227-8unebat1npl554u7sficsagpmpdkb08j.apps.googleusercontent.com',
-  redirectUrl:
-    'com.googleusercontent.apps.1073547053227-8unebat1npl554u7sficsagpmpdkb08j:/oauth2redirect/google',
+  clientId: GOOGLE_CLIENT_ID,
+  // '1073547053227-8unebat1npl554u7sficsagpmpdkb08j.apps.googleusercontent.com',
+  redirectUrl: GOOGLE_REDIRECT_URL,
+  // 'com.googleusercontent.apps.1073547053227-8unebat1npl554u7sficsagpmpdkb08j:/oauth2redirect/google',
   scopes: ['openid', 'profile', 'email'],
 };
 

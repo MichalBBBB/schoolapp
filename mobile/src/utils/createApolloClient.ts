@@ -23,11 +23,15 @@ import NetInfo from '@react-native-community/netinfo';
 import SerializingLink from 'apollo-link-serialize';
 import {PersistentQueueLink} from './persistentQueueLink';
 import {BatchHttpLink} from '@apollo/client/link/batch-http';
+import {API_URI_ANDROID, API_URI_DEFAULT} from '@env';
 
 // export const baseUri =
 //   Platform.OS == 'ios' ? 'http://localhost:5002' : 'http://10.0.2.2:5002';
 
-export const baseUri = 'https://api.dayto.app';
+// export const baseUri = 'https://api.dayto.app';
+
+export const baseUri =
+  Platform.OS == 'android' ? API_URI_ANDROID : API_URI_DEFAULT;
 
 export const uri = baseUri + '/graphql';
 
