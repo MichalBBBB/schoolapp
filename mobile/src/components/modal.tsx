@@ -62,7 +62,7 @@ export const Modal: React.FC<ModalProps> = ({
   });
 
   useEffect(() => {
-    if (avoidKeyboard) {
+    if (avoidKeyboard && Platform.OS == 'ios') {
       if (isVisible) {
         KeyboardManager.setEnable(false);
       } else {
