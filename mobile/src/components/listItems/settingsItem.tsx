@@ -1,6 +1,6 @@
 import {forwardRef} from 'react';
 import {Image, Pressable, View} from 'react-native';
-import {BasicText} from '../basicViews/BasicText';
+import {BasicText, BasicTextProps} from '../basicViews/BasicText';
 import React from 'react';
 import {BasicIcon} from '../basicViews/BasicIcon';
 import {ColorsObject} from '../../types/Theme';
@@ -11,6 +11,7 @@ interface SettingsItemProps {
   onPress?: () => void;
   showArrow?: boolean;
   textColor?: keyof ColorsObject;
+  leftTextProps?: BasicTextProps;
 }
 
 export const SettingsItem = forwardRef<View, SettingsItemProps>(
@@ -21,6 +22,7 @@ export const SettingsItem = forwardRef<View, SettingsItemProps>(
       rightText,
       showArrow = true,
       textColor = 'primary',
+      leftTextProps,
     } = props;
     return (
       <Pressable
@@ -32,7 +34,9 @@ export const SettingsItem = forwardRef<View, SettingsItemProps>(
           justifyContent: 'space-between',
           padding: 6,
         }}>
-        <BasicText color={textColor}>{text}</BasicText>
+        <BasicText color={textColor} {...leftTextProps}>
+          {text}
+        </BasicText>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <BasicText color="textSecondary" style={{marginRight: 5}}>
             {rightText}

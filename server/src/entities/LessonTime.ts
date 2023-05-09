@@ -9,6 +9,7 @@ import {
   Relation,
 } from "typeorm";
 import { Lesson } from "./Lesson";
+import { Schedule } from "./Schedule";
 import { User } from "./User";
 
 @Entity()
@@ -31,6 +32,16 @@ export class LessonTime extends BaseEntity {
 
   @Column()
   userId: string;
+
+  @ManyToOne(() => Schedule, (schedule) => schedule.lessonTimes, {
+    nullable: true,
+    onDelete: "CASCADE",
+  })
+  schedule?: Relation<Schedule>;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  scheduleId?: string;
 
   @OneToMany(() => Lesson, (lesson) => lesson.lessonTime)
   lessons: Relation<Lesson>[];

@@ -1,14 +1,16 @@
 import React from 'react';
 import {useLayoutEffect} from 'react';
-import {Pressable} from 'react-native';
+import {Pressable, View} from 'react-native';
 import {BasicIcon} from '../../../components/basicViews/BasicIcon';
 import {BasicText} from '../../../components/basicViews/BasicText';
+import {BasicTextInput} from '../../../components/basicViews/BasicTextInput';
 import {LessonTimesView} from '../../../components/lessonTimeView';
 import {SettingsStackScreenProps} from '../../../utils/types';
 
 const LessonTimesScreen: React.FC<
   SettingsStackScreenProps<'LessonTimesScreen'>
-> = ({navigation}) => {
+> = ({navigation, route}) => {
+  const {schedule} = route.params;
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: '',
@@ -28,7 +30,17 @@ const LessonTimesScreen: React.FC<
     });
   });
 
-  return <LessonTimesView />;
+  return (
+    <View>
+      <BasicTextInput
+        style={{textAlign: 'center'}}
+        defaultValue={schedule.name}
+        variant="unstyled"
+        textVariant="heading"
+      />
+      <LessonTimesView scheduleId={schedule.id} />
+    </View>
+  );
 };
 
 export default LessonTimesScreen;

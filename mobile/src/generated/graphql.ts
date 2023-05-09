@@ -54,7 +54,8 @@ export type Invite = {
 
 export type Lesson = {
   __typename?: 'Lesson';
-  dayNumber: Scalars['Float'];
+  date?: Maybe<Scalars['DateTime']>;
+  dayNumber?: Maybe<Scalars['Float']>;
   extraInfo?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   lessonTime: LessonTime;
@@ -68,6 +69,7 @@ export type LessonTime = {
   __typename?: 'LessonTime';
   endTime: Scalars['String'];
   id: Scalars['String'];
+  scheduleId?: Maybe<Scalars['String']>;
   startTime: Scalars['String'];
 };
 
@@ -90,6 +92,7 @@ export type Mutation = {
   createLesson: Lesson;
   createLessonTime: LessonTime;
   createProject: Project;
+  createSchedule: Schedule;
   createSubject: Subject;
   createSubtask: Subtask;
   createTask: Task;
@@ -128,6 +131,7 @@ export type Mutation = {
   toggleSubtask: Subtask;
   toggleTask: Task;
   verifyEmail: Scalars['Boolean'];
+  verifyUsersEmail: Scalars['Boolean'];
 };
 
 
@@ -186,6 +190,7 @@ export type MutationCreateLessonArgs = {
 export type MutationCreateLessonTimeArgs = {
   endTime: Scalars['String'];
   id: Scalars['String'];
+  scheduleId: Scalars['String'];
   startTime: Scalars['String'];
 };
 
@@ -193,6 +198,12 @@ export type MutationCreateLessonTimeArgs = {
 export type MutationCreateProjectArgs = {
   id?: InputMaybe<Scalars['String']>;
   memberEmails: Array<Scalars['String']>;
+  name: Scalars['String'];
+};
+
+
+export type MutationCreateScheduleArgs = {
+  id: Scalars['String'];
   name: Scalars['String'];
 };
 
@@ -419,6 +430,11 @@ export type MutationVerifyEmailArgs = {
   token: Scalars['String'];
 };
 
+
+export type MutationVerifyUsersEmailArgs = {
+  email: Scalars['String'];
+};
+
 export type Project = {
   __typename?: 'Project';
   id: Scalars['String'];
@@ -462,6 +478,7 @@ export type Query = {
   getAllLessons: Array<Lesson>;
   getAllProjects: Array<Project>;
   getAllReminders: Array<Reminder>;
+  getAllSchedules: Array<Schedule>;
   getAllSubjects: Array<Subject>;
   getAllSubtasksOfTask: Array<Subtask>;
   getAllTasks: Array<Task>;
@@ -469,6 +486,7 @@ export type Query = {
   getInvites: Array<Invite>;
   getProjectTasksOfUser: Array<ProjectTask>;
   getProjects: Array<Project>;
+  getSchedules: Array<Schedule>;
   hello: Scalars['String'];
   me: User;
 };
@@ -499,6 +517,17 @@ export type RemindersInput = {
   id: Scalars['String'];
   minutesBefore: Scalars['Float'];
   title: Scalars['String'];
+};
+
+export type Schedule = {
+  __typename?: 'Schedule';
+  dates?: Maybe<Array<Scalars['DateTime']>>;
+  dayNumbers?: Maybe<Array<Scalars['Float']>>;
+  default: Scalars['Boolean'];
+  id: Scalars['String'];
+  lessonTimes: Array<LessonTime>;
+  name: Scalars['String'];
+  userId: Scalars['String'];
 };
 
 export type Settings = {
@@ -565,6 +594,7 @@ export type User = {
   lessonTimes: Array<LessonTime>;
   lessons: Array<Lesson>;
   reminders: Array<Reminder>;
+  schedules: Array<Schedule>;
   settings: Settings;
   settingsId: Scalars['String'];
   subjects: Array<Subject>;
@@ -616,9 +646,9 @@ export type CalendarEventFragment = { __typename?: 'CalendarEvent', id: string, 
 
 export type InviteFragment = { __typename?: 'Invite', adminName: string, projectName: string, projectId: string };
 
-export type LessonFragment = { __typename?: 'Lesson', id: string, dayNumber: number, extraInfo?: string | null, subject: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } };
+export type LessonFragment = { __typename?: 'Lesson', id: string, dayNumber?: number | null, extraInfo?: string | null, subject: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null } };
 
-export type LessonTimeFragment = { __typename?: 'LessonTime', id: string, startTime: string, endTime: string };
+export type LessonTimeFragment = { __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null };
 
 export type ProjectFragment = { __typename?: 'Project', isAdmin: boolean, name: string, id: string, text?: string | null, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, doDate?: any | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> };
 
@@ -629,6 +659,8 @@ export type ProjectTaskWithProjectFragment = { __typename?: 'ProjectTask', id: s
 export type PublicUserFragment = { __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null };
 
 export type ReminderFragment = { __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null };
+
+export type ScheduleFragment = { __typename?: 'Schedule', id: string, name: string, default: boolean, dayNumbers?: Array<number> | null, dates?: Array<any> | null, lessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null }> };
 
 export type SettingsFragment = { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean };
 
@@ -683,7 +715,7 @@ export type CreateLessonMutationVariables = Exact<{
 }>;
 
 
-export type CreateLessonMutation = { __typename?: 'Mutation', createLesson: { __typename?: 'Lesson', id: string, dayNumber: number, extraInfo?: string | null, subject: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } } };
+export type CreateLessonMutation = { __typename?: 'Mutation', createLesson: { __typename?: 'Lesson', id: string, dayNumber?: number | null, extraInfo?: string | null, subject: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null } } };
 
 export type DeleteLessonMutationVariables = Exact<{
   id: Scalars['String'];
@@ -699,16 +731,17 @@ export type EditLessonMutationVariables = Exact<{
 }>;
 
 
-export type EditLessonMutation = { __typename?: 'Mutation', editLesson: { __typename?: 'Lesson', id: string, dayNumber: number, extraInfo?: string | null, subject: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } } };
+export type EditLessonMutation = { __typename?: 'Mutation', editLesson: { __typename?: 'Lesson', id: string, dayNumber?: number | null, extraInfo?: string | null, subject: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null } } };
 
 export type CreateLessonTimeMutationVariables = Exact<{
   endTime: Scalars['String'];
   startTime: Scalars['String'];
   id: Scalars['String'];
+  scheduleId: Scalars['String'];
 }>;
 
 
-export type CreateLessonTimeMutation = { __typename?: 'Mutation', createLessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } };
+export type CreateLessonTimeMutation = { __typename?: 'Mutation', createLessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null } };
 
 export type DeleteLessonTimeMutationVariables = Exact<{
   id: Scalars['String'];
@@ -722,7 +755,7 @@ export type EditLessonTimesMutationVariables = Exact<{
 }>;
 
 
-export type EditLessonTimesMutation = { __typename?: 'Mutation', editLessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string }> };
+export type EditLessonTimesMutation = { __typename?: 'Mutation', editLessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null }> };
 
 export type AcceptProjectInviteMutationVariables = Exact<{
   id: Scalars['String'];
@@ -837,6 +870,14 @@ export type ToggleProjectTaskMutationVariables = Exact<{
 
 
 export type ToggleProjectTaskMutation = { __typename?: 'Mutation', toggleProjectTask: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, doDate?: any | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
+
+export type CreateScheduleMutationVariables = Exact<{
+  name: Scalars['String'];
+  id: Scalars['String'];
+}>;
+
+
+export type CreateScheduleMutation = { __typename?: 'Mutation', createSchedule: { __typename?: 'Schedule', id: string, name: string, default: boolean, dayNumbers?: Array<number> | null, dates?: Array<any> | null, lessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null }> } };
 
 export type SetSettingsMutationVariables = Exact<{
   startOfWeek?: InputMaybe<Scalars['String']>;
@@ -1008,20 +1049,20 @@ export type GetAllEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetAllEventsQuery = { __typename?: 'Query', getAllEvents: Array<{ __typename?: 'CalendarEvent', id: string, name: string, text?: string | null, startDate: any, endDate?: any | null, wholeDay: boolean, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> }> };
 
-export type GetAllLessonTimesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetAllLessonTimesQuery = { __typename?: 'Query', getAllLessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string }> };
-
 export type GetAllLessonsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllLessonsQuery = { __typename?: 'Query', getAllLessons: Array<{ __typename?: 'Lesson', id: string, dayNumber: number, extraInfo?: string | null, subject: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string } }> };
+export type GetAllLessonsQuery = { __typename?: 'Query', getAllLessons: Array<{ __typename?: 'Lesson', id: string, dayNumber?: number | null, extraInfo?: string | null, subject: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null } }> };
 
 export type GetAllRemindersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetAllRemindersQuery = { __typename?: 'Query', getAllReminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> };
+
+export type GetAllSchedulesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllSchedulesQuery = { __typename?: 'Query', getAllSchedules: Array<{ __typename?: 'Schedule', id: string, name: string, default: boolean, dayNumbers?: Array<number> | null, dates?: Array<any> | null, lessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null }> }> };
 
 export type GetAllSubjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1135,6 +1176,7 @@ export const LessonTimeFragmentDoc = gql`
   id
   startTime
   endTime
+  scheduleId
 }
     `;
 export const LessonFragmentDoc = gql`
@@ -1215,6 +1257,18 @@ export const ProjectTaskWithProjectFragmentDoc = gql`
 }
     ${SimpleProjectFragmentDoc}
 ${PublicUserFragmentDoc}`;
+export const ScheduleFragmentDoc = gql`
+    fragment Schedule on Schedule {
+  id
+  name
+  default
+  lessonTimes {
+    ...LessonTime
+  }
+  dayNumbers
+  dates
+}
+    ${LessonTimeFragmentDoc}`;
 export const SubtaskFragmentDoc = gql`
     fragment Subtask on Subtask {
   name
@@ -1483,8 +1537,13 @@ export type EditLessonMutationHookResult = ReturnType<typeof useEditLessonMutati
 export type EditLessonMutationResult = Apollo.MutationResult<EditLessonMutation>;
 export type EditLessonMutationOptions = Apollo.BaseMutationOptions<EditLessonMutation, EditLessonMutationVariables>;
 export const CreateLessonTimeDocument = gql`
-    mutation CreateLessonTime($endTime: String!, $startTime: String!, $id: String!) {
-  createLessonTime(endTime: $endTime, startTime: $startTime, id: $id) {
+    mutation CreateLessonTime($endTime: String!, $startTime: String!, $id: String!, $scheduleId: String!) {
+  createLessonTime(
+    endTime: $endTime
+    startTime: $startTime
+    id: $id
+    scheduleId: $scheduleId
+  ) {
     ...LessonTime
   }
 }
@@ -1507,6 +1566,7 @@ export type CreateLessonTimeMutationFn = Apollo.MutationFunction<CreateLessonTim
  *      endTime: // value for 'endTime'
  *      startTime: // value for 'startTime'
  *      id: // value for 'id'
+ *      scheduleId: // value for 'scheduleId'
  *   },
  * });
  */
@@ -2057,6 +2117,40 @@ export function useToggleProjectTaskMutation(baseOptions?: Apollo.MutationHookOp
 export type ToggleProjectTaskMutationHookResult = ReturnType<typeof useToggleProjectTaskMutation>;
 export type ToggleProjectTaskMutationResult = Apollo.MutationResult<ToggleProjectTaskMutation>;
 export type ToggleProjectTaskMutationOptions = Apollo.BaseMutationOptions<ToggleProjectTaskMutation, ToggleProjectTaskMutationVariables>;
+export const CreateScheduleDocument = gql`
+    mutation CreateSchedule($name: String!, $id: String!) {
+  createSchedule(name: $name, id: $id) {
+    ...Schedule
+  }
+}
+    ${ScheduleFragmentDoc}`;
+export type CreateScheduleMutationFn = Apollo.MutationFunction<CreateScheduleMutation, CreateScheduleMutationVariables>;
+
+/**
+ * __useCreateScheduleMutation__
+ *
+ * To run a mutation, you first call `useCreateScheduleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateScheduleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createScheduleMutation, { data, loading, error }] = useCreateScheduleMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useCreateScheduleMutation(baseOptions?: Apollo.MutationHookOptions<CreateScheduleMutation, CreateScheduleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateScheduleMutation, CreateScheduleMutationVariables>(CreateScheduleDocument, options);
+      }
+export type CreateScheduleMutationHookResult = ReturnType<typeof useCreateScheduleMutation>;
+export type CreateScheduleMutationResult = Apollo.MutationResult<CreateScheduleMutation>;
+export type CreateScheduleMutationOptions = Apollo.BaseMutationOptions<CreateScheduleMutation, CreateScheduleMutationVariables>;
 export const SetSettingsDocument = gql`
     mutation SetSettings($startOfWeek: String, $startOfRotationDate: DateTime, $lengthOfRotation: Float, $skipWeekends: Boolean, $darkMode: Boolean, $sortTasksBy: String, $showDoDate: Boolean, $showCompletedTasks: Boolean, $isFirstTime: Boolean) {
   setSettings(
@@ -2837,40 +2931,6 @@ export function useGetAllEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetAllEventsQueryHookResult = ReturnType<typeof useGetAllEventsQuery>;
 export type GetAllEventsLazyQueryHookResult = ReturnType<typeof useGetAllEventsLazyQuery>;
 export type GetAllEventsQueryResult = Apollo.QueryResult<GetAllEventsQuery, GetAllEventsQueryVariables>;
-export const GetAllLessonTimesDocument = gql`
-    query GetAllLessonTimes {
-  getAllLessonTimes {
-    ...LessonTime
-  }
-}
-    ${LessonTimeFragmentDoc}`;
-
-/**
- * __useGetAllLessonTimesQuery__
- *
- * To run a query within a React component, call `useGetAllLessonTimesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllLessonTimesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllLessonTimesQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetAllLessonTimesQuery(baseOptions?: Apollo.QueryHookOptions<GetAllLessonTimesQuery, GetAllLessonTimesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAllLessonTimesQuery, GetAllLessonTimesQueryVariables>(GetAllLessonTimesDocument, options);
-      }
-export function useGetAllLessonTimesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllLessonTimesQuery, GetAllLessonTimesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAllLessonTimesQuery, GetAllLessonTimesQueryVariables>(GetAllLessonTimesDocument, options);
-        }
-export type GetAllLessonTimesQueryHookResult = ReturnType<typeof useGetAllLessonTimesQuery>;
-export type GetAllLessonTimesLazyQueryHookResult = ReturnType<typeof useGetAllLessonTimesLazyQuery>;
-export type GetAllLessonTimesQueryResult = Apollo.QueryResult<GetAllLessonTimesQuery, GetAllLessonTimesQueryVariables>;
 export const GetAllLessonsDocument = gql`
     query GetAllLessons {
   getAllLessons {
@@ -2939,6 +2999,40 @@ export function useGetAllRemindersLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetAllRemindersQueryHookResult = ReturnType<typeof useGetAllRemindersQuery>;
 export type GetAllRemindersLazyQueryHookResult = ReturnType<typeof useGetAllRemindersLazyQuery>;
 export type GetAllRemindersQueryResult = Apollo.QueryResult<GetAllRemindersQuery, GetAllRemindersQueryVariables>;
+export const GetAllSchedulesDocument = gql`
+    query GetAllSchedules {
+  getAllSchedules {
+    ...Schedule
+  }
+}
+    ${ScheduleFragmentDoc}`;
+
+/**
+ * __useGetAllSchedulesQuery__
+ *
+ * To run a query within a React component, call `useGetAllSchedulesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllSchedulesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllSchedulesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllSchedulesQuery(baseOptions?: Apollo.QueryHookOptions<GetAllSchedulesQuery, GetAllSchedulesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllSchedulesQuery, GetAllSchedulesQueryVariables>(GetAllSchedulesDocument, options);
+      }
+export function useGetAllSchedulesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllSchedulesQuery, GetAllSchedulesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllSchedulesQuery, GetAllSchedulesQueryVariables>(GetAllSchedulesDocument, options);
+        }
+export type GetAllSchedulesQueryHookResult = ReturnType<typeof useGetAllSchedulesQuery>;
+export type GetAllSchedulesLazyQueryHookResult = ReturnType<typeof useGetAllSchedulesLazyQuery>;
+export type GetAllSchedulesQueryResult = Apollo.QueryResult<GetAllSchedulesQuery, GetAllSchedulesQueryVariables>;
 export const GetAllSubjectsDocument = gql`
     query GetAllSubjects {
   getAllSubjects {

@@ -22,9 +22,13 @@ export class Lesson extends BaseEntity {
   @Field({ nullable: true })
   extraInfo?: string;
 
-  @Column()
-  @Field()
-  dayNumber!: number;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  dayNumber?: number;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  date?: Date;
 
   @ManyToOne(() => LessonTime, (lessonTime) => lessonTime.lessons, {
     onDelete: "CASCADE",

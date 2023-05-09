@@ -2,8 +2,14 @@ mutation CreateLessonTime(
   $endTime: String!
   $startTime: String!
   $id: String!
+  $scheduleId: String!
 ) {
-  createLessonTime(endTime: $endTime, startTime: $startTime, id: $id) {
+  createLessonTime(
+    endTime: $endTime
+    startTime: $startTime
+    id: $id
+    scheduleId: $scheduleId
+  ) {
     ...LessonTime
   }
 }

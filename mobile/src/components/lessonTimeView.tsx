@@ -3,8 +3,8 @@ import dayjs from 'dayjs';
 import {useState, useLayoutEffect} from 'react';
 import {Pressable, Text, FlatList, View, Image, StyleSheet} from 'react-native';
 import {
-  useGetAllLessonTimesQuery,
   LessonTimeFragment,
+  useGetAllSchedulesQuery,
 } from '../generated/graphql';
 import {useCreateLessonTime} from '../mutationHooks/lessonTime/createLessonTime';
 import {useDeleteLessonTime} from '../mutationHooks/lessonTime/deleteLessonTimes';
@@ -15,9 +15,6 @@ import {BasicIcon} from './basicViews/BasicIcon';
 import {BasicText} from './basicViews/BasicText';
 import {BasicTextInput} from './basicViews/BasicTextInput';
 import SelectTimeModal from './modals/selectTimeView/selectTimeModal';
-import CustomParseFormat from 'dayjs/plugin/customParseFormat';
-import RelativeTime from 'dayjs/plugin/relativeTime';
-import {useTheme} from '../contexts/ThemeContext';
 import {v4 as uuidv4} from 'uuid';
 
 export type LessonTime = {
@@ -26,17 +23,23 @@ export type LessonTime = {
   endTime: string;
 };
 
-export const LessonTimesView: React.FC = () => {
-  const {data, loading: getLessonTimesLoading} = useGetAllLessonTimesQuery();
+interface LessonTimesViewProps {
+  scheduleId: string;
+}
+
+export const LessonTimesView: React.FC<LessonTimesViewProps> = ({
+  scheduleId,
+}) => {
+  const {data: schedules, loading: getLessonTimesLoading} =
+    useGetAllSchedulesQuery();
+  const data =
+    schedules?.getAllSchedules.find(item => item.id == scheduleId)!
+      .lessonTimes || [];
   const [createLessonTime] = useCreateLessonTime();
-  const [
-    editLessonTimes,
-    {data: editLessonTimesData, error: editLessonTimesError},
-  ] = useEditLessonTimes();
+  const [editLessonTimes] = useEditLessonTimes();
   const [deleteLessonTime] = useDeleteLessonTime();
 
   const [defaultLessonLength, setDefaultLessonLength] = useState(45);
-  const [theme] = useTheme();
   const [timeModalVisible, setTimeModalVisible] = useState(false);
   const [activeLesson, setActiveLesson] = useState<{
     index: number;
@@ -48,9 +51,9 @@ export const LessonTimesView: React.FC = () => {
     let time;
     if (activeLesson) {
       if (activeLesson.time == 'start') {
-        time = data?.getAllLessonTimes[activeLesson.index].startTime;
+        time = data[activeLesson.index].startTime;
       } else {
-        time = data?.getAllLessonTimes[activeLesson.index].endTime;
+        time = data[activeLesson.index].endTime;
       }
     } else {
       time = '08:00';
@@ -60,6 +63,7 @@ export const LessonTimesView: React.FC = () => {
 
   const addLessonTime = (lastLessonTime: LessonTimeFragment) => {
     createLessonTime({
+      scheduleId,
       id: uuidv4(),
       startTime: dayjs(lastLessonTime.endTime, 'HH:mm')
         .add(10, 'minute')
@@ -71,8 +75,8 @@ export const LessonTimesView: React.FC = () => {
   };
 
   const getBreakLength = (index: number) => {
-    return dayjs(data?.getAllLessonTimes[index + 1].startTime, 'HH:mm').diff(
-      dayjs(data?.getAllLessonTimes[index].endTime, 'HH:mm'),
+    return dayjs(data[index + 1].startTime, 'HH:mm').diff(
+      dayjs(data[index].endTime, 'HH:mm'),
       'minute',
     );
   };
@@ -86,15 +90,15 @@ export const LessonTimesView: React.FC = () => {
       return;
     }
     if (changedValue == 'break') {
-      const oldValue = dayjs(
-        data?.getAllLessonTimes[index + 1].startTime,
-        'HH:mm',
-      ).diff(dayjs(data?.getAllLessonTimes[index].endTime, 'HH:mm'), 'minute');
+      const oldValue = dayjs(data[index + 1].startTime, 'HH:mm').diff(
+        dayjs(data[index].endTime, 'HH:mm'),
+        'minute',
+      );
       const difference = parseInt(newValue as string) - oldValue;
       console.log(difference, oldValue, newValue);
       editLessonTimes({
         lessonTimes:
-          data?.getAllLessonTimes.slice(index + 1).map((item, itemIndex) => {
+          data?.slice(index + 1).map((item, itemIndex) => {
             return {
               id: item.id,
               startTime: dayjs(item.startTime, 'HH:mm')
@@ -110,25 +114,25 @@ export const LessonTimesView: React.FC = () => {
       editLessonTimes({
         lessonTimes: {
           startTime: newValue as string,
-          id: data.getAllLessonTimes[index].id,
-          endTime: data.getAllLessonTimes[index].endTime,
+          id: data[index].id,
+          endTime: data[index].endTime,
         },
       });
     } else if (changedValue == 'lesson-end') {
-      if (index == 0 && data.getAllLessonTimes.length == 1) {
+      if (index == 0 && data.length == 1) {
         setDefaultLessonLength(
           dayjs(newValue, 'HH:mm').diff(
-            dayjs(data.getAllLessonTimes[index].startTime, 'HH:mm'),
+            dayjs(data[index].startTime, 'HH:mm'),
             'minute',
           ),
         );
       }
-      const oldValue = data.getAllLessonTimes[index].endTime;
+      const oldValue = data[index].endTime;
       const difference = dayjs(newValue, 'HH:mm').diff(
         dayjs(oldValue, 'HH:mm'),
         'minute',
       );
-      const lessonTimeInputs = data.getAllLessonTimes
+      const lessonTimeInputs = data
         .slice(index, undefined)
         .map((item, itemIndex) => {
           console.log(index, itemIndex, item);
@@ -165,18 +169,8 @@ export const LessonTimesView: React.FC = () => {
   return (
     <>
       <FlatList
-        ListHeaderComponent={() => (
-          <View style={styles.listHeaderContainer}>
-            <BasicText textVariant="heading" style={{marginBottom: 5}}>
-              Enter times of your lessons
-            </BasicText>
-            <BasicText color="textSecondary" textVariant="subText">
-              You can edit this later
-            </BasicText>
-          </View>
-        )}
         contentContainerStyle={styles.container}
-        data={data?.getAllLessonTimes.map((item, index) => {
+        data={data?.map((item, index) => {
           return {...item, lessonNumber: index};
         })}
         ListEmptyComponent={() => (
@@ -185,6 +179,7 @@ export const LessonTimesView: React.FC = () => {
               spacing="m"
               onPress={() => {
                 createLessonTime({
+                  scheduleId,
                   id: uuidv4(),
                   startTime: '08:00',
                   endTime: '08:45',
@@ -236,7 +231,7 @@ export const LessonTimesView: React.FC = () => {
                   </BasicText>
                 </BasicButton>
               </View>
-              {index == (data?.getAllLessonTimes.length || 1) - 1 && (
+              {index == (data?.length || 1) - 1 && (
                 <Pressable
                   onPress={() => {
                     deleteLessonTime({
@@ -251,7 +246,7 @@ export const LessonTimesView: React.FC = () => {
                 </Pressable>
               )}
             </BasicCard>
-            {index + 1 !== data?.getAllLessonTimes.length ? (
+            {index + 1 !== data?.length ? (
               <View style={styles.break}>
                 <BasicTextInput
                   style={{

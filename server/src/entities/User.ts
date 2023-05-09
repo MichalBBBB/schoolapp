@@ -16,6 +16,7 @@ import { CalendarEvent } from "./CalendarEvent";
 import { Lesson } from "./Lesson";
 import { LessonTime } from "./LessonTime";
 import { Reminder } from "./Reminder";
+import { Schedule } from "./Schedule";
 import { Settings } from "./Settings";
 import { Task } from "./Task";
 import { UserProject } from "./UserProject";
@@ -102,6 +103,10 @@ export class User extends BaseEntity {
   @Field(() => [LessonTime])
   @OneToMany(() => LessonTime, (lessonTime) => lessonTime.user)
   lessonTimes: LessonTime[];
+
+  @Field(() => [Schedule])
+  @OneToMany(() => Schedule, (schedule) => schedule.user)
+  schedules: Relation<Schedule>[];
 
   @Field(() => [Lesson])
   @OneToMany(() => Lesson, (lesson) => lesson.user)

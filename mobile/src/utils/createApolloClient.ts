@@ -35,17 +35,9 @@ export const baseUri =
 
 export const uri = baseUri + '/graphql';
 
-const httpLink = createHttpLink({
-  uri: uri,
-});
-
 const batchHttpLink = new BatchHttpLink({
   uri,
 });
-
-const retryLink = new RetryLink();
-
-const serializingLink = new SerializingLink();
 
 const errorLink = onError(error => {
   console.log(
@@ -135,6 +127,15 @@ export const createApolloClient = async (
           },
         },
       },
+      Schedule: {
+        fields: {
+          lessonTimes(existingLessonTimes: Reference[], {canRead}) {
+            return existingLessonTimes
+              ? existingLessonTimes.filter(canRead)
+              : [];
+          },
+        },
+      },
       Query: {
         fields: {
           getAllTasks(existingTasks: Reference[], {canRead}) {
@@ -142,11 +143,6 @@ export const createApolloClient = async (
           },
           getAllSubjects(existinSubjects: Reference[], {canRead}) {
             return existinSubjects ? existinSubjects.filter(canRead) : [];
-          },
-          getAllLessonTimes(existingLessonTImes: Reference[], {canRead}) {
-            return existingLessonTImes
-              ? existingLessonTImes.filter(canRead)
-              : [];
           },
           getAllLessons(existingLessons: Reference[], {canRead}) {
             return existingLessons ? existingLessons.filter(canRead) : [];

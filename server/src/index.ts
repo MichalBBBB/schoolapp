@@ -32,6 +32,9 @@ import { reminderResolver } from "./resolvers/reminderResolver";
 import { settingsResolver } from "./resolvers/settingsResolver";
 import { createClient } from "redis";
 import { MyContext } from "./utils/MyContext";
+import { Schedule } from "./entities/Schedule";
+import { LessonTime } from "./entities/LessonTime";
+import { ScheduleResolver } from "./resolvers/scheduleResolver";
 
 export type UserQueueObject = {
   resolveObject: DefferedObject;
@@ -51,7 +54,21 @@ const main = async () => {
     });
   //User.delete({});
   //Task.delete({});
-  AppDataSource.runMigrations();
+  await AppDataSource.runMigrations();
+  // Only keep this in this one version to change the data in the database
+  const schedules = await Schedule.find();
+  if (schedules.length == 0) {
+    const users = await User.find();
+    for (const user of users) {
+      const schedule = Schedule.create({
+        name: "Default Schedule",
+        userId: user.id,
+      });
+      const lessonTimes = await LessonTime.find({ where: { userId: user.id } });
+      schedule.lessonTimes = lessonTimes;
+      await schedule.save();
+    }
+  }
 
   const redis = createClient({
     url: process.env.REDIS_URL,
@@ -127,6 +144,7 @@ const main = async () => {
         projectTaskResolver,
         reminderResolver,
         settingsResolver,
+        ScheduleResolver,
       ],
     }),
   });
