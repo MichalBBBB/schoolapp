@@ -105,6 +105,7 @@ export type Mutation = {
   deleteLessonTimes: Scalars['Boolean'];
   deleteProject: Scalars['Boolean'];
   deleteProjectTask: Scalars['Boolean'];
+  deleteSchedule: Scalars['Boolean'];
   deleteSubject: Scalars['Boolean'];
   deleteSubtask: Scalars['Boolean'];
   deleteTask: Scalars['Boolean'];
@@ -113,6 +114,7 @@ export type Mutation = {
   editLessonTimes: Array<LessonTime>;
   editProject: Project;
   editProjectTask: ProjectTask;
+  editSchedule: Schedule;
   editSubject: Subject;
   editTask: Task;
   editUser: User;
@@ -272,6 +274,11 @@ export type MutationDeleteProjectTaskArgs = {
 };
 
 
+export type MutationDeleteScheduleArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationDeleteSubjectArgs = {
   id: Scalars['String'];
 };
@@ -321,6 +328,12 @@ export type MutationEditProjectArgs = {
 export type MutationEditProjectTaskArgs = {
   doDate?: InputMaybe<Scalars['DateTime']>;
   dueDate?: InputMaybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  name: Scalars['String'];
+};
+
+
+export type MutationEditScheduleArgs = {
   id: Scalars['String'];
   name: Scalars['String'];
 };
@@ -521,12 +534,14 @@ export type RemindersInput = {
 
 export type Schedule = {
   __typename?: 'Schedule';
+  createdAt: Scalars['DateTime'];
   dates?: Maybe<Array<Scalars['DateTime']>>;
   dayNumbers?: Maybe<Array<Scalars['Float']>>;
   default: Scalars['Boolean'];
   id: Scalars['String'];
   lessonTimes: Array<LessonTime>;
   name: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
   userId: Scalars['String'];
 };
 
@@ -660,7 +675,7 @@ export type PublicUserFragment = { __typename?: 'PublicUser', name: string, emai
 
 export type ReminderFragment = { __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null };
 
-export type ScheduleFragment = { __typename?: 'Schedule', id: string, name: string, default: boolean, dayNumbers?: Array<number> | null, dates?: Array<any> | null, lessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null }> };
+export type ScheduleFragment = { __typename?: 'Schedule', id: string, name: string, default: boolean, dayNumbers?: Array<number> | null, dates?: Array<any> | null, createdAt: any, updatedAt: any, lessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null }> };
 
 export type SettingsFragment = { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean };
 
@@ -877,7 +892,22 @@ export type CreateScheduleMutationVariables = Exact<{
 }>;
 
 
-export type CreateScheduleMutation = { __typename?: 'Mutation', createSchedule: { __typename?: 'Schedule', id: string, name: string, default: boolean, dayNumbers?: Array<number> | null, dates?: Array<any> | null, lessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null }> } };
+export type CreateScheduleMutation = { __typename?: 'Mutation', createSchedule: { __typename?: 'Schedule', id: string, name: string, default: boolean, dayNumbers?: Array<number> | null, dates?: Array<any> | null, createdAt: any, updatedAt: any, lessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null }> } };
+
+export type DeleteScheduleMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteScheduleMutation = { __typename?: 'Mutation', deleteSchedule: boolean };
+
+export type EditScheduleMutationVariables = Exact<{
+  id: Scalars['String'];
+  name: Scalars['String'];
+}>;
+
+
+export type EditScheduleMutation = { __typename?: 'Mutation', editSchedule: { __typename?: 'Schedule', id: string, name: string, default: boolean, dayNumbers?: Array<number> | null, dates?: Array<any> | null, createdAt: any, updatedAt: any, lessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null }> } };
 
 export type SetSettingsMutationVariables = Exact<{
   startOfWeek?: InputMaybe<Scalars['String']>;
@@ -1062,7 +1092,7 @@ export type GetAllRemindersQuery = { __typename?: 'Query', getAllReminders: Arra
 export type GetAllSchedulesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllSchedulesQuery = { __typename?: 'Query', getAllSchedules: Array<{ __typename?: 'Schedule', id: string, name: string, default: boolean, dayNumbers?: Array<number> | null, dates?: Array<any> | null, lessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null }> }> };
+export type GetAllSchedulesQuery = { __typename?: 'Query', getAllSchedules: Array<{ __typename?: 'Schedule', id: string, name: string, default: boolean, dayNumbers?: Array<number> | null, dates?: Array<any> | null, createdAt: any, updatedAt: any, lessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null }> }> };
 
 export type GetAllSubjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1267,6 +1297,8 @@ export const ScheduleFragmentDoc = gql`
   }
   dayNumbers
   dates
+  createdAt
+  updatedAt
 }
     ${LessonTimeFragmentDoc}`;
 export const SubtaskFragmentDoc = gql`
@@ -2151,6 +2183,71 @@ export function useCreateScheduleMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateScheduleMutationHookResult = ReturnType<typeof useCreateScheduleMutation>;
 export type CreateScheduleMutationResult = Apollo.MutationResult<CreateScheduleMutation>;
 export type CreateScheduleMutationOptions = Apollo.BaseMutationOptions<CreateScheduleMutation, CreateScheduleMutationVariables>;
+export const DeleteScheduleDocument = gql`
+    mutation DeleteSchedule($id: String!) {
+  deleteSchedule(id: $id)
+}
+    `;
+export type DeleteScheduleMutationFn = Apollo.MutationFunction<DeleteScheduleMutation, DeleteScheduleMutationVariables>;
+
+/**
+ * __useDeleteScheduleMutation__
+ *
+ * To run a mutation, you first call `useDeleteScheduleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteScheduleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteScheduleMutation, { data, loading, error }] = useDeleteScheduleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteScheduleMutation(baseOptions?: Apollo.MutationHookOptions<DeleteScheduleMutation, DeleteScheduleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteScheduleMutation, DeleteScheduleMutationVariables>(DeleteScheduleDocument, options);
+      }
+export type DeleteScheduleMutationHookResult = ReturnType<typeof useDeleteScheduleMutation>;
+export type DeleteScheduleMutationResult = Apollo.MutationResult<DeleteScheduleMutation>;
+export type DeleteScheduleMutationOptions = Apollo.BaseMutationOptions<DeleteScheduleMutation, DeleteScheduleMutationVariables>;
+export const EditScheduleDocument = gql`
+    mutation EditSchedule($id: String!, $name: String!) {
+  editSchedule(id: $id, name: $name) {
+    ...Schedule
+  }
+}
+    ${ScheduleFragmentDoc}`;
+export type EditScheduleMutationFn = Apollo.MutationFunction<EditScheduleMutation, EditScheduleMutationVariables>;
+
+/**
+ * __useEditScheduleMutation__
+ *
+ * To run a mutation, you first call `useEditScheduleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditScheduleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editScheduleMutation, { data, loading, error }] = useEditScheduleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useEditScheduleMutation(baseOptions?: Apollo.MutationHookOptions<EditScheduleMutation, EditScheduleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditScheduleMutation, EditScheduleMutationVariables>(EditScheduleDocument, options);
+      }
+export type EditScheduleMutationHookResult = ReturnType<typeof useEditScheduleMutation>;
+export type EditScheduleMutationResult = Apollo.MutationResult<EditScheduleMutation>;
+export type EditScheduleMutationOptions = Apollo.BaseMutationOptions<EditScheduleMutation, EditScheduleMutationVariables>;
 export const SetSettingsDocument = gql`
     mutation SetSettings($startOfWeek: String, $startOfRotationDate: DateTime, $lengthOfRotation: Float, $skipWeekends: Boolean, $darkMode: Boolean, $sortTasksBy: String, $showDoDate: Boolean, $showCompletedTasks: Boolean, $isFirstTime: Boolean) {
   setSettings(

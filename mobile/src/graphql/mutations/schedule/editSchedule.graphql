@@ -1,0 +1,5 @@
+mutation EditSchedule($id: String!, $name: String!) {
+  editSchedule(id: $id, name: $name) {
+    ...Schedule
+  }
+}

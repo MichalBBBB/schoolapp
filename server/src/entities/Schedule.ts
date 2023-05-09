@@ -2,11 +2,13 @@ import { Field, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
+  UpdateDateColumn,
 } from "typeorm";
 import { LessonTime } from "./LessonTime";
 import { User } from "./User";
@@ -44,4 +46,12 @@ export class Schedule extends BaseEntity {
   @Column({ type: "timestamp without time zone", array: true, nullable: true })
   @Field(() => [Date], { nullable: true })
   dates?: Date[];
+
+  @CreateDateColumn()
+  @Field()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  @Field()
+  updatedAt: Date;
 }

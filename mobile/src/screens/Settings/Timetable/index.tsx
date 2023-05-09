@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import dayjs from 'dayjs';
+import React, {useEffect, useState} from 'react';
 import {ScrollView, View} from 'react-native';
 import {v4} from 'uuid';
 import {BasicButton} from '../../../components/basicViews/BasicButton';
@@ -17,6 +18,9 @@ export const TimeTableHomeScreen: React.FC<
   const {data: schedules} = useGetAllSchedulesQuery();
   const [newScheduleWindowVisible, setNewScheduleWindowVisible] =
     useState(false);
+  const sortedSchedules = [...(schedules?.getAllSchedules || [])].sort((a, b) =>
+    dayjs(a.createdAt).diff(b.createdAt),
+  );
   return (
     <>
       <ScrollView style={{padding: 10}}>
@@ -39,8 +43,8 @@ export const TimeTableHomeScreen: React.FC<
             </BasicText>
           </BasicButton>
         </View>
-        <BasicCard backgroundColor="accentBackground1">
-          {schedules?.getAllSchedules.map((item, index) => (
+        <BasicCard backgroundColor="accentBackground1" marginBottom={20}>
+          {sortedSchedules?.map((item, index) => (
             <SettingsItem
               key={index}
               text={item.name}
@@ -49,6 +53,14 @@ export const TimeTableHomeScreen: React.FC<
               }}
             />
           ))}
+        </BasicCard>
+        <BasicCard backgroundColor="accentBackground1">
+          <SettingsItem
+            text="Timetable"
+            onPress={() => {
+              navigation.navigate('TimeTableScreen');
+            }}
+          />
         </BasicCard>
       </ScrollView>
       <BasicInputWindow

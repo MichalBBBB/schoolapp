@@ -40,6 +40,8 @@ export const useCreateSchedule: () => [
           dates: [],
           dayNumbers: [],
           lessonTimes: [],
+          updatedAt: new Date(),
+          createdAt: new Date(),
         },
       },
       update: (cache, {data}) => {

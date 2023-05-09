@@ -68,4 +68,35 @@ export class ScheduleResolver {
     }).save();
     return schedule;
   }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
+  async deleteSchedule(@Arg("id") id: string, @Ctx() { payload }: MyContext) {
+    const schedule = await Schedule.findOne({ where: { id } });
+    if (schedule && schedule.userId == payload?.userId) {
+      await schedule.remove();
+      return true;
+    } else {
+      throw new Error("Shedule wasn't found");
+    }
+  }
+
+  @Mutation(() => Schedule)
+  @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
+  async editSchedule(
+    @Arg("id") id: string,
+    @Arg("name") name: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    const schedule = await Schedule.findOne({ where: { id } });
+    if (schedule && schedule.userId == payload?.userId) {
+      schedule.name = name;
+      await schedule.save();
+      return schedule;
+    } else {
+      throw new Error("Schedule wasn't found");
+    }
+  }
 }

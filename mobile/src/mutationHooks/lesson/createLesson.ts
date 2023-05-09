@@ -4,10 +4,10 @@ import {
   CreateLessonMutationVariables,
   GetAllLessonsDocument,
   GetAllLessonsQuery,
-  GetAllLessonTimesDocument,
-  GetAllLessonTimesQuery,
   GetAllSubjectsDocument,
   GetAllSubjectsQuery,
+  LessonTime,
+  LessonTimeFragmentDoc,
   TaskFragment,
   TaskFragmentDoc,
   useCreateLessonMutation,
@@ -29,11 +29,11 @@ export const useCreateLesson: () => [
         query: GetAllSubjectsDocument,
       })
     ).data.getAllSubjects.find(item => item.id == variables.subjectId);
-    const lessonTime = (
-      await client.query<GetAllLessonTimesQuery>({
-        query: GetAllLessonTimesDocument,
-      })
-    ).data.getAllLessonTimes.find(item => item.id == variables.lessonTimeId);
+    const lessonTime = client.readFragment<LessonTime>({
+      fragment: LessonTimeFragmentDoc,
+      fragmentName: 'LessonTime',
+      id: `LessonTime:${variables.lessonTimeId}`,
+    });
     if (subject && lessonTime) {
       await createLesson({
         context: {

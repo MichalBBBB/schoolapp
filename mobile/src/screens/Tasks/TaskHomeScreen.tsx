@@ -41,7 +41,6 @@ import {TaskScreenOptionsPopup} from '../../components/popups/taskScreenOptionsP
 import {useTheme} from '../../contexts/ThemeContext';
 import {
   GetAllLessonsQuery,
-  GetAllLessonTimesDocument,
   ProjectTaskFragment,
   ProjectTaskWithProjectFragment,
   TaskFragment,
