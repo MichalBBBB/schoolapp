@@ -1,12 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {
-  Pressable,
-  Text,
-  View,
-  ScrollView,
-  StyleSheet,
-  LayoutAnimation,
-} from 'react-native';
+import {Text, View, ScrollView, LayoutAnimation} from 'react-native';
 import {useTheme} from '../contexts/ThemeContext';
 import {
   useGetAllLessonsQuery,
@@ -15,7 +8,6 @@ import {
   LessonTimeFragment,
 } from '../generated/graphql';
 import {useCreateLesson} from '../mutationHooks/lesson/createLesson';
-import {SettingsStackScreenProps} from '../utils/types';
 import {useSettings} from '../utils/useSettings';
 import {BasicButton} from './basicViews/BasicButton';
 import {BasicIcon} from './basicViews/BasicIcon';
@@ -24,9 +16,6 @@ import {TimeTableLesson} from './listItems/timetableLesson';
 import {SelectSubjectPopup} from './popups/selectSubject/selectSubjectPopup';
 import {v4 as uuidv4} from 'uuid';
 import dayjs from 'dayjs';
-import {Popup} from './popup';
-import {Menu} from './menu';
-import {MenuItem} from './menu/MenuItem';
 import {SchedulesPopup} from './popups/schedulePopup/schedulesPopup';
 import {useEditSchedule} from '../mutationHooks/schedule/editSchedule';
 import {useDeleteLesson} from '../mutationHooks/lesson/deleteLesson';

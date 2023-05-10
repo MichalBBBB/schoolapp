@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import React from 'react';
 import {FlatList, View} from 'react-native';
 import {
@@ -20,13 +21,21 @@ export const SchedulesWindow: React.FC<SchedulesWindowProps> = ({
   animateClose,
 }) => {
   const {data: schedules} = useGetAllSchedulesQuery();
+  const sortedSchedules = [...(schedules?.getAllSchedules || [])].sort((a, b) =>
+    dayjs(a.createdAt).diff(b.createdAt),
+  );
   return (
     <BasicCard backgroundColor="accentBackground1" style={{maxHeight: 250}}>
+      <View style={{width: '100%'}}>
+        <BasicText spacing="s" textVariant="button">
+          Choose a schedule
+        </BasicText>
+      </View>
       <View style={{flexDirection: 'row'}}>
         <FlatList
           initialNumToRender={schedules?.getAllSchedules.length}
           keyboardShouldPersistTaps="handled"
-          data={schedules?.getAllSchedules}
+          data={sortedSchedules}
           renderItem={({item}) => (
             <BasicButton
               spacing="none"

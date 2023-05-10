@@ -65,9 +65,13 @@ const findRowOfDate = (date: dayjs.Dayjs) => {
 
 interface calendarProps {
   screenHeight: number;
+  onChangeSelectedDay?: (day: dayjs.Dayjs) => void;
 }
 
-const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
+const CalendarView: React.FC<calendarProps> = ({
+  screenHeight,
+  onChangeSelectedDay,
+}) => {
   const {data: events} = useGetAllEventsQuery();
   const {data: tasks} = useGetAllTasksQuery();
 
@@ -152,6 +156,10 @@ const CalendarView: React.FC<calendarProps> = ({screenHeight}) => {
       ],
     };
   });
+
+  useEffect(() => {
+    onChangeSelectedDay?.(selectedDay);
+  }, [selectedDay]);
 
   const onDayPress = (date: dayjs.Dayjs) => {
     setSelectedDay(date);

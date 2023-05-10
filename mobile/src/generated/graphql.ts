@@ -182,7 +182,8 @@ export type MutationCreateEventArgs = {
 
 
 export type MutationCreateLessonArgs = {
-  dayNumber: Scalars['Float'];
+  date?: InputMaybe<Scalars['DateTime']>;
+  dayNumber?: InputMaybe<Scalars['Float']>;
   id: Scalars['String'];
   lessonTimeId: Scalars['String'];
   subjectId: Scalars['String'];
@@ -663,7 +664,7 @@ export type CalendarEventFragment = { __typename?: 'CalendarEvent', id: string, 
 
 export type InviteFragment = { __typename?: 'Invite', adminName: string, projectName: string, projectId: string };
 
-export type LessonFragment = { __typename?: 'Lesson', id: string, dayNumber?: number | null, extraInfo?: string | null, subject: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null } };
+export type LessonFragment = { __typename?: 'Lesson', id: string, dayNumber?: number | null, extraInfo?: string | null, date?: any | null, subject: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null } };
 
 export type LessonTimeFragment = { __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null };
 
@@ -725,14 +726,15 @@ export type EditEventMutationVariables = Exact<{
 export type EditEventMutation = { __typename?: 'Mutation', editEvent: { __typename?: 'CalendarEvent', id: string, name: string, text?: string | null, startDate: any, endDate?: any | null, wholeDay: boolean, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> } };
 
 export type CreateLessonMutationVariables = Exact<{
-  dayNumber: Scalars['Float'];
+  dayNumber?: InputMaybe<Scalars['Float']>;
   lessonTimeId: Scalars['String'];
   subjectId: Scalars['String'];
   id: Scalars['String'];
+  date?: InputMaybe<Scalars['DateTime']>;
 }>;
 
 
-export type CreateLessonMutation = { __typename?: 'Mutation', createLesson: { __typename?: 'Lesson', id: string, dayNumber?: number | null, extraInfo?: string | null, subject: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null } } };
+export type CreateLessonMutation = { __typename?: 'Mutation', createLesson: { __typename?: 'Lesson', id: string, dayNumber?: number | null, extraInfo?: string | null, date?: any | null, subject: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null } } };
 
 export type DeleteLessonMutationVariables = Exact<{
   id: Scalars['String'];
@@ -748,7 +750,7 @@ export type EditLessonMutationVariables = Exact<{
 }>;
 
 
-export type EditLessonMutation = { __typename?: 'Mutation', editLesson: { __typename?: 'Lesson', id: string, dayNumber?: number | null, extraInfo?: string | null, subject: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null } } };
+export type EditLessonMutation = { __typename?: 'Mutation', editLesson: { __typename?: 'Lesson', id: string, dayNumber?: number | null, extraInfo?: string | null, date?: any | null, subject: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null } } };
 
 export type CreateLessonTimeMutationVariables = Exact<{
   endTime: Scalars['String'];
@@ -1086,7 +1088,7 @@ export type GetAllEventsQuery = { __typename?: 'Query', getAllEvents: Array<{ __
 export type GetAllLessonsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllLessonsQuery = { __typename?: 'Query', getAllLessons: Array<{ __typename?: 'Lesson', id: string, dayNumber?: number | null, extraInfo?: string | null, subject: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null } }> };
+export type GetAllLessonsQuery = { __typename?: 'Query', getAllLessons: Array<{ __typename?: 'Lesson', id: string, dayNumber?: number | null, extraInfo?: string | null, date?: any | null, subject: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null }, lessonTime: { __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null } }> };
 
 export type GetAllRemindersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1218,6 +1220,7 @@ export const LessonFragmentDoc = gql`
   id
   dayNumber
   extraInfo
+  date
   subject {
     ...Subject
   }
@@ -1466,12 +1469,13 @@ export type EditEventMutationHookResult = ReturnType<typeof useEditEventMutation
 export type EditEventMutationResult = Apollo.MutationResult<EditEventMutation>;
 export type EditEventMutationOptions = Apollo.BaseMutationOptions<EditEventMutation, EditEventMutationVariables>;
 export const CreateLessonDocument = gql`
-    mutation CreateLesson($dayNumber: Float!, $lessonTimeId: String!, $subjectId: String!, $id: String!) {
+    mutation CreateLesson($dayNumber: Float, $lessonTimeId: String!, $subjectId: String!, $id: String!, $date: DateTime) {
   createLesson(
     id: $id
     dayNumber: $dayNumber
     lessonTimeId: $lessonTimeId
     subjectId: $subjectId
+    date: $date
   ) {
     ...Lesson
   }
@@ -1496,6 +1500,7 @@ export type CreateLessonMutationFn = Apollo.MutationFunction<CreateLessonMutatio
  *      lessonTimeId: // value for 'lessonTimeId'
  *      subjectId: // value for 'subjectId'
  *      id: // value for 'id'
+ *      date: // value for 'date'
  *   },
  * });
  */
