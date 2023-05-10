@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   Pressable,
   Text,
@@ -7,13 +7,6 @@ import {
   StyleSheet,
   LayoutAnimation,
 } from 'react-native';
-import {
-  Table,
-  Row,
-  TableWrapper,
-  Col,
-  Cell,
-} from 'react-native-table-component';
 import {useTheme} from '../contexts/ThemeContext';
 import {
   useGetAllLessonsQuery,
@@ -36,24 +29,18 @@ import {Menu} from './menu';
 import {MenuItem} from './menu/MenuItem';
 import {SchedulesPopup} from './popups/schedulePopup/schedulesPopup';
 import {useEditSchedule} from '../mutationHooks/schedule/editSchedule';
+import {useDeleteLesson} from '../mutationHooks/lesson/deleteLesson';
 
-const getIndex = <T,>(
-  arr: Array<Array<T>>,
-  pred: (item: T) => boolean,
-): [number, number] | undefined => {
-  for (var i = 0; i < arr.length; i++) {
-    var index = arr[i].findIndex(pred);
-    if (index > -1) {
-      return [i, index];
-    }
-  }
-};
+const widthConstant = 2.5;
 
 export const TimeTableView = () => {
   const {data, loading: lessonsLoading} = useGetAllLessonsQuery();
   const {data: schedules} = useGetAllSchedulesQuery();
   const [createLesson] = useCreateLesson();
   const [editSchedule] = useEditSchedule();
+  const [deleteLesson] = useDeleteLesson();
+
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const [theme] = useTheme();
 
@@ -76,10 +63,12 @@ export const TimeTableView = () => {
 
   const map = useMemo(() => {
     var tempMap: Array<Array<LessonFragment | LessonTimeFragment>> = [];
+    // we populate the map with only lessonTimes
     dayNumbers.forEach(item => {
       const schedule = getScheduleOfDay(item);
       tempMap.push(schedule.lessonTimes);
     });
+    // we go through all lessons, find their location and replace the lessonTime with the lesson
     data?.getAllLessons.forEach(item => {
       if (
         item.dayNumber !== null &&
@@ -89,6 +78,8 @@ export const TimeTableView = () => {
         const index = tempMap[item.dayNumber].findIndex(
           mapItem => mapItem.id == item.lessonTime.id,
         );
+        // assigning a value directly to the map didn't work,
+        // so we just assign the whole row
         tempMap[item.dayNumber] = [...tempMap[item.dayNumber]].map(
           (arrayItem, arrayIndex) => (arrayIndex == index ? item : arrayItem),
         );
@@ -97,25 +88,84 @@ export const TimeTableView = () => {
     return tempMap;
   }, [data, schedules, settings]);
 
+  const earliestTime = useMemo(() => {
+    // get the schedules that are actually displayed in the timetable
+    const activeSchedules = [
+      schedules?.getAllSchedules.find(item => item.default),
+      ...(schedules?.getAllSchedules.filter(item => {
+        return (
+          item.dayNumbers &&
+          item.dayNumbers.some(
+            dayNumber => dayNumber < (settings?.lengthOfRotation || 5) - 1,
+          )
+        );
+      }) || []),
+    ];
+    var earliestTime = '08:00';
+    // go through every lessonTime and change the earliest time, if the lessonTime is earlier
+    activeSchedules.forEach(item => {
+      item?.lessonTimes.forEach(lessonTime => {
+        if (
+          dayjs(lessonTime.startTime, 'HH:mm').isBefore(
+            dayjs(earliestTime, 'HH:mm'),
+          )
+        ) {
+          earliestTime = lessonTime.startTime;
+        }
+      });
+    });
+    return earliestTime;
+  }, [schedules, settings]);
+
+  const latestTime = useMemo(() => {
+    // get the schedules that are actually displayed in the timetable
+    const activeSchedules = [
+      schedules?.getAllSchedules.find(item => item.default),
+      ...(schedules?.getAllSchedules.filter(item => {
+        return (
+          item.dayNumbers &&
+          item.dayNumbers.some(
+            dayNumber => dayNumber < (settings?.lengthOfRotation || 5) - 1,
+          )
+        );
+      }) || []),
+    ];
+    var latestTime = '14:00';
+    // go through every lessonTime and change the earliest time, if the lessonTime is later
+    activeSchedules.forEach(item => {
+      item?.lessonTimes.forEach(lessonTime => {
+        if (
+          dayjs(lessonTime.endTime, 'HH:mm').isAfter(dayjs(latestTime, 'HH:mm'))
+        ) {
+          latestTime = lessonTime.endTime;
+        }
+      });
+    });
+    return latestTime;
+  }, [schedules, settings]);
+
+  // get the width of an element based on the length of the lessonTime
   const getWidth = (item: LessonFragment | LessonTimeFragment) => {
     if (item.__typename == 'Lesson') {
       const diff = dayjs(item.lessonTime.endTime, 'HH:mm').diff(
         dayjs(item.lessonTime.startTime, 'HH:mm'),
         'm',
       );
-      return diff / 0.4;
+      return diff * widthConstant;
     } else if (item.__typename == 'LessonTime') {
       const diff = dayjs(item.endTime, 'HH:mm').diff(
         dayjs(item.startTime, 'HH:mm'),
         'm',
       );
-      return diff / 0.4;
+      return diff * widthConstant;
     } else {
       return 100;
     }
   };
 
+  // get the time between two lessonTimes
   const getBreakLength = (lessonTime: LessonTimeFragment) => {
+    // get all other lessonTimes from that schedule and sort them
     const lessonTimes = [
       ...(schedules?.getAllSchedules.find(
         item => item.id == lessonTime.scheduleId,
@@ -133,28 +183,112 @@ export const TimeTableView = () => {
         dayjs(nextLessonTime.startTime, 'HH:mm').diff(
           dayjs(lessonTime.endTime, 'HH:mm'),
           'minute',
-        ) / 0.4
+        ) * widthConstant
       );
     }
-
-    return 0;
   };
 
-  if (lessonsLoading) {
+  // get the offest of the first lessonTime
+  const getFirstOffset = (row: Array<LessonFragment | LessonTimeFragment>) => {
+    if (row.length > 0) {
+      const item = row[0];
+      if (item.__typename == 'Lesson') {
+        return (
+          dayjs(item.lessonTime.startTime, 'HH:mm').diff(
+            dayjs(earliestTime, 'HH:mm'),
+            'm',
+          ) * widthConstant
+        );
+      } else {
+        return (
+          dayjs((item as LessonTimeFragment).startTime, 'HH:mm').diff(
+            dayjs(earliestTime, 'HH:mm'),
+            'm',
+          ) * widthConstant
+        );
+      }
+    } else {
+      return 0;
+    }
+  };
+
+  const topTimes = useMemo(() => {
+    const earliestHour = parseInt(earliestTime.split(':')[0]) + 1;
+    const latestHour = parseInt(latestTime.split(':')[0]);
+    const times = [];
+    for (var i = earliestHour; i <= latestHour; i++) {
+      times.push(i.toString() + ':00');
+    }
+    return times;
+  }, [earliestTime, schedules]);
+
+  if (lessonsLoading || map.length == 0) {
     return <Text>Loading...</Text>;
   }
   return (
     <ScrollView style={{flex: 1}} horizontal={true}>
       <ScrollView style={{flex: 1}}>
+        <View
+          style={{
+            position: 'absolute',
+            flexDirection: 'row',
+            height: '100%',
+            paddingLeft:
+              140 + (60 - parseInt(earliestTime.split(':')[1])) * widthConstant,
+          }}>
+          {topTimes.map((item, index) => (
+            <View
+              key={index}
+              style={{
+                height: '100%',
+                width: 1,
+                backgroundColor: theme.colors.border,
+                marginRight: 60 * widthConstant - 1,
+                marginTop: 20,
+              }}
+            />
+          ))}
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            paddingLeft:
+              140 + (60 - parseInt(earliestTime.split(':')[1])) * widthConstant,
+            marginBottom: 10,
+          }}>
+          {topTimes.map((item, index) => (
+            <BasicText
+              key={index}
+              style={{
+                marginRight: 60 * widthConstant - 50,
+                width: 50,
+                transform: [{translateX: -25}],
+                textAlign: 'center',
+              }}>
+              {item}
+            </BasicText>
+          ))}
+        </View>
         {map.map((row, rowIndex) => (
           <View
             key={rowIndex}
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              marginBottom: 5,
+              // marginBottom: 5,
+              paddingVertical: 5,
+              borderBottomWidth: 1,
+              borderBottomColor: theme.colors.border,
             }}>
-            <View style={{alignItems: 'center', marginHorizontal: 10}}>
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingHorizontal: 10,
+                width: 130,
+                minHeight: 80,
+                marginRight: 10 + getFirstOffset(row),
+              }}>
               <BasicText style={{marginBottom: 5}}>{`Day ${
                 rowIndex + 1
               }`}</BasicText>
@@ -181,10 +315,15 @@ export const TimeTableView = () => {
                       dayNumbers: [...(schedule.dayNumbers || []), rowIndex],
                     });
                   }
+                  data?.getAllLessons.forEach(item => {
+                    if (item.dayNumber == rowIndex) {
+                      deleteLesson({id: item.id});
+                    }
+                  });
                 }}
                 trigger={
                   <BasicButton backgroundColor="accentBackground1" spacing="m">
-                    <BasicText style={{maxWidth: 80}} numberOfLines={1}>
+                    <BasicText numberOfLines={1} style={{textAlign: 'center'}}>
                       {getScheduleOfDay(rowIndex).name}
                     </BasicText>
                   </BasicButton>
@@ -242,12 +381,3 @@ export const TimeTableView = () => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {flex: 1},
-  header: {height: 50},
-  dataWrapper: {marginTop: -1},
-  row: {backgroundColor: '#fff', flexDirection: 'row', height: 80},
-});
-
-//
