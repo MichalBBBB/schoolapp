@@ -1,5 +1,10 @@
-mutation EditSchedule($id: String!, $name: String!) {
-  editSchedule(id: $id, name: $name) {
+mutation EditSchedule(
+  $id: String!
+  $name: String
+  $dayNumbers: [Float!]
+  $dates: [DateTime!]
+) {
+  editSchedule(id: $id, name: $name, dayNumbers: $dayNumbers, dates: $dates) {
     ...Schedule
   }
 }

@@ -334,8 +334,10 @@ export type MutationEditProjectTaskArgs = {
 
 
 export type MutationEditScheduleArgs = {
+  dates?: InputMaybe<Array<Scalars['DateTime']>>;
+  dayNumbers?: InputMaybe<Array<Scalars['Float']>>;
   id: Scalars['String'];
-  name: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -903,7 +905,9 @@ export type DeleteScheduleMutation = { __typename?: 'Mutation', deleteSchedule: 
 
 export type EditScheduleMutationVariables = Exact<{
   id: Scalars['String'];
-  name: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
+  dayNumbers?: InputMaybe<Array<Scalars['Float']> | Scalars['Float']>;
+  dates?: InputMaybe<Array<Scalars['DateTime']> | Scalars['DateTime']>;
 }>;
 
 
@@ -2215,8 +2219,8 @@ export type DeleteScheduleMutationHookResult = ReturnType<typeof useDeleteSchedu
 export type DeleteScheduleMutationResult = Apollo.MutationResult<DeleteScheduleMutation>;
 export type DeleteScheduleMutationOptions = Apollo.BaseMutationOptions<DeleteScheduleMutation, DeleteScheduleMutationVariables>;
 export const EditScheduleDocument = gql`
-    mutation EditSchedule($id: String!, $name: String!) {
-  editSchedule(id: $id, name: $name) {
+    mutation EditSchedule($id: String!, $name: String, $dayNumbers: [Float!], $dates: [DateTime!]) {
+  editSchedule(id: $id, name: $name, dayNumbers: $dayNumbers, dates: $dates) {
     ...Schedule
   }
 }
@@ -2238,6 +2242,8 @@ export type EditScheduleMutationFn = Apollo.MutationFunction<EditScheduleMutatio
  *   variables: {
  *      id: // value for 'id'
  *      name: // value for 'name'
+ *      dayNumbers: // value for 'dayNumbers'
+ *      dates: // value for 'dates'
  *   },
  * });
  */

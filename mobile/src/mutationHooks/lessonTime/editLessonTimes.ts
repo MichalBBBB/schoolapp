@@ -2,8 +2,6 @@ import {FetchResult, MutationResult, useApolloClient} from '@apollo/client';
 import {
   EditLessonTimesMutation,
   EditLessonTimesMutationVariables,
-  GetAllLessonTimesDocument,
-  GetAllLessonTimesQuery,
   LessonTimeFragment,
   LessonTimeFragmentDoc,
   useEditLessonTimesMutation,
@@ -19,6 +17,7 @@ export const useEditLessonTimes: () => [
   MutationResult<EditLessonTimesMutation>,
 ] = () => {
   const [editLessonTimes, data] = useEditLessonTimesMutation();
+  const client = useApolloClient();
   const func = async (variables: EditLessonTimesMutationVariables) => {
     var lessonTimesArray =
       'map' in variables.lessonTimes
@@ -33,11 +32,17 @@ export const useEditLessonTimes: () => [
       optimisticResponse: {
         __typename: 'Mutation',
         editLessonTimes: lessonTimesArray.map(item => {
+          const lessonTime = client.readFragment<LessonTimeFragment>({
+            fragment: LessonTimeFragmentDoc,
+            fragmentName: 'LessonTime',
+            id: `LessonTime:${item.id}`,
+          });
           return {
             __typename: 'LessonTime',
             id: item.id,
             startTime: item.startTime,
             endTime: item.endTime,
+            scheduleId: lessonTime?.scheduleId,
           };
         }),
       },

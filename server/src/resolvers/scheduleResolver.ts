@@ -86,15 +86,17 @@ export class ScheduleResolver {
   @UseMiddleware(isAuth)
   @UseMiddleware(queueMiddleware)
   async editSchedule(
+    @Ctx() { payload }: MyContext,
     @Arg("id") id: string,
-    @Arg("name") name: string,
-    @Ctx() { payload }: MyContext
+    @Arg("name", { nullable: true }) name?: string,
+    @Arg("dayNumbers", () => [Number], { nullable: true })
+    dayNumbers?: number[],
+    @Arg("dates", () => [Date], { nullable: true }) dates?: Date[]
   ) {
     const schedule = await Schedule.findOne({ where: { id } });
     if (schedule && schedule.userId == payload?.userId) {
-      schedule.name = name;
-      await schedule.save();
-      return schedule;
+      await Schedule.update({ id }, { name, dayNumbers, dates });
+      return Schedule.findOne({ where: { id } });
     } else {
       throw new Error("Schedule wasn't found");
     }

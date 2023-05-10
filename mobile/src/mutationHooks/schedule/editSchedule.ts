@@ -30,6 +30,15 @@ export const useEditSchedule: () => [
       },
     );
     if (schedule) {
+      var dayNumbers = schedule.dayNumbers;
+      if (variables.dayNumbers) {
+        if (typeof variables.dayNumbers == 'number') {
+          dayNumbers = [variables.dayNumbers];
+        } else {
+          dayNumbers = variables.dayNumbers;
+        }
+      }
+
       const result = await editSchedule({
         context: {
           serializationKey: 'MUTATION',
@@ -41,7 +50,9 @@ export const useEditSchedule: () => [
             ...schedule,
             __typename: 'Schedule',
             id: variables.id,
-            name: variables.name,
+            name: variables.name || schedule.name,
+            dayNumbers: dayNumbers,
+            dates: variables.dates || schedule.dates,
           },
         },
         update: (cache, {data}) => {

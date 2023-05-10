@@ -1,5 +1,12 @@
 import React, {useMemo} from 'react';
-import {Pressable, Text, View, ScrollView, StyleSheet} from 'react-native';
+import {
+  Pressable,
+  Text,
+  View,
+  ScrollView,
+  StyleSheet,
+  LayoutAnimation,
+} from 'react-native';
 import {
   Table,
   Row,
@@ -24,6 +31,11 @@ import {TimeTableLesson} from './listItems/timetableLesson';
 import {SelectSubjectPopup} from './popups/selectSubject/selectSubjectPopup';
 import {v4 as uuidv4} from 'uuid';
 import dayjs from 'dayjs';
+import {Popup} from './popup';
+import {Menu} from './menu';
+import {MenuItem} from './menu/MenuItem';
+import {SchedulesPopup} from './popups/schedulePopup/schedulesPopup';
+import {useEditSchedule} from '../mutationHooks/schedule/editSchedule';
 
 const getIndex = <T,>(
   arr: Array<Array<T>>,
@@ -41,6 +53,7 @@ export const TimeTableView = () => {
   const {data, loading: lessonsLoading} = useGetAllLessonsQuery();
   const {data: schedules} = useGetAllSchedulesQuery();
   const [createLesson] = useCreateLesson();
+  const [editSchedule] = useEditSchedule();
 
   const [theme] = useTheme();
 
@@ -82,7 +95,7 @@ export const TimeTableView = () => {
       }
     });
     return tempMap;
-  }, [data, schedules]);
+  }, [data, schedules, settings]);
 
   const getWidth = (item: LessonFragment | LessonTimeFragment) => {
     if (item.__typename == 'Lesson') {
@@ -90,16 +103,41 @@ export const TimeTableView = () => {
         dayjs(item.lessonTime.startTime, 'HH:mm'),
         'm',
       );
-      return diff / 0.6;
+      return diff / 0.4;
     } else if (item.__typename == 'LessonTime') {
       const diff = dayjs(item.endTime, 'HH:mm').diff(
         dayjs(item.startTime, 'HH:mm'),
         'm',
       );
-      return diff / 0.6;
+      return diff / 0.4;
     } else {
       return 100;
     }
+  };
+
+  const getBreakLength = (lessonTime: LessonTimeFragment) => {
+    const lessonTimes = [
+      ...(schedules?.getAllSchedules.find(
+        item => item.id == lessonTime.scheduleId,
+      )?.lessonTimes || []),
+    ];
+    lessonTimes.sort((a, b) => {
+      return dayjs(a.startTime, 'HH:mm').diff(dayjs(b.startTime, 'HH:mm'), 'm');
+    });
+    const index = lessonTimes.findIndex(item => item.id == lessonTime.id);
+    if (index == lessonTimes.length - 1) {
+      return 0;
+    } else {
+      const nextLessonTime = lessonTimes[index + 1];
+      return (
+        dayjs(nextLessonTime.startTime, 'HH:mm').diff(
+          dayjs(lessonTime.endTime, 'HH:mm'),
+          'minute',
+        ) / 0.4
+      );
+    }
+
+    return 0;
   };
 
   if (lessonsLoading) {
@@ -111,12 +149,61 @@ export const TimeTableView = () => {
         {map.map((row, rowIndex) => (
           <View
             key={rowIndex}
-            style={{flexDirection: 'row', alignItems: 'center'}}>
-            <BasicText style={{marginHorizontal: 10}}>{`Day ${
-              rowIndex + 1
-            }`}</BasicText>
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: 5,
+            }}>
+            <View style={{alignItems: 'center', marginHorizontal: 10}}>
+              <BasicText style={{marginBottom: 5}}>{`Day ${
+                rowIndex + 1
+              }`}</BasicText>
+              <SchedulesPopup
+                selectedScheduleId={getScheduleOfDay(rowIndex).id}
+                onSubmit={schedule => {
+                  LayoutAnimation.configureNext(
+                    LayoutAnimation.Presets.easeInEaseOut,
+                  );
+                  const previousSchedule = schedules?.getAllSchedules.find(
+                    item => item.dayNumbers?.includes(rowIndex),
+                  );
+                  if (previousSchedule) {
+                    editSchedule({
+                      id: previousSchedule.id,
+                      dayNumbers: previousSchedule.dayNumbers?.filter(
+                        item => item !== rowIndex,
+                      ),
+                    });
+                  }
+                  if (!schedule.default) {
+                    editSchedule({
+                      id: schedule.id,
+                      dayNumbers: [...(schedule.dayNumbers || []), rowIndex],
+                    });
+                  }
+                }}
+                trigger={
+                  <BasicButton backgroundColor="accentBackground1" spacing="m">
+                    <BasicText style={{maxWidth: 80}} numberOfLines={1}>
+                      {getScheduleOfDay(rowIndex).name}
+                    </BasicText>
+                  </BasicButton>
+                }
+              />
+            </View>
             {row.map((item, index) => (
-              <View key={index} style={{height: 100, width: getWidth(item)}}>
+              <View
+                key={index}
+                style={{
+                  height: 100,
+                  width: getWidth(item),
+                  padding: 2,
+                  marginRight: getBreakLength(
+                    item.__typename == 'Lesson'
+                      ? item.lessonTime
+                      : (item as LessonTimeFragment),
+                  ),
+                }}>
                 {item.__typename == 'Lesson' ? (
                   <TimeTableLesson lesson={item} />
                 ) : (
@@ -124,7 +211,6 @@ export const TimeTableView = () => {
                     style={{
                       width: '100%',
                       height: '100%',
-                      padding: 2,
                     }}>
                     <SelectSubjectPopup
                       onSubmit={subject => {
