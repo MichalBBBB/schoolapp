@@ -45,10 +45,11 @@ export const useCreateLesson: () => [
           createLesson: {
             __typename: 'Lesson',
             id: variables.id,
-            dayNumber: variables.dayNumber,
+            dayNumber: variables.dayNumber || null,
             lessonTime: lessonTime,
             subject: subject,
             extraInfo: null,
+            date: variables.date || null,
           },
         },
         update: (cache, {data}) => {

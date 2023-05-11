@@ -26,6 +26,7 @@ import {replaceAllData} from '../../Content';
 import {useApolloClient} from '@apollo/client';
 import {BasicRefreshControl} from '../basicViews/BasicRefreshControl';
 import TaskListProjectTask from '../listItems/taskListProjectTask';
+import {useGetSpecialScheduleForDay} from '../../utils/useSpecialScheduleForDay';
 
 export const width = Dimensions.get('screen').width;
 
@@ -48,6 +49,8 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
   const {data: tasks} = useGetAllTasksQuery();
   const {data: projectTasks} = useGetProjectTasksOfUserQuery();
 
+  const specialSchedule = useGetSpecialScheduleForDay(date);
+
   const client = useApolloClient();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -63,7 +66,7 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
   }, [date, settings]);
 
   const createSections: () => section[] = () => {
-    const lessonsThisDay =
+    var lessonsThisDay =
       lessons?.getAllLessons
         .filter(item => {
           return dayNumber == item.dayNumber;
@@ -73,6 +76,16 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
             dayjs(b.lessonTime.startTime, 'HH:mm'),
           );
         }) || [];
+    if (specialSchedule) {
+      lessonsThisDay =
+        lessons?.getAllLessons
+          .filter(item => dayjs(item.date).isSame(date, 'day'))
+          .sort((a, b) => {
+            return dayjs(a.lessonTime.startTime, 'HH:mm').diff(
+              dayjs(b.lessonTime.startTime, 'HH:mm'),
+            );
+          }) || [];
+    }
     const tasksThisDay: Array<TaskFragment | ProjectTaskWithProjectFragment> =
       (
         (tasks?.getAllTasks.filter(item => {
@@ -108,7 +121,7 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
     const sections: section[] = [];
     if (lessonsThisDay.length > 0) {
       sections.push({
-        title: 'Lessons',
+        title: specialSchedule ? `Lessons - Special Schedule` : 'Lessons',
         data: lessonsThisDay,
       });
     }

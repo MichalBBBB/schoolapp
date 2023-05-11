@@ -8,6 +8,7 @@ import {
   useGetAllLessonsQuery,
 } from '../../generated/graphql';
 import {useCreateLesson} from '../../mutationHooks/lesson/createLesson';
+import {useEditSchedule} from '../../mutationHooks/schedule/editSchedule';
 import {BasicButton} from '../basicViews/BasicButton';
 import {BasicModalCard} from '../basicViews/BasicModalCard';
 import {BasicText} from '../basicViews/BasicText';
@@ -32,6 +33,8 @@ export const ScheduleWindow: React.FC<ScheduleWindowProps> = ({
 }) => {
   const [createLesson] = useCreateLesson();
   const {data: lessons} = useGetAllLessonsQuery();
+  const [editSchedule] = useEditSchedule();
+
   const list = useMemo(() => {
     return schedule.lessonTimes.map(item => {
       const lesson = lessons?.getAllLessons.find(
@@ -62,7 +65,18 @@ export const ScheduleWindow: React.FC<ScheduleWindowProps> = ({
           <BasicButton variant="unstyled" spacing="none" onPress={onClose}>
             <BasicText textVariant="button">Back</BasicText>
           </BasicButton>
-          <BasicButton variant="unstyled" spacing="none" onPress={onSubmit}>
+          <BasicButton
+            variant="unstyled"
+            spacing="none"
+            onPress={() => {
+              editSchedule({
+                id: schedule.id,
+                dates: schedule.dates
+                  ? schedule.dates?.concat([date.toDate()])
+                  : [date.toDate()],
+              });
+              onSubmit();
+            }}>
             <BasicText textVariant="button">Done</BasicText>
           </BasicButton>
         </View>
