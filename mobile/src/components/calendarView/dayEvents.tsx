@@ -168,6 +168,9 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
             height: 200,
           }}>
           <BasicText textVariant="heading">Nothing for this day</BasicText>
+          {specialSchedule && (
+            <BasicText color="textSecondary">Special Schedule</BasicText>
+          )}
         </View>
       }
       style={[styles.sectionList, {width}]}

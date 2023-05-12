@@ -54,7 +54,7 @@ export const ScheduleWindow: React.FC<ScheduleWindowProps> = ({
       onBackdropPress={onClose}
       isVisible={visible}
       alignCard="center"
-      style={{maxHeight: 500}}>
+      style={{maxHeight: 500, minHeight: 350}}>
       <View style={{padding: 10, width: '100%'}}>
         <View
           style={{
@@ -98,6 +98,16 @@ export const ScheduleWindow: React.FC<ScheduleWindowProps> = ({
       <FlatList
         keyboardShouldPersistTaps="handled"
         data={list}
+        ListEmptyComponent={() => (
+          <View style={{width: '100%'}}>
+            <BasicText
+              textVariant="subHeading"
+              style={{textAlign: 'center', padding: 30}}
+              color="textSecondary">
+              Nothing here
+            </BasicText>
+          </View>
+        )}
         renderItem={({item, index}) => (
           <View style={{maxHeight: 80, padding: 5}} key={index}>
             {item.__typename == 'Lesson' ? (

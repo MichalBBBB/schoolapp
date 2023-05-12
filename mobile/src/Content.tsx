@@ -11,6 +11,7 @@ import {
   isLoadingVar,
   isLoggedInVar,
   isOnlineVar,
+  minVersionVar,
   persistentQueueLink,
 } from './App';
 import {
@@ -26,15 +27,13 @@ import {baseUri} from './utils/createApolloClient';
 import {setRemindersFromApollo} from './utils/reminderUtils';
 import {useSettings} from './utils/useSettings';
 import dayjs from 'dayjs';
-import {
-  GetAllLessonTimesDocument,
-  GetAllTasksDocument,
-  useMeQuery,
-} from './generated/graphql';
+import {useMeQuery} from './generated/graphql';
 import {is24HourFormat} from 'react-native-device-time-format';
 import {useSetSettings} from './mutationHooks/settings/setSettings';
 import {v4 as uuidv4} from 'uuid';
 import {AlertProvider} from './contexts/AlertContext';
+import {isVersionHighEnough} from './utils/isVersionHighEnough';
+import {UpdateAppScreen} from './screens/UpdateAppScreen';
 
 const is12hourConfig = {
   // abbreviated format options allowing localization
@@ -68,7 +67,10 @@ const is24hourConfig = {
 
 export const replaceAllData = async (client: ApolloClient<any>) => {
   try {
-    await fetch(baseUri + '/check');
+    const result = await fetch(baseUri + '/check');
+    const {minVersion} = await result.json();
+    console.log(minVersion);
+    minVersionVar(minVersion);
     isOnlineVar(true);
     const promises: Array<Promise<any>> = [];
     allQueries.forEach(item => {
@@ -109,6 +111,7 @@ export const Content: React.FC = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const settings = useSettings();
   const {data: me} = useMeQuery();
+  const minVersion = useReactiveVar(minVersionVar);
 
   const [setSettings] = useSetSettings();
 
@@ -127,17 +130,10 @@ export const Content: React.FC = () => {
     setForceRerenderingValue(uuidv4());
   };
 
-  const onFirstSignIn = async () => {
-    // do things that happen when the user starts their account
-  };
-
   const [theme, setTheme] = useTheme();
   useEffect(() => {
     if (isOnline && isLoggedIn) {
       openQueue(client);
-      if (settings?.isFirstTime && me?.me.emailVerified) {
-        onFirstSignIn();
-      }
     } else if (!isOnline) {
       persistentQueueLink.close();
     } else if (!isLoggedIn) {
@@ -205,7 +201,7 @@ export const Content: React.FC = () => {
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <PortalProvider>
-        <Routes />
+        {isVersionHighEnough(minVersion) ? <Routes /> : <UpdateAppScreen />}
       </PortalProvider>
     </GestureHandlerRootView>
   );

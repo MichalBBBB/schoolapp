@@ -61,7 +61,7 @@ const main = async () => {
     const users = await User.find();
     for (const user of users) {
       const schedule = Schedule.create({
-        name: "Default Schedule",
+        name: "Default",
         userId: user.id,
       });
       const lessonTimes = await LessonTime.find({ where: { userId: user.id } });
@@ -161,7 +161,7 @@ const main = async () => {
   );
 
   app.get("/check", (_req, res) => {
-    res.send(true);
+    res.json({ minVersion: "1.0.4" });
   });
 
   app.listen(process.env.PORT, () => {

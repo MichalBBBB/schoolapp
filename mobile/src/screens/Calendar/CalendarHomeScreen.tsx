@@ -38,7 +38,7 @@ const CalendarHomeScreen: React.FC<
           }>
           <Menu>
             <MenuItem
-              text="One off schedule"
+              text="Special schedule"
               onPress={() => {
                 setSpecialScheduleWindowVisible(true);
               }}

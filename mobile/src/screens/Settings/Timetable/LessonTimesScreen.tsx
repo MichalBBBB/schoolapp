@@ -30,10 +30,10 @@ const LessonTimesScreen: React.FC<
       headerRight: () => (
         <Popup
           trigger={
-            <BasicButton variant="unstyled" spacing="none">
+            <BasicButton variant="unstyled">
               <BasicIcon
                 source={require('../../../../assets/Options.png')}
-                style={{height: 25, width: 25}}
+                style={{height: 20, width: 20}}
               />
             </BasicButton>
           }>

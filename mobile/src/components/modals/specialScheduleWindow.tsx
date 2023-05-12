@@ -67,11 +67,12 @@ export const SpecialScheduleWindow: React.FC<SpecialScheduleWindowProps> = ({
                     dayjs(item).isSame(dayjs(date), 'day'),
                   )
                 ) {
+                  const newDates = item.dates.filter(
+                    itemDate => !dayjs(itemDate).isSame(date, 'day'),
+                  );
                   editSchedule({
                     id: item.id,
-                    dates: item.dates.filter(
-                      itemDate => !dayjs(itemDate).isSame(date),
-                    ),
+                    dates: newDates,
                   });
                 }
               });

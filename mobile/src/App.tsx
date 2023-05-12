@@ -36,6 +36,7 @@ import KeyboardManager from 'react-native-keyboard-manager/dist';
 export const isLoggedInVar = makeVar(true);
 export const isOnlineVar = makeVar(true);
 export const isLoadingVar = makeVar(false);
+export const minVersionVar = makeVar('1.0.0');
 export const persistentQueueLink = new PersistentQueueLink();
 dayjs.extend(weekday);
 dayjs.extend(updateLocale);

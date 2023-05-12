@@ -33,7 +33,8 @@ export class lessonResolver {
     @Arg("dayNumber", { nullable: true }) dayNumber?: number,
     @Arg("date", { nullable: true }) date?: Date
   ) {
-    if (!date && !dayNumber) {
+    console.log(dayNumber, date);
+    if (!date && (dayNumber == null || dayNumber == undefined)) {
       throw new Error("You have to provide dayNumber of date");
     }
     const lesson = await Lesson.create({
