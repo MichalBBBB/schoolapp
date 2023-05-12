@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Schedules1683588142125 implements MigrationInterface {
-    name = 'Schedules1683588142125'
+export class Schedules1683925485801 implements MigrationInterface {
+    name = 'Schedules1683925485801'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`CREATE TABLE "schedule" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "userId" uuid NOT NULL, "dayNumbers" integer array, "dates" TIMESTAMP array, CONSTRAINT "PK_1c05e42aec7371641193e180046" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "schedule" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "default" boolean NOT NULL DEFAULT false, "userId" uuid NOT NULL, "dayNumbers" integer array, "dates" TIMESTAMP array, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_1c05e42aec7371641193e180046" PRIMARY KEY ("id"))`);
         await queryRunner.query(`ALTER TABLE "lesson_time" ADD "scheduleId" uuid`);
         await queryRunner.query(`ALTER TABLE "lesson" ADD "date" TIMESTAMP`);
         await queryRunner.query(`ALTER TABLE "lesson" ALTER COLUMN "dayNumber" DROP NOT NULL`);

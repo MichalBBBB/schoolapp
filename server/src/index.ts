@@ -63,6 +63,7 @@ const main = async () => {
       const schedule = Schedule.create({
         name: "Default",
         userId: user.id,
+        default: true,
       });
       const lessonTimes = await LessonTime.find({ where: { userId: user.id } });
       schedule.lessonTimes = lessonTimes;
