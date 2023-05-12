@@ -11,7 +11,11 @@ import {
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import {CalendarEventFragment, TaskFragment} from '../generated/graphql';
+import {
+  CalendarEventFragment,
+  ScheduleFragment,
+  TaskFragment,
+} from '../generated/graphql';
 
 export type TabParamList = {
   TaskStack: NavigatorScreenParams<TaskStackParamList>;
@@ -64,7 +68,8 @@ export type ProjectStackScreenProps<T extends keyof ProjectStackParamList> =
 export type SettingsStackParamList = {
   SettingsHomeScreen: undefined;
   TimeTableScreen: undefined;
-  LessonTimesScreen: undefined;
+  TimeTableHomeScreen: undefined;
+  LessonTimesScreen: {schedule: ScheduleFragment};
   AdvancedTimeTableScreen: undefined;
   DateSettingsScreen: undefined;
   StartOfWeekScreen: undefined;

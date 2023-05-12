@@ -1,8 +1,8 @@
 import {
   GetAllEventsDocument,
   GetAllLessonsDocument,
-  GetAllLessonTimesDocument,
   GetAllRemindersDocument,
+  GetAllSchedulesDocument,
   GetAllSubjectsDocument,
   GetAllTasksDocument,
   GetInvitesDocument,
@@ -14,12 +14,12 @@ import {
 export const allQueries = [
   GetAllEventsDocument,
   GetAllLessonsDocument,
-  GetAllLessonTimesDocument,
   GetAllSubjectsDocument,
   GetAllTasksDocument,
   GetInvitesDocument,
   GetProjectsDocument,
   GetAllRemindersDocument,
   GetProjectTasksOfUserDocument,
+  GetAllSchedulesDocument,
   MeDocument,
 ];

@@ -9,6 +9,7 @@ import {ProfileScreen} from '../screens/Settings/Profile';
 import {ChangePasswordScreen} from '../screens/Settings/Profile/ChangePasswordScreen';
 
 import SettingsHomeScreen from '../screens/Settings/SettingsHomeScreen';
+import {TimeTableHomeScreen} from '../screens/Settings/Timetable';
 import {AdvancedTimeTableScreen} from '../screens/Settings/Timetable/AdvancedTimeTableScreen';
 import LessonTimesScreen from '../screens/Settings/Timetable/LessonTimesScreen';
 import TimeTableScreen from '../screens/Settings/Timetable/TimeTableScreen';
@@ -34,6 +35,11 @@ const SettingsStack: React.FC<
         name="SettingsHomeScreen"
         options={{title: 'Settings'}}
         component={SettingsHomeScreen}
+      />
+      <Stack.Screen
+        name="TimeTableHomeScreen"
+        options={{title: 'Timetable'}}
+        component={TimeTableHomeScreen}
       />
       <Stack.Screen
         name="LessonTimesScreen"

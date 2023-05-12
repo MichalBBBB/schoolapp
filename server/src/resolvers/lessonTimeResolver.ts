@@ -58,6 +58,7 @@ export class lessonTimeResolver {
     @Arg("id") id: string,
     @Arg("startTime") startTime: string,
     @Arg("endTime") endTime: string,
+    @Arg("scheduleId") scheduleId: string,
     @Ctx() { payload }: MyContext
   ) {
     const lessonTime = await LessonTime.create({
@@ -65,6 +66,7 @@ export class lessonTimeResolver {
       startTime,
       endTime,
       userId: payload?.userId,
+      scheduleId,
     }).save();
     return lessonTime;
   }

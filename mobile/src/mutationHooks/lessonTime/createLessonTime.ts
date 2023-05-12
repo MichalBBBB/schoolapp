@@ -2,12 +2,8 @@ import {
   useCreateLessonTimeMutation,
   CreateLessonTimeMutation,
   GetAllSubjectsDocument,
-  SubjectFragment,
-  GetAllLessonTimesDocument,
-  GetAllLessonTimesQueryResult,
-  GetAllLessonTimesQuery,
-  CreateEventMutation,
-  GetAllSubjectsQuery,
+  ScheduleFragment,
+  ScheduleFragmentDoc,
 } from '../../generated/graphql';
 import {CreateLessonTimeMutationVariables} from '../../generated/graphql';
 import {FetchResult, MutationResult, useApolloClient} from '@apollo/client';
@@ -25,10 +21,6 @@ export const useCreateLessonTime: () => [
   const [createLessonTime, data] = useCreateLessonTimeMutation();
 
   const func = async (variables: CreateLessonTimeMutationVariables) => {
-    const {data: subjects} = await client.query({
-      query: GetAllSubjectsDocument,
-    });
-
     const result = await createLessonTime({
       context: {
         serializationKey: 'MUTATION',
@@ -41,6 +33,7 @@ export const useCreateLessonTime: () => [
           id: variables.id,
           startTime: variables.startTime,
           endTime: variables.endTime,
+          scheduleId: variables.scheduleId,
         },
       },
       update: (cache, {data}) => {
@@ -48,18 +41,22 @@ export const useCreateLessonTime: () => [
           return;
         }
         const {createLessonTime: lessonTime} = data;
-        const cacheData = cache.readQuery<GetAllLessonTimesQuery>({
-          query: GetAllLessonTimesDocument,
+        const cacheData = cache.readFragment<ScheduleFragment>({
+          fragment: ScheduleFragmentDoc,
+          fragmentName: 'Schedule',
+          id: `Schedule:${variables.scheduleId}`,
         });
         if (!cacheData) {
           return;
         }
-        const LessonTimes = cacheData.getAllLessonTimes;
-        const newLessonTimes = [...LessonTimes, lessonTime];
-        cache.writeQuery<GetAllLessonTimesQuery>({
-          query: GetAllLessonTimesDocument,
+        const lessonTimes = cacheData.lessonTimes;
+        const newLessonTimes = [...lessonTimes, lessonTime];
+        cache.writeFragment<ScheduleFragment>({
+          fragment: ScheduleFragmentDoc,
+          fragmentName: 'Schedule',
           data: {
-            getAllLessonTimes: newLessonTimes,
+            ...cacheData,
+            lessonTimes: newLessonTimes,
           },
         });
       },

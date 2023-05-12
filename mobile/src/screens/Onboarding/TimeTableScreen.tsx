@@ -17,7 +17,9 @@ export const TimeTableScreen: React.FC<
         style={{paddingTop: 10, textAlign: 'center'}}>
         Set up your schedule
       </BasicText>
-      <BasicText color="textSecondary" style={{textAlign: 'center'}}>
+      <BasicText
+        color="textSecondary"
+        style={{textAlign: 'center', marginBottom: 10}}>
         You can change other settings of your schedule later
       </BasicText>
       <TimeTableView />

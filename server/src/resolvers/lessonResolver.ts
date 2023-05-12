@@ -30,13 +30,19 @@ export class lessonResolver {
     @Arg("id") id: string,
     @Arg("subjectId") subjectId: string,
     @Arg("lessonTimeId") lessonTimeId: string,
-    @Arg("dayNumber") dayNumber: number
+    @Arg("dayNumber", { nullable: true }) dayNumber?: number,
+    @Arg("date", { nullable: true }) date?: Date
   ) {
+    console.log(dayNumber, date);
+    if (!date && (dayNumber == null || dayNumber == undefined)) {
+      throw new Error("You have to provide dayNumber of date");
+    }
     const lesson = await Lesson.create({
       id,
       subjectId,
       lessonTimeId,
       dayNumber,
+      date,
       userId: payload?.userId,
     }).save();
     const lessonWithRelations = await Lesson.findOne({

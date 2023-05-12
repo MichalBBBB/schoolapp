@@ -49,19 +49,20 @@ export const Popup: React.FC<PopupProps> = ({
   const [shouldAnimate, setShouldAnimate] = useState(false);
   const [shouldClose, setShouldClose] = useState(false);
   const [popupVisible, setPopupVisible] = useState(false);
-  const [contentVisible, setContentVisible] = useState(false);
 
   const [isTop, setIsTop] = useState(false);
   const [isRight, setisRight] = useState(true);
 
   const scale = useSharedValue(0);
+  const top = useSharedValue(0);
+  const left = useSharedValue(0);
 
   const closeModal = () => {
     setShouldClose(true);
   };
 
   const setModalToClosed = () => {
-    setContentVisible(false);
+    // setContentVisible(false);
     setPopupVisible(false);
     setShouldClose(false);
   };
@@ -78,14 +79,14 @@ export const Popup: React.FC<PopupProps> = ({
     }
   }, [shouldClose]);
 
-  useEffect(() => {
-    if (shouldAnimate && !contentVisible && popupVisible) {
-      setContentVisible(true);
-      scale.value = 0;
-      scale.value = withSpring(1, {damping: 10, mass: 0.3, stiffness: 180});
-      setShouldAnimate(false);
-    }
-  }, [contentDimensions]);
+  // useEffect(() => {
+  //   if (shouldAnimate && !contentVisible && popupVisible) {
+  //     setContentVisible(true);
+  //     scale.value = 0;
+  //     scale.value = withSpring(1, {damping: 10, mass: 0.3, stiffness: 180});
+  //     setShouldAnimate(false);
+  //   }
+  // }, [contentDimensions]);
 
   const measureTrigger = () => {
     triggerWrapperRef.current?.measureInWindow((x, y, width, height) => {
@@ -98,22 +99,20 @@ export const Popup: React.FC<PopupProps> = ({
     });
   };
 
-  const {top, left} = useMemo(() => {
-    let left = 0;
-    let top = 0;
-
-    // console.log(triggerDimensions, contentDimensions);
+  useEffect(() => {
+    let tempLeft = 0;
+    let tempTop = 0;
 
     // if the popup is outside the screen from the left
     if (
       triggerDimensions.left - contentDimensions.width < 0 &&
       forceSide !== 'right'
     ) {
-      left = triggerDimensions.left;
+      tempLeft = triggerDimensions.left;
 
       setisRight(false);
     } else {
-      left =
+      tempLeft =
         triggerDimensions.left -
         contentDimensions.width +
         triggerDimensions.width;
@@ -127,10 +126,10 @@ export const Popup: React.FC<PopupProps> = ({
         contentDimensions.height + initialTriggerTop >
         layoutHeight - keyboardHeight
       ) {
-        top = triggerDimensions.top - contentDimensions.height - 10;
+        tempTop = triggerDimensions.top - contentDimensions.height - 10;
         setIsTop(false);
       } else {
-        top = initialTriggerTop;
+        tempTop = initialTriggerTop;
         setIsTop(true);
       }
     } else {
@@ -141,21 +140,34 @@ export const Popup: React.FC<PopupProps> = ({
         initialTriggerTop + contentDimensions.height >
         layoutHeight - keyboardHeight
       ) {
-        top =
+        tempTop =
           initialTriggerTop -
           triggerDimensions.height -
           contentDimensions.height;
         setIsTop(false);
       } else {
-        top = initialTriggerTop;
+        tempTop = initialTriggerTop;
         setIsTop(true);
       }
     }
-    return {top, left};
+    top.value = tempTop;
+    left.value = tempLeft;
   }, [contentDimensions, triggerDimensions]);
+
+  useEffect(() => {
+    if (shouldAnimate && popupVisible && contentDimensions.height !== 0) {
+      scale.value = 0;
+      scale.value = withSpring(1, {damping: 10, mass: 0.3, stiffness: 180});
+      setShouldAnimate(false);
+    }
+  }, [top, left, popupVisible, contentDimensions]);
 
   const contentAnimatedStyle = useAnimatedStyle(() => {
     return {
+      top: top.value,
+      left: left.value,
+      // hide the view until it's in its final position
+      opacity: top.value !== 0 && left.value !== 0 ? 1 : 0,
       transform: [
         {
           translateY: interpolate(
@@ -214,7 +226,6 @@ export const Popup: React.FC<PopupProps> = ({
             // setContentVisible(false);
             measureTrigger();
             setPopupVisible(true);
-            // setShouldAnimate(true);
             extraOnPress?.();
           },
         })}
@@ -243,8 +254,8 @@ export const Popup: React.FC<PopupProps> = ({
                 {
                   alignSelf: 'flex-start',
                   zIndex: 99,
-                  top,
-                  left,
+                  // top,
+                  // left,
                 },
                 contentAnimatedStyle,
               ]}>

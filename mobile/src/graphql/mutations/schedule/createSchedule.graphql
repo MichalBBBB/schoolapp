@@ -1,0 +1,5 @@
+mutation CreateSchedule($name: String!, $id: String!) {
+  createSchedule(name: $name, id: $id) {
+    ...Schedule
+  }
+}

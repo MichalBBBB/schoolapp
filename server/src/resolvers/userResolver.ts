@@ -42,6 +42,7 @@ import {
   ForgotPasswordUnion,
   ForgotPasswordSuccess,
 } from "../types/userResponseTypes";
+import { Schedule } from "../entities/Schedule";
 
 const client = new OAuth2Client({
   clientId: process.env.GOOGLE_CLIENT_ID,
@@ -228,6 +229,11 @@ export class userResolver {
       }
     }
     if (user) {
+      await Schedule.create({
+        name: "Default Schedule",
+        default: true,
+        userId: user.id,
+      }).save();
       // Send refresh token cookie
       sendVerificationEmail({ email: user.email, userId: user.id, redis });
       sendRefreshToken(res, createRefreshToken(user));
@@ -285,6 +291,11 @@ export class userResolver {
         imageURL: response.pictureURL,
         emailVerified: true,
         settings,
+      }).save();
+      await Schedule.create({
+        name: "Default Schedule",
+        default: true,
+        userId: user.id,
       }).save();
     }
     if (user) {

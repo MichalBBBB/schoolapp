@@ -89,7 +89,7 @@ const SettingsHomeScreen: React.FC<
             <SettingsItem
               text="Timetable"
               onPress={() => {
-                navigation.navigate('LessonTimesScreen');
+                navigation.navigate('TimeTableHomeScreen');
               }}
             />
             <SettingsItem
