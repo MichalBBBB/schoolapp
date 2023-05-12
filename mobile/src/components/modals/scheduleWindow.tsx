@@ -54,7 +54,7 @@ export const ScheduleWindow: React.FC<ScheduleWindowProps> = ({
       onBackdropPress={onClose}
       isVisible={visible}
       alignCard="center"
-      style={{maxHeight: 500, minHeight: 350}}>
+      style={{maxHeight: 510, minHeight: 350}}>
       <View style={{padding: 10, width: '100%'}}>
         <View
           style={{
