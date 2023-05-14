@@ -24,6 +24,7 @@ import {calendarConfigWithoutTime} from '../../components/listItems/task';
 import {
   GetAllTasksDocument,
   RemindersInput,
+  SubtaskFragment,
   useCreateSubtaskMutation,
   useEditTaskMutation,
   useGetAllTasksQuery,
@@ -39,6 +40,7 @@ import {SelectSubjectPopup} from '../../components/popups/selectSubject/selectSu
 import {TaskStackScreenProps} from '../../utils/types';
 import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {SubjectColorsObject} from '../../types/Theme';
+import {useEditSubtask} from '../../mutationHooks/task/editSubtask';
 
 const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
   navigation,
@@ -54,18 +56,12 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
 
   const [name, setName] = useState(task.name);
   const [text, setText] = useState(task.text);
-  const [dueDate, setDueDate] = useState<dayjs.Dayjs | null>(
-    task.dueDate ? dayjs(task.dueDate) : null,
-  );
-  const [edited, setEdited] = useState(false);
   const [editTask] = useEditTask();
   const [editDueDateModalIsVisible, setEditDueDateModalIsVisible] =
     useState(false);
   const [editDoDateModalIsVisible, setEditDoDateModalIsVisible] =
     useState(false);
   const [addSubtaskModalIsVisible, setAddSubtaskModalIsVisible] =
-    useState(false);
-  const [selectSubjectModalIsVisible, setSelectSubjectModalIsVisible] =
     useState(false);
 
   useEffect(() => {
@@ -173,7 +169,6 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
                 doDate: task.doDate,
                 subjectId: subject?.id || null,
               });
-              setSelectSubjectModalIsVisible(false);
             }}
           />
         </View>
@@ -182,7 +177,6 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
           spacing="none"
           textVariant="heading"
           onChangeText={text => {
-            setEdited(true);
             setName(text);
           }}
           defaultValue={task.name}
@@ -206,7 +200,6 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
           setEditDueDateModalIsVisible(false);
         }}
         onSubmit={date => {
-          setDueDate(date);
           editTask({
             id: task.id,
             name,

@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   Image,
   Text,
@@ -6,7 +6,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   LayoutAnimation,
+  Pressable,
 } from 'react-native';
+import {TouchableHighlight} from 'react-native-gesture-handler';
 import {useTheme} from '../../contexts/ThemeContext';
 import {
   SubtaskFragment,
@@ -14,15 +16,22 @@ import {
   useToggleSubtaskMutation,
 } from '../../generated/graphql';
 import {useDeleteSubtask} from '../../mutationHooks/task/deleteSubtask';
+import {useEditSubtask} from '../../mutationHooks/task/editSubtask';
 import {useToggleSubtask} from '../../mutationHooks/task/toggleSubtask';
 import {TaskNavigationProp} from '../../utils/types';
 import {BasicIcon} from '../basicViews/BasicIcon';
 import {BasicText} from '../basicViews/BasicText';
+import BasicInputWindow from '../modals/basicInputWindow';
 import SlidingView from '../slidingView';
 
 const Subtask: React.FC<{subtask: SubtaskFragment}> = ({subtask}) => {
   const [deleteSubtask] = useDeleteSubtask();
   const [toggleSubtask] = useToggleSubtask();
+  const [editSubtask] = useEditSubtask();
+
+  const [editSubtaskWindowVisible, setEditSubtaskWindowVisible] =
+    useState(false);
+
   const deleteSubtaskFunc = async () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     await deleteSubtask({
@@ -48,6 +57,7 @@ const Subtask: React.FC<{subtask: SubtaskFragment}> = ({subtask}) => {
             resizeMode: 'stretch',
             height: 25,
             width: 25,
+            tintColor: 'white',
           }}
         />
       </View>
@@ -55,37 +65,55 @@ const Subtask: React.FC<{subtask: SubtaskFragment}> = ({subtask}) => {
   );
 
   return (
-    <View>
-      <SlidingView
-        frontView={
-          <View
-            style={{
-              padding: 10,
-              backgroundColor: theme.colors.accentBackground1,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <TouchableOpacity
+    <>
+      <View>
+        <SlidingView
+          frontView={
+            <TouchableHighlight
               onPress={() => {
-                toggleSubtask({id: subtask.id});
+                setEditSubtaskWindowVisible(true);
               }}>
-              <BasicIcon
-                source={
-                  subtask.done
-                    ? require('../../../assets/Checkmark.png')
-                    : require('../../../assets/Circle.png')
-                }
-                style={styles.checkMark}
-              />
-            </TouchableOpacity>
-            <BasicText>{subtask.name}</BasicText>
-          </View>
-        }
-        backView={[back]}
-        backViewWidth={70}
-        numberOfBackElements={1}
+              <View
+                style={{
+                  padding: 10,
+                  backgroundColor: theme.colors.accentBackground1,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    toggleSubtask({id: subtask.id});
+                  }}>
+                  <BasicIcon
+                    source={
+                      subtask.done
+                        ? require('../../../assets/Checkmark.png')
+                        : require('../../../assets/Circle.png')
+                    }
+                    style={styles.checkMark}
+                  />
+                </TouchableOpacity>
+                <BasicText>{subtask.name}</BasicText>
+              </View>
+            </TouchableHighlight>
+          }
+          backView={[back]}
+          backViewWidth={70}
+          numberOfBackElements={1}
+        />
+      </View>
+      <BasicInputWindow
+        defaultValue={subtask.name}
+        visible={editSubtaskWindowVisible}
+        onClose={() => {
+          setEditSubtaskWindowVisible(false);
+        }}
+        onSubmit={value => {
+          editSubtask({id: subtask.id, name: value});
+          setEditSubtaskWindowVisible(false);
+        }}
       />
-    </View>
+    </>
   );
 };
 

@@ -1,0 +1,5 @@
+mutation EditSubtask($id: String!, $name: String!) {
+  editSubtask(id: $id, name: $name) {
+    ...Subtask
+  }
+}
