@@ -14,12 +14,7 @@ import {
   minVersionVar,
   persistentQueueLink,
 } from './App';
-import {
-  DarkTheme,
-  LightTheme,
-  ThemeProvider,
-  useTheme,
-} from './contexts/ThemeContext';
+import {DarkTheme, LightTheme, useTheme} from './contexts/ThemeContext';
 import Routes from './Routes';
 import {allQueries} from './utils/allQueries';
 import NetInfo from '@react-native-community/netinfo';
@@ -34,6 +29,7 @@ import {v4 as uuidv4} from 'uuid';
 import {AlertProvider} from './contexts/AlertContext';
 import {isVersionHighEnough} from './utils/isVersionHighEnough';
 import {UpdateAppScreen} from './screens/UpdateAppScreen';
+import Purchases from 'react-native-purchases';
 
 const is12hourConfig = {
   // abbreviated format options allowing localization
@@ -106,14 +102,14 @@ export const Content: React.FC = () => {
   // when we change global dayjs settings, the components don't automatically update
   // here we just make sure the whole app rerenders
   const [_forceRerenderingValue, setForceRerenderingValue] = useState('');
+  const [isPurchasesLoggedIn, setIsPurchasesLoggedIn] = useState(false);
   const client = useApolloClient();
   const isOnline = useReactiveVar(isOnlineVar);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const settings = useSettings();
-  const {data: me} = useMeQuery();
   const minVersion = useReactiveVar(minVersionVar);
 
-  const [setSettings] = useSetSettings();
+  const {data: me} = useMeQuery();
 
   const updateLocale = async () => {
     const is24hour = await is24HourFormat();
@@ -139,15 +135,17 @@ export const Content: React.FC = () => {
     } else if (!isLoggedIn) {
       console.log('delete store');
       client.resetStore();
+      setIsPurchasesLoggedIn(false);
     }
   }, [isOnline, isLoggedIn]);
 
-  // if the user is logged out, delete all the data from this device
   useEffect(() => {
-    if (!isLoggedIn) {
-      client.resetStore();
+    if (!isPurchasesLoggedIn && me && isLoggedIn) {
+      console.log('logging in');
+      Purchases.logIn(me.me.id);
+      setIsPurchasesLoggedIn(true);
     }
-  }, [isLoggedInVar]);
+  }, [me, isPurchasesLoggedIn, isLoggedIn]);
 
   // set the locale based on settings
   useEffect(() => {

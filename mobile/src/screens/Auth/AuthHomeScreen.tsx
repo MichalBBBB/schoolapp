@@ -3,6 +3,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useEffect} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {authorize} from 'react-native-app-auth';
+import Purchases from 'react-native-purchases';
 import {isLoggedInVar} from '../../App';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicText} from '../../components/basicViews/BasicText';
@@ -32,7 +33,7 @@ const AuthHomeScreen: React.FC<
         variables: {idToken: authState.idToken},
       });
       if (response.data) {
-        setAccessToken(response.data?.googleSignIn.accessToken);
+        setAccessToken(response.data.googleSignIn.accessToken);
         isLoggedInVar(true);
       }
     } catch (err) {

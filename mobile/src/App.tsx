@@ -32,6 +32,8 @@ import NetInfo from '@react-native-community/netinfo';
 import {createRemindersChannel} from './utils/notifications';
 import 'dayjs/locale/en';
 import KeyboardManager from 'react-native-keyboard-manager/dist';
+import Purchases from 'react-native-purchases';
+import {RC_API_KEY} from '@env';
 
 export const isLoggedInVar = makeVar(true);
 export const isOnlineVar = makeVar(true);
@@ -74,6 +76,7 @@ const App = () => {
   useEffect(() => {
     initializeApolloClient();
     createRemindersChannel();
+    Purchases.configure({apiKey: RC_API_KEY});
   }, []);
 
   useEffect(() => {

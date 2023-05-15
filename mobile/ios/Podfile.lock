@@ -84,6 +84,8 @@ PODS:
     - MMKVCore (~> 1.2.15)
   - MMKVCore (1.2.15)
   - OpenSSL-Universal (1.1.1100)
+  - PurchasesHybridCommon (4.15.0):
+    - RevenueCat (= 4.18.0)
   - RCT-Folly (2021.06.28.00-v2):
     - boost
     - DoubleConversion
@@ -381,6 +383,7 @@ PODS:
     - IQKeyboardManagerSwift (= 6.5.11)
     - React-Core
     - React-RCTText
+  - RevenueCat (4.18.0)
   - RNCPicker (2.4.8):
     - React-Core
   - RNDeviceTimeFormat (2.0.0):
@@ -393,6 +396,9 @@ PODS:
     - React-Core
     - RNNotifee/NotifeeCore (= 7.5.0)
   - RNNotifee/NotifeeCore (7.5.0):
+    - React-Core
+  - RNPurchases (5.14.0):
+    - PurchasesHybridCommon (= 4.15.0)
     - React-Core
   - RNReanimated (2.14.4):
     - DoubleConversion
@@ -497,6 +503,7 @@ DEPENDENCIES:
   - "RNFlashList (from `../node_modules/@shopify/flash-list`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNNotifee (from `../node_modules/@notifee/react-native`)"
+  - RNPurchases (from `../node_modules/react-native-purchases`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -520,6 +527,8 @@ SPEC REPOS:
     - MMKV
     - MMKVCore
     - OpenSSL-Universal
+    - PurchasesHybridCommon
+    - RevenueCat
     - SocketRocket
     - YogaKit
 
@@ -610,6 +619,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNNotifee:
     :path: "../node_modules/@notifee/react-native"
+  RNPurchases:
+    :path: "../node_modules/react-native-purchases"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -640,6 +651,7 @@ SPEC CHECKSUMS:
   MMKV: 7f34558bbb5a33b0eaefae2de4b6a20a2ffdad6f
   MMKVCore: ddf41b9d9262f058419f9ba7598719af56c02cd3
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
+  PurchasesHybridCommon: da45a710d9f4f7819fd769b8efc3abbb5e4e8cab
   RCT-Folly: b9d9fe1fc70114b751c076104e52f3b1b5e5a95a
   RCTRequired: fe80e9f71dd15939e5399dd94d0aa0e5e069d592
   RCTTypeSafety: 4c802f7c4b9e7c55470e7fc56d50385cbfcce89b
@@ -673,11 +685,13 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: df1518d092e8c74cafddc56690d1ac386ec24d7a
   ReactCommon: fac40473e2c4117522384027ab33ad0cb6717dc5
   ReactNativeKeyboardManager: 30ef68551383d86d3ae044afc3d29f12629ec60b
+  RevenueCat: d8f5b1477c4eb78b658e86a97fd64ed4d6b3fbfd
   RNCPicker: 0bf8ef8f7800524f32d2bb2a8bcadd53eda0ecd1
   RNDeviceTimeFormat: a66bbc4c86e0e683c006b90095687c7bb351c983
   RNFlashList: 8ec7f7454721145fe84566bb9e88bcf58981c9fe
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
   RNNotifee: 053c0ace9c73634709a0214fd9c436a5777a562f
+  RNPurchases: fd161618736051325818c6a232338938f3b2cf2f
   RNReanimated: ba021107f1dd90cb04c35c5d639392d5da27d065
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
