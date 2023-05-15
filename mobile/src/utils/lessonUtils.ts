@@ -22,14 +22,12 @@ export const closestLesson = (
   if (subjectLessons.length == 0) {
     return null;
   }
-  console.log(subjectLessons);
   subjectLessons.sort((a, b) => {
     return dayjs(getDateOfClosestInstanceOfLesson(a, settings)).diff(
       getDateOfClosestInstanceOfLesson(b, settings),
       'minute',
     );
   });
-  console.log(getDateOfClosestInstanceOfLesson(subjectLessons[0], settings));
   return getDateOfClosestInstanceOfLesson(subjectLessons[0], settings);
 };
 
@@ -38,19 +36,15 @@ const getDateOfClosestInstanceOfLesson = (
   settings: SettingsFragment,
 ) => {
   let dayNumber = getDayNumber(dayjs(), settings);
-  // if the lesson hasn't yet been in this rotation
+
+  if (!lesson.dayNumber) {
+    return dayjs(lesson.date);
+  }
 
   const isItWeekend = dayNumber == -1;
   if (dayNumber == -1) {
     dayNumber = getDayNumber(dayjs().locale('sk').weekday(4), settings);
   }
-  console.log(
-    'daynumber',
-    dayNumber,
-    lesson.dayNumber,
-    lesson.dayNumber > dayNumber,
-    dayjs().isBefore(dayjs(lesson.lessonTime.startTime, 'HH:mm')),
-  );
 
   if (lesson.dayNumber > dayNumber) {
     if (settings.skipWeekends) {
@@ -71,7 +65,6 @@ const getDateOfClosestInstanceOfLesson = (
     dayjs().isBefore(dayjs(lesson.lessonTime.startTime, 'HH:mm')) &&
     !isItWeekend
   ) {
-    console.log('here');
     return dayjs(lesson.lessonTime.startTime, 'HH:mm');
     // if the lesson already happened in this rotation
   } else {
@@ -81,7 +74,6 @@ const getDateOfClosestInstanceOfLesson = (
         settings.lengthOfRotation - dayNumber + lesson.dayNumber,
       ).toDate();
     } else {
-      console.log(settings.lengthOfRotation - dayNumber + lesson.dayNumber);
       return dayjs(lesson.lessonTime.startTime, 'HH:mm')
         .add(settings.lengthOfRotation - dayNumber + lesson.dayNumber, 'day')
         .toDate();

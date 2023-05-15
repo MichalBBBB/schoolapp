@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {ScrollView} from 'react-native';
+import {isLoadingVar} from '../../../App';
 import {BasicButton} from '../../../components/basicViews/BasicButton';
 import {BasicText} from '../../../components/basicViews/BasicText';
 import {BasicTextInput} from '../../../components/basicViews/BasicTextInput';
@@ -20,9 +21,11 @@ export const ChangePasswordScreen: React.FC<
   const [errors, setErrors] = useState<Array<UserError>>([]);
 
   const changePassword = async () => {
+    isLoadingVar(true);
     const result = await changePasswordMutation({
       variables: {newPassword: password, oldPassword},
     });
+    isLoadingVar(false);
     console.log(result);
     if (result.data?.changePassword.__typename == 'UserFail') {
       setErrors(result.data.changePassword.errors);

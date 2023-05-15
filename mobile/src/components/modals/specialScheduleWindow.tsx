@@ -67,7 +67,7 @@ export const SpecialScheduleWindow: React.FC<SpecialScheduleWindowProps> = ({
               clearLessons(date);
               onClose();
             }}>
-            <BasicText>Clear</BasicText>
+            <BasicText textVariant="button">Clear</BasicText>
           </BasicButton>
         </View>
         <FlatList

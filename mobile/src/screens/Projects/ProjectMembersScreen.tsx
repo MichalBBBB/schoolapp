@@ -1,6 +1,14 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useLayoutEffect, useState} from 'react';
-import {FlatList, Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import {
+  FlatList,
+  Image,
+  LayoutAnimation,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {AddProjectMemberWindow} from '../../components/modals/addProjectMemberWindow';
 import BasicInputWindow from '../../components/modals/basicInputWindow';
 import {BasicButton} from '../../components/basicViews/BasicButton';
@@ -19,6 +27,7 @@ import {
   useRemoveMemberFromProjectMutation,
 } from '../../generated/graphql';
 import {ProjectStackScreenProps} from '../../utils/types';
+import {isLoadingVar} from '../../App';
 
 export const ProjectMembersScreen: React.FC<
   ProjectStackScreenProps<'ProjectMembersScreen'>
@@ -113,11 +122,14 @@ export const ProjectMembersScreen: React.FC<
                     <MenuItem
                       text="Make admin"
                       onPress={() => {
+                        isLoadingVar(true);
                         makeMemberAdmin({
                           variables: {
                             memberId: item.userId,
                             projectId: route.params.projectId,
                           },
+                        }).finally(() => {
+                          isLoadingVar(false);
                         });
                       }}
                     />
@@ -125,11 +137,14 @@ export const ProjectMembersScreen: React.FC<
                       color="dangerous"
                       text="Remove member"
                       onPress={() => {
+                        isLoadingVar(true);
                         removeMember({
                           variables: {
-                            memberId: item.id,
+                            memberId: item.userId,
                             projectId: route.params.projectId,
                           },
+                        }).finally(() => {
+                          isLoadingVar(false);
                         });
                       }}
                     />
@@ -141,12 +156,20 @@ export const ProjectMembersScreen: React.FC<
         />
       </View>
       <BasicInputWindow
+        autoCapitalize="none"
         visible={addProjectMemberWindowVisible}
         onClose={() => {
           setAddProjectMemberWindowVisible(false);
         }}
         onSubmit={value => {
-          addMember({variables: {projectId: project?.id, memberEmail: value}});
+          isLoadingVar(true);
+
+          addMember({
+            variables: {projectId: project?.id, memberEmail: value},
+          }).finally(() => {
+            isLoadingVar(false);
+          });
+          setAddProjectMemberWindowVisible(false);
         }}
         buttonText={'Invite'}
         placeholder="Email"

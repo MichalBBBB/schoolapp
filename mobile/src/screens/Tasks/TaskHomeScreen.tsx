@@ -163,42 +163,28 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
     <View style={{flex: 1}}>
       <FlatList
         ListEmptyComponent={() => {
-          if (isLoading) {
-            return (
-              <View
-                style={{
-                  height: 500,
-                  width: '100%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
+          return (
+            <View
+              style={{
+                height: 500,
+                width: '100%',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <BasicText textVariant="heading" style={{marginBottom: 10}}>
+                No tasks yet
+              </BasicText>
+              <BasicButton
+                spacing="m"
+                onPress={() => {
+                  setAddTaskOpen(true);
                 }}>
-                <BasicLoading />
-              </View>
-            );
-          } else {
-            return (
-              <View
-                style={{
-                  height: 500,
-                  width: '100%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <BasicText textVariant="heading" style={{marginBottom: 10}}>
-                  No tasks yet
+                <BasicText color="textContrast" textVariant="button">
+                  Create a new one
                 </BasicText>
-                <BasicButton
-                  spacing="m"
-                  onPress={() => {
-                    setAddTaskOpen(true);
-                  }}>
-                  <BasicText color="textContrast" textVariant="button">
-                    Create a new one
-                  </BasicText>
-                </BasicButton>
-              </View>
-            );
-          }
+              </BasicButton>
+            </View>
+          );
         }}
         refreshControl={
           <BasicRefreshControl

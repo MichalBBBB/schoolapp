@@ -39,6 +39,7 @@ export const queueMiddleware: MiddlewareFn<MyContext> = async (
       // we use this try catch block to allow the rest of the code to run,
       // even if the next() promise rejects and we throw the error at the end
       try {
+        await new Promise((r) => setTimeout(r, 2000));
         result = await next();
       } catch (e) {
         error = e;
