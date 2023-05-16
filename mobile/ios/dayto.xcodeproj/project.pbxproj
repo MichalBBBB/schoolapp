@@ -12,6 +12,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3F0B760935180F0BA1F9400A /* libPods-dayto-daytoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2720257A12EAA61888BCAD8B /* libPods-dayto-daytoTests.a */; };
+		770D1CFB2A12F6DD00363CA8 /* StoreKitTestCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = 770D1CFA2A12F6DD00363CA8 /* StoreKitTestCertificate.cer */; };
 		77E5B0C229EB7B03006C970F /* EmptyFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77E5B0C129EB7B03006C970F /* EmptyFile.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		C3F0DC00633A809FB136C546 /* libPods-dayto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 065AE85DBBC558C7E2975C47 /* libPods-dayto.a */; };
@@ -41,6 +42,8 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = dayto/main.m; sourceTree = "<group>"; };
 		2720257A12EAA61888BCAD8B /* libPods-dayto-daytoTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-dayto-daytoTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		34D8AF04D13CA2CC73133E39 /* Pods-dayto.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-dayto.release.xcconfig"; path = "Target Support Files/Pods-dayto/Pods-dayto.release.xcconfig"; sourceTree = "<group>"; };
+		770D1CF92A12F5FB00363CA8 /* SyncedProducts.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = SyncedProducts.storekit; sourceTree = "<group>"; };
+		770D1CFA2A12F6DD00363CA8 /* StoreKitTestCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = StoreKitTestCertificate.cer; sourceTree = "<group>"; };
 		7738E7D929D7C7610071AC44 /* dayto.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = dayto.entitlements; path = dayto/dayto.entitlements; sourceTree = "<group>"; };
 		77E5B0C029EB7B02006C970F /* dayto-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "dayto-Bridging-Header.h"; sourceTree = "<group>"; };
 		77E5B0C129EB7B03006C970F /* EmptyFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyFile.swift; sourceTree = "<group>"; };
@@ -90,6 +93,8 @@
 		13B07FAE1A68108700A75B9A /* dayto */ = {
 			isa = PBXGroup;
 			children = (
+				770D1CF92A12F5FB00363CA8 /* SyncedProducts.storekit */,
+				770D1CFA2A12F6DD00363CA8 /* StoreKitTestCertificate.cer */,
 				7738E7D929D7C7610071AC44 /* dayto.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -251,6 +256,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				770D1CFB2A12F6DD00363CA8 /* StoreKitTestCertificate.cer in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

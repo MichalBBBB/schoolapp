@@ -1,0 +1,89 @@
+{
+  "identifier" : "5370FC58",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6447488384",
+    "_developerTeamID" : "AZLX5H46ZL",
+    "_lastSynchronizedDate" : 705888666.13524306
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "21340453",
+      "localizations" : [
+
+      ],
+      "name" : "Dayto premium",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "2.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "6449201279",
+          "introductoryOffer" : {
+            "internalID" : "B0F0222D",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P2W"
+          },
+          "localizations" : [
+            {
+              "description" : "Monthly subscription for Dayto premium",
+              "displayName" : "Monthly premium",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "dt_300_1m_2w0",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Dayto premium 1 month",
+          "subscriptionGroupID" : "21340453",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "8.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6449201264",
+          "introductoryOffer" : {
+            "internalID" : "13D49A8C",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P2W"
+          },
+          "localizations" : [
+            {
+              "description" : "Annual subscription to Dayto premium",
+              "displayName" : "Annual Premium",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "dt_1000_1y_2w0",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Dayto premium 1 year",
+          "subscriptionGroupID" : "21340453",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 2,
+    "minor" : 0
+  }
+}

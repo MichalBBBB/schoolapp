@@ -143,6 +143,9 @@ export const Content: React.FC = () => {
     if (!isPurchasesLoggedIn && me && isLoggedIn) {
       console.log('logging in');
       Purchases.logIn(me.me.id);
+      Purchases.getOfferings().then(result => {
+        console.log(result);
+      });
       setIsPurchasesLoggedIn(true);
     }
   }, [me, isPurchasesLoggedIn, isLoggedIn]);
