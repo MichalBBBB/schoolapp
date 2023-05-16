@@ -11,6 +11,7 @@ import {MenuItem} from '../../components/menu/MenuItem';
 import {SpecialScheduleWindow} from '../../components/modals/specialScheduleWindow';
 import {Popup} from '../../components/popup';
 import {CalendarStackScreenProps} from '../../types/navigationTypes';
+import {usePremiumFeature} from '../../utils/hooks/usePremiumFeature';
 
 const CalendarHomeScreen: React.FC<
   CalendarStackScreenProps<'CalendarHomeScreen'>
@@ -19,6 +20,7 @@ const CalendarHomeScreen: React.FC<
   const [selectedDay, setSelectedDay] = useState(dayjs());
   const [specialScheduleWindowVisible, setSpecialScheduleWindowVisible] =
     useState(false);
+  const premiumFeature = usePremiumFeature();
   const findDimensions = (layout: any) => {
     const {x, y, width, height} = layout;
     setScreenHeight(height);
@@ -69,7 +71,9 @@ const CalendarHomeScreen: React.FC<
           }}>
           <AddButton
             onPress={() => {
-              navigation.navigate('EventDetailScreen', {event: undefined});
+              premiumFeature(() => {
+                navigation.navigate('EventDetailScreen', {event: undefined});
+              });
             }}
           />
         </View>

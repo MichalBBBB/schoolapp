@@ -8,8 +8,14 @@
   ],
   "settings" : {
     "_applicationInternalID" : "6447488384",
+    "_compatibilityTimeRate" : {
+      "3" : 6
+    },
     "_developerTeamID" : "AZLX5H46ZL",
-    "_lastSynchronizedDate" : 705888666.13524306
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 705888666.13524306,
+    "_storeKitError" : 0,
+    "_timeRate" : 1001
   },
   "subscriptionGroups" : [
     {

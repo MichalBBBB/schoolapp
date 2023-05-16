@@ -8,6 +8,7 @@ declare global {
       DATABASE_URL: string;
       PORT: string;
       SENDGRID_API_KEY: string;
+      RVC_API_KEY: string;
     }
   }
 }

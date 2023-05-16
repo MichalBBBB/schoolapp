@@ -30,6 +30,7 @@ import {AlertProvider} from './contexts/AlertContext';
 import {isVersionHighEnough} from './utils/helperFunctions/isVersionHighEnough';
 import {UpdateAppScreen} from './screens/UpdateAppScreen';
 import Purchases from 'react-native-purchases';
+import {RC_API_KEY} from '@env';
 
 const is12hourConfig = {
   // abbreviated format options allowing localization
@@ -102,6 +103,7 @@ export const Content: React.FC = () => {
   // when we change global dayjs settings, the components don't automatically update
   // here we just make sure the whole app rerenders
   const [_forceRerenderingValue, setForceRerenderingValue] = useState('');
+  const [isPurchasesConfigured, setIsPurchasesConfigured] = useState(false);
   const [isPurchasesLoggedIn, setIsPurchasesLoggedIn] = useState(false);
   const client = useApolloClient();
   const isOnline = useReactiveVar(isOnlineVar);
@@ -140,12 +142,13 @@ export const Content: React.FC = () => {
   }, [isOnline, isLoggedIn]);
 
   useEffect(() => {
-    if (!isPurchasesLoggedIn && me && isLoggedIn) {
-      console.log('logging in');
+    if (!isPurchasesConfigured && me && isLoggedIn) {
+      console.log('logging in', RC_API_KEY);
+      Purchases.configure({apiKey: RC_API_KEY, appUserID: me.me.id});
+      setIsPurchasesConfigured(true);
+      setIsPurchasesLoggedIn(true);
+    } else if (!isPurchasesLoggedIn && me && isLoggedIn) {
       Purchases.logIn(me.me.id);
-      Purchases.getOfferings().then(result => {
-        console.log(result);
-      });
       setIsPurchasesLoggedIn(true);
     }
   }, [me, isPurchasesLoggedIn, isLoggedIn]);

@@ -76,7 +76,6 @@ const App = () => {
   useEffect(() => {
     initializeApolloClient();
     createRemindersChannel();
-    Purchases.configure({apiKey: RC_API_KEY});
   }, []);
 
   useEffect(() => {

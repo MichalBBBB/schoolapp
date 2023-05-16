@@ -98,7 +98,6 @@ export class projectResolver {
       )
       .leftJoinAndSelect("project.tasks", "projectTask")
       .getMany();
-    console.log(projects);
     return projects;
   }
 
@@ -202,7 +201,6 @@ export class projectResolver {
       relations: { userProjects: true },
     });
     const user = await User.findOne({ where: { email: memberEmail } });
-    console.log(project);
     if (
       user &&
       project &&

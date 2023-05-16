@@ -180,7 +180,7 @@ export class userResolver {
 
     return {
       user: user,
-      accessToken: createAccesToken(user),
+      accessToken: await createAccesToken(user),
     };
   }
 
@@ -213,7 +213,6 @@ export class userResolver {
         fullName: name,
         settings,
       }).save();
-      console.log(settings);
     } catch (err) {
       await settings.remove();
       // Catch postgres error about broken unique contstraint on email
@@ -239,7 +238,7 @@ export class userResolver {
       sendRefreshToken(res, createRefreshToken(user));
       return {
         user,
-        accessToken: createAccesToken(user),
+        accessToken: await createAccesToken(user),
       };
     } else {
       throw new Error("an error occured");
@@ -251,7 +250,6 @@ export class userResolver {
     const key = EMAIL_VERIFICATION_PREFIX + token;
     const userId = await redis.get(key);
     if (userId) {
-      console.log("verify email successful");
       await User.update({ id: userId }, { emailVerified: true });
       redis.del(key);
       return true;
@@ -302,7 +300,7 @@ export class userResolver {
       sendRefreshToken(res, createRefreshToken(user));
       return {
         user,
-        accessToken: createAccesToken(user),
+        accessToken: await createAccesToken(user),
       };
     } else {
       throw new Error("an error occured");
@@ -393,10 +391,8 @@ export class userResolver {
     @Arg("token") token: string,
     @Ctx() { redis }: MyContext
   ): Promise<ChangePasswordSuccess | UserFail> {
-    console.log("here");
     const key = RESET_PASSWORD_PREFIX + token;
     const userId = await redis.get(key);
-    console.log(userId, newPassword);
     if (userId) {
       const hashedPassword = await argon2.hash(newPassword);
       await User.update({ id: userId }, { password: hashedPassword });

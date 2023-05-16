@@ -42,7 +42,6 @@ export class lessonTimeResolver {
   @Query(() => [LessonTime])
   @UseMiddleware(isAuth)
   async getAllLessonTimes(@Ctx() { payload }: MyContext) {
-    console.log(payload);
     const result = await LessonTime.createQueryBuilder("lessontime")
       .select()
       .where('lessontime."userId" = :id', { id: payload?.userId })
