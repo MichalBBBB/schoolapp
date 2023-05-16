@@ -8,8 +8,8 @@ import {BasicRadio} from '../../../components/basicViews/BasicRadio';
 import {BasicText} from '../../../components/basicViews/BasicText';
 import {useMeQuery} from '../../../generated/graphql';
 import {useSetSettings} from '../../../mutationHooks/settings/setSettings';
-import {useSettings} from '../../../utils/useSettings';
-import {SettingsStackScreenProps} from '../../../utils/types';
+import {useSettings} from '../../../utils/hooks/useSettings';
+import {SettingsStackScreenProps} from '../../../types/navigationTypes';
 
 const startOfWeekOptions = [
   ['MON', 'Monday'],

@@ -42,7 +42,7 @@ import DayEvents from './dayEvents';
 import {BasicButton} from '../basicViews/BasicButton';
 import {BasicText} from '../basicViews/BasicText';
 import {useTheme} from '../../contexts/ThemeContext';
-import {useSettings} from '../../utils/useSettings';
+import {useSettings} from '../../utils/hooks/useSettings';
 import {BasicIcon} from '../basicViews/BasicIcon';
 import {DayEventsList} from './dayEventsList';
 

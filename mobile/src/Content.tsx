@@ -16,18 +16,18 @@ import {
 } from './App';
 import {DarkTheme, LightTheme, useTheme} from './contexts/ThemeContext';
 import Routes from './Routes';
-import {allQueries} from './utils/allQueries';
+import {allQueries} from './utils/constants/allQueries';
 import NetInfo from '@react-native-community/netinfo';
-import {baseUri} from './utils/createApolloClient';
-import {setRemindersFromApollo} from './utils/reminderUtils';
-import {useSettings} from './utils/useSettings';
+import {baseUri} from './utils/services/createApolloClient';
+import {setRemindersFromApollo} from './utils/helperFunctions/reminderUtils';
+import {useSettings} from './utils/hooks/useSettings';
 import dayjs from 'dayjs';
 import {useMeQuery} from './generated/graphql';
 import {is24HourFormat} from 'react-native-device-time-format';
 import {useSetSettings} from './mutationHooks/settings/setSettings';
 import {v4 as uuidv4} from 'uuid';
 import {AlertProvider} from './contexts/AlertContext';
-import {isVersionHighEnough} from './utils/isVersionHighEnough';
+import {isVersionHighEnough} from './utils/helperFunctions/isVersionHighEnough';
 import {UpdateAppScreen} from './screens/UpdateAppScreen';
 import Purchases from 'react-native-purchases';
 

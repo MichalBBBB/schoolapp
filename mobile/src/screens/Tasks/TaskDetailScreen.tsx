@@ -32,12 +32,12 @@ import {
 import {v4 as uuidv4} from 'uuid';
 import {useCreateSubtask} from '../../mutationHooks/task/createSubtask';
 import {useEditTask} from '../../mutationHooks/task/editTask';
-import {setRemindersFromApollo} from '../../utils/reminderUtils';
+import {setRemindersFromApollo} from '../../utils/helperFunctions/reminderUtils';
 import {useApolloClient} from '@apollo/client';
 import SelectSubjectWindow from '../../components/popups/selectSubject';
 import {Popup} from '../../components/popup';
 import {SelectSubjectPopup} from '../../components/popups/selectSubject/selectSubjectPopup';
-import {TaskStackScreenProps} from '../../utils/types';
+import {TaskStackScreenProps} from '../../types/navigationTypes';
 import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {SubjectColorsObject} from '../../types/Theme';
 import {useEditSubtask} from '../../mutationHooks/task/editSubtask';

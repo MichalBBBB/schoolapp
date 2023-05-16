@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {useGetAllSchedulesQuery} from '../generated/graphql';
+import {useGetAllSchedulesQuery} from '../../generated/graphql';
 
 export const useGetSpecialScheduleForDay = (date: dayjs.Dayjs) => {
   const {data: schedules} = useGetAllSchedulesQuery();

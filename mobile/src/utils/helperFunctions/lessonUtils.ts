@@ -3,7 +3,7 @@ import {
   LessonFragment,
   SettingsFragment,
   SubjectFragment,
-} from '../generated/graphql';
+} from '../../generated/graphql';
 
 // timetables have a lot of rotation options
 // you can set the length of the rotation - after how many days will the classes repeat

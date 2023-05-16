@@ -2,7 +2,7 @@ import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {Pressable} from 'react-native';
 import {BasicText} from '../../../components/basicViews/BasicText';
 import {BasicIcon} from '../../../components/basicViews/BasicIcon';
-import {SettingsStackScreenProps} from '../../../utils/types';
+import {SettingsStackScreenProps} from '../../../types/navigationTypes';
 import {TimeTableView} from '../../../components/TimeTableView';
 
 const TimeTableScreen: React.FC<

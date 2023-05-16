@@ -10,7 +10,7 @@ import {Menu} from '../../components/menu';
 import {MenuItem} from '../../components/menu/MenuItem';
 import {SpecialScheduleWindow} from '../../components/modals/specialScheduleWindow';
 import {Popup} from '../../components/popup';
-import {CalendarStackScreenProps} from '../../utils/types';
+import {CalendarStackScreenProps} from '../../types/navigationTypes';
 
 const CalendarHomeScreen: React.FC<
   CalendarStackScreenProps<'CalendarHomeScreen'>

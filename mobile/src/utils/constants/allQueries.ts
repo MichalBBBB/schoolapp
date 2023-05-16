@@ -9,7 +9,7 @@ import {
   GetProjectsDocument,
   GetProjectTasksOfUserDocument,
   MeDocument,
-} from '../generated/graphql';
+} from '../../generated/graphql';
 
 export const allQueries = [
   GetAllEventsDocument,

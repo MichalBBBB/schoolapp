@@ -13,9 +13,9 @@ import {Popup} from '../../../components/popup';
 import {SettingsItem} from '../../../components/listItems/settingsItem';
 import {useSetSettings} from '../../../mutationHooks/settings/setSettings';
 import {SubjectColorsObject} from '../../../types/Theme';
-import {useSettings} from '../../../utils/useSettings';
+import {useSettings} from '../../../utils/hooks/useSettings';
 import {BasicLoading} from '../../../components/basicViews/BasicLoading';
-import {SettingsStackScreenProps} from '../../../utils/types';
+import {SettingsStackScreenProps} from '../../../types/navigationTypes';
 
 export const AdvancedTimeTableScreen: React.FC<
   SettingsStackScreenProps<'AdvancedTimeTableScreen'>

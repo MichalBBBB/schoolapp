@@ -19,7 +19,7 @@ import {
 import {
   closestLesson,
   getTimeOfLessonThisDay,
-} from '../../../utils/lessonUtils';
+} from '../../../utils/helperFunctions/lessonUtils';
 import {BasicButton} from '../../basicViews/BasicButton';
 import {BasicCard} from '../../basicViews/BasicCard';
 import {BasicModalCard} from '../../basicViews/BasicModalCard';
@@ -29,9 +29,9 @@ import WeekDays from '../../calendar/weekDays';
 import {RemindersWindow} from '../remindersWindow';
 import SelectTimeModal from '../selectTimeView/selectTimeModal';
 import notifee, {AndroidNotificationSetting} from '@notifee/react-native';
-import {useSettings} from '../../../utils/useSettings';
+import {useSettings} from '../../../utils/hooks/useSettings';
 import {BasicIcon} from '../../basicViews/BasicIcon';
-import {checkPermissions} from '../../../utils/notifications';
+import {checkPermissions} from '../../../utils/services/notifications';
 
 interface EditDateWindowProps {
   onSubmit: (date: dayjs.Dayjs | null, reminderTimes?: number[]) => void;

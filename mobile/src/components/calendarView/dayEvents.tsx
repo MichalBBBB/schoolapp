@@ -17,16 +17,16 @@ import {WEEK_DAY_NUMBERS} from '../../types/weekDays';
 import {Lesson} from './lesson';
 import Task from '../listItems/task';
 import {BasicText} from '../basicViews/BasicText';
-import {useSettings} from '../../utils/useSettings';
-import {getDayNumber} from '../../utils/lessonUtils';
+import {useSettings} from '../../utils/hooks/useSettings';
+import {getDayNumber} from '../../utils/helperFunctions/lessonUtils';
 import {useTheme} from '../../contexts/ThemeContext';
 import {useNavigation} from '@react-navigation/native';
-import {CalendarNavigationProp} from '../../utils/types';
+import {CalendarNavigationProp} from '../../types/navigationTypes';
 import {replaceAllData} from '../../Content';
 import {useApolloClient} from '@apollo/client';
 import {BasicRefreshControl} from '../basicViews/BasicRefreshControl';
 import TaskListProjectTask from '../listItems/taskListProjectTask';
-import {useGetSpecialScheduleForDay} from '../../utils/useSpecialScheduleForDay';
+import {useGetSpecialScheduleForDay} from '../../utils/hooks/useSpecialScheduleForDay';
 
 export const width = Dimensions.get('screen').width;
 

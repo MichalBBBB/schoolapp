@@ -9,7 +9,7 @@ import {BasicText} from '../../components/basicViews/BasicText';
 import Task, {calendarConfigWithoutTime} from '../../components/listItems/task';
 import {useGetAllTasksQuery} from '../../generated/graphql';
 import {BasicIcon} from '../../components/basicViews/BasicIcon';
-import {TaskStackScreenProps} from '../../utils/types';
+import {TaskStackScreenProps} from '../../types/navigationTypes';
 import AddButton from '../../components/addButton';
 
 export const PlanDayScreen: React.FC<

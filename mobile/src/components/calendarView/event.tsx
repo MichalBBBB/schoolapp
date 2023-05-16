@@ -16,7 +16,7 @@ import SlidingView from '../slidingView';
 import {v4 as uuidv4} from 'uuid';
 import {Popup} from '../popup';
 import {useNavigation} from '@react-navigation/native';
-import {CalendarNavigationProp} from '../../utils/types';
+import {CalendarNavigationProp} from '../../types/navigationTypes';
 import {BasicCard} from '../basicViews/BasicCard';
 import {useTheme} from '../../contexts/ThemeContext';
 import {BasicIcon} from '../basicViews/BasicIcon';

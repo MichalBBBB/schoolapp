@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text} from 'react-native';
-import {useSettings} from '../../utils/useSettings';
+import {useSettings} from '../../utils/hooks/useSettings';
 import {BasicText} from '../basicViews/BasicText';
 
 const weekDaysMon = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];

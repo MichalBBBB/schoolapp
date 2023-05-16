@@ -1,9 +1,9 @@
 import {
   GetAllRemindersDocument,
   GetAllRemindersQuery,
-} from '../generated/graphql';
+} from '../../generated/graphql';
 import notifee from '@notifee/react-native';
-import {setNotificationTrigger} from './notifications';
+import {setNotificationTrigger} from '../services/notifications';
 import {ApolloClient} from '@apollo/client';
 import dayjs from 'dayjs';
 

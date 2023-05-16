@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {useTheme} from '../../contexts/ThemeContext';
 import {useSetSettings} from '../../mutationHooks/settings/setSettings';
-import {useSettings} from '../../utils/useSettings';
+import {useSettings} from '../../utils/hooks/useSettings';
 import {BasicCard} from '../basicViews/BasicCard';
 import {BasicRadio} from '../basicViews/BasicRadio';
 import {BasicText} from '../basicViews/BasicText';

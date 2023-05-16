@@ -22,7 +22,7 @@ import {
 } from '../../generated/graphql';
 
 import {v4 as uuidv4} from 'uuid';
-import {setRemindersFromApollo} from '../../utils/reminderUtils';
+import {setRemindersFromApollo} from '../../utils/helperFunctions/reminderUtils';
 import {useApolloClient} from '@apollo/client';
 import {SelectSubjectPopup} from '../../components/popups/selectSubject/selectSubjectPopup';
 import {useEditEvent} from '../../mutationHooks/calendarEvent/editEvent';
@@ -30,10 +30,10 @@ import {BasicCard} from '../../components/basicViews/BasicCard';
 import {
   CalendarStackParamList,
   CalendarStackScreenProps,
-} from '../../utils/types';
+} from '../../types/navigationTypes';
 import {useCreateEvent} from '../../mutationHooks/calendarEvent/createEvent';
 import {RemindersWindow} from '../../components/modals/remindersWindow';
-import {checkPermissions} from '../../utils/notifications';
+import {checkPermissions} from '../../utils/services/notifications';
 
 const EventDetailScreen: React.FC<
   CalendarStackScreenProps<'EventDetailScreen'>

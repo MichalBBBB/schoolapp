@@ -29,7 +29,7 @@ import {SubjectColorsObject} from '../../types/Theme';
 import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
 import {Popup} from '../popup';
 import {useNavigation} from '@react-navigation/native';
-import {CalendarNavigationProp} from '../../utils/types';
+import {CalendarNavigationProp} from '../../types/navigationTypes';
 import {BasicIcon} from '../basicViews/BasicIcon';
 import {useTheme} from '../../contexts/ThemeContext';
 

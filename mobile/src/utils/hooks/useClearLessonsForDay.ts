@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import {useGetAllLessonsQuery} from '../generated/graphql';
-import {useDeleteLesson} from '../mutationHooks/lesson/deleteLesson';
+import {useGetAllLessonsQuery} from '../../generated/graphql';
+import {useDeleteLesson} from '../../mutationHooks/lesson/deleteLesson';
 
 export const useClearLessonsForDay = () => {
   const {data: lessons} = useGetAllLessonsQuery();

@@ -7,7 +7,7 @@ import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {BasicCard} from '../../components/basicViews/BasicCard';
-import {ProjectStackScreenProps} from '../../utils/types';
+import {ProjectStackScreenProps} from '../../types/navigationTypes';
 import {useCreateProject} from '../../mutationHooks/project/createProject';
 import {v4 as uuidv4} from 'uuid';
 import {BasicIcon} from '../../components/basicViews/BasicIcon';

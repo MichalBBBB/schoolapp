@@ -12,14 +12,14 @@ import {calendarConfigWithoutTime} from '../../listItems/task';
 import {BasicModalCard} from '../../basicViews/BasicModalCard';
 import {BasicTextInput} from '../../basicViews/BasicTextInput';
 import {BasicButton} from '../../basicViews/BasicButton';
-import {getCurrentLesson} from '../../../utils/lessonUtils';
+import {getCurrentLesson} from '../../../utils/helperFunctions/lessonUtils';
 import {BasicText} from '../../basicViews/BasicText';
 import {v4 as uuidv4} from 'uuid';
 import {useCreateTask} from '../../../mutationHooks/task/createTask';
 import {SelectSubjectPopup} from '../../popups/selectSubject/selectSubjectPopup';
 import {useTheme} from '../../../contexts/ThemeContext';
 import {SubjectColorsObject} from '../../../types/Theme';
-import {useSettings} from '../../../utils/useSettings';
+import {useSettings} from '../../../utils/hooks/useSettings';
 import {SubjectModal} from '../subjectModal';
 
 interface addTaskWindowProps {

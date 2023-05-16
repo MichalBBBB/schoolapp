@@ -12,7 +12,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import Month from './month';
 import {FlashList} from '@shopify/flash-list';
 import {BasicText} from '../basicViews/BasicText';
-import {useSettings} from '../../utils/useSettings';
+import {useSettings} from '../../utils/hooks/useSettings';
 
 interface CalendarProps {
   calendarWidth: number;

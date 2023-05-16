@@ -53,8 +53,8 @@ import {
   TabParamList,
   TaskStackParamList,
   TaskStackScreenProps,
-} from '../../utils/types';
-import {useSettings} from '../../utils/useSettings';
+} from '../../types/navigationTypes';
+import {useSettings} from '../../utils/hooks/useSettings';
 import {replaceAllData} from '../../Content';
 import {
   NormalizedCacheObject,

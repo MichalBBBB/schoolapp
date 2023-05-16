@@ -1,4 +1,4 @@
-import {SubjectColorsObject} from '../types/Theme';
+import {SubjectColorsObject} from '../../types/Theme';
 
 export type ExampleSubject = {
   name: string;

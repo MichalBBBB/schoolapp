@@ -12,7 +12,7 @@ import {
   CalendarNavigationProp,
   TabNavigationProp,
   TaskNavigationProp,
-} from '../../utils/types';
+} from '../../types/navigationTypes';
 import SlidingView from '../slidingView';
 
 import {BasicText} from '../basicViews/BasicText';

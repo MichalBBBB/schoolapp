@@ -13,7 +13,7 @@ import {TimeTableHomeScreen} from '../screens/Settings/Timetable';
 import {AdvancedTimeTableScreen} from '../screens/Settings/Timetable/AdvancedTimeTableScreen';
 import LessonTimesScreen from '../screens/Settings/Timetable/LessonTimesScreen';
 import TimeTableScreen from '../screens/Settings/Timetable/TimeTableScreen';
-import {SettingsStackParamList} from '../utils/types';
+import {SettingsStackParamList} from '../types/navigationTypes';
 
 const SettingsStack: React.FC<
   BottomTabScreenProps<TabStackParamList, 'SettingsStack'>

@@ -8,7 +8,7 @@ import {
   LessonTimeFragment,
 } from '../generated/graphql';
 import {useCreateLesson} from '../mutationHooks/lesson/createLesson';
-import {useSettings} from '../utils/useSettings';
+import {useSettings} from '../utils/hooks/useSettings';
 import {BasicButton} from './basicViews/BasicButton';
 import {BasicIcon} from './basicViews/BasicIcon';
 import {BasicText} from './basicViews/BasicText';

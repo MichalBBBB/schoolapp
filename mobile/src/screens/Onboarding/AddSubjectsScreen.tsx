@@ -7,8 +7,11 @@ import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {OnboardingContinueButton} from '../../components/onboardingContinueButton';
 import {useCreateSubject} from '../../mutationHooks/subject/createSubject';
-import {ExampleSubject, exampleSubjects} from '../../utils/exampleSubjects';
-import {OnboardingStackScreenProps} from '../../utils/types';
+import {
+  ExampleSubject,
+  exampleSubjects,
+} from '../../utils/constants/exampleSubjects';
+import {OnboardingStackScreenProps} from '../../types/navigationTypes';
 
 export const AddSubjectsScreen: React.FC<
   OnboardingStackScreenProps<'AddSubjectsScreen'>

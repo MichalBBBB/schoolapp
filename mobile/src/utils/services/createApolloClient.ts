@@ -15,13 +15,18 @@ import {
 } from 'apollo3-cache-persist';
 import jwtDecode from 'jwt-decode';
 import {Platform} from 'react-native';
-import {isLoggedInVar, isOnlineVar, persistentQueueLink, storage} from '../App';
-import {getAccessToken, setAccessToken} from './AccessToken';
+import {
+  isLoggedInVar,
+  isOnlineVar,
+  persistentQueueLink,
+  storage,
+} from '../../App';
+import {getAccessToken, setAccessToken} from '../AccessToken';
 import {onError} from '@apollo/client/link/error';
 import {RetryLink} from '@apollo/client/link/retry';
 import NetInfo from '@react-native-community/netinfo';
 import SerializingLink from 'apollo-link-serialize';
-import {PersistentQueueLink} from './persistentQueueLink';
+import {PersistentQueueLink} from '../persistentQueueLink';
 import {BatchHttpLink} from '@apollo/client/link/batch-http';
 import {API_URI_ANDROID, API_URI_DEFAULT} from '@env';
 

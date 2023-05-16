@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import {useGetAllSchedulesQuery} from '../generated/graphql';
-import {useEditSchedule} from '../mutationHooks/schedule/editSchedule';
+import {useGetAllSchedulesQuery} from '../../generated/graphql';
+import {useEditSchedule} from '../../mutationHooks/schedule/editSchedule';
 
 export const useClearSchedulesForDay = () => {
   const {data: schedules} = useGetAllSchedulesQuery();

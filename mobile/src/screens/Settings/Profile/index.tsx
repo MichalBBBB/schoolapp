@@ -12,7 +12,7 @@ import {AlertObject, useAlert} from '../../../contexts/AlertContext';
 import {useDeleteAccountMutation, useMeQuery} from '../../../generated/graphql';
 import {useEditUser} from '../../../mutationHooks/user/editUser';
 import {setAccessToken} from '../../../utils/AccessToken';
-import {SettingsStackScreenProps} from '../../../utils/types';
+import {SettingsStackScreenProps} from '../../../types/navigationTypes';
 
 export const ProfileScreen: React.FC<
   SettingsStackScreenProps<'ProfileScreen'>

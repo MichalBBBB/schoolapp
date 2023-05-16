@@ -4,7 +4,7 @@ import {BasicText} from '../../components/basicViews/BasicText';
 import {LessonTimesView} from '../../components/lessonTimeView';
 import {OnboardingContinueButton} from '../../components/onboardingContinueButton';
 import {useGetAllSchedulesQuery} from '../../generated/graphql';
-import {OnboardingStackScreenProps} from '../../utils/types';
+import {OnboardingStackScreenProps} from '../../types/navigationTypes';
 
 export const LessonTimesScreen: React.FC<
   OnboardingStackScreenProps<'LessonTimeScreen'>

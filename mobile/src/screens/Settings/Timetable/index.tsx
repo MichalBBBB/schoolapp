@@ -13,7 +13,7 @@ import {
   useGetAllSchedulesQuery,
 } from '../../../generated/graphql';
 import {useCreateSchedule} from '../../../mutationHooks/schedule/createSchedule';
-import {SettingsStackScreenProps} from '../../../utils/types';
+import {SettingsStackScreenProps} from '../../../types/navigationTypes';
 
 export const TimeTableHomeScreen: React.FC<
   SettingsStackScreenProps<'TimeTableHomeScreen'>

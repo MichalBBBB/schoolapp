@@ -11,7 +11,7 @@ import {ProjectMembersScreen} from '../screens/Projects/ProjectMembersScreen';
 import {PlanDayScreen} from '../screens/Tasks/PlanDayScreen';
 import TaskDetailScreen from '../screens/Tasks/TaskDetailScreen';
 import TaskHomeScreen from '../screens/Tasks/TaskHomeScreen';
-import {TaskStackParamList} from '../utils/types';
+import {TaskStackParamList} from '../types/navigationTypes';
 
 const TaskStack: React.FC<
   BottomTabScreenProps<TabStackParamList, 'TaskStack'>

@@ -19,7 +19,7 @@ import {DarkTheme, LightTheme, useTheme} from '../../contexts/ThemeContext';
 import {useLogoutMutation, useMeQuery} from '../../generated/graphql';
 import {useSetSettings} from '../../mutationHooks/settings/setSettings';
 import {setAccessToken} from '../../utils/AccessToken';
-import {SettingsStackScreenProps} from '../../utils/types';
+import {SettingsStackScreenProps} from '../../types/navigationTypes';
 
 const SettingsHomeScreen: React.FC<
   SettingsStackScreenProps<'SettingsHomeScreen'>

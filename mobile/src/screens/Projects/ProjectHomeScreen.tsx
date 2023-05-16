@@ -16,7 +16,7 @@ import {
   useGetInvitesQuery,
   useGetProjectsQuery,
 } from '../../generated/graphql';
-import {ProjectStackScreenProps} from '../../utils/types';
+import {ProjectStackScreenProps} from '../../types/navigationTypes';
 
 const ProjectHomeScreen: React.FC<
   ProjectStackScreenProps<'ProjectHomeScreen'>
