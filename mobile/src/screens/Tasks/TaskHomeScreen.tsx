@@ -63,6 +63,7 @@ import {
 } from '@apollo/client';
 import {BasicLoading} from '../../components/basicViews/BasicLoading';
 import {BasicRefreshControl} from '../../components/basicViews/BasicRefreshControl';
+import {usePremiumFeature} from '../../utils/hooks/usePremiumFeature';
 
 if (
   Platform.OS === 'android' &&
@@ -78,7 +79,7 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
   const {data: projectTasks} = useGetProjectTasksOfUserQuery({
     fetchPolicy: 'network-only',
   });
-  const isLoading = useReactiveVar(isLoadingVar);
+  const premiumFeature = usePremiumFeature();
   const [setSettings] = useSetSettings();
   const [addTaskOpen, setAddTaskOpen] = useState(false);
   const [theme] = useTheme();
@@ -240,7 +241,15 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
       <View style={{position: 'absolute', right: 0, bottom: 0, margin: 20}}>
         <AddButton
           onPress={() => {
-            setAddTaskOpen(true);
+            if (
+              (data?.getAllTasks.filter(item => !item.done).length || 0) > 5
+            ) {
+              premiumFeature(() => {
+                setAddTaskOpen(true);
+              });
+            } else {
+              setAddTaskOpen(true);
+            }
           }}
         />
       </View>

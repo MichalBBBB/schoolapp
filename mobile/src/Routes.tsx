@@ -164,19 +164,6 @@ const Routes = () => {
           <NavigationContainer theme={theme}>
             {getContent()}
           </NavigationContainer>
-          {isLoading && (
-            <Portal>
-              <View
-                style={{
-                  ...StyleSheet.absoluteFillObject,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: 'rgba(0,0,0,0.1)',
-                }}>
-                <BasicLoading />
-              </View>
-            </Portal>
-          )}
         </PremiumWindowProvider>
       </AlertProvider>
     </>

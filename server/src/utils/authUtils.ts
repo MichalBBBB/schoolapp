@@ -17,17 +17,22 @@ export const createAccesToken = async (user: User) => {
         },
       }
     );
-    console.log(result.data.subscriber);
   } catch (err) {
     console.log(err);
   }
 
+  const activeEntitlements = result
+    ? Object.entries(result?.data.subscriber.entitlements)
+        .filter((item) => {
+          return dayjs((item[1] as any).expires_date).isAfter(dayjs());
+        })
+        .map((item) => item[0])
+    : undefined;
+
   return sign(
     {
       userId: user.id,
-      entitlements: result
-        ? Object.keys(result.data.subscriber.entitlements)
-        : undefined,
+      entitlements: activeEntitlements,
     } as AccesTokenPayload,
     process.env.ACCES_TOKEN_SECRET!,
     {

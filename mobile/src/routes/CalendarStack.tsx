@@ -29,7 +29,7 @@ const CalendarStack: React.FC<
       })}>
       <Stack.Screen
         name="CalendarHomeScreen"
-        options={{title: 'Calendar'}}
+        options={{title: 'Calendar1'}}
         component={CalendarHomeScreen}
       />
       <Stack.Screen

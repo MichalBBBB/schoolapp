@@ -7,8 +7,9 @@ import Purchases from 'react-native-purchases';
 import {isLoggedInVar} from '../../App';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicText} from '../../components/basicViews/BasicText';
+import {packagesVar} from '../../Content';
 import {useTheme} from '../../contexts/ThemeContext';
-import {useGoogleSignInMutation} from '../../generated/graphql';
+import {useGoogleSignInMutation, UserSuccess} from '../../generated/graphql';
 import {AuthStackParamList} from '../../routes/AuthStack';
 import {setAccessToken} from '../../utils/AccessToken';
 
@@ -35,6 +36,14 @@ const AuthHomeScreen: React.FC<
       if (response.data) {
         setAccessToken(response.data.googleSignIn.accessToken);
         isLoggedInVar(true);
+        (async () => {
+          await Purchases.logIn(
+            (response.data?.googleSignIn as UserSuccess).user.id,
+          );
+          await Purchases.getOfferings().then(result => {
+            packagesVar(result.current?.availablePackages || []);
+          });
+        })();
       }
     } catch (err) {
       console.log(err);

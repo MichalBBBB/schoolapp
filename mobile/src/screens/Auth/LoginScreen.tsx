@@ -1,11 +1,18 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+import Purchases from 'react-native-purchases';
 import {isLoggedInVar} from '../../App';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
-import {useLoginMutation, UserError} from '../../generated/graphql';
+import {packagesVar} from '../../Content';
+import {
+  useLoginMutation,
+  useMeQuery,
+  UserError,
+  UserSuccess,
+} from '../../generated/graphql';
 import {AuthStackParamList} from '../../routes/AuthStack';
 import {setAccessToken} from '../../utils/AccessToken';
 
@@ -20,10 +27,16 @@ export const LoginScreen: React.FC<
 
   const login = async () => {
     const response = await loginMutation({variables: {password, email}});
-    console.log('login', response);
+    console.log('login', JSON.stringify(response.data?.login));
     if (response.data?.login.__typename === 'UserSuccess') {
       setAccessToken(response.data.login.accessToken);
       isLoggedInVar(true);
+      (async () => {
+        await Purchases.logIn((response.data?.login as UserSuccess).user.id);
+        await Purchases.getOfferings().then(result => {
+          packagesVar(result.current?.availablePackages || []);
+        });
+      })();
     } else if (response.data?.login.__typename === 'UserFail') {
       setErrors(response.data?.login.errors);
     }

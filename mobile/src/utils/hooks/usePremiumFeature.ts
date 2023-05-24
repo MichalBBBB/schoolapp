@@ -6,8 +6,7 @@ export const usePremiumFeature = () => {
   return (callback: () => void) => {
     Purchases.getCustomerInfo().then(result => {
       if (result.entitlements.active['premium']) {
-        // callback();
-        showPremiumWindow();
+        callback();
       } else {
         showPremiumWindow();
       }

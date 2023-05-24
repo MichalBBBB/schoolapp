@@ -1,5 +1,6 @@
 import {
   ApolloClient,
+  makeVar,
   NormalizedCacheObject,
   useApolloClient,
   useReactiveVar,
@@ -22,15 +23,21 @@ import {baseUri} from './utils/services/createApolloClient';
 import {setRemindersFromApollo} from './utils/helperFunctions/reminderUtils';
 import {useSettings} from './utils/hooks/useSettings';
 import dayjs from 'dayjs';
-import {useMeQuery} from './generated/graphql';
+import {useLogoutMutation, useMeQuery} from './generated/graphql';
 import {is24HourFormat} from 'react-native-device-time-format';
 import {useSetSettings} from './mutationHooks/settings/setSettings';
 import {v4 as uuidv4} from 'uuid';
 import {AlertProvider} from './contexts/AlertContext';
 import {isVersionHighEnough} from './utils/helperFunctions/isVersionHighEnough';
 import {UpdateAppScreen} from './screens/UpdateAppScreen';
-import Purchases from 'react-native-purchases';
+import Purchases, {
+  PurchasesOffering,
+  PurchasesPackage,
+} from 'react-native-purchases';
 import {RC_API_KEY} from '@env';
+import {setAccessToken} from './utils/AccessToken';
+import {View, StyleSheet} from 'react-native';
+import {BasicLoading} from './components/basicViews/BasicLoading';
 
 const is12hourConfig = {
   // abbreviated format options allowing localization
@@ -82,6 +89,7 @@ export const replaceAllData = async (client: ApolloClient<any>) => {
     setRemindersFromApollo(client);
   } catch (e) {
     isOnlineVar(false);
+    isLoadingVar(false);
   }
 };
 
@@ -99,17 +107,22 @@ const openQueue = async (client: ApolloClient<any>) => {
   }
 };
 
+// variable that contains all purchasable packages
+export const packagesVar = makeVar<PurchasesPackage[]>([]);
+
 export const Content: React.FC = () => {
   // when we change global dayjs settings, the components don't automatically update
   // here we just make sure the whole app rerenders
   const [_forceRerenderingValue, setForceRerenderingValue] = useState('');
   const [isPurchasesConfigured, setIsPurchasesConfigured] = useState(false);
-  const [isPurchasesLoggedIn, setIsPurchasesLoggedIn] = useState(false);
   const client = useApolloClient();
   const isOnline = useReactiveVar(isOnlineVar);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isLoading = useReactiveVar(isLoadingVar);
   const settings = useSettings();
   const minVersion = useReactiveVar(minVersionVar);
+
+  const [logout] = useLogoutMutation();
 
   const {data: me} = useMeQuery();
 
@@ -128,6 +141,10 @@ export const Content: React.FC = () => {
     setForceRerenderingValue(uuidv4());
   };
 
+  useEffect(() => {
+    console.log('me', JSON.stringify(me));
+  }, [me]);
+
   const [theme, setTheme] = useTheme();
   useEffect(() => {
     if (isOnline && isLoggedIn) {
@@ -136,22 +153,30 @@ export const Content: React.FC = () => {
       persistentQueueLink.close();
     } else if (!isLoggedIn) {
       console.log('delete store');
-      client.resetStore();
-      setIsPurchasesLoggedIn(false);
+      (async () => {
+        await logout();
+        setAccessToken('');
+        client.resetStore();
+      })();
     }
   }, [isOnline, isLoggedIn]);
 
   useEffect(() => {
     if (!isPurchasesConfigured && me && isLoggedIn) {
-      console.log('logging in', RC_API_KEY);
-      Purchases.configure({apiKey: RC_API_KEY, appUserID: me.me.id});
-      setIsPurchasesConfigured(true);
-      setIsPurchasesLoggedIn(true);
-    } else if (!isPurchasesLoggedIn && me && isLoggedIn) {
-      Purchases.logIn(me.me.id);
-      setIsPurchasesLoggedIn(true);
+      console.log('configure');
+      (async () => {
+        Purchases.configure({
+          apiKey: RC_API_KEY,
+          appUserID: me.me.id,
+          usesStoreKit2IfAvailable: true,
+        });
+        await Purchases.getOfferings().then(result => {
+          packagesVar(result.current?.availablePackages || []);
+        });
+        setIsPurchasesConfigured(true);
+      })();
     }
-  }, [me, isPurchasesLoggedIn, isLoggedIn]);
+  }, [me, isPurchasesConfigured, isLoggedIn]);
 
   // set the locale based on settings
   useEffect(() => {
@@ -207,6 +232,18 @@ export const Content: React.FC = () => {
       <PortalProvider>
         {isVersionHighEnough(minVersion) ? <Routes /> : <UpdateAppScreen />}
       </PortalProvider>
+      {isLoading && (
+        <View
+          style={{
+            ...StyleSheet.absoluteFillObject,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0,0,0,0.1)',
+            zIndex: 100,
+          }}>
+          <BasicLoading />
+        </View>
+      )}
     </GestureHandlerRootView>
   );
 };

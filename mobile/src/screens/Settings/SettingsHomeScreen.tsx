@@ -133,8 +133,6 @@ const SettingsHomeScreen: React.FC<
             <Pressable
               style={styles.listItem}
               onPress={() => {
-                logout();
-                setAccessToken('');
                 isLoggedInVar(false);
               }}>
               <BasicText color="dangerous">Log out</BasicText>

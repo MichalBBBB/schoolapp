@@ -14,6 +14,7 @@ import {
 } from '../../../generated/graphql';
 import {useCreateSchedule} from '../../../mutationHooks/schedule/createSchedule';
 import {SettingsStackScreenProps} from '../../../types/navigationTypes';
+import {usePremiumFeature} from '../../../utils/hooks/usePremiumFeature';
 
 export const TimeTableHomeScreen: React.FC<
   SettingsStackScreenProps<'TimeTableHomeScreen'>
@@ -25,6 +26,7 @@ export const TimeTableHomeScreen: React.FC<
   const sortedSchedules = [...(schedules?.getAllSchedules || [])].sort((a, b) =>
     dayjs(a.createdAt).diff(b.createdAt),
   );
+  const premiumFeature = usePremiumFeature();
   return (
     <>
       <ScrollView style={{padding: 10}}>
@@ -40,7 +42,15 @@ export const TimeTableHomeScreen: React.FC<
           <BasicButton
             variant="unstyled"
             onPress={() => {
-              setNewScheduleWindowVisible(true);
+              console.log(schedules?.getAllSchedules.length);
+              if ((schedules?.getAllSchedules.length || 0) >= 3) {
+                console.log('here');
+                premiumFeature(() => {
+                  setNewScheduleWindowVisible(true);
+                });
+              } else {
+                setNewScheduleWindowVisible(true);
+              }
             }}>
             <BasicText textVariant="button" spacing="none">
               Add

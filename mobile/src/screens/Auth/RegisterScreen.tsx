@@ -1,11 +1,17 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import Purchases from 'react-native-purchases';
 import {isLoggedInVar} from '../../App';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
-import {useRegisterMutation, UserError} from '../../generated/graphql';
+import {packagesVar} from '../../Content';
+import {
+  useRegisterMutation,
+  UserError,
+  UserSuccess,
+} from '../../generated/graphql';
 import {AuthStackParamList} from '../../routes/AuthStack';
 import {setAccessToken} from '../../utils/AccessToken';
 
@@ -29,6 +35,12 @@ export const RegisterScreen: React.FC<
     if (response.data?.register.__typename === 'UserSuccess') {
       setAccessToken(response.data.register.accessToken);
       isLoggedInVar(true);
+      (async () => {
+        await Purchases.logIn((response.data?.register as UserSuccess).user.id);
+        await Purchases.getOfferings().then(result => {
+          packagesVar(result.current?.availablePackages || []);
+        });
+      })();
     } else if (response.data?.register.__typename === 'UserFail') {
       setErrors(response.data.register.errors);
     }
