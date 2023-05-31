@@ -171,6 +171,7 @@ const DayView: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
 
   return (
     <ScrollView
+      scrollEnabled={scrollEnabled}
       style={{width, paddingTop: 5}}
       contentContainerStyle={{padding: 5}}
       refreshControl={

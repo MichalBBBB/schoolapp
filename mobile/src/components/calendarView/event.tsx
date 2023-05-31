@@ -55,13 +55,14 @@ const Event: React.FC<EventProps> = ({event, height, variant = 'list'}) => {
           height,
           padding: 12,
           justifyContent: 'space-between',
-          alignItems: variant == 'list' ? 'center' : 'flex-start',
         }}>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <BasicText>{event.name}</BasicText>
           {variant == 'list' && (
             <BasicText color="textSecondary" style={{marginRight: 8}}>
-              {dayjs(event.startDate).format('HH:mm')}
+              {`${dayjs(event.startDate).format('HH:mm')} - ${dayjs(
+                event.endDate,
+              ).format('HH:mm')}`}
             </BasicText>
           )}
         </View>

@@ -190,24 +190,30 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
       renderItem={({item, index}) => {
         if (item.__typename == 'Lesson') {
           return (
-            <Lesson
-              navigation={navigation}
-              lesson={item}
-              event={data?.getAllEvents.find(event => {
-                return (
-                  event.subject?.id == item.subject.id &&
-                  dayjs(event.startDate).format('HH:mm') ==
-                    item.lessonTime.startTime &&
-                  dayjs(event.startDate).isSame(date, 'day')
-                );
-              })}
-              onEventPress={event => {
-                navigation.navigate('EventDetailScreen', {event});
-              }}
-            />
+            <View style={{margin: 5, marginHorizontal: 10}}>
+              <Lesson
+                navigation={navigation}
+                lesson={item}
+                event={data?.getAllEvents.find(event => {
+                  return (
+                    event.subject?.id == item.subject.id &&
+                    dayjs(event.startDate).format('HH:mm') ==
+                      item.lessonTime.startTime &&
+                    dayjs(event.startDate).isSame(date, 'day')
+                  );
+                })}
+                onEventPress={event => {
+                  navigation.navigate('EventDetailScreen', {event});
+                }}
+              />
+            </View>
           );
         } else if (item.__typename == 'CalendarEvent') {
-          return <Event event={item} />;
+          return (
+            <View style={{marginHorizontal: 10, margin: 5}}>
+              <Event event={item} />
+            </View>
+          );
         } else if (item.__typename == 'ProjectTask') {
           return (
             <TaskListProjectTask
