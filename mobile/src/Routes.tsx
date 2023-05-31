@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
-import {isLoggedInVar} from './App';
+import {isLoadingVar, isLoggedInVar} from './App';
 import AuthStack from './routes/AuthStack';
 import {useApolloClient, useReactiveVar} from '@apollo/client';
 import TaskStack from './routes/TaskStack';
@@ -28,6 +28,9 @@ import {useSettings} from './utils/useSettings';
 import {OnboardingStack} from './routes/OnboardingStack';
 import BasicInputWindow from './components/modals/basicInputWindow';
 import {VerifyEmailScreen} from './screens/VerifyEmailScreen';
+import {Portal} from '@gorhom/portal';
+import {BasicCard} from './components/basicViews/BasicCard';
+import {BasicLoading} from './components/basicViews/BasicLoading';
 
 export type TabStackParamList = {
   TaskStack: undefined;
@@ -38,6 +41,7 @@ export type TabStackParamList = {
 
 const Routes = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isLoading = useReactiveVar(isLoadingVar);
 
   const client = useApolloClient();
 
@@ -155,18 +159,20 @@ const Routes = () => {
     <>
       <AlertProvider>
         <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
-        <NavigationContainer theme={theme}>
-          {/* {isLoggedIn ? (
-            me?.me.emailVerified ? (
-              screens
-            ) : (
-              verifyEmailScreen
-            )
-          ) : (
-            <AuthStack />
-          )} */}
-          {getContent()}
-        </NavigationContainer>
+        <NavigationContainer theme={theme}>{getContent()}</NavigationContainer>
+        {isLoading && (
+          <Portal>
+            <View
+              style={{
+                ...StyleSheet.absoluteFillObject,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'rgba(0,0,0,0.1)',
+              }}>
+              <BasicLoading />
+            </View>
+          </Portal>
+        )}
       </AlertProvider>
     </>
   );

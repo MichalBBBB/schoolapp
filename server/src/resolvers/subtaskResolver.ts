@@ -82,6 +82,27 @@ export class subtaskResolver {
     throw new Error("subtask doesn't exist");
   }
 
+  @Mutation(() => Subtask)
+  @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
+  async editSubtask(
+    @Arg("id") id: string,
+    @Arg("name") name: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    const subtask = await Subtask.findOne({ where: { id } });
+    if (subtask) {
+      const task = await Task.findOne({ where: { id: subtask.taskId } });
+
+      if (task?.userId === payload?.userId && task) {
+        await Subtask.update({ id }, { name });
+        return Subtask.findOne({ where: { id } });
+      }
+      throw new Error("you are not authorized for this action");
+    }
+    throw new Error("subtask doesn't exist");
+  }
+
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   @UseMiddleware(queueMiddleware)

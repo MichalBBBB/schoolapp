@@ -14,7 +14,6 @@ import {
   useMeQuery,
   useResendVerificationEmailMutation,
 } from '../generated/graphql';
-import {useEditUser} from '../mutationHooks/user/edituser';
 import {setAccessToken} from '../utils/AccessToken';
 
 export const VerifyEmailScreen = () => {

@@ -10,7 +10,7 @@ import BasicInputWindow from '../../../components/modals/basicInputWindow';
 import {Popup} from '../../../components/popup';
 import {AlertObject, useAlert} from '../../../contexts/AlertContext';
 import {useDeleteAccountMutation, useMeQuery} from '../../../generated/graphql';
-import {useEditUser} from '../../../mutationHooks/user/edituser';
+import {useEditUser} from '../../../mutationHooks/user/editUser';
 import {setAccessToken} from '../../../utils/AccessToken';
 import {SettingsStackScreenProps} from '../../../utils/types';
 

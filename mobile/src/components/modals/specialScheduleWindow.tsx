@@ -7,6 +7,7 @@ import {
 } from '../../generated/graphql';
 import {useEditSchedule} from '../../mutationHooks/schedule/editSchedule';
 import {useClearLessonsForDay} from '../../utils/clearLessonsForDay';
+import {useClearSchedulesForDay} from '../../utils/useClearSchedulesForDay';
 import {useGetSpecialScheduleForDay} from '../../utils/useSpecialScheduleForDay';
 import {BasicButton} from '../basicViews/BasicButton';
 import {BasicModalCard} from '../basicViews/BasicModalCard';
@@ -28,6 +29,7 @@ export const SpecialScheduleWindow: React.FC<SpecialScheduleWindowProps> = ({
   const [scheduleWindowVisible, setScheduleWindowVisible] = useState(false);
   const {data: schedules} = useGetAllSchedulesQuery();
   const clearLessons = useClearLessonsForDay();
+  const clearSchedules = useClearSchedulesForDay();
   const specialSchedule = useGetSpecialScheduleForDay(date);
   const sortedSchedules = [...(schedules?.getAllSchedules || [])].sort((a, b) =>
     dayjs(a.createdAt).diff(b.createdAt),
@@ -61,25 +63,11 @@ export const SpecialScheduleWindow: React.FC<SpecialScheduleWindowProps> = ({
             variant="unstyled"
             spacing="none"
             onPress={() => {
-              schedules?.getAllSchedules.forEach(item => {
-                if (
-                  item.dates?.some(item =>
-                    dayjs(item).isSame(dayjs(date), 'day'),
-                  )
-                ) {
-                  const newDates = item.dates.filter(
-                    itemDate => !dayjs(itemDate).isSame(date, 'day'),
-                  );
-                  editSchedule({
-                    id: item.id,
-                    dates: newDates,
-                  });
-                }
-              });
+              clearSchedules(date);
               clearLessons(date);
               onClose();
             }}>
-            <BasicText>Clear</BasicText>
+            <BasicText textVariant="button">Clear</BasicText>
           </BasicButton>
         </View>
         <FlatList
@@ -92,6 +80,10 @@ export const SpecialScheduleWindow: React.FC<SpecialScheduleWindowProps> = ({
               text={item.name}
               onPress={() => {
                 setSelectedSchedule(item);
+                if (specialSchedule && specialSchedule?.id !== item.id) {
+                  clearSchedules(date);
+                  clearLessons(date);
+                }
                 setScheduleWindowVisible(true);
               }}
               style={{marginBottom: 8}}

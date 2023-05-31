@@ -47,6 +47,7 @@ export const LessonTimesView: React.FC<LessonTimesViewProps> = ({
   } | null>(null);
   const [changingValue, setChangingValue] = useState<number | string>(0);
 
+  // get the time for the select time modal
   const getInitialTime = () => {
     let time;
     if (activeLesson) {
@@ -111,13 +112,41 @@ export const LessonTimesView: React.FC<LessonTimesViewProps> = ({
           }) || [],
       });
     } else if (changedValue == 'lesson-start') {
-      editLessonTimes({
-        lessonTimes: {
-          startTime: newValue as string,
-          id: data[index].id,
-          endTime: data[index].endTime,
-        },
-      });
+      if (index > 0) {
+        if (
+          dayjs(newValue, 'HH:mm').isBefore(
+            dayjs(data[index - 1].endTime, 'HH:mm'),
+          )
+        ) {
+          return;
+        }
+      }
+      if (
+        dayjs(newValue, 'HH:mm').isAfter(dayjs(data[index].endTime, 'HH:mm'))
+      ) {
+        const lengthOfLesson = dayjs(data[index].endTime, 'HH:mm').diff(
+          dayjs(data[index].startTime, 'HH:mm'),
+          'minute',
+        );
+        console.log(lengthOfLesson);
+        editLessonTimes({
+          lessonTimes: {
+            startTime: newValue as string,
+            id: data[index].id,
+            endTime: dayjs(newValue, 'HH:mm')
+              .add(lengthOfLesson, 'minute')
+              .format('HH:mm'),
+          },
+        });
+      } else {
+        editLessonTimes({
+          lessonTimes: {
+            startTime: newValue as string,
+            id: data[index].id,
+            endTime: data[index].endTime,
+          },
+        });
+      }
     } else if (changedValue == 'lesson-end') {
       if (index == 0 && data.length == 1) {
         setDefaultLessonLength(
