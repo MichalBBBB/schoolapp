@@ -11,6 +11,7 @@ import {
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
+import dayjs from 'dayjs';
 import {
   CalendarEventFragment,
   ScheduleFragment,
@@ -40,7 +41,7 @@ export type TaskStackScreenProps<T extends keyof TaskStackParamList> =
 
 export type CalendarStackParamList = {
   CalendarHomeScreen: undefined;
-  EventDetailScreen: {event?: CalendarEventFragment};
+  EventDetailScreen: {event?: CalendarEventFragment; date?: dayjs.Dayjs};
   TaskDetailScreen: {task: TaskFragment};
   ProjectDetailScreen: {projectId: string};
   ProjectMembersScreen: {projectId: string};

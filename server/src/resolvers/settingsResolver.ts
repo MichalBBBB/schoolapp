@@ -22,7 +22,8 @@ export class settingsResolver {
     @Arg("sortTasksBy", { nullable: true })
     sortTasksBy?: "DATE_ADDED" | "DUE_DATE" | "DO_DATE",
     @Arg("showCompletedTasks", { nullable: true }) showCompletedTasks?: boolean,
-    @Arg("isFirstTime", { nullable: true }) isFirstTime?: boolean
+    @Arg("isFirstTime", { nullable: true }) isFirstTime?: boolean,
+    @Arg("showCalendarView", { nullable: true }) showCalendarView?: boolean
   ) {
     const user = await User.findOne({ where: { id: payload?.userId } });
     await Settings.update(
@@ -37,6 +38,7 @@ export class settingsResolver {
         sortTasksBy,
         showCompletedTasks,
         isFirstTime,
+        showCalendarView,
       }
     );
     return Settings.findOne({ where: { id: user?.settingsId } });

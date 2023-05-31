@@ -425,6 +425,7 @@ export type MutationSetSettingsArgs = {
   darkMode?: InputMaybe<Scalars['Boolean']>;
   isFirstTime?: InputMaybe<Scalars['Boolean']>;
   lengthOfRotation?: InputMaybe<Scalars['Float']>;
+  showCalendarView?: InputMaybe<Scalars['Boolean']>;
   showCompletedTasks?: InputMaybe<Scalars['Boolean']>;
   showDoDate?: InputMaybe<Scalars['Boolean']>;
   skipWeekends?: InputMaybe<Scalars['Boolean']>;
@@ -561,6 +562,7 @@ export type Settings = {
   id: Scalars['String'];
   isFirstTime: Scalars['Boolean'];
   lengthOfRotation: Scalars['Float'];
+  showCalendarView: Scalars['Boolean'];
   showCompletedTasks: Scalars['Boolean'];
   showDoDate: Scalars['Boolean'];
   skipWeekends: Scalars['Boolean'];
@@ -665,7 +667,7 @@ export type UserSuccess = {
   user: User;
 };
 
-export type UserFragment = { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, emailVerified: boolean, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } };
+export type UserFragment = { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, emailVerified: boolean, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean, showCalendarView: boolean } };
 
 export type CalendarEventFragment = { __typename?: 'CalendarEvent', id: string, name: string, text?: string | null, startDate: any, endDate?: any | null, wholeDay: boolean, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> };
 
@@ -687,7 +689,7 @@ export type ReminderFragment = { __typename?: 'Reminder', id: string, minutesBef
 
 export type ScheduleFragment = { __typename?: 'Schedule', id: string, name: string, default: boolean, dayNumbers?: Array<number> | null, dates?: Array<any> | null, createdAt: any, updatedAt: any, lessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null }> };
 
-export type SettingsFragment = { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean };
+export type SettingsFragment = { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean, showCalendarView: boolean };
 
 export type SimpleProjectFragment = { __typename?: 'Project', id: string, name: string };
 
@@ -932,10 +934,11 @@ export type SetSettingsMutationVariables = Exact<{
   showDoDate?: InputMaybe<Scalars['Boolean']>;
   showCompletedTasks?: InputMaybe<Scalars['Boolean']>;
   isFirstTime?: InputMaybe<Scalars['Boolean']>;
+  showCalendarView?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type SetSettingsMutation = { __typename?: 'Mutation', setSettings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } };
+export type SetSettingsMutation = { __typename?: 'Mutation', setSettings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean, showCalendarView: boolean } };
 
 export type CreateSubjectMutationVariables = Exact<{
   name: Scalars['String'];
@@ -1052,7 +1055,7 @@ export type EditUserMutationVariables = Exact<{
 }>;
 
 
-export type EditUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, emailVerified: boolean, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } } };
+export type EditUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, emailVerified: boolean, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean, showCalendarView: boolean } } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
@@ -1148,7 +1151,7 @@ export type HelloQuery = { __typename?: 'Query', hello: string };
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, emailVerified: boolean, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, emailVerified: boolean, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean, showCalendarView: boolean } } };
 
 export const SettingsFragmentDoc = gql`
     fragment Settings on Settings {
@@ -1162,6 +1165,7 @@ export const SettingsFragmentDoc = gql`
   showDoDate
   showCompletedTasks
   isFirstTime
+  showCalendarView
 }
     `;
 export const UserFragmentDoc = gql`
@@ -2275,7 +2279,7 @@ export type EditScheduleMutationHookResult = ReturnType<typeof useEditScheduleMu
 export type EditScheduleMutationResult = Apollo.MutationResult<EditScheduleMutation>;
 export type EditScheduleMutationOptions = Apollo.BaseMutationOptions<EditScheduleMutation, EditScheduleMutationVariables>;
 export const SetSettingsDocument = gql`
-    mutation SetSettings($startOfWeek: String, $startOfRotationDate: DateTime, $lengthOfRotation: Float, $skipWeekends: Boolean, $darkMode: Boolean, $sortTasksBy: String, $showDoDate: Boolean, $showCompletedTasks: Boolean, $isFirstTime: Boolean) {
+    mutation SetSettings($startOfWeek: String, $startOfRotationDate: DateTime, $lengthOfRotation: Float, $skipWeekends: Boolean, $darkMode: Boolean, $sortTasksBy: String, $showDoDate: Boolean, $showCompletedTasks: Boolean, $isFirstTime: Boolean, $showCalendarView: Boolean) {
   setSettings(
     startOfWeek: $startOfWeek
     startOfRotationDate: $startOfRotationDate
@@ -2286,6 +2290,7 @@ export const SetSettingsDocument = gql`
     showDoDate: $showDoDate
     showCompletedTasks: $showCompletedTasks
     isFirstTime: $isFirstTime
+    showCalendarView: $showCalendarView
   ) {
     ...Settings
   }
@@ -2315,6 +2320,7 @@ export type SetSettingsMutationFn = Apollo.MutationFunction<SetSettingsMutation,
  *      showDoDate: // value for 'showDoDate'
  *      showCompletedTasks: // value for 'showCompletedTasks'
  *      isFirstTime: // value for 'isFirstTime'
+ *      showCalendarView: // value for 'showCalendarView'
  *   },
  * });
  */

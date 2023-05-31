@@ -9,4 +9,5 @@ fragment Settings on Settings {
   showDoDate
   showCompletedTasks
   isFirstTime
+  showCalendarView
 }
