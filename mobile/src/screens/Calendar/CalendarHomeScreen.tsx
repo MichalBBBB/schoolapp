@@ -69,7 +69,10 @@ const CalendarHomeScreen: React.FC<
           }}>
           <AddButton
             onPress={() => {
-              navigation.navigate('EventDetailScreen', {event: undefined});
+              navigation.navigate('EventDetailScreen', {
+                event: undefined,
+                date: selectedDay,
+              });
             }}
           />
         </View>

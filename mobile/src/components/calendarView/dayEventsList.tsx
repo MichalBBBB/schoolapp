@@ -5,6 +5,7 @@ import {Dimensions, FlatList, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {BasicText} from '../basicViews/BasicText';
 import DayEvents from './dayEvents';
+import DayView from './dayView';
 
 export const width = Dimensions.get('screen').width;
 
@@ -150,11 +151,12 @@ export const DayEventsList: React.FC<DayEventsListProps> = ({
             );
           } else {
             return (
-              <DayEvents
-                date={item}
-                scrollEnabled={scrollEnabled}
-                key={index}
-              />
+              // <DayEvents
+              //   date={item}
+              //   scrollEnabled={scrollEnabled}
+              //   key={index}
+              // />
+              <DayView date={item} scrollEnabled={scrollEnabled} key={index} />
             );
           }
         }}

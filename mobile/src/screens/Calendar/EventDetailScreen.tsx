@@ -52,10 +52,12 @@ const EventDetailScreen: React.FC<
   const [createEvent] = useCreateEvent();
 
   const [startDate, setStartDate] = useState(
-    dayjs(event?.startDate) || dayjs(),
+    event ? dayjs(event.startDate) : route.params.date || dayjs(),
   );
   const [endDate, setEndDate] = useState(
-    dayjs(event?.endDate) || dayjs().add(1, 'hour'),
+    event
+      ? dayjs(event.endDate)
+      : route.params.date?.add(1, 'hour') || dayjs().add(1, 'hour'),
   );
   const [subject, setSubject] = useState<SubjectFragment | null>(
     event?.subject || null,

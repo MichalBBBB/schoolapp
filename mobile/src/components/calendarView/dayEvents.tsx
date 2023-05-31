@@ -27,6 +27,7 @@ import {useApolloClient} from '@apollo/client';
 import {BasicRefreshControl} from '../basicViews/BasicRefreshControl';
 import TaskListProjectTask from '../listItems/taskListProjectTask';
 import {useGetSpecialScheduleForDay} from '../../utils/useSpecialScheduleForDay';
+import {getEventGroups, getEventMap} from '../../utils/eventMap';
 
 export const width = Dimensions.get('screen').width;
 
@@ -119,6 +120,12 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
           }
         }) || [];
     const sections: section[] = [];
+    if (dayNumber == 2) {
+      console.log(
+        JSON.stringify(getEventGroups(date, eventsThisDay, lessonsThisDay)),
+      );
+    }
+
     if (lessonsThisDay.length > 0) {
       sections.push({
         title: specialSchedule ? `Lessons - Special Schedule` : 'Lessons',
@@ -184,6 +191,7 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
         if (item.__typename == 'Lesson') {
           return (
             <Lesson
+              navigation={navigation}
               lesson={item}
               event={data?.getAllEvents.find(event => {
                 return (
@@ -193,6 +201,9 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
                   dayjs(event.startDate).isSame(date, 'day')
                 );
               })}
+              onEventPress={event => {
+                navigation.navigate('EventDetailScreen', {event});
+              }}
             />
           );
         } else if (item.__typename == 'CalendarEvent') {

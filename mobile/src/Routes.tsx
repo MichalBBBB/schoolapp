@@ -160,7 +160,7 @@ const Routes = () => {
       <AlertProvider>
         <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
         <NavigationContainer theme={theme}>{getContent()}</NavigationContainer>
-        {isLoading && (
+        {/* {isLoading && (
           <Portal>
             <View
               style={{
@@ -172,7 +172,7 @@ const Routes = () => {
               <BasicLoading />
             </View>
           </Portal>
-        )}
+        )} */}
       </AlertProvider>
     </>
   );
