@@ -3,8 +3,10 @@ import dayjs from 'dayjs';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {Dimensions, FlatList, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useSettings} from '../../utils/useSettings';
 import {BasicText} from '../basicViews/BasicText';
 import DayEvents from './dayEvents';
+import DayView from './dayView';
 
 export const width = Dimensions.get('screen').width;
 
@@ -47,6 +49,8 @@ export const DayEventsList: React.FC<DayEventsListProps> = ({
   const [index, setIndex] = useState(pastScrollRange);
 
   const flatListRef = useRef<FlashList<any>>(null);
+
+  const settings = useSettings();
 
   useEffect(() => {
     const newDays = createList(pastScrollRange, futureScrollRange);
@@ -134,6 +138,7 @@ export const DayEventsList: React.FC<DayEventsListProps> = ({
           setIndex(newIndex);
         }}
         data={days}
+        extraData={settings?.showCalendarView}
         renderItem={({item, index}) => {
           if (typeof item == 'string') {
             return (
@@ -149,13 +154,23 @@ export const DayEventsList: React.FC<DayEventsListProps> = ({
               </View>
             );
           } else {
-            return (
-              <DayEvents
-                date={item}
-                scrollEnabled={scrollEnabled}
-                key={index}
-              />
-            );
+            if (settings?.showCalendarView) {
+              return (
+                <DayView
+                  date={item}
+                  scrollEnabled={scrollEnabled}
+                  key={index}
+                />
+              );
+            } else {
+              return (
+                <DayEvents
+                  date={item}
+                  scrollEnabled={scrollEnabled}
+                  key={index}
+                />
+              );
+            }
           }
         }}
       />

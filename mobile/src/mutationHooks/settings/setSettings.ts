@@ -61,6 +61,10 @@ export const useSetSettings: () => [
               variables.isFirstTime == null
                 ? settings.isFirstTime
                 : variables.isFirstTime,
+            showCalendarView:
+              variables.showCalendarView == null
+                ? settings.showCalendarView
+                : variables.showCalendarView,
           },
         },
         update: (cache, {data}) => {
