@@ -118,7 +118,7 @@ export const DayEventsList: React.FC<DayEventsListProps> = ({
   }
 
   return (
-    <View style={{width, height}}>
+    <View style={{width, height, flex: 1}}>
       <FlashList
         estimatedItemSize={width}
         removeClippedSubviews={true}
