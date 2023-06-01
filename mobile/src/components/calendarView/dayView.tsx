@@ -173,7 +173,7 @@ const DayView: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
     <>
       <ScrollView
         scrollEnabled={scrollEnabled}
-        style={{width}}
+        style={{width, marginTop: 5}}
         contentContainerStyle={{
           paddingHorizontal: 5,
           paddingTop: 10,
