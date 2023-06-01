@@ -17,11 +17,8 @@ import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
 import {useCreateTask} from '../../mutationHooks/task/createTask';
 import {BasicText} from '../basicViews/BasicText';
 import EditDateModal from '../modals/editDateWindow';
-import {Menu} from '../menu';
-import {MenuItem} from '../menu/MenuItem';
 import SlidingView from '../slidingView';
 import {v4 as uuidv4} from 'uuid';
-import {Popup} from '../popup';
 import {useNavigation} from '@react-navigation/native';
 import {CalendarNavigationProp} from '../../utils/types';
 import {BasicCard} from '../basicViews/BasicCard';
@@ -51,6 +48,7 @@ const Event: React.FC<EventProps> = ({event, height, variant = 'list'}) => {
       }}>
       <BasicCard
         backgroundColor="accentBackground1"
+        borderRadius={0}
         style={{
           height,
           padding: 12,
@@ -59,7 +57,7 @@ const Event: React.FC<EventProps> = ({event, height, variant = 'list'}) => {
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <BasicText>{event.name}</BasicText>
           {variant == 'list' && (
-            <BasicText color="textSecondary" style={{marginRight: 8}}>
+            <BasicText color="textSecondary">
               {`${dayjs(event.startDate).format('HH:mm')} - ${dayjs(
                 event.endDate,
               ).format('HH:mm')}`}

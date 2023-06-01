@@ -170,135 +170,143 @@ const DayView: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
   }, [blocks]);
 
   return (
-    <ScrollView
-      scrollEnabled={scrollEnabled}
-      style={{width, paddingTop: 5}}
-      contentContainerStyle={{padding: 5}}
-      refreshControl={
-        <BasicRefreshControl
-          refreshing={refreshing}
-          onRefresh={() => {
-            setRefreshing(true);
-            replaceAllData(client).then(() => {
-              setRefreshing(false);
-            });
-          }}
-        />
-      }>
-      {blocks.length > 0 ? (
-        <>
-          <View
-            style={{
-              width: '100%',
-              position: 'absolute',
-              paddingTop: (60 - blocks[0].startTime.minute()) * heightConstant,
-            }}>
-            {sideTimes.map((item, index) => (
-              <View
-                key={index}
-                style={{
-                  width: '100%',
-                  height: 1,
-                  backgroundColor: theme.colors.border,
-                  marginBottom: 60 * heightConstant - 1,
-                  marginLeft: 45,
-                }}
-              />
-            ))}
-          </View>
-          <View
-            style={{
-              position: 'absolute',
-              paddingTop: (60 - blocks[0].startTime.minute()) * heightConstant,
-            }}>
-            {sideTimes.map((item, index) => (
-              <View
-                key={index}
-                style={{
-                  marginBottom: 60 * heightConstant - 30,
-                  marginLeft: 5,
-                  height: 30,
-                  transform: [{translateY: -15}],
-                  justifyContent: 'center',
-                }}>
-                <BasicText
-                  color="textSecondary"
-                  style={{
-                    textAlign: 'center',
-                  }}>
-                  {item}
-                </BasicText>
-              </View>
-            ))}
-          </View>
-          {blocks.map((block, index) => (
+    <>
+      <ScrollView
+        scrollEnabled={scrollEnabled}
+        style={{width}}
+        contentContainerStyle={{
+          paddingHorizontal: 5,
+          paddingTop: 10,
+          paddingBottom: 50,
+        }}
+        refreshControl={
+          <BasicRefreshControl
+            refreshing={refreshing}
+            onRefresh={() => {
+              setRefreshing(true);
+              replaceAllData(client).then(() => {
+                setRefreshing(false);
+              });
+            }}
+          />
+        }>
+        {blocks.length > 0 ? (
+          <>
             <View
-              key={index}
               style={{
-                flexDirection: 'row',
-                marginTop: getBlockOffset(index),
-                marginLeft: 35,
+                width: '100%',
+                position: 'absolute',
+                paddingTop:
+                  (60 - blocks[0].startTime.minute()) * heightConstant,
               }}>
-              {block.columns.map((column, columnIndex) => (
-                <View style={{flex: 1}} key={columnIndex}>
-                  {column.map((item, itemIndex) => (
-                    <View
-                      key={itemIndex}
-                      style={{
-                        marginTop: getOffset(
-                          item,
-                          block,
-                          columnIndex,
-                          itemIndex,
-                        ),
-                        marginHorizontal: 5,
-                      }}>
-                      {item.__typename == 'Lesson' ? (
-                        <Lesson
-                          navigation={navigation}
-                          lesson={item}
-                          height={getHeight(item)}
-                          variant="calendar"
-                          event={data?.getAllEvents.find(event => {
-                            return (
-                              event.subject?.id == item.subject?.id &&
-                              dayjs(event.startDate).format('HH:mm') ==
-                                item.lessonTime.startTime &&
-                              dayjs(event.startDate).isSame(date, 'day')
-                            );
-                          })}
-                          onEventPress={event => {
-                            navigation.navigate('EventDetailScreen', {event});
-                          }}
-                        />
-                      ) : (
-                        <Event
-                          event={item as CalendarEventFragment}
-                          height={getHeight(item)}
-                          variant="calendar"
-                        />
-                      )}
-                    </View>
-                  ))}
+              {sideTimes.map((item, index) => (
+                <View
+                  key={index}
+                  style={{
+                    width: '100%',
+                    height: 1,
+                    backgroundColor: theme.colors.border,
+                    marginBottom: 60 * heightConstant - 1,
+                    marginLeft: 45,
+                  }}
+                />
+              ))}
+            </View>
+            <View
+              style={{
+                position: 'absolute',
+                paddingTop:
+                  (60 - blocks[0].startTime.minute()) * heightConstant,
+              }}>
+              {sideTimes.map((item, index) => (
+                <View
+                  key={index}
+                  style={{
+                    marginBottom: 60 * heightConstant - 30,
+                    marginLeft: 5,
+                    height: 30,
+                    transform: [{translateY: -15}],
+                    justifyContent: 'center',
+                  }}>
+                  <BasicText
+                    color="textSecondary"
+                    style={{
+                      textAlign: 'center',
+                    }}>
+                    {item}
+                  </BasicText>
                 </View>
               ))}
             </View>
-          ))}
-        </>
-      ) : (
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: 200,
-          }}>
-          <BasicText textVariant="heading">Nothing for this day</BasicText>
-          {specialSchedule && (
-            <BasicText color="textSecondary">Special Schedule</BasicText>
-          )}
-        </View>
-      )}
-    </ScrollView>
+            {blocks.map((block, index) => (
+              <View
+                key={index}
+                style={{
+                  flexDirection: 'row',
+                  marginTop: getBlockOffset(index),
+                  marginLeft: 35,
+                }}>
+                {block.columns.map((column, columnIndex) => (
+                  <View style={{flex: 1}} key={columnIndex}>
+                    {column.map((item, itemIndex) => (
+                      <View
+                        key={itemIndex}
+                        style={{
+                          marginTop: getOffset(
+                            item,
+                            block,
+                            columnIndex,
+                            itemIndex,
+                          ),
+                          marginHorizontal: 5,
+                        }}>
+                        {item.__typename == 'Lesson' ? (
+                          <Lesson
+                            navigation={navigation}
+                            lesson={item}
+                            height={getHeight(item)}
+                            variant="calendar"
+                            event={data?.getAllEvents.find(event => {
+                              return (
+                                event.subject?.id == item.subject?.id &&
+                                dayjs(event.startDate).format('HH:mm') ==
+                                  item.lessonTime.startTime &&
+                                dayjs(event.startDate).isSame(date, 'day')
+                              );
+                            })}
+                            onEventPress={event => {
+                              navigation.navigate('EventDetailScreen', {event});
+                            }}
+                          />
+                        ) : (
+                          <Event
+                            event={item as CalendarEventFragment}
+                            height={getHeight(item)}
+                            variant="calendar"
+                          />
+                        )}
+                      </View>
+                    ))}
+                  </View>
+                ))}
+              </View>
+            ))}
+          </>
+        ) : (
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: 200,
+            }}>
+            <BasicText textVariant="heading">Nothing for this day</BasicText>
+            {specialSchedule && (
+              <BasicText color="textSecondary">Special Schedule</BasicText>
+            )}
+          </View>
+        )}
+      </ScrollView>
+    </>
   );
 };
 

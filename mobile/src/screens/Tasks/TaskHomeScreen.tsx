@@ -197,16 +197,16 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
             }}
           />
         }
-        contentContainerStyle={
+        contentContainerStyle={[
+          {marginHorizontal: 10},
           list.length == 0
             ? {flexGrow: 1}
             : {
                 borderRadius: 15,
                 overflow: 'hidden',
                 backgroundColor: theme.colors.accentBackground1,
-              }
-        }
-        style={{padding: 10}}
+              },
+        ]}
         data={list}
         renderItem={({item, index}) => {
           if ('projectId' in item) {

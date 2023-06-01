@@ -15,8 +15,6 @@ import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {BasicRadio} from '../../components/basicViews/BasicRadio';
 import {BasicText} from '../../components/basicViews/BasicText';
 import CalendarView from '../../components/calendarView/calendarView';
-import {Menu} from '../../components/menu';
-import {MenuItem} from '../../components/menu/MenuItem';
 import {SpecialScheduleWindow} from '../../components/modals/specialScheduleWindow';
 import {Popup} from '../../components/popup';
 import {useTheme} from '../../contexts/ThemeContext';
@@ -122,7 +120,7 @@ const CalendarHomeScreen: React.FC<
             onPress={() => {
               navigation.navigate('EventDetailScreen', {
                 event: undefined,
-                date: selectedDay,
+                date: selectedDay.hour(10),
               });
             }}
           />

@@ -34,6 +34,7 @@ import {BasicIcon} from '../basicViews/BasicIcon';
 import {useTheme} from '../../contexts/ThemeContext';
 import {LessonDetailView} from '../modals/lessonDetailView';
 import {BasicButton} from '../basicViews/BasicButton';
+import {version} from 'graphql';
 
 interface LessonProps {
   lesson: LessonFragment;
@@ -89,7 +90,9 @@ export const Lesson: React.FC<LessonProps> = ({
       <BasicButton
         backgroundColor="background"
         onPress={() => {
-          setLessonDetailViewVisible(true);
+          if (variant == 'calendar') {
+            setLessonDetailViewVisible(true);
+          }
         }}
         style={{height}}
         spacing="none"
