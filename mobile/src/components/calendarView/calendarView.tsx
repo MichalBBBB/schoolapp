@@ -45,6 +45,7 @@ import {useTheme} from '../../contexts/ThemeContext';
 import {useSettings} from '../../utils/useSettings';
 import {BasicIcon} from '../basicViews/BasicIcon';
 import {DayEventsList} from './dayEventsList';
+import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
 
 // constants
 export const calendarWidth = Dimensions.get('screen').width;
@@ -89,6 +90,8 @@ const CalendarView: React.FC<calendarProps> = ({
   const calendarRef = useRef<CalendarHandle>(null);
   const weekViewRef = useRef<CalendarHandle>(null);
 
+  const tabBarHeight = useBottomTabBarHeight();
+
   const daysWithDots = useMemo(() => {
     const list: dayjs.Dayjs[] = [];
     tasks?.getAllTasks.forEach(item => {
@@ -115,7 +118,9 @@ const CalendarView: React.FC<calendarProps> = ({
   const dayEventsAnimatedStyle = useAnimatedStyle(() => {
     return {
       // height: screenHeight - (calendarHeight + weekHeaderHeight + 34) - y.value,
-      top: calendarHeight + y.value,
+      // top: calendarHeight + y.value,
+      // top: 0,
+      marginTop: calendarHeight + y.value,
     };
   });
 
@@ -222,7 +227,7 @@ const CalendarView: React.FC<calendarProps> = ({
   );
 
   return (
-    <View style={{flex: 1, justifyContent: 'space-between'}}>
+    <View style={{flex: 1}}>
       <View style={{backgroundColor: theme.colors.background, zIndex: 10}}>
         <View
           style={{
@@ -334,10 +339,12 @@ const CalendarView: React.FC<calendarProps> = ({
           {
             zIndex: 10,
             backgroundColor: theme.colors.background,
-            height: screenHeight - (weekHeight + weekHeaderHeight),
+            // height:
+            //   screenHeight - (weekHeight + weekHeaderHeight + tabBarHeight),
+            flex: 1,
           },
         ]}>
-        <View style={{height: '100%'}}>
+        <View style={{flex: 1}}>
           <DayEventsList
             height={screenHeight - (weekHeight + weekHeaderHeight)}
             scrollEnabled={isWeekView}
