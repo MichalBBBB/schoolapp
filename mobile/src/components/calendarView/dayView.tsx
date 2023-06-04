@@ -170,10 +170,18 @@ const DayView: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
   }, [blocks]);
 
   return (
-    <>
+    <View style={{flex: 1}}>
+      {/* <View
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          height: 100,
+          width: 100,
+          backgroundColor: 'black',
+        }}></View> */}
       <ScrollView
         scrollEnabled={scrollEnabled}
-        style={{width}}
+        style={{width, marginTop: 5}}
         contentContainerStyle={{
           paddingHorizontal: 5,
           paddingTop: 10,
@@ -306,7 +314,7 @@ const DayView: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
           </View>
         )}
       </ScrollView>
-    </>
+    </View>
   );
 };
 
