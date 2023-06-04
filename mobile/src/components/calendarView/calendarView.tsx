@@ -339,12 +339,15 @@ const CalendarView: React.FC<calendarProps> = ({
           {
             zIndex: 10,
             backgroundColor: theme.colors.background,
-            // height:
-            //   screenHeight - (weekHeight + weekHeaderHeight + tabBarHeight),
+            height:
+              screenHeight - (weekHeight + weekHeaderHeight + tabBarHeight),
             flex: 1,
           },
         ]}>
-        <View style={{flex: 1}}>
+        <View
+          style={{
+            flex: 1,
+          }}>
           <DayEventsList
             height={screenHeight - (weekHeight + weekHeaderHeight)}
             scrollEnabled={isWeekView}

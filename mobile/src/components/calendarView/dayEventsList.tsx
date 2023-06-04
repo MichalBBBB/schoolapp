@@ -48,7 +48,7 @@ export const DayEventsList: React.FC<DayEventsListProps> = ({
   const [days, setDays] = useState<Array<string | dayjs.Dayjs>>([]);
   const [index, setIndex] = useState(pastScrollRange);
 
-  const flatListRef = useRef<FlashList<any>>(null);
+  const flatListRef = useRef<FlatList<any>>(null);
 
   const settings = useSettings();
 
@@ -119,8 +119,13 @@ export const DayEventsList: React.FC<DayEventsListProps> = ({
 
   return (
     <View style={{width, height, flex: 1}}>
-      <FlashList
-        estimatedItemSize={width}
+      <FlatList
+        // estimatedItemSize={width}
+        getItemLayout={(item, index) => ({
+          length: width,
+          offset: width * index,
+          index: index,
+        })}
         removeClippedSubviews={true}
         scrollEnabled={scrollEnabled}
         ref={flatListRef}
