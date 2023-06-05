@@ -238,13 +238,18 @@ const EventDetailScreen: React.FC<
         onClose={() => {
           setEditStartDateModalIsVisible(false);
         }}
-        onSubmit={date => {
+        onSubmit={(date, _, lesson) => {
           setStartDate(date!);
           if (isNew) {
             if (!endDateHasBeenChanged) {
               setEndDate(date!.add(1, 'hour'));
             }
           }
+          if (lesson) {
+            const [hour, minute] = lesson?.lessonTime.endTime.split(':');
+            setEndDate(date!.hour(parseInt(hour)).minute(parseInt(minute)));
+          }
+
           setEditStartDateModalIsVisible(false);
         }}
         isVisible={editStartDateModalIsVisible}
