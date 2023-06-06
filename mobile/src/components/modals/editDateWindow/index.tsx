@@ -11,15 +11,13 @@ import {
   Image,
 } from 'react-native';
 import {
+  LessonFragment,
   Reminder,
   ReminderFragment,
   SubjectFragment,
   useGetAllLessonsQuery,
 } from '../../../generated/graphql';
-import {
-  closestLesson,
-  getTimeOfLessonThisDay,
-} from '../../../utils/lessonUtils';
+import {closestLesson, getLessonThisDay} from '../../../utils/lessonUtils';
 import {BasicButton} from '../../basicViews/BasicButton';
 import {BasicCard} from '../../basicViews/BasicCard';
 import {BasicModalCard} from '../../basicViews/BasicModalCard';
@@ -34,7 +32,11 @@ import {BasicIcon} from '../../basicViews/BasicIcon';
 import {checkPermissions} from '../../../utils/notifications';
 
 interface EditDateWindowProps {
-  onSubmit: (date: dayjs.Dayjs | null, reminderTimes?: number[]) => void;
+  onSubmit: (
+    date: dayjs.Dayjs | null,
+    reminderTimes?: number[],
+    lesson?: LessonFragment,
+  ) => void;
   initialDate?: dayjs.Dayjs | null;
   subject?: SubjectFragment | undefined | null;
   onClose: () => void;
@@ -129,6 +131,32 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
       }
     }
   }, [subject, settings]);
+
+  const getLesson = () => {
+    if (subject && settings) {
+      const lesson = getLessonThisDay(
+        subject,
+        selectedDay,
+        lessons?.getAllLessons || [],
+        settings,
+      );
+      if (lesson) {
+        const [hours, minutes] = lesson.lessonTime.startTime.split(':');
+        if (
+          selectedDay.hour() == parseInt(hours) &&
+          selectedDay.minute() == parseInt(minutes)
+        ) {
+          return lesson;
+        } else {
+          return undefined;
+        }
+      } else {
+        return undefined;
+      }
+    } else {
+      return undefined;
+    }
+  };
 
   const specialDaysView = (
     <View style={{flexDirection: 'row'}}>
@@ -277,14 +305,15 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             selectedDay={selectedDay}
             onChangeSelectedDay={date => {
               if (subject && settings) {
-                const timeOfLesson = getTimeOfLessonThisDay(
+                const timeOfLesson = getLessonThisDay(
                   subject,
                   date,
                   lessons?.getAllLessons || [],
                   settings,
                 );
                 if (timeOfLesson) {
-                  const [hours, minutes] = timeOfLesson.split(':');
+                  const [hours, minutes] =
+                    timeOfLesson.lessonTime.startTime.split(':');
                   setSelectedDay(
                     date.hour(parseInt(hours)).minute(parseInt(minutes)),
                   );
@@ -332,7 +361,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             style={{flex: 1}}
             onPress={() => {
               const date: dayjs.Dayjs = selectedDay;
-              onSubmit(date, reminderTimes);
+              onSubmit(date, reminderTimes, getLesson());
             }}
             variant={'unstyled'}>
             <BasicText color="primary" style={{fontWeight: 'bold'}}>

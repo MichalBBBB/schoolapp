@@ -188,7 +188,7 @@ export const getDayNumber: (
   }
 };
 
-export const getTimeOfLessonThisDay = (
+export const getLessonThisDay = (
   subject: SubjectFragment,
   date: dayjs.Dayjs,
   lessons: LessonFragment[],
@@ -201,7 +201,7 @@ export const getTimeOfLessonThisDay = (
     }
   });
   if (lesson) {
-    return lesson.lessonTime.startTime;
+    return lesson;
   } else {
     return null;
   }

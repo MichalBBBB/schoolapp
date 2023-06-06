@@ -1,15 +1,7 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
-import BackButton from '../../components/backButton';
+import {Keyboard, Pressable, ScrollView, StyleSheet, View} from 'react-native';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
@@ -27,10 +19,7 @@ import {useApolloClient} from '@apollo/client';
 import {SelectSubjectPopup} from '../../components/popups/selectSubject/selectSubjectPopup';
 import {useEditEvent} from '../../mutationHooks/calendarEvent/editEvent';
 import {BasicCard} from '../../components/basicViews/BasicCard';
-import {
-  CalendarStackParamList,
-  CalendarStackScreenProps,
-} from '../../utils/types';
+import {CalendarStackScreenProps} from '../../utils/types';
 import {useCreateEvent} from '../../mutationHooks/calendarEvent/createEvent';
 import {RemindersWindow} from '../../components/modals/remindersWindow';
 import {checkPermissions} from '../../utils/notifications';
@@ -238,13 +227,18 @@ const EventDetailScreen: React.FC<
         onClose={() => {
           setEditStartDateModalIsVisible(false);
         }}
-        onSubmit={date => {
+        onSubmit={(date, _, lesson) => {
           setStartDate(date!);
           if (isNew) {
             if (!endDateHasBeenChanged) {
               setEndDate(date!.add(1, 'hour'));
             }
           }
+          if (lesson) {
+            const [hour, minute] = lesson?.lessonTime.endTime.split(':');
+            setEndDate(date!.hour(parseInt(hour)).minute(parseInt(minute)));
+          }
+
           setEditStartDateModalIsVisible(false);
         }}
         isVisible={editStartDateModalIsVisible}
