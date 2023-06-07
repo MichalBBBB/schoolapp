@@ -228,7 +228,7 @@ const EventDetailScreen: React.FC<
         onClose={() => {
           setEditStartDateModalIsVisible(false);
         }}
-        onSubmit={(date, _includesTime, _, lesson) => {
+        onSubmit={({date, lesson}) => {
           setStartDate(date!);
           if (isNew) {
             if (!endDateHasBeenChanged) {
@@ -250,7 +250,7 @@ const EventDetailScreen: React.FC<
         onClose={() => {
           setEditEndDateModalIsVisible(false);
         }}
-        onSubmit={date => {
+        onSubmit={({date}) => {
           setEditEndDateModalIsVisible(false);
           if (!endDate.isSame(date)) {
             setEndDateHasBeenChanged(true);

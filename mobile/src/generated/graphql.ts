@@ -364,6 +364,7 @@ export type MutationEditTaskArgs = {
   doDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
   dueDate?: InputMaybe<Scalars['DateTime']>;
   dueDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
+  duration?: InputMaybe<Scalars['Float']>;
   id: Scalars['String'];
   name: Scalars['String'];
   reminders?: InputMaybe<Array<RemindersInput>>;
@@ -602,6 +603,7 @@ export type Task = {
   done: Scalars['Boolean'];
   dueDate?: Maybe<Scalars['DateTime']>;
   dueDateIncludesTime: Scalars['Boolean'];
+  duration?: Maybe<Scalars['Float']>;
   id: Scalars['String'];
   name: Scalars['String'];
   reminders: Array<Reminder>;
@@ -703,7 +705,7 @@ export type SubjectFragment = { __typename?: 'Subject', id: string, name: string
 
 export type SubtaskFragment = { __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean };
 
-export type TaskFragment = { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> };
+export type TaskFragment = { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, duration?: number | null, doDateIncludesTime: boolean, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> };
 
 export type CreateEventMutationVariables = Exact<{
   startDate: Scalars['DateTime'];
@@ -993,7 +995,7 @@ export type CreateTaskMutationVariables = Exact<{
 }>;
 
 
-export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> } };
+export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, duration?: number | null, doDateIncludesTime: boolean, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> } };
 
 export type DeleteSubtaskMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1024,13 +1026,14 @@ export type EditTaskMutationVariables = Exact<{
   dueDate?: InputMaybe<Scalars['DateTime']>;
   dueDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
   doDate?: InputMaybe<Scalars['DateTime']>;
+  duration?: InputMaybe<Scalars['Float']>;
   doDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
   reminders?: InputMaybe<Array<RemindersInput> | RemindersInput>;
   subjectId?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type EditTaskMutation = { __typename?: 'Mutation', editTask: { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> } };
+export type EditTaskMutation = { __typename?: 'Mutation', editTask: { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, duration?: number | null, doDateIncludesTime: boolean, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> } };
 
 export type ToggleSubtaskMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1044,7 +1047,7 @@ export type ToggleTaskMutationVariables = Exact<{
 }>;
 
 
-export type ToggleTaskMutation = { __typename?: 'Mutation', toggleTask: { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> } };
+export type ToggleTaskMutation = { __typename?: 'Mutation', toggleTask: { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, duration?: number | null, doDateIncludesTime: boolean, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> } };
 
 export type ChangePasswordMutationVariables = Exact<{
   oldPassword: Scalars['String'];
@@ -1136,7 +1139,7 @@ export type GetAllSubjectsQuery = { __typename?: 'Query', getAllSubjects: Array<
 export type GetAllTasksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllTasksQuery = { __typename?: 'Query', getAllTasks: Array<{ __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> }> };
+export type GetAllTasksQuery = { __typename?: 'Query', getAllTasks: Array<{ __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, duration?: number | null, doDateIncludesTime: boolean, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> }> };
 
 export type GetInvitesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1362,6 +1365,7 @@ export const TaskFragmentDoc = gql`
   dueDate
   dueDateIncludesTime
   doDate
+  duration
   doDateIncludesTime
   reminders {
     ...Reminder
@@ -2630,7 +2634,7 @@ export type EditSubtaskMutationHookResult = ReturnType<typeof useEditSubtaskMuta
 export type EditSubtaskMutationResult = Apollo.MutationResult<EditSubtaskMutation>;
 export type EditSubtaskMutationOptions = Apollo.BaseMutationOptions<EditSubtaskMutation, EditSubtaskMutationVariables>;
 export const EditTaskDocument = gql`
-    mutation EditTask($id: String!, $name: String!, $text: String, $dueDate: DateTime, $dueDateIncludesTime: Boolean, $doDate: DateTime, $doDateIncludesTime: Boolean, $reminders: [RemindersInput!], $subjectId: String) {
+    mutation EditTask($id: String!, $name: String!, $text: String, $dueDate: DateTime, $dueDateIncludesTime: Boolean, $doDate: DateTime, $duration: Float, $doDateIncludesTime: Boolean, $reminders: [RemindersInput!], $subjectId: String) {
   editTask(
     id: $id
     name: $name
@@ -2638,6 +2642,7 @@ export const EditTaskDocument = gql`
     dueDate: $dueDate
     dueDateIncludesTime: $dueDateIncludesTime
     doDate: $doDate
+    duration: $duration
     doDateIncludesTime: $doDateIncludesTime
     reminders: $reminders
     subjectId: $subjectId
@@ -2667,6 +2672,7 @@ export type EditTaskMutationFn = Apollo.MutationFunction<EditTaskMutation, EditT
  *      dueDate: // value for 'dueDate'
  *      dueDateIncludesTime: // value for 'dueDateIncludesTime'
  *      doDate: // value for 'doDate'
+ *      duration: // value for 'duration'
  *      doDateIncludesTime: // value for 'doDateIncludesTime'
  *      reminders: // value for 'reminders'
  *      subjectId: // value for 'subjectId'

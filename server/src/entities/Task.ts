@@ -42,6 +42,10 @@ export class Task extends BaseEntity {
   @Field(() => Date, { nullable: true })
   doDate?: Date;
 
+  @Column({ nullable: true })
+  @Field(() => Number, { nullable: true })
+  duration?: number;
+
   @Column({ default: true })
   @Field()
   doDateIncludesTime: boolean;

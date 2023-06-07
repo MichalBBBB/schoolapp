@@ -63,6 +63,7 @@ export const useEditTask: () => [
             dueDate: variables.dueDate || null,
             dueDateIncludesTime: variables.dueDateIncludesTime || false,
             doDate: variables.doDate || null,
+            duration: variables.duration || null,
             doDateIncludesTime: variables.doDateIncludesTime || false,
             subtasks: task.subtasks,
             subject: subject,

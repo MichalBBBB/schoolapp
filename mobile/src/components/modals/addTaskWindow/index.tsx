@@ -146,7 +146,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
         onClose={() => {
           setViewVisible('main');
         }}
-        onSubmit={(date, includesTime) => {
+        onSubmit={({date, includesTime}) => {
           setTaskDate(date);
           setDueDateIncludesTime(includesTime);
           setViewVisible('main');

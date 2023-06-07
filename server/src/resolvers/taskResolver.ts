@@ -202,6 +202,7 @@ export class taskResolver {
     dueDateIncludesTime?: boolean,
     @Arg("doDate", { nullable: true }) doDate?: Date,
     @Arg("doDateIncludesTime", { nullable: true }) doDateIncludesTime?: boolean,
+    @Arg("duration", { nullable: true }) duration?: number,
     @Arg("reminders", () => [RemindersInput], { nullable: true })
     reminders?: RemindersInput[],
     @Arg("subjectId", { nullable: true }) subjectId?: string
@@ -230,6 +231,7 @@ export class taskResolver {
       task.name = name;
       task.text = text;
       task.doDate = doDate;
+      task.duration = duration;
       task.doDateIncludesTime = doDateIncludesTime || false;
       task.dueDateIncludesTime = dueDateIncludesTime || false;
       task.dueDate = dueDate;

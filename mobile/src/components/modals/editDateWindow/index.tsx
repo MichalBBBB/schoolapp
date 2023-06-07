@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Pressable,
   Image,
+  LayoutAnimation,
 } from 'react-native';
 import {
   LessonFragment,
@@ -30,14 +31,16 @@ import notifee, {AndroidNotificationSetting} from '@notifee/react-native';
 import {useSettings} from '../../../utils/useSettings';
 import {BasicIcon} from '../../basicViews/BasicIcon';
 import {checkPermissions} from '../../../utils/notifications';
+import {DurationWindow} from '../durationWindow';
 
 interface EditDateWindowProps {
-  onSubmit: (
-    date: dayjs.Dayjs | null,
-    includesTime: boolean,
-    reminderTimes?: number[],
-    lesson?: LessonFragment,
-  ) => void;
+  onSubmit: (data: {
+    date: dayjs.Dayjs | null;
+    includesTime: boolean;
+    reminderTimes?: number[];
+    lesson?: LessonFragment;
+    duration?: number | null;
+  }) => void;
   initialDate?: dayjs.Dayjs | null;
   subject?: SubjectFragment | undefined | null;
   onClose: () => void;
@@ -49,6 +52,8 @@ interface EditDateWindowProps {
   clearButton?: boolean;
   allowNoTime?: boolean;
   includesTime?: boolean;
+  showDuration?: boolean;
+  initialDuration?: number | null;
 }
 
 type SpecialDate = {
@@ -92,6 +97,8 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
   clearButton = true,
   allowNoTime = false,
   includesTime = true,
+  showDuration = false,
+  initialDuration,
 }) => {
   const {data: lessons} = useGetAllLessonsQuery();
 
@@ -110,6 +117,8 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
     initialReminderTimes,
   );
   const [includeTime, setIncludeTime] = useState(includesTime);
+  const [duration, setDuration] = useState(initialDuration || null);
+  const [durationWindowOpen, setDurationWindowOpen] = useState(false);
 
   const calendarRef = useRef<CalendarHandle>(null);
 
@@ -244,6 +253,26 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
     </BasicButton>
   );
 
+  const durationView = (
+    <BasicButton
+      variant="unstyled"
+      onPress={() => setDurationWindowOpen(true)}
+      style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+      }}>
+      <BasicText>Duration</BasicText>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <BasicText>{duration ? `${duration} minutes` : 'None'}</BasicText>
+        <BasicIcon
+          source={require('../../../../assets/Chevron-right.png')}
+          style={{height: 20, width: 20}}
+        />
+      </View>
+    </BasicButton>
+  );
+
   return (
     <BasicModalCard
       alignCard="center"
@@ -266,7 +295,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             <BasicButton
               variant="unstyled"
               onPress={() => {
-                onSubmit(null, false);
+                onSubmit({date: null, includesTime: false});
               }}>
               <BasicText>Clear</BasicText>
             </BasicButton>
@@ -350,6 +379,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
               backgroundColor="accentBackground2"
               style={{marginHorizontal: 10, marginTop: 10}}>
               {showTime && timeView}
+              {showDuration && includeTime && durationView}
               {showReminders && remindersView}
             </BasicCard>
           )}
@@ -369,7 +399,13 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             style={{flex: 1}}
             onPress={() => {
               const date: dayjs.Dayjs = selectedDay;
-              onSubmit(date, includeTime, reminderTimes, getLesson());
+              onSubmit({
+                date,
+                includesTime: includeTime,
+                reminderTimes,
+                lesson: getLesson(),
+                duration,
+              });
             }}
             variant={'unstyled'}>
             <BasicText color="primary" style={{fontWeight: 'bold'}}>
@@ -387,12 +423,26 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             setRemindersWindowOpen(false);
           }}
         />
+        <DurationWindow
+          initialDuration={duration}
+          isVisible={durationWindowOpen}
+          onClose={() => {
+            setDurationWindowOpen(false);
+          }}
+          onSubmit={duration => {
+            setDuration(duration);
+            setDurationWindowOpen(false);
+          }}
+        />
         <SelectTimeModal
           allowClear={allowNoTime}
           onClose={() => {
             setTimePopupOpen(false);
           }}
           onSubmit={time => {
+            LayoutAnimation.configureNext(
+              LayoutAnimation.Presets.easeInEaseOut,
+            );
             setTimePopupOpen(false);
             if (time) {
               setIncludeTime(true);

@@ -211,7 +211,7 @@ export const Lesson: React.FC<LessonProps> = ({
         onClose={() => {
           setStudyTimeModalVisible(false);
         }}
-        onSubmit={date => {
+        onSubmit={({date}) => {
           setStudyTimeModalVisible(false);
           addTask({
             id: uuidv4(),

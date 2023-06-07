@@ -135,7 +135,7 @@ const EditProjectTaskWindow: React.FC<EditProjectTaskWindowProps> = ({
         onClose={() => {
           setViewVisible('main');
         }}
-        onSubmit={date => {
+        onSubmit={({date}) => {
           setDueDate(date);
           setViewVisible('main');
         }}
@@ -146,7 +146,7 @@ const EditProjectTaskWindow: React.FC<EditProjectTaskWindowProps> = ({
         onClose={() => {
           setViewVisible('main');
         }}
-        onSubmit={date => {
+        onSubmit={({date}) => {
           setDoDate(date);
           setViewVisible('main');
         }}

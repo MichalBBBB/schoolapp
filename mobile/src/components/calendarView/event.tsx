@@ -106,7 +106,7 @@ const Event: React.FC<EventProps> = ({event, height, variant = 'list'}) => {
         onClose={() => {
           setStudyTimeModalVisible(false);
         }}
-        onSubmit={date => {
+        onSubmit={({date}) => {
           setStudyTimeModalVisible(false);
           addTask({
             id: uuidv4(),

@@ -1,13 +1,8 @@
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {
-  Button,
   FlatList,
-  Image,
   StyleSheet,
-  Text,
-  TextInput,
   View,
   TouchableOpacity,
   Keyboard,
@@ -21,26 +16,16 @@ import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
 import EditDateModal from '../../components/modals/editDateWindow';
 import Subtask from '../../components/listItems/subtask';
 import {calendarConfigWithoutTime} from '../../components/listItems/task';
-import {
-  GetAllTasksDocument,
-  RemindersInput,
-  SubtaskFragment,
-  useCreateSubtaskMutation,
-  useEditTaskMutation,
-  useGetAllTasksQuery,
-} from '../../generated/graphql';
+import {RemindersInput, useGetAllTasksQuery} from '../../generated/graphql';
 import {v4 as uuidv4} from 'uuid';
 import {useCreateSubtask} from '../../mutationHooks/task/createSubtask';
 import {useEditTask} from '../../mutationHooks/task/editTask';
 import {setRemindersFromApollo} from '../../utils/reminderUtils';
 import {useApolloClient} from '@apollo/client';
-import SelectSubjectWindow from '../../components/popups/selectSubject';
-import {Popup} from '../../components/popup';
 import {SelectSubjectPopup} from '../../components/popups/selectSubject/selectSubjectPopup';
 import {TaskStackScreenProps} from '../../utils/types';
 import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {SubjectColorsObject} from '../../types/Theme';
-import {useEditSubtask} from '../../mutationHooks/task/editSubtask';
 
 const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
   navigation,
@@ -63,10 +48,6 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
     useState(false);
   const [addSubtaskModalIsVisible, setAddSubtaskModalIsVisible] =
     useState(false);
-
-  useEffect(() => {
-    console.log(name);
-  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -205,7 +186,7 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
         onClose={() => {
           setEditDueDateModalIsVisible(false);
         }}
-        onSubmit={(date, includesTime) => {
+        onSubmit={({date, includesTime}) => {
           editTask({
             id: task.id,
             name,
@@ -221,6 +202,8 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
         isVisible={editDueDateModalIsVisible}
       />
       <EditDateModal
+        showDuration={true}
+        initialDuration={task.duration}
         includesTime={task.doDateIncludesTime}
         allowNoTime={true}
         initialDate={task.doDate ? dayjs(task.doDate) : dayjs()}
@@ -229,7 +212,7 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
         onClose={() => {
           setEditDoDateModalIsVisible(false);
         }}
-        onSubmit={async (date, includesTime, reminderTimes) => {
+        onSubmit={async ({date, includesTime, reminderTimes, duration}) => {
           let reminders: RemindersInput[] | undefined;
           if (reminderTimes) {
             reminders = reminderTimes.map(item => {
@@ -254,6 +237,7 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
             doDateIncludesTime: includesTime,
             reminders,
             subjectId: task.subject?.id,
+            duration,
           });
           setRemindersFromApollo(client);
         }}
