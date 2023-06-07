@@ -34,9 +34,17 @@ export class Task extends BaseEntity {
   @Field(() => Date, { nullable: true })
   dueDate?: Date;
 
+  @Column({ default: true })
+  @Field()
+  dueDateIncludesTime: boolean;
+
   @Column({ nullable: true })
   @Field(() => Date, { nullable: true })
   doDate?: Date;
+
+  @Column({ default: true })
+  @Field()
+  doDateIncludesTime: boolean;
 
   @ManyToOne(() => User, (user) => user.tasks, {
     onDelete: "CASCADE",

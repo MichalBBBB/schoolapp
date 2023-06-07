@@ -3,7 +3,9 @@ mutation EditTask(
   $name: String!
   $text: String
   $dueDate: DateTime
+  $dueDateIncludesTime: Boolean
   $doDate: DateTime
+  $doDateIncludesTime: Boolean
   $reminders: [RemindersInput!]
   $subjectId: String
 ) {
@@ -12,7 +14,9 @@ mutation EditTask(
     name: $name
     text: $text
     dueDate: $dueDate
+    dueDateIncludesTime: $dueDateIncludesTime
     doDate: $doDate
+    doDateIncludesTime: $doDateIncludesTime
     reminders: $reminders
     subjectId: $subjectId
   ) {

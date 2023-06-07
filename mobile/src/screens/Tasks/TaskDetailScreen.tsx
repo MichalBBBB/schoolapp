@@ -89,6 +89,8 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
               name,
               text,
               dueDate: task.dueDate,
+              dueDateIncludesTime: task.dueDateIncludesTime,
+              doDateIncludesTime: task.doDateIncludesTime,
               doDate: task.doDate,
               subjectId: task.subject?.id,
             });
@@ -166,7 +168,9 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
                 name,
                 text,
                 dueDate: task.dueDate,
+                dueDateIncludesTime: task.dueDateIncludesTime,
                 doDate: task.doDate,
+                doDateIncludesTime: task.doDateIncludesTime,
                 subjectId: subject?.id || null,
               });
             }}
@@ -194,18 +198,22 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
         />
       </View>
       <EditDateModal
+        includesTime={task.dueDateIncludesTime}
+        allowNoTime={true}
         initialDate={task.dueDate ? dayjs(task.dueDate) : dayjs()}
         subject={task.subject}
         onClose={() => {
           setEditDueDateModalIsVisible(false);
         }}
-        onSubmit={date => {
+        onSubmit={(date, includesTime) => {
           editTask({
             id: task.id,
             name,
             text,
             dueDate: date?.toDate() || null,
+            dueDateIncludesTime: includesTime,
             doDate: task.doDate,
+            doDateIncludesTime: task.doDateIncludesTime,
             subjectId: task.subject?.id,
           });
           setEditDueDateModalIsVisible(false);
@@ -213,13 +221,15 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
         isVisible={editDueDateModalIsVisible}
       />
       <EditDateModal
+        includesTime={task.doDateIncludesTime}
+        allowNoTime={true}
         initialDate={task.doDate ? dayjs(task.doDate) : dayjs()}
         initialReminderTimes={task.reminders.map(item => item.minutesBefore)}
         showReminders
         onClose={() => {
           setEditDoDateModalIsVisible(false);
         }}
-        onSubmit={async (date, reminderTimes) => {
+        onSubmit={async (date, includesTime, reminderTimes) => {
           let reminders: RemindersInput[] | undefined;
           if (reminderTimes) {
             reminders = reminderTimes.map(item => {
@@ -239,7 +249,9 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
             name,
             text,
             dueDate: task.dueDate,
+            dueDateIncludesTime: task.dueDateIncludesTime,
             doDate: date?.toDate() || null,
+            doDateIncludesTime: includesTime,
             reminders,
             subjectId: task.subject?.id,
           });

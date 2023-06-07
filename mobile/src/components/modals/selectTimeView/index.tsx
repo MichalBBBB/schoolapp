@@ -8,13 +8,17 @@ import {BasicButton} from '../../basicViews/BasicButton';
 import {BasicText} from '../../basicViews/BasicText';
 
 interface SelectTimeViewModalProps {
-  onSubmit?: (time: string) => void;
+  onSubmit?: (time: string | null) => void;
   initialTime?: string | undefined;
+  onClose: () => void;
+  allowClear?: boolean;
 }
 
 const SelectTimeView: React.FC<SelectTimeViewModalProps> = ({
   onSubmit,
   initialTime = '8:00',
+  onClose,
+  allowClear = false,
 }) => {
   const [date, setDate] = useState(dayjs(initialTime, 'HH:mm').toDate());
 
@@ -22,6 +26,24 @@ const SelectTimeView: React.FC<SelectTimeViewModalProps> = ({
 
   return (
     <View style={styles.container}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          width: '100%',
+          padding: 10,
+        }}>
+        <BasicText textVariant="heading">Select Time</BasicText>
+        {allowClear && (
+          <BasicButton
+            variant="unstyled"
+            onPress={() => {
+              onSubmit?.(null);
+            }}>
+            <BasicText>Clear</BasicText>
+          </BasicButton>
+        )}
+      </View>
       <DatePicker
         date={date}
         mode="time"
@@ -31,15 +53,38 @@ const SelectTimeView: React.FC<SelectTimeViewModalProps> = ({
           setDate(newDate);
         }}
       />
-      <BasicButton
-        style={{padding: 10}}
-        onPress={() => {
-          if (onSubmit) {
-            onSubmit(dayjs(date).format('HH:mm'));
-          }
+      <View
+        style={{
+          flexDirection: 'row',
+          width: '100%',
+          alignItems: 'center',
+          paddingHorizontal: 20,
+          padding: 5,
+          paddingTop: 10,
         }}>
-        <BasicText color="background">Select</BasicText>
-      </BasicButton>
+        <BasicButton
+          style={{flex: 1}}
+          onPress={() => {
+            onClose();
+          }}
+          variant={'unstyled'}>
+          <BasicText color="textSecondary" style={{fontWeight: 'bold'}}>
+            Cancel
+          </BasicText>
+        </BasicButton>
+        <BasicButton
+          style={{flex: 1}}
+          onPress={() => {
+            if (onSubmit) {
+              onSubmit(dayjs(date).format('HH:mm'));
+            }
+          }}
+          variant={'unstyled'}>
+          <BasicText color="primary" style={{fontWeight: 'bold'}}>
+            Select
+          </BasicText>
+        </BasicButton>
+      </View>
     </View>
   );
 };

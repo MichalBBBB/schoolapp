@@ -61,7 +61,9 @@ export const useEditTask: () => [
             updatedAt: new Date().toISOString(),
             text: variables.text,
             dueDate: variables.dueDate || null,
+            dueDateIncludesTime: variables.dueDateIncludesTime || false,
             doDate: variables.doDate || null,
+            doDateIncludesTime: variables.doDateIncludesTime || false,
             subtasks: task.subtasks,
             subject: subject,
             reminders: remindersArray.map(item => {

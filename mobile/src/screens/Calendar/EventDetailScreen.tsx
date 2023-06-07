@@ -221,13 +221,14 @@ const EventDetailScreen: React.FC<
         </BasicCard>
       </ScrollView>
       <EditDateModal
+        allowNoTime={false}
         clearButton={false}
         initialDate={startDate ? dayjs(startDate) : dayjs()}
         subject={subject}
         onClose={() => {
           setEditStartDateModalIsVisible(false);
         }}
-        onSubmit={(date, _, lesson) => {
+        onSubmit={(date, _includesTime, _, lesson) => {
           setStartDate(date!);
           if (isNew) {
             if (!endDateHasBeenChanged) {
