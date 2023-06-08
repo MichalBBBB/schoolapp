@@ -80,6 +80,10 @@ export class projectTaskResolver {
     @Arg("projectId") projectId: string,
     @Arg("dueDate", { nullable: true }) dueDate?: Date,
     @Arg("doDate", { nullable: true }) doDate?: Date,
+    @Arg("dueDateIncludesTime", { nullable: true })
+    dueDateIncludesTime?: boolean,
+    @Arg("doDateIncludesTime", { nullable: true }) doDateIncludesTime?: boolean,
+    @Arg("duration", { nullable: true }) duration?: number,
     @Arg("id", { nullable: true }) id?: string
   ) {
     return ProjectTask.create({
@@ -88,6 +92,9 @@ export class projectTaskResolver {
       name,
       dueDate,
       doDate,
+      dueDateIncludesTime,
+      doDateIncludesTime,
+      duration,
     }).save();
   }
 
@@ -98,6 +105,10 @@ export class projectTaskResolver {
     @Arg("id") id: string,
     @Arg("name") name: string,
     @Arg("dueDate", { nullable: true }) dueDate?: Date,
+    @Arg("dueDateIncludesTime", { nullable: true })
+    dueDateIncludesTime?: boolean,
+    @Arg("doDateIncludesTime", { nullable: true }) doDateIncludesTime?: boolean,
+    @Arg("duration", { nullable: true }) duration?: number,
     @Arg("doDate", { nullable: true }) doDate?: Date
   ) {
     const projectTask = await ProjectTask.findOne({ where: { id } });
@@ -105,6 +116,9 @@ export class projectTaskResolver {
       projectTask.name = name;
       projectTask.dueDate = dueDate;
       projectTask.doDate = doDate;
+      projectTask.doDateIncludesTime = doDateIncludesTime || false;
+      projectTask.dueDateIncludesTime = dueDateIncludesTime || false;
+      projectTask.duration = duration;
       await projectTask.save();
       return projectTask;
     } else {

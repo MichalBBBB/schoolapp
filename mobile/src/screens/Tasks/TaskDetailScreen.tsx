@@ -72,6 +72,7 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
               dueDate: task.dueDate,
               dueDateIncludesTime: task.dueDateIncludesTime,
               doDateIncludesTime: task.doDateIncludesTime,
+              duration: task.duration,
               doDate: task.doDate,
               subjectId: task.subject?.id,
             });
@@ -227,6 +228,7 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
             });
           }
           setEditDoDateModalIsVisible(false);
+          console.log(duration);
           await editTask({
             id: task.id,
             name,

@@ -10,8 +10,12 @@ import {
 import {
   CalendarEventFragment,
   LessonFragment,
+  ProjectTaskWithProjectFragment,
+  TaskFragment,
   useGetAllEventsQuery,
   useGetAllLessonsQuery,
+  useGetAllTasksQuery,
+  useGetProjectTasksOfUserQuery,
 } from '../../generated/graphql';
 import Event from './event';
 import {Lesson} from './lesson';
@@ -27,6 +31,7 @@ import {replaceAllData} from '../../Content';
 import {useApolloClient} from '@apollo/client';
 import {BasicText} from '../basicViews/BasicText';
 import {useTheme} from '../../contexts/ThemeContext';
+import CalendarTask from './calendarTask';
 
 export const width = Dimensions.get('screen').width;
 
@@ -40,6 +45,8 @@ interface DayEventsProps {
 const DayView: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
   const {data} = useGetAllEventsQuery();
   const {data: lessons} = useGetAllLessonsQuery();
+  const {data: tasks} = useGetAllTasksQuery();
+  const {data: projectTasks} = useGetProjectTasksOfUserQuery();
   const navigation = useNavigation<CalendarNavigationProp>();
   const specialSchedule = useGetSpecialScheduleForDay(date);
 
@@ -104,25 +111,54 @@ const DayView: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
             return true;
           }
         }) || [];
-    const result = getEventBlocks(date, eventsThisDay, lessonsThisDay);
+    const tasksThisDay: Array<TaskFragment | ProjectTaskWithProjectFragment> =
+      (
+        (tasks?.getAllTasks.filter(item => {
+          return dayjs(item.doDate).isSame(dayjs(date), 'date');
+        }) as Array<TaskFragment | ProjectTaskWithProjectFragment>) || []
+      ).concat(
+        projectTasks?.getProjectTasksOfUser.filter(item => !item.done) || [],
+      ) || [];
+    const result = getEventBlocks(
+      date,
+      eventsThisDay,
+      lessonsThisDay,
+      tasksThisDay,
+    );
     return result;
-  }, [data, lessons]);
+  }, [data, lessons, tasks, projectTasks]);
 
   // get the width of an element based on the length of the lessonTime
-  const getHeight = (item: LessonFragment | CalendarEventFragment) => {
+  const getHeight = (
+    item:
+      | LessonFragment
+      | CalendarEventFragment
+      | TaskFragment
+      | ProjectTaskWithProjectFragment,
+  ) => {
     if (item.__typename == 'Lesson') {
       const diff = getEnd(item, date).diff(getStart(item, date), 'm');
       return diff * heightConstant;
     } else if (item.__typename == 'CalendarEvent') {
-      const diff = dayjs(item.endDate).diff(dayjs(item.startDate), 'm');
+      const diff = getEnd(item, date).diff(dayjs(item.startDate), 'm');
       return diff * heightConstant;
+    } else if (
+      (item.__typename == 'Task' || item.__typename == 'ProjectTask') &&
+      item.duration
+    ) {
+      const diff = Math.max(item.duration, 10) * heightConstant;
+      return diff;
     } else {
       return 100;
     }
   };
 
   const getOffset = (
-    item: LessonFragment | CalendarEventFragment,
+    item:
+      | LessonFragment
+      | CalendarEventFragment
+      | TaskFragment
+      | ProjectTaskWithProjectFragment,
     block: EventBlock,
     columnIndex: number,
     itemIndex: number,
@@ -150,6 +186,46 @@ const DayView: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
       );
 
       return diff * heightConstant;
+    }
+  };
+
+  const renderItem = (
+    item:
+      | LessonFragment
+      | CalendarEventFragment
+      | TaskFragment
+      | ProjectTaskWithProjectFragment,
+  ) => {
+    if (item.__typename == 'CalendarEvent') {
+      return (
+        <Event
+          event={item as CalendarEventFragment}
+          height={getHeight(item)}
+          variant="calendar"
+        />
+      );
+    } else if (item.__typename == 'Lesson') {
+      return (
+        <Lesson
+          navigation={navigation}
+          lesson={item}
+          height={getHeight(item)}
+          variant="calendar"
+          event={data?.getAllEvents.find(event => {
+            return (
+              event.subject?.id == item.subject?.id &&
+              dayjs(event.startDate).format('HH:mm') ==
+                item.lessonTime.startTime &&
+              dayjs(event.startDate).isSame(date, 'day')
+            );
+          })}
+          onEventPress={event => {
+            navigation.navigate('EventDetailScreen', {event});
+          }}
+        />
+      );
+    } else if (item.__typename == 'Task') {
+      return <CalendarTask task={item} height={getHeight(item)} />;
     }
   };
 
@@ -268,31 +344,7 @@ const DayView: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
                           ),
                           marginHorizontal: 5,
                         }}>
-                        {item.__typename == 'Lesson' ? (
-                          <Lesson
-                            navigation={navigation}
-                            lesson={item}
-                            height={getHeight(item)}
-                            variant="calendar"
-                            event={data?.getAllEvents.find(event => {
-                              return (
-                                event.subject?.id == item.subject?.id &&
-                                dayjs(event.startDate).format('HH:mm') ==
-                                  item.lessonTime.startTime &&
-                                dayjs(event.startDate).isSame(date, 'day')
-                              );
-                            })}
-                            onEventPress={event => {
-                              navigation.navigate('EventDetailScreen', {event});
-                            }}
-                          />
-                        ) : (
-                          <Event
-                            event={item as CalendarEventFragment}
-                            height={getHeight(item)}
-                            variant="calendar"
-                          />
-                        )}
+                        {renderItem(item)}
                       </View>
                     ))}
                   </View>

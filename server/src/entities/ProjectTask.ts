@@ -33,9 +33,21 @@ export class ProjectTask extends BaseEntity {
   @Field({ nullable: true })
   dueDate?: Date;
 
+  @Column({ default: true })
+  @Field()
+  dueDateIncludesTime: boolean;
+
   @Column({ nullable: true })
   @Field({ nullable: true })
   doDate?: Date;
+
+  @Column({ default: true })
+  @Field()
+  doDateIncludesTime: boolean;
+
+  @Column({ nullable: true })
+  @Field(() => Number, { nullable: true })
+  duration?: number;
 
   @OneToMany(
     () => UserProjectTask,
