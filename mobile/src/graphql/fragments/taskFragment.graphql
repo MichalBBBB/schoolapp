@@ -12,7 +12,10 @@ fragment Task on Task {
   }
   text
   dueDate
+  dueDateIncludesTime
   doDate
+  duration
+  doDateIncludesTime
   reminders {
     ...Reminder
   }

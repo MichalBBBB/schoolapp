@@ -2,9 +2,20 @@ mutation EditProjectTask(
   $id: String!
   $name: String!
   $dueDate: DateTime
+  $dueDateIncludesTime: Boolean
   $doDate: DateTime
+  $duration: Float
+  $doDateIncludesTime: Boolean
 ) {
-  editProjectTask(id: $id, name: $name, dueDate: $dueDate, doDate: $doDate) {
+  editProjectTask(
+    id: $id
+    name: $name
+    dueDate: $dueDate
+    doDate: $doDate
+    dueDateIncludesTime: $dueDateIncludesTime
+    doDateIncludesTime: $doDateIncludesTime
+    duration: $duration
+  ) {
     ...ProjectTask
   }
 }

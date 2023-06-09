@@ -2,22 +2,11 @@ import dayjs from 'dayjs';
 import React, {useEffect, useState} from 'react';
 import {
   View,
-  Text,
-  TouchableOpacity,
-  Image,
   StyleSheet,
   Pressable,
-  TouchableHighlight,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {
-  CalendarEventFragment,
-  GetAllEventsDocument,
-  GetAllTasksDocument,
-  LessonFragment,
-  useCreateTaskMutation,
-  useDeleteEventMutation,
-} from '../../generated/graphql';
+import {CalendarEventFragment, LessonFragment} from '../../generated/graphql';
 import {BasicCard} from '../basicViews/BasicCard';
 import {BasicText} from '../basicViews/BasicText';
 import EditDateModal from '../modals/editDateWindow';
@@ -28,13 +17,11 @@ import {useCreateTask} from '../../mutationHooks/task/createTask';
 import {SubjectColorsObject} from '../../types/Theme';
 import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
 import {Popup} from '../popup';
-import {useNavigation} from '@react-navigation/native';
 import {CalendarNavigationProp} from '../../utils/types';
 import {BasicIcon} from '../basicViews/BasicIcon';
 import {useTheme} from '../../contexts/ThemeContext';
 import {LessonDetailView} from '../modals/lessonDetailView';
 import {BasicButton} from '../basicViews/BasicButton';
-import {version} from 'graphql';
 
 interface LessonProps {
   lesson: LessonFragment;
@@ -100,11 +87,15 @@ export const Lesson: React.FC<LessonProps> = ({
         <BasicCard
           subjectColor={lesson.subject.colorName as keyof SubjectColorsObject}
           borderWidth={1}
+          spacing="none"
           style={[
             styles.container,
             {
-              justifyContent: 'space-between',
+              justifyContent:
+                height && height >= 40 ? 'space-between' : 'center',
               width: '100%',
+              padding: (height && height >= 40) || !height ? 12 : 0,
+              paddingHorizontal: 10,
               height: height ? '100%' : undefined,
             },
           ]}>
@@ -119,11 +110,15 @@ export const Lesson: React.FC<LessonProps> = ({
                   <BasicText style={{marginRight: 5}}>
                     {lesson.subject.name}
                   </BasicText>
-                  {variant == 'calendar' && extraInfoView}
+                  {variant == 'calendar' &&
+                    height &&
+                    height >= 40 &&
+                    extraInfoView}
                 </View>
-                {variant == 'list' && extraInfoView}
+                {(variant == 'list' || (height && height <= 40)) &&
+                  extraInfoView}
               </View>
-              {variant == 'list' && (
+              {(variant == 'list' || (height && height <= 40)) && (
                 <BasicText color="textSecondary">
                   {`${dayjs(lesson.lessonTime.startTime, 'HH:mm').format(
                     'HH:mm',
@@ -185,7 +180,7 @@ export const Lesson: React.FC<LessonProps> = ({
               </TouchableWithoutFeedback>
             )}
           </View>
-          {variant == 'calendar' && (
+          {variant == 'calendar' && height && height >= 40 && (
             <BasicText color="textSecondary">
               {`${dayjs(lesson.lessonTime.startTime, 'HH:mm').format(
                 'HH:mm',
@@ -211,7 +206,7 @@ export const Lesson: React.FC<LessonProps> = ({
         onClose={() => {
           setStudyTimeModalVisible(false);
         }}
-        onSubmit={date => {
+        onSubmit={({date}) => {
           setStudyTimeModalVisible(false);
           addTask({
             id: uuidv4(),

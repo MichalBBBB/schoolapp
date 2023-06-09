@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ import {
   TouchableHighlight,
   TouchableOpacity,
 } from 'react-native-gesture-handler';
-import {CalendarEventFragment} from '../../generated/graphql';
+import {TaskFragment} from '../../generated/graphql';
 import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
 import {useCreateTask} from '../../mutationHooks/task/createTask';
 import {BasicText} from '../basicViews/BasicText';
@@ -24,57 +24,52 @@ import {CalendarNavigationProp} from '../../utils/types';
 import {BasicCard} from '../basicViews/BasicCard';
 import {useTheme} from '../../contexts/ThemeContext';
 import {BasicIcon} from '../basicViews/BasicIcon';
+import {useDeleteTask} from '../../mutationHooks/task/deleteTask';
 
-interface EventProps {
-  event: CalendarEventFragment;
-  height?: number;
-  variant?: 'list' | 'calendar';
+interface CalendarTaskProps {
+  task: TaskFragment;
+  height: number;
 }
 
-const Event: React.FC<EventProps> = ({event, height, variant = 'list'}) => {
-  const [deleteEvent] = useDeleteEvent();
-  const [addTask] = useCreateTask();
+const CalendarTask: React.FC<CalendarTaskProps> = ({task, height}) => {
+  const [deleteTask] = useDeleteTask();
 
   const navigation = useNavigation<CalendarNavigationProp>();
 
-  const [theme] = useTheme();
+  useEffect(() => {
+    console.log(task);
+  });
 
-  const [studyTimeModalVisible, setStudyTimeModalVisible] = useState(false);
+  if (!task.doDate || !task.doDateIncludesTime || !task.duration) {
+    return <View style={{height}}></View>;
+  }
 
   const frontView = (
     <TouchableHighlight
       onPress={() => {
-        navigation.navigate('EventDetailScreen', {event});
+        navigation.navigate('TaskDetailScreen', {task});
       }}>
       <BasicCard
         backgroundColor="accentBackground1"
         borderRadius={0}
         style={{
           height,
-          padding: height && height >= 40 ? 12 : 0,
-          paddingHorizontal: 10,
-          justifyContent: height && height >= 40 ? 'space-between' : 'center',
+          padding: height >= 40 ? 12 : 0,
+          paddingLeft: 10,
+          justifyContent: height >= 40 ? 'space-between' : 'center',
         }}>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <BasicText style={{marginRight: 5}} numberOfLines={1}>
-            {event.name}
-          </BasicText>
-          {variant == 'list' ||
-            (height && height <= 40 && (
-              <BasicText color="textSecondary">
-                {`${dayjs(event.startDate).format('HH:mm')} - ${dayjs(
-                  event.endDate,
-                ).format('HH:mm')}`}
-              </BasicText>
-            ))}
-        </View>
-        {variant == 'calendar' && height && height >= 40 && (
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <BasicText style={{marginRight: 5}}>{task.name}</BasicText>
           <BasicText color="textSecondary" style={{marginRight: 8}}>
-            {`${dayjs(event.startDate).format('HH:mm')} - ${dayjs(
-              event.endDate,
-            ).format('HH:mm')}`}
+            {`${dayjs(task.doDate).format('HH:mm')} - ${dayjs(task.doDate)
+              .add(task.duration, 'm')
+              .format('HH:mm')}`}
           </BasicText>
-        )}
+        </View>
       </BasicCard>
     </TouchableHighlight>
   );
@@ -90,7 +85,7 @@ const Event: React.FC<EventProps> = ({event, height, variant = 'list'}) => {
                 LayoutAnimation.configureNext(
                   LayoutAnimation.Presets.easeInEaseOut,
                 );
-                deleteEvent({id: event.id});
+                deleteTask({id: task.id});
               }}>
               <View style={styles.backViewContainer}>
                 <Image
@@ -104,23 +99,6 @@ const Event: React.FC<EventProps> = ({event, height, variant = 'list'}) => {
           numberOfBackElements={1}
         />
       </View>
-      <EditDateModal
-        clearButton={false}
-        isVisible={studyTimeModalVisible}
-        onClose={() => {
-          setStudyTimeModalVisible(false);
-        }}
-        onSubmit={({date}) => {
-          setStudyTimeModalVisible(false);
-          addTask({
-            id: uuidv4(),
-            name: `Study for ${event?.name}`,
-            subjectId: event.subject?.id,
-            dueDate: event?.startDate,
-            doDate: date!.toDate(),
-          });
-        }}
-      />
     </>
   );
 };
@@ -150,4 +128,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Event;
+export default CalendarTask;

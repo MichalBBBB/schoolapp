@@ -71,16 +71,17 @@ export const RemindersWindow: React.FC<RemindersWindowProps> = ({
         <BasicText textVariant="heading">Reminders</BasicText>
       </View>
       <View style={styles.reminderTimesContainer}>
-        <View style={{flexDirection: 'row', marginBottom: 10}}>
+        <Pressable
+          style={{flexDirection: 'row', marginBottom: 10}}
+          onPress={() => {
+            setSelectedReminderTimes([]);
+          }}>
           <BasicRadio
             style={{marginRight: 10}}
             toggled={selectedReminderTimes.length == 0}
-            onToggle={toggled => {
-              setSelectedReminderTimes([]);
-            }}
           />
           <BasicText>None</BasicText>
-        </View>
+        </Pressable>
         {reminderTimes.map((item, index) => (
           <Pressable
             key={index}

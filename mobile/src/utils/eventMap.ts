@@ -3,16 +3,22 @@ import {
   CalendarEventFragment,
   Lesson,
   LessonFragment,
+  ProjectTaskWithProjectFragment,
+  TaskFragment,
 } from '../generated/graphql';
 import {getEnd, getStart, isOverlap} from './eventUtils';
 
 export type EventReference = {
-  __typename: 'CalendarEvent' | 'Lesson';
+  __typename: 'CalendarEvent' | 'Lesson' | 'Task';
   id: string;
 };
 
 export type MapEvent = {
-  data: CalendarEventFragment | LessonFragment;
+  data:
+    | CalendarEventFragment
+    | LessonFragment
+    | TaskFragment
+    | ProjectTaskWithProjectFragment;
   overlaps: EventReference[];
 };
 
@@ -20,6 +26,7 @@ export const getEventMap = (
   date: dayjs.Dayjs,
   events: CalendarEventFragment[],
   lessons: LessonFragment[],
+  tasks: Array<TaskFragment | ProjectTaskWithProjectFragment>,
 ) => {
   const map: MapEvent[] = [];
   // go through events
@@ -47,6 +54,15 @@ export const getEventMap = (
         ];
       }
     });
+    // check if event overlaps with any tasks
+    tasks.forEach(task => {
+      if (isOverlap(date, item, task)) {
+        mapEvent.overlaps = [
+          ...(mapEvent.overlaps || []),
+          {id: task.id, __typename: 'Task'},
+        ];
+      }
+    });
     map.push(mapEvent);
   });
   // go through lessons
@@ -64,6 +80,49 @@ export const getEventMap = (
         ];
       }
     });
+    // check if lesson overlaps with any tasks
+    tasks.forEach(task => {
+      if (isOverlap(date, item, task)) {
+        mapEvent.overlaps = [
+          ...(mapEvent.overlaps || []),
+          {id: task.id, __typename: 'Task'},
+        ];
+      }
+    });
+    map.push(mapEvent);
+  });
+  tasks.forEach(item => {
+    const mapEvent: MapEvent = {
+      data: item,
+      overlaps: [],
+    };
+    // check if event overlaps with other events
+    events.forEach(event => {
+      if (isOverlap(date, item, event)) {
+        mapEvent.overlaps = [
+          ...(mapEvent.overlaps || []),
+          {id: event.id, __typename: 'CalendarEvent'},
+        ];
+      }
+    });
+    // check if event overlaps with any lessons
+    lessons.forEach(lesson => {
+      if (isOverlap(date, item, lesson)) {
+        mapEvent.overlaps = [
+          ...(mapEvent.overlaps || []),
+          {id: lesson.id, __typename: 'Lesson'},
+        ];
+      }
+    });
+    // check if event overlaps with any tasks
+    tasks.forEach(task => {
+      if (isOverlap(date, item, task)) {
+        mapEvent.overlaps = [
+          ...(mapEvent.overlaps || []),
+          {id: task.id, __typename: 'Task'},
+        ];
+      }
+    });
     map.push(mapEvent);
   });
   return map;
@@ -77,8 +136,9 @@ export const getEventGroups = (
   date: dayjs.Dayjs,
   events: CalendarEventFragment[],
   lessons: LessonFragment[],
+  tasks: Array<TaskFragment | ProjectTaskWithProjectFragment>,
 ) => {
-  var map = getEventMap(date, events, lessons);
+  var map = getEventMap(date, events, lessons, tasks);
   const getGroup = (event: MapEvent) => {
     map = map.filter(item => {
       return item.data.id !== event.data.id;
@@ -107,7 +167,14 @@ export const getEventGroups = (
 };
 
 export type EventBlock = {
-  columns: Array<Array<CalendarEventFragment | LessonFragment>>;
+  columns: Array<
+    Array<
+      | CalendarEventFragment
+      | LessonFragment
+      | TaskFragment
+      | ProjectTaskWithProjectFragment
+    >
+  >;
   startTime: dayjs.Dayjs;
   endTime: dayjs.Dayjs;
 };
@@ -116,8 +183,9 @@ export const getEventBlocks = (
   date: dayjs.Dayjs,
   events: CalendarEventFragment[],
   lessons: LessonFragment[],
+  tasks: Array<TaskFragment | ProjectTaskWithProjectFragment>,
 ) => {
-  const groups = getEventGroups(date, events, lessons);
+  const groups = getEventGroups(date, events, lessons, tasks);
 
   const blocks: Array<EventBlock> = groups.map(group => {
     const sortedItems = group.data.map(item => {
