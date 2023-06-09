@@ -83,7 +83,7 @@ export const getEnd = (
     }
   } else if (item.__typename == 'CalendarEvent') {
     if (dayjs(item.endDate).diff(item.startDate, 'm') < 10) {
-      return item.startDate.add(10, 'm');
+      return dayjs(item.startDate).add(10, 'm');
     } else {
       return dayjs(item.endDate);
     }

@@ -23,6 +23,7 @@ import {CalendarStackScreenProps} from '../../utils/types';
 import {useCreateEvent} from '../../mutationHooks/calendarEvent/createEvent';
 import {RemindersWindow} from '../../components/modals/remindersWindow';
 import {checkPermissions} from '../../utils/notifications';
+import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
 
 const EventDetailScreen: React.FC<
   CalendarStackScreenProps<'EventDetailScreen'>
@@ -39,6 +40,7 @@ const EventDetailScreen: React.FC<
   const client = useApolloClient();
 
   const [createEvent] = useCreateEvent();
+  const [deleteEvent] = useDeleteEvent();
 
   const [startDate, setStartDate] = useState(
     event ? dayjs(event.startDate) : route.params.date || dayjs(),
@@ -207,7 +209,8 @@ const EventDetailScreen: React.FC<
             </BasicText>
           </Pressable>
         </BasicCard>
-        <BasicCard backgroundColor="accentBackground1">
+
+        <BasicCard backgroundColor="accentBackground1" marginBottom={10}>
           <BasicTextInput
             value={text || ''}
             variant="unstyled"
@@ -219,6 +222,20 @@ const EventDetailScreen: React.FC<
             multiline={true}
           />
         </BasicCard>
+        {event && (
+          <BasicCard backgroundColor="accentBackground1">
+            <BasicButton
+              variant="unstyled"
+              onPress={() => {
+                deleteEvent({id: event.id});
+                navigation.goBack();
+              }}>
+              <BasicText style={{textAlign: 'center'}} color="dangerous">
+                Delete Event
+              </BasicText>
+            </BasicButton>
+          </BasicCard>
+        )}
       </ScrollView>
       <EditDateModal
         allowNoTime={false}

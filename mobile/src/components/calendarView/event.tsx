@@ -51,20 +51,24 @@ const Event: React.FC<EventProps> = ({event, height, variant = 'list'}) => {
         borderRadius={0}
         style={{
           height,
-          padding: 12,
-          justifyContent: 'space-between',
+          padding: height && height >= 40 ? 12 : 0,
+          paddingHorizontal: 10,
+          justifyContent: height && height >= 40 ? 'space-between' : 'center',
         }}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <BasicText>{event.name}</BasicText>
-          {variant == 'list' && (
-            <BasicText color="textSecondary">
-              {`${dayjs(event.startDate).format('HH:mm')} - ${dayjs(
-                event.endDate,
-              ).format('HH:mm')}`}
-            </BasicText>
-          )}
+          <BasicText style={{marginRight: 5}} numberOfLines={1}>
+            {event.name}
+          </BasicText>
+          {variant == 'list' ||
+            (height && height <= 40 && (
+              <BasicText color="textSecondary">
+                {`${dayjs(event.startDate).format('HH:mm')} - ${dayjs(
+                  event.endDate,
+                ).format('HH:mm')}`}
+              </BasicText>
+            ))}
         </View>
-        {variant == 'calendar' && (
+        {variant == 'calendar' && height && height >= 40 && (
           <BasicText color="textSecondary" style={{marginRight: 8}}>
             {`${dayjs(event.startDate).format('HH:mm')} - ${dayjs(
               event.endDate,

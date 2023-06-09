@@ -54,6 +54,7 @@ export const useCreateTask: () => [
           dueDateIncludesTime: variables.dueDateIncludesTime || false,
           doDate: variables.doDate || null,
           doDateIncludesTime: variables.doDateIncludesTime || false,
+          duration: null,
           subtasks: [],
           subject: subject || null,
           reminders: [],

@@ -126,7 +126,7 @@ const DayView: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
       tasksThisDay,
     );
     return result;
-  }, [data, lessons, tasks, projectTasks]);
+  }, [data, lessons, tasks, projectTasks, specialSchedule]);
 
   // get the width of an element based on the length of the lessonTime
   const getHeight = (
