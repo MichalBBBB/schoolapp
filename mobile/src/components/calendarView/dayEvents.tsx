@@ -120,11 +120,6 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
           }
         }) || [];
     const sections: section[] = [];
-    if (dayNumber == 2) {
-      console.log(
-        JSON.stringify(getEventGroups(date, eventsThisDay, lessonsThisDay)),
-      );
-    }
 
     if (lessonsThisDay.length > 0) {
       sections.push({
