@@ -8,7 +8,7 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
-import {View, FlatList} from 'react-native';
+import {View, FlatList, Platform} from 'react-native';
 import {CalendarHandle} from '.';
 import {SettingsFragment} from '../../generated/graphql';
 import Week from './week';
@@ -47,6 +47,9 @@ const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
             index: index + 1,
             animated: true,
           });
+          if (Platform.OS === 'android') {
+            updateWeeks(index + 1);
+          }
         }
       },
       goBackwards() {
@@ -55,6 +58,9 @@ const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
             index: index - 1,
             animated: true,
           });
+          if (Platform.OS === 'android') {
+            updateWeeks(index - 1);
+          }
         }
       },
     };
@@ -133,6 +139,22 @@ const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
     setWeeks(weeksCopy);
   }, []);
 
+  const updateWeeks = (newIndex: number) => {
+    // go through the data array and change months close to viewable to full dates to render full calendars
+    const weeksCopy = changeVisibility(newIndex);
+    console.log(weeksCopy);
+
+    if (
+      index !== newIndex &&
+      onChangeActiveWeek &&
+      typeof weeks[newIndex] !== 'string'
+    ) {
+      onChangeActiveWeek(weeksCopy[newIndex] as dayjs.Dayjs);
+    }
+    setIndex(newIndex);
+    setWeeks(weeksCopy);
+  };
+
   const renderItem = ({item}: {item: dayjs.Dayjs | string}) => {
     return (
       <View style={{width: calendarWidth}}>
@@ -174,19 +196,7 @@ const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
       onMomentumScrollEnd={item => {
         // change data in months on every scroll
         const newIndex = item.nativeEvent.contentOffset.x / calendarWidth;
-
-        // go through the data array and change months close to viewable to full dates to render full calendars
-        const weeksCopy = changeVisibility(newIndex);
-
-        if (
-          index !== newIndex &&
-          onChangeActiveWeek &&
-          typeof weeks[newIndex] !== 'string'
-        ) {
-          onChangeActiveWeek(weeksCopy[newIndex] as dayjs.Dayjs);
-        }
-        setIndex(newIndex);
-        setWeeks(weeksCopy);
+        updateWeeks(newIndex);
       }}
       extraData={daysWithDots}
     />

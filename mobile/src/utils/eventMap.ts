@@ -80,7 +80,6 @@ export const getEventMap = (
         ];
       }
     });
-    console.log(tasks);
     // check if lesson overlaps with any tasks
     tasks.forEach(task => {
       if (isOverlap(date, item, task)) {
