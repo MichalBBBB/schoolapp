@@ -68,6 +68,8 @@ export default memo(Week, (prevProps, nextProps) => {
     if (JSON.stringify(prevProps.week) !== JSON.stringify(nextProps.week)) {
       return false;
     }
+  } else {
+    return false;
   }
 
   if (

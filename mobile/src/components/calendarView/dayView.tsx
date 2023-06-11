@@ -114,7 +114,9 @@ const DayView: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
     const tasksThisDay: Array<TaskFragment | ProjectTaskWithProjectFragment> =
       (
         (tasks?.getAllTasks.filter(item => {
-          return dayjs(item.doDate).isSame(dayjs(date), 'date');
+          return (
+            dayjs(item.doDate).isSame(dayjs(date), 'date') && item.duration
+          );
         }) as Array<TaskFragment | ProjectTaskWithProjectFragment>) || []
       ).concat(
         projectTasks?.getProjectTasksOfUser.filter(item => !item.done) || [],
