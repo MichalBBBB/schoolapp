@@ -33,7 +33,6 @@ export const width = Dimensions.get('screen').width;
 
 interface DayEventsProps {
   date: dayjs.Dayjs;
-  scrollEnabled: boolean;
 }
 
 type section = {
@@ -44,7 +43,7 @@ type section = {
     | Array<TaskFragment | ProjectTaskWithProjectFragment>;
 };
 
-const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
+const DayEvents: React.FC<DayEventsProps> = ({date}) => {
   const {data} = useGetAllEventsQuery();
   const {data: lessons} = useGetAllLessonsQuery();
   const {data: tasks} = useGetAllTasksQuery();
@@ -234,7 +233,6 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
         }
       }}
       renderSectionFooter={() => <View style={styles.sectionFooter}></View>}
-      scrollEnabled={scrollEnabled}
       disableVirtualization={true}
     />
   );

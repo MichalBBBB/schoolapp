@@ -32,15 +32,13 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
   route,
 }) => {
   const {data: Tasks} = useGetAllTasksQuery();
-  const task = Tasks?.getAllTasks.find(
-    item => item.id == route.params.task.id,
-  )!;
+  const task = Tasks?.getAllTasks.find(item => item.id == route.params.task.id);
   const [addSubtask] = useCreateSubtask();
 
   const client = useApolloClient();
 
-  const [name, setName] = useState(task.name);
-  const [text, setText] = useState(task.text);
+  const [name, setName] = useState(task?.name || '');
+  const [text, setText] = useState(task?.text || '');
   const [editTask] = useEditTask();
   const [editDueDateModalIsVisible, setEditDueDateModalIsVisible] =
     useState(false);
@@ -48,6 +46,12 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
     useState(false);
   const [addSubtaskModalIsVisible, setAddSubtaskModalIsVisible] =
     useState(false);
+
+  useEffect(() => {
+    if (!task) {
+      navigation.goBack();
+    }
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -65,23 +69,39 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
       headerLeft: () => (
         <BackButton
           onPress={() => {
-            editTask({
-              id: task.id,
-              name,
-              text,
-              dueDate: task.dueDate,
-              dueDateIncludesTime: task.dueDateIncludesTime,
-              doDateIncludesTime: task.doDateIncludesTime,
-              duration: task.duration,
-              doDate: task.doDate,
-              subjectId: task.subject?.id,
-            });
+            if (task) {
+              editTask({
+                id: task.id,
+                name,
+                text,
+                dueDate: task.dueDate,
+                dueDateIncludesTime: task.dueDateIncludesTime,
+                doDateIncludesTime: task.doDateIncludesTime,
+                duration: task.duration,
+                doDate: task.doDate,
+                subjectId: task.subject?.id,
+              });
+            }
             navigation.goBack();
           }}
         />
       ),
     });
   });
+
+  if (!task) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <BasicText textVariant="heading">Task wasn't found</BasicText>
+      </View>
+    );
+  }
 
   return (
     <>

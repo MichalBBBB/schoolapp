@@ -86,6 +86,17 @@ export const PlanDayScreen: React.FC<
         }
         data={unassignedTasks}
         renderItem={({item}) => <Task task={item} planning planningDay={day} />}
+        ListEmptyComponent={() => (
+          <View
+            style={{
+              height: 200,
+              width: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <BasicText textVariant="heading">No available tasks</BasicText>
+          </View>
+        )}
       />
     </View>
   );

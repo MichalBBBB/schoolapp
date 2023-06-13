@@ -141,7 +141,6 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
           },
         ]);
       } else if (!subject && specialDays.length == 4) {
-        console.log('here');
         setSpecialDays(specialDays.filter((item, index) => index !== 3));
       }
     }
@@ -188,6 +187,9 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             variant={selectedSpecialDay == item ? 'filled' : 'unstyled'}
             backgroundColor={'accentBackground2'}
             onPress={() => {
+              if (index == 3) {
+                setIncludeTime(true);
+              }
               setSelectedSpecialDay(item);
               setSelectedDay(item.date);
             }}
