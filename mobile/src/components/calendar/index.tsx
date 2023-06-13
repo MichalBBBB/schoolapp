@@ -240,7 +240,7 @@ const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
         }}
         ref={flatListRef}
         // rerender when index changes
-        extraData={[index, selectedDay, daysWithDots]}
+        extraData={[index, selectedDay, daysWithDots, settings]}
       />
     </View>
   );

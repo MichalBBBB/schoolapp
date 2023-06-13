@@ -160,21 +160,9 @@ export const DayEventsList: React.FC<DayEventsListProps> = ({
             );
           } else {
             if (settings?.showCalendarView) {
-              return (
-                <DayView
-                  date={item}
-                  scrollEnabled={scrollEnabled}
-                  key={index}
-                />
-              );
+              return <DayView date={item} key={index} />;
             } else {
-              return (
-                <DayEvents
-                  date={item}
-                  scrollEnabled={scrollEnabled}
-                  key={index}
-                />
-              );
+              return <DayEvents date={item} key={index} />;
             }
           }
         }}

@@ -39,10 +39,9 @@ const heightConstant = 2;
 
 interface DayEventsProps {
   date: dayjs.Dayjs;
-  scrollEnabled: boolean;
 }
 
-const DayView: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
+const DayView: React.FC<DayEventsProps> = ({date}) => {
   const {data} = useGetAllEventsQuery();
   const {data: lessons} = useGetAllLessonsQuery();
   const {data: tasks} = useGetAllTasksQuery();
@@ -258,7 +257,7 @@ const DayView: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
           backgroundColor: 'black',
         }}></View> */}
       <ScrollView
-        scrollEnabled={scrollEnabled}
+        // scrollEnabled={scrollEnabled}
         style={{width, marginTop: 5}}
         contentContainerStyle={{
           paddingHorizontal: 5,

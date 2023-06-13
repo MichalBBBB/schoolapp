@@ -28,7 +28,8 @@ export const closestLesson = (
       'minute',
     );
   });
-  return getDateOfClosestInstanceOfLesson(subjectLessons[0], settings);
+  const result = getDateOfClosestInstanceOfLesson(subjectLessons[0], settings);
+  return result;
 };
 
 const getDateOfClosestInstanceOfLesson = (
@@ -37,7 +38,7 @@ const getDateOfClosestInstanceOfLesson = (
 ) => {
   let dayNumber = getDayNumber(dayjs(), settings);
 
-  if (!lesson.dayNumber) {
+  if (lesson.dayNumber == null || lesson.dayNumber == undefined) {
     return dayjs(lesson.date);
   }
 
@@ -69,10 +70,11 @@ const getDateOfClosestInstanceOfLesson = (
     // if the lesson already happened in this rotation
   } else {
     if (settings.skipWeekends) {
-      return addWorkDays(
+      const result = addWorkDays(
         dayjs(lesson.lessonTime.startTime, 'HH:mm'),
         settings.lengthOfRotation - dayNumber + lesson.dayNumber,
       ).toDate();
+      return result;
     } else {
       return dayjs(lesson.lessonTime.startTime, 'HH:mm')
         .add(settings.lengthOfRotation - dayNumber + lesson.dayNumber, 'day')

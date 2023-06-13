@@ -11,6 +11,7 @@ import React, {
 import {View, FlatList, Platform} from 'react-native';
 import {CalendarHandle} from '.';
 import {SettingsFragment} from '../../generated/graphql';
+import {useSettings} from '../../utils/useSettings';
 import Week from './week';
 import {WeekViewItem} from './weekViewItem';
 
@@ -69,6 +70,8 @@ const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
   const [weeks, setWeeks] = useState<Array<dayjs.Dayjs | string>>([week]);
   const [index, setIndex] = useState(pastScrollRange);
   const flatListRef = createRef<FlashList<any>>();
+
+  const settings = useSettings();
 
   const createDateFromString = (string: string) => {
     const date = string
@@ -142,7 +145,6 @@ const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
   const updateWeeks = (newIndex: number) => {
     // go through the data array and change months close to viewable to full dates to render full calendars
     const weeksCopy = changeVisibility(newIndex);
-    console.log(weeksCopy);
 
     if (
       index !== newIndex &&
@@ -198,7 +200,7 @@ const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
         const newIndex = item.nativeEvent.contentOffset.x / calendarWidth;
         updateWeeks(newIndex);
       }}
-      extraData={daysWithDots}
+      extraData={[index, daysWithDots, settings, selectedDay]}
     />
   );
 });
