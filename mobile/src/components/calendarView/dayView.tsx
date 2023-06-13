@@ -290,6 +290,7 @@ const DayView: React.FC<DayEventsProps> = ({date}) => {
           spacing="none">
           {tasksWithoutDuration?.map((item, index) => (
             <Task
+              key={index}
               backgroundColor="accentBackground1"
               task={item}
               onPress={() => {
@@ -304,6 +305,7 @@ const DayView: React.FC<DayEventsProps> = ({date}) => {
           style={{
             width: '100%',
             paddingHorizontal: 5,
+            backgroundColor: 'black',
           }}>
           {blocks.length > 0 ? (
             <>
