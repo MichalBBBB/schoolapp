@@ -228,6 +228,7 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
                 task={item}
                 backgroundColor={'accentBackground1'}
                 onPress={() => {
+                  console.log('wtf');
                   navigation.navigate('TaskDetailScreen', {task: item});
                 }}
               />

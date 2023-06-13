@@ -32,6 +32,8 @@ import {useApolloClient} from '@apollo/client';
 import {BasicText} from '../basicViews/BasicText';
 import {useTheme} from '../../contexts/ThemeContext';
 import CalendarTask from './calendarTask';
+import Task from '../listItems/task';
+import {BasicCard} from '../basicViews/BasicCard';
 
 export const width = Dimensions.get('screen').width;
 
@@ -64,6 +66,15 @@ const DayView: React.FC<DayEventsProps> = ({date}) => {
       return -1;
     }
   }, [date, settings]);
+
+  const tasksWithoutDuration = useMemo(() => {
+    return tasks?.getAllTasks.filter(item => {
+      return (
+        dayjs(item.doDate).isSame(date, 'date') &&
+        (!item.doDateIncludesTime || !item.duration)
+      );
+    });
+  }, [tasks]);
 
   const blocks = useMemo(() => {
     var lessonsThisDay =
@@ -260,8 +271,6 @@ const DayView: React.FC<DayEventsProps> = ({date}) => {
         // scrollEnabled={scrollEnabled}
         style={{width, marginTop: 5}}
         contentContainerStyle={{
-          paddingHorizontal: 5,
-          paddingTop: 10,
           paddingBottom: 50,
         }}
         refreshControl={
@@ -275,97 +284,119 @@ const DayView: React.FC<DayEventsProps> = ({date}) => {
             }}
           />
         }>
-        {blocks.length > 0 ? (
-          <>
-            <View
-              style={{
-                width: '100%',
-                position: 'absolute',
-                paddingTop:
-                  (60 - blocks[0].startTime.minute()) * heightConstant,
-              }}>
-              {sideTimes.map((item, index) => (
-                <View
-                  key={index}
-                  style={{
-                    width: '100%',
-                    height: 1,
-                    backgroundColor: theme.colors.border,
-                    marginBottom: 60 * heightConstant - 1,
-                    marginLeft: 45,
-                  }}
-                />
-              ))}
-            </View>
-            <View
-              style={{
-                position: 'absolute',
-                paddingTop:
-                  (60 - blocks[0].startTime.minute()) * heightConstant,
-              }}>
-              {sideTimes.map((item, index) => (
-                <View
-                  key={index}
-                  style={{
-                    marginBottom: 60 * heightConstant - 30,
-                    marginLeft: 5,
-                    height: 30,
-                    transform: [{translateY: -15}],
-                    justifyContent: 'center',
-                  }}>
-                  <BasicText
-                    color="textSecondary"
-                    style={{
-                      textAlign: 'center',
-                    }}>
-                    {item}
-                  </BasicText>
-                </View>
-              ))}
-            </View>
-            {blocks.map((block, index) => (
+        <BasicCard
+          backgroundColor="accentBackground1"
+          style={{margin: 10, overflow: 'hidden'}}
+          spacing="none">
+          {tasksWithoutDuration?.map((item, index) => (
+            <Task
+              backgroundColor="accentBackground1"
+              task={item}
+              onPress={() => {
+                navigation.navigate('TaskDetailScreen', {
+                  task: item as TaskFragment,
+                });
+              }}
+            />
+          ))}
+        </BasicCard>
+        <View
+          style={{
+            width: '100%',
+            paddingHorizontal: 5,
+          }}>
+          {blocks.length > 0 ? (
+            <>
               <View
-                key={index}
                 style={{
-                  flexDirection: 'row',
-                  marginTop: getBlockOffset(index),
-                  marginLeft: 35,
+                  width: '100%',
+                  position: 'absolute',
+                  paddingTop:
+                    (60 - blocks[0].startTime.minute()) * heightConstant,
                 }}>
-                {block.columns.map((column, columnIndex) => (
-                  <View style={{flex: 1}} key={columnIndex}>
-                    {column.map((item, itemIndex) => (
-                      <View
-                        key={itemIndex}
-                        style={{
-                          marginTop: getOffset(
-                            item,
-                            block,
-                            columnIndex,
-                            itemIndex,
-                          ),
-                          marginHorizontal: 5,
-                        }}>
-                        {renderItem(item)}
-                      </View>
-                    ))}
+                {sideTimes.map((item, index) => (
+                  <View
+                    key={index}
+                    style={{
+                      width: '100%',
+                      height: 1,
+                      backgroundColor: theme.colors.border,
+                      marginBottom: 60 * heightConstant - 1,
+                      marginLeft: 45,
+                    }}
+                  />
+                ))}
+              </View>
+              <View
+                style={{
+                  position: 'absolute',
+                  paddingTop:
+                    (60 - blocks[0].startTime.minute()) * heightConstant,
+                }}>
+                {sideTimes.map((item, index) => (
+                  <View
+                    key={index}
+                    style={{
+                      marginBottom: 60 * heightConstant - 30,
+                      marginLeft: 5,
+                      height: 30,
+                      transform: [{translateY: -15}],
+                      justifyContent: 'center',
+                    }}>
+                    <BasicText
+                      color="textSecondary"
+                      style={{
+                        textAlign: 'center',
+                      }}>
+                      {item}
+                    </BasicText>
                   </View>
                 ))}
               </View>
-            ))}
-          </>
-        ) : (
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: 200,
-            }}>
-            <BasicText textVariant="heading">Nothing for this day</BasicText>
-            {specialSchedule && (
-              <BasicText color="textSecondary">Special Schedule</BasicText>
-            )}
-          </View>
-        )}
+              {blocks.map((block, index) => (
+                <View
+                  key={index}
+                  style={{
+                    flexDirection: 'row',
+                    marginTop: getBlockOffset(index),
+                    marginLeft: 35,
+                  }}>
+                  {block.columns.map((column, columnIndex) => (
+                    <View style={{flex: 1}} key={columnIndex}>
+                      {column.map((item, itemIndex) => (
+                        <View
+                          key={itemIndex}
+                          style={{
+                            marginTop: getOffset(
+                              item,
+                              block,
+                              columnIndex,
+                              itemIndex,
+                            ),
+                            marginHorizontal: 5,
+                          }}>
+                          {renderItem(item)}
+                        </View>
+                      ))}
+                    </View>
+                  ))}
+                </View>
+              ))}
+            </>
+          ) : (
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: 200,
+              }}>
+              <BasicText textVariant="heading">Nothing for this day</BasicText>
+              {specialSchedule && (
+                <BasicText color="textSecondary">Special Schedule</BasicText>
+              )}
+            </View>
+          )}
+        </View>
       </ScrollView>
     </View>
   );
