@@ -305,7 +305,6 @@ const DayView: React.FC<DayEventsProps> = ({date}) => {
           style={{
             width: '100%',
             paddingHorizontal: 5,
-            backgroundColor: 'black',
           }}>
           {blocks.length > 0 ? (
             <>
