@@ -79,7 +79,7 @@ const ProjectDetailScreen: React.FC<
                 })
               }
             />
-            {false && (
+            {project?.isAdmin && (
               <MenuItem
                 text={'Delete project'}
                 color="dangerous"

@@ -77,6 +77,7 @@ const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
           }
         }
       },
+      scrollToSelectedDate() {},
     };
   });
 

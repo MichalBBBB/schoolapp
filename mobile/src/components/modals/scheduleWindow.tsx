@@ -15,6 +15,7 @@ import {BasicText} from '../basicViews/BasicText';
 import {calendarConfigWithoutTime} from '../listItems/task';
 import {TimeTableLesson} from '../listItems/timetableLesson';
 import {SelectSubjectPopup} from '../popups/selectSubject/selectSubjectPopup';
+import {BasicIcon} from '../basicViews/BasicIcon';
 
 interface ScheduleWindowProps {
   date: dayjs.Dayjs;
@@ -55,7 +56,7 @@ export const ScheduleWindow: React.FC<ScheduleWindowProps> = ({
       isVisible={visible}
       alignCard="center"
       style={{maxHeight: 510, minHeight: 350}}>
-      <View style={{padding: 10, width: '100%'}}>
+      <View style={{paddingVertical: 10, paddingHorizontal: 5, width: '100%'}}>
         <View
           style={{
             flexDirection: 'row',
@@ -63,7 +64,16 @@ export const ScheduleWindow: React.FC<ScheduleWindowProps> = ({
             paddingBottom: 10,
           }}>
           <BasicButton variant="unstyled" spacing="none" onPress={onClose}>
-            <BasicText textVariant="button">Back</BasicText>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <BasicIcon
+                source={require('../../../assets/Chevron-left.png')}
+                style={{width: 20, height: 20, resizeMode: 'center'}}
+                color="textSecondary"
+              />
+              <BasicText textVariant="button" color="textSecondary">
+                Schedules
+              </BasicText>
+            </View>
           </BasicButton>
           <BasicButton
             variant="unstyled"
@@ -77,7 +87,12 @@ export const ScheduleWindow: React.FC<ScheduleWindowProps> = ({
               });
               onSubmit();
             }}>
-            <BasicText textVariant="button">Done</BasicText>
+            <BasicText
+              textVariant="button"
+              color="accent"
+              style={{paddingRight: 5}}>
+              Done
+            </BasicText>
           </BasicButton>
         </View>
         <View>
@@ -119,6 +134,7 @@ export const ScheduleWindow: React.FC<ScheduleWindowProps> = ({
                   height: '100%',
                 }}>
                 <SelectSubjectPopup
+                  backgroundColor="accentBackground3"
                   onSubmit={subject => {
                     if (subject) {
                       createLesson({
@@ -132,7 +148,7 @@ export const ScheduleWindow: React.FC<ScheduleWindowProps> = ({
                   trigger={
                     <BasicButton
                       style={{width: '100%', height: '100%'}}
-                      backgroundColor="accentBackground1"
+                      backgroundColor="accentBackground2"
                       spacing="m">
                       <BasicText textVariant="button">Add</BasicText>
                       <View

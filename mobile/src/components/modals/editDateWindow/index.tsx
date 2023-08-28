@@ -146,6 +146,11 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
     }
   }, [subject, settings]);
 
+  useEffect(() => {
+    if (isVisible) {
+    }
+  }, [isVisible]);
+
   const getLesson = () => {
     if (subject && settings) {
       const lesson = getLessonThisDay(
@@ -339,7 +344,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             ref={calendarRef}
             weekHeight={weekHeight}
             calendarWidth={windowWidth - 20}
-            pastScrollRange={2}
+            pastScrollRange={20}
             futureScrollRange={20}
             selectedDay={selectedDay}
             onChangeSelectedDay={date => {
@@ -410,7 +415,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
               });
             }}
             variant={'unstyled'}>
-            <BasicText color="primary" style={{fontWeight: 'bold'}}>
+            <BasicText color="accent" style={{fontWeight: 'bold'}}>
               Select
             </BasicText>
           </BasicButton>

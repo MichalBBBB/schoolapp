@@ -1,4 +1,3 @@
-import {PickerIOS, Picker} from '@react-native-picker/picker';
 import dayjs from 'dayjs';
 import React, {useEffect, useState} from 'react';
 import {View, Text, Pressable, StyleSheet} from 'react-native';
@@ -80,7 +79,7 @@ const SelectTimeView: React.FC<SelectTimeViewModalProps> = ({
             }
           }}
           variant={'unstyled'}>
-          <BasicText color="primary" style={{fontWeight: 'bold'}}>
+          <BasicText color="accent" style={{fontWeight: 'bold'}}>
             Select
           </BasicText>
         </BasicButton>

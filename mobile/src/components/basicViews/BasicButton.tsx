@@ -30,7 +30,7 @@ interface BasicButtonProps extends TouchableOpacityProps {
 export const BasicButton = forwardRef<View, BasicButtonProps>((props, ref) => {
   const {
     backgroundColor = 'accent',
-    borderColor = 'accent',
+    borderColor = 'lightBorder',
     subjectColor,
     children,
     onPress,

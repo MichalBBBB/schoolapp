@@ -205,7 +205,7 @@ const DayEvents: React.FC<DayEventsProps> = ({date}) => {
         } else if (item.__typename == 'CalendarEvent') {
           return (
             <View style={{marginHorizontal: 10, margin: 5}}>
-              <Event event={item} />
+              <Event event={item} variant="list" />
             </View>
           );
         } else if (item.__typename == 'ProjectTask') {

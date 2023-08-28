@@ -179,6 +179,7 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
           />
         </View>
         <BasicTextInput
+          style={{marginLeft: 5}}
           variant="unstyled"
           spacing="none"
           textVariant="heading"
@@ -189,9 +190,11 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
         />
         <BasicTextInput
           variant="unstyled"
+          placeholder="Enter task details here"
           multiline={true}
           onChangeText={setText}
           defaultValue={task.text || ''}
+          marginBottom={5}
         />
         <FlatList
           contentContainerStyle={{borderRadius: 15, overflow: 'hidden'}}
