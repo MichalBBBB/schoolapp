@@ -97,7 +97,7 @@ export const NavBar: React.FC<{ pathname: string }> = ({ pathname }) => {
           setIsMenuOpen(!isMenuOpen);
         }}
       />
-      <Link as={GatsbyLink} mr={4}>
+      <Link as={GatsbyLink} mr={4} to="/">
         <Flex alignItems={"center"}>
           {/* <img
             src={"/logo.svg"}
