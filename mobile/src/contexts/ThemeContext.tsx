@@ -11,16 +11,18 @@ import {MyTheme, SubjectColorsObject} from '../types/Theme';
 
 const lightSubjectColors: SubjectColorsObject = {
   purple: {primary: '#b981da', secondary: '#b981da55'},
-  pink: {primary: '#efa7cf', secondary: '#efa7cf55'},
+  pink: {primary: '#ffb6cb', secondary: '#ffb6cb55'},
+  darkPink: {primary: '#de4de3', secondary: '#de4de355'},
   darkBlue: {primary: '#698de8', secondary: '#698de855'},
   blue: {primary: '#a2cffe', secondary: '#a2cffe55'},
   darkGreen: {primary: '#479253', secondary: '#47925355'},
-  green: {primary: '#95e3c0', secondary: '#95e3c055'},
-  yellow: {primary: '#e9d32a', secondary: '#e9d32a55'},
-  beige: {primary: '#efc5b5', secondary: '#efc5b555'},
+  green: {primary: '#66e8d7', secondary: '#66e8d755'},
+  yellow: {primary: '#eaed8c', secondary: '#eaed8c55'},
+  darkYellow: {primary: '#d1c96f', secondary: '#d1c96f60'},
+  beige: {primary: '#e8c99e', secondary: '#e8c99e55'},
   orange: {primary: '#f6a265', secondary: '#f6a26555'},
   red: {primary: '#f66565', secondary: '#f6656555'},
-  brown: {primary: '#ad8d56', secondary: '#ad8d5655'},
+  brown: {primary: '#80673d', secondary: '#80673d55'},
   grey: {primary: '#a5a49f', secondary: '#a5a49f55'},
 };
 

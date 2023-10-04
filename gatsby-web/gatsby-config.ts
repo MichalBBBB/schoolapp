@@ -30,6 +30,12 @@ const config: GatsbyConfig = {
         portalZIndex: undefined,
       },
     },
+    {
+      resolve: "gatsby-plugin-manifest",
+      options: {
+        icon: "src/images/icon.svg",
+      },
+    },
   ],
 };
 

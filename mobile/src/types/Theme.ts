@@ -42,7 +42,9 @@ export type SubjectColorsObject = {
   grey: SubjectColor;
   brown: SubjectColor;
   pink: SubjectColor;
+  darkPink: SubjectColor;
   yellow: SubjectColor;
+  darkYellow: SubjectColor;
   green: SubjectColor;
   red: SubjectColor;
   purple: SubjectColor;
