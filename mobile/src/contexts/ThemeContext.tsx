@@ -10,20 +10,20 @@ import {TextStyle} from 'react-native';
 import {MyTheme, SubjectColorsObject} from '../types/Theme';
 
 const lightSubjectColors: SubjectColorsObject = {
-  purple: {primary: '#b981da', secondary: '#b981da55'},
-  pink: {primary: '#ffb6cb', secondary: '#ffb6cb55'},
-  darkPink: {primary: '#de4de3', secondary: '#de4de355'},
-  darkBlue: {primary: '#698de8', secondary: '#698de855'},
-  blue: {primary: '#a2cffe', secondary: '#a2cffe55'},
-  darkGreen: {primary: '#479253', secondary: '#47925355'},
   green: {primary: '#66e8d7', secondary: '#66e8d755'},
-  yellow: {primary: '#eaed8c', secondary: '#eaed8c55'},
-  darkYellow: {primary: '#d1c96f', secondary: '#d1c96f60'},
-  beige: {primary: '#e8c99e', secondary: '#e8c99e55'},
-  orange: {primary: '#f6a265', secondary: '#f6a26555'},
-  red: {primary: '#f66565', secondary: '#f6656555'},
-  brown: {primary: '#80673d', secondary: '#80673d55'},
+  blue: {primary: '#a2cffe', secondary: '#a2cffe55'},
+  darkBlue: {primary: '#698de8', secondary: '#698de855'},
+  darkGreen: {primary: '#479253', secondary: '#47925355'},
   grey: {primary: '#a5a49f', secondary: '#a5a49f55'},
+  purple: {primary: '#b981da', secondary: '#b981da55'},
+  brown: {primary: '#80673d', secondary: '#80673d55'},
+  beige: {primary: '#e8c99e', secondary: '#e8c99e55'},
+  pink: {primary: '#ffb6cb', secondary: '#ffb6cb55'},
+  darkYellow: {primary: '#b28a11', secondary: '#b28a1160'},
+  orange: {primary: '#f6a265', secondary: '#f6a26555'},
+  darkPink: {primary: '#de4de3', secondary: '#de4de355'},
+  yellow: {primary: '#eaed8c', secondary: '#eaed8c55'},
+  red: {primary: '#f66565', secondary: '#f6656555'},
 };
 
 export const LightTheme: MyTheme = {

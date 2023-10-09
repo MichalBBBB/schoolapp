@@ -42,9 +42,6 @@ export const useDeleteSchedule: () => [
           return;
         }
         if (data.deleteSchedule) {
-          const normalizedScheduleId = `Schedule:${variables.id}`;
-          cache.evict({id: normalizedScheduleId});
-
           const lessons = cache.readQuery<GetAllLessonsQuery>({
             query: GetAllLessonsDocument,
           });
@@ -59,6 +56,8 @@ export const useDeleteSchedule: () => [
                 }) || [],
             },
           });
+          const normalizedScheduleId = `Schedule:${variables.id}`;
+          cache.evict({id: normalizedScheduleId});
           cache.gc();
         }
       },
