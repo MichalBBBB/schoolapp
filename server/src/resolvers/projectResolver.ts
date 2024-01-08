@@ -15,13 +15,14 @@ import { Project } from "../entities/Project";
 import { PublicUser, User } from "../entities/User";
 import { UserProject } from "../entities/UserProject";
 import { isAuth } from "../middleware/isAuth";
+import { queueMiddleware } from "../middleware/queueMiddleware";
 import { AppDataSource } from "../TypeORM";
 import { MyContext } from "../utils/MyContext";
 
 @ObjectType()
 class Invite {
   @Field()
-  ownerName: string;
+  adminName: string;
 
   @Field()
   projectName: string;
@@ -49,9 +50,12 @@ const loadMembers: (keys: string[]) => Promise<PublicUser[][]> = async (
       .filter((userProject) => userProject.projectId === key)
       .map((item) => {
         const publicUser: PublicUser = {
+          // create a unique id for this public user object (it is unique for the project)
+          id: `${item.projectId}:${item.user.id}`,
           name: item.user.fullName,
           email: item.user.email,
-          id: item.user.id,
+          userId: item.user.id,
+          isAdmin: item.isAdmin,
         };
         return publicUser;
       })
@@ -69,33 +73,47 @@ export class projectResolver {
   async members(@Root() root: Project) {
     return membersLoader.load(root.id);
   }
+  @FieldResolver()
+  async isAdmin(@Root() root: Project, @Ctx() { payload }: MyContext) {
+    const members = await membersLoader.load(root.id);
+    if (
+      members.some((item) => item.userId == payload?.userId && item.isAdmin)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   @Query(() => [Project])
   @UseMiddleware(isAuth)
   async getProjects(@Ctx() { payload }: MyContext) {
     const projects = await Project.createQueryBuilder("project")
       .select()
-      .leftJoin(
+      .innerJoin(
         "project.userProjects",
         "userProject",
-        '"userProject"."userId" = :id',
-        { id: payload?.userId }
+        '"userProject"."userId" = :id AND "userProject".accepted = :accepted',
+        { id: payload?.userId, accepted: true }
       )
       .leftJoinAndSelect("project.tasks", "projectTask")
       .getMany();
+    console.log(projects);
     return projects;
   }
 
   @Mutation(() => Project)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async createProject(
     @Ctx() { payload }: MyContext,
     @Arg("name") name: string,
-    @Arg("memberEmails", () => [String]) memberEmails: string[]
+    @Arg("memberEmails", () => [String]) memberEmails: string[],
+    @Arg("id", { nullable: true }) id?: string
   ) {
     const project = await Project.create({
-      ownerId: payload?.userId,
       name,
+      id,
     }).save();
     await AppDataSource.transaction(async (transactionEntityManager) => {
       memberEmails.forEach(async (item) => {
@@ -117,6 +135,7 @@ export class projectResolver {
           projectId: project.id,
           userId: payload?.userId,
           accepted: true,
+          isAdmin: true,
         })
         .save();
     });
@@ -126,13 +145,43 @@ export class projectResolver {
     });
   }
 
+  @Mutation(() => Project)
+  @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
+  async editProject(
+    @Arg("id") id: string,
+    @Arg("name") name: string,
+    @Arg("text", { nullable: true }) text: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    const project = await Project.findOne({
+      where: { id },
+      relations: { userProjects: true, tasks: true },
+    });
+    if (project?.userProjects.some((item) => item.userId == payload?.userId)) {
+      project.name = name;
+      project.text = text;
+      project.save();
+      return project;
+    } else {
+      throw new Error("you don't have authority");
+    }
+  }
+
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async deleteProject(@Arg("id") id: string, @Ctx() { payload }: MyContext) {
     const project = await Project.findOne({
-      where: { id, ownerId: payload?.userId },
+      where: { id },
+      relations: { userProjects: true },
     });
-    if (project) {
+    if (
+      project &&
+      project?.userProjects.some(
+        (item) => item.userId == payload?.userId && item.isAdmin
+      )
+    ) {
       await project.remove();
       return true;
     } else {
@@ -142,14 +191,25 @@ export class projectResolver {
 
   @Mutation(() => Project)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async addMemberToProject(
     @Arg("projectId") projectId: string,
     @Arg("memberEmail") memberEmail: string,
     @Ctx() { payload }: MyContext
   ) {
-    const project = await Project.findOne({ where: { id: projectId } });
+    const project = await Project.findOne({
+      where: { id: projectId },
+      relations: { userProjects: true },
+    });
     const user = await User.findOne({ where: { email: memberEmail } });
-    if (project?.ownerId == payload?.userId && user) {
+    console.log(project);
+    if (
+      user &&
+      project &&
+      project?.userProjects.some(
+        (item) => item.userId == payload?.userId && item.isAdmin
+      )
+    ) {
       await UserProject.create({
         userId: user.id,
         projectId,
@@ -164,6 +224,7 @@ export class projectResolver {
 
   @Mutation(() => Project)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async removeMemberFromProject(
     @Arg("projectId") projectId: string,
     @Arg("memberId") memberId: string,
@@ -172,8 +233,17 @@ export class projectResolver {
     const userProject = await UserProject.findOne({
       where: { userId: memberId, projectId },
     });
-    const project = await Project.findOne({ where: { id: projectId } });
-    if (memberId == payload?.userId || payload?.userId == project?.ownerId) {
+    const project = await Project.findOne({
+      where: { id: projectId },
+      relations: { userProjects: true },
+    });
+    if (
+      project &&
+      project?.userProjects.some(
+        (item) => item.userId == payload?.userId && item.isAdmin
+      ) &&
+      memberId !== payload?.userId
+    ) {
       await userProject?.remove();
     }
     return Project.findOne({
@@ -181,8 +251,35 @@ export class projectResolver {
       relations: { tasks: true },
     });
   }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
+  async makeMemberAdmin(
+    @Arg("memberId") memberId: string,
+    @Arg("projectId") projectId: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    const currentAdmin = await UserProject.findOne({
+      where: { userId: payload?.userId, isAdmin: true, projectId },
+    });
+    const newAdmin = await UserProject.findOne({
+      where: { userId: memberId, projectId },
+    });
+    if (currentAdmin && newAdmin) {
+      currentAdmin.isAdmin = false;
+      await currentAdmin.save();
+      newAdmin.isAdmin = true;
+      await newAdmin?.save();
+      return true;
+    } else {
+      throw new Error("An error occured");
+    }
+  }
+
   @Mutation(() => Project)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async acceptProjectInvite(
     @Arg("id") id: string,
     @Ctx() { payload }: MyContext
@@ -201,6 +298,7 @@ export class projectResolver {
 
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
   async declineProjectInvite(
     @Arg("id") id: string,
     @Ctx() { payload }: MyContext
@@ -225,14 +323,15 @@ export class projectResolver {
     });
     const invites: Invite[] = await Promise.all(
       userProjects.map(async (item) => {
-        const owner = await User.findOne({
-          where: { id: item.project.ownerId },
+        const admin = await UserProject.findOne({
+          where: { projectId: item.project.id, isAdmin: true },
+          relations: { user: true },
         });
-        if (owner) {
+        if (admin) {
           return {
             projectId: item.project.id,
             projectName: item.project.name,
-            ownerName: owner.fullName,
+            adminName: admin.user.fullName,
           };
         } else {
           throw new Error("project owner hasn't been found");

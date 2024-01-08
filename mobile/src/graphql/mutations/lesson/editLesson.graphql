@@ -1,5 +1,5 @@
-mutation EditLesson($id: String!, $subjectId: String!) {
-  editLesson(id: $id, subjectId: $subjectId) {
+mutation EditLesson($id: String!, $subjectId: String!, $extraInfo: String) {
+  editLesson(id: $id, subjectId: $subjectId, extraInfo: $extraInfo) {
     ...Lesson
   }
 }

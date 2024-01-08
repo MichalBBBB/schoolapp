@@ -1,9 +1,23 @@
 mutation AddProjectTask(
+  $id: String!
   $name: String!
   $dueDate: DateTime
+  $dueDateIncludesTime: Boolean
+  $doDate: DateTime
+  $doDateIncludesTime: Boolean
+  $duration: Float
   $projectId: String!
 ) {
-  addProjectTask(name: $name, dueDate: $dueDate, projectId: $projectId) {
+  addProjectTask(
+    name: $name
+    dueDate: $dueDate
+    dueDateIncludesTime: $dueDateIncludesTime
+    projectId: $projectId
+    doDate: $doDate
+    duration: $duration
+    doDateIncludesTime: $doDateIncludesTime
+    id: $id
+  ) {
     ...ProjectTask
   }
 }

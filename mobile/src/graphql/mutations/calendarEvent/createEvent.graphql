@@ -5,6 +5,8 @@ mutation CreateEvent(
   $name: String!
   $subjectId: String
   $id: String!
+  $reminders: [RemindersInput!]
+  $text: String
 ) {
   createEvent(
     id: $id
@@ -13,6 +15,8 @@ mutation CreateEvent(
     wholeDay: $wholeDay
     name: $name
     subjectId: $subjectId
+    reminders: $reminders
+    text: $text
   ) {
     ...CalendarEvent
   }

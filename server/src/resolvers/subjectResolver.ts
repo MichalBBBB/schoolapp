@@ -28,14 +28,38 @@ export class subjectResolver {
   async createSubject(
     @Arg("id") id: string,
     @Arg("name") name: string,
-    @Ctx() { payload }: MyContext
+    @Arg("colorName") colorName: string,
+    @Ctx() { payload }: MyContext,
+    @Arg("extraInfo", { nullable: true }) extraInfo?: string
   ) {
     const result = await Subject.createQueryBuilder("subject")
       .insert()
-      .values({ id, name, userId: payload?.userId })
+      .values({ id, name, userId: payload?.userId, colorName, extraInfo })
       .returning("*")
       .execute();
     return result.raw[0];
+  }
+
+  @Mutation(() => Subject)
+  @UseMiddleware(isAuth)
+  @UseMiddleware(queueMiddleware)
+  async editSubject(
+    @Ctx() { payload }: MyContext,
+    @Arg("id") id: string,
+    @Arg("name") name: string,
+    @Arg("colorName") colorName: string,
+    @Arg("extraInfo", { nullable: true }) extraInfo?: string
+  ) {
+    const subject = await Subject.findOne({ where: { id } });
+    if (subject && subject.userId == payload?.userId) {
+      subject.name = name;
+      subject.colorName = colorName;
+      subject.extraInfo = extraInfo;
+      await subject.save();
+      return subject;
+    } else {
+      throw new Error("you are not authorized for this action");
+    }
   }
 
   @Mutation(() => Boolean)

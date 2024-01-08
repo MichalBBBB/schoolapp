@@ -1,4 +1,4 @@
-import "dotenv/config";
+import "dotenv-safe/config";
 import "reflect-metadata";
 import express from "express";
 import { buildSchema } from "type-graphql";
@@ -29,6 +29,12 @@ import cors from "cors";
 import { json } from "body-parser";
 import { DefferedObject } from "./middleware/queueMiddleware";
 import { reminderResolver } from "./resolvers/reminderResolver";
+import { settingsResolver } from "./resolvers/settingsResolver";
+import { createClient } from "redis";
+import { MyContext } from "./utils/MyContext";
+import { Schedule } from "./entities/Schedule";
+import { LessonTime } from "./entities/LessonTime";
+import { ScheduleResolver } from "./resolvers/scheduleResolver";
 
 export type UserQueueObject = {
   resolveObject: DefferedObject;
@@ -48,8 +54,36 @@ const main = async () => {
     });
   //User.delete({});
   //Task.delete({});
+  await AppDataSource.runMigrations();
+  // Only keep this in this one version to change the data in the database
+  const schedules = await Schedule.find();
+  if (schedules.length == 0) {
+    const users = await User.find();
+    for (const user of users) {
+      const schedule = Schedule.create({
+        name: "Default",
+        userId: user.id,
+        default: true,
+      });
+      const lessonTimes = await LessonTime.find({ where: { userId: user.id } });
+      schedule.lessonTimes = lessonTimes;
+      await schedule.save();
+    }
+  }
+
+  const redis = createClient({
+    url: process.env.REDIS_URL,
+  });
+
+  redis.on("error", (err) => console.log("Redis Client Error", err));
+
+  await redis.connect().catch((err) => {
+    console.log("redis error", err);
+  });
 
   const app = express();
+
+  app.set("proxy", 1);
 
   app.use(cookieParser());
 
@@ -110,6 +144,8 @@ const main = async () => {
         projectResolver,
         projectTaskResolver,
         reminderResolver,
+        settingsResolver,
+        ScheduleResolver,
       ],
     }),
   });
@@ -121,11 +157,15 @@ const main = async () => {
     cors<cors.CorsRequest>(),
     json(),
     expressMiddleware(apolloServer, {
-      context: async ({ res, req }) => ({ res, req }),
+      context: async ({ res, req }) => ({ res, req, redis } as MyContext),
     })
   );
 
-  app.listen(5002, () => {
+  app.get("/check", (_req, res) => {
+    res.json({ minVersion: "1.0.4" });
+  });
+
+  app.listen(process.env.PORT, () => {
     console.log("Server running");
   });
 };

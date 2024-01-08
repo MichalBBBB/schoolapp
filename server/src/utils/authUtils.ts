@@ -1,6 +1,7 @@
 import { User } from "src/entities/User";
 import { sign } from "jsonwebtoken";
 import { Response } from "express";
+import dayjs from "dayjs";
 
 export const createAccesToken = (user: User) => {
   return sign({ userId: user.id }, process.env.ACCES_TOKEN_SECRET!, {
@@ -22,6 +23,7 @@ export const sendRefreshToken = (res: Response, token: string) => {
   res.cookie("jid", token, {
     httpOnly: true,
     path: "/refresh_token",
+    expires: dayjs().add(7, "day").toDate(),
   });
 };
 

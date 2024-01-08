@@ -31,12 +31,24 @@ export class Task extends BaseEntity {
   text: string;
 
   @Column({ nullable: true })
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   dueDate?: Date;
 
+  @Column({ default: true })
+  @Field()
+  dueDateIncludesTime: boolean;
+
   @Column({ nullable: true })
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   doDate?: Date;
+
+  @Column({ nullable: true })
+  @Field(() => Number, { nullable: true })
+  duration?: number;
+
+  @Column({ default: true })
+  @Field()
+  doDateIncludesTime: boolean;
 
   @ManyToOne(() => User, (user) => user.tasks, {
     onDelete: "CASCADE",
@@ -56,13 +68,16 @@ export class Task extends BaseEntity {
   @Field(() => [Subtask])
   subtasks: Relation<Subtask>[];
 
-  @ManyToOne(() => Subject, (subject) => subject.tasks, { nullable: true })
+  @ManyToOne(() => Subject, (subject) => subject.tasks, {
+    nullable: true,
+    onDelete: "SET NULL",
+  })
   @Field(() => Subject, { nullable: true })
   subject: Relation<Subject>;
 
   @Column({ nullable: true })
-  @Field({ nullable: true })
-  subjectId: string;
+  @Field(() => String, { nullable: true })
+  subjectId?: string;
 
   @OneToMany(() => Reminder, (reminder) => reminder.task)
   @Field(() => [Reminder])

@@ -4,8 +4,9 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToMany,
+  JoinColumn,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
@@ -14,11 +15,12 @@ import { Subject } from "../entities/Subject";
 import { CalendarEvent } from "./CalendarEvent";
 import { Lesson } from "./Lesson";
 import { LessonTime } from "./LessonTime";
-import { Project } from "./Project";
-import { ProjectTask } from "./ProjectTask";
 import { Reminder } from "./Reminder";
+import { Schedule } from "./Schedule";
+import { Settings } from "./Settings";
 import { Task } from "./Task";
 import { UserProject } from "./UserProject";
+import { UserProjectTask } from "./UserProjectTask";
 
 @ObjectType()
 export class PublicUser {
@@ -26,10 +28,16 @@ export class PublicUser {
   id: string;
 
   @Field()
+  userId: string;
+
+  @Field()
   email: string;
 
   @Field()
   name: string;
+
+  @Field({ nullable: true })
+  isAdmin?: boolean;
 }
 
 @Entity()
@@ -50,12 +58,19 @@ export class User extends BaseEntity {
   @Field()
   email: string;
 
+  @Column({ default: false })
+  @Field()
+  emailVerified: boolean;
+
   @Column({ nullable: true })
-  password: string;
+  password?: string;
 
   @Column({ nullable: true })
   @Field({ nullable: true })
   googleId: string;
+
+  @Field()
+  usesOAuth: boolean;
 
   @Column({ nullable: true })
   @Field({ nullable: true })
@@ -65,9 +80,9 @@ export class User extends BaseEntity {
   @OneToMany(() => Task, (task) => task.user)
   tasks: Task[];
 
-  @Field(() => [Task])
-  @ManyToMany(() => Task, (task) => task.user)
-  projectTasks: ProjectTask[];
+  @OneToMany(() => UserProjectTask, (userProjectTask) => userProjectTask.user)
+  @Field(() => [UserProjectTask])
+  userProjectTasks: Relation<UserProjectTask>[];
 
   @Field(() => [Subject])
   @OneToMany(() => Subject, (subject) => subject.user)
@@ -89,6 +104,10 @@ export class User extends BaseEntity {
   @OneToMany(() => LessonTime, (lessonTime) => lessonTime.user)
   lessonTimes: LessonTime[];
 
+  @Field(() => [Schedule])
+  @OneToMany(() => Schedule, (schedule) => schedule.user)
+  schedules: Relation<Schedule>[];
+
   @Field(() => [Lesson])
   @OneToMany(() => Lesson, (lesson) => lesson.user)
   lessons: Relation<Lesson>[];
@@ -97,11 +116,20 @@ export class User extends BaseEntity {
   @Field(() => [UserProject])
   userProjects: Relation<UserProject>[];
 
-  @OneToMany(() => Project, (project) => project.owner)
-  @Field(() => [Project])
-  ownedProjects: Relation<Project>[];
+  // @OneToMany(() => Project, (project) => project.owner)
+  // @Field(() => [Project])
+  // ownedProjects: Relation<Project>[];
 
   @OneToMany(() => Reminder, (reminder) => reminder.user)
   @Field(() => [Reminder])
   reminders: Relation<Reminder>;
+
+  @OneToOne(() => Settings)
+  @JoinColumn()
+  @Field(() => Settings)
+  settings: Relation<Settings>;
+
+  @Column()
+  @Field()
+  settingsId: string;
 }

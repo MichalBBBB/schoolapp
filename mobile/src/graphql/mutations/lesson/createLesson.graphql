@@ -1,14 +1,16 @@
 mutation CreateLesson(
-  $dayOfTheWeek: String!
+  $dayNumber: Float
   $lessonTimeId: String!
   $subjectId: String!
   $id: String!
+  $date: DateTime
 ) {
   createLesson(
     id: $id
-    dayOfTheWeek: $dayOfTheWeek
+    dayNumber: $dayNumber
     lessonTimeId: $lessonTimeId
     subjectId: $subjectId
+    date: $date
   ) {
     ...Lesson
   }

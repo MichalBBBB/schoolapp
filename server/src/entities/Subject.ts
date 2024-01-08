@@ -24,6 +24,10 @@ export class Subject extends BaseEntity {
   @Field()
   name: string;
 
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  extraInfo?: string;
+
   @OneToMany(() => Task, (task) => task.subject, { nullable: true })
   tasks: Task[];
 
@@ -39,4 +43,8 @@ export class Subject extends BaseEntity {
   @OneToMany(() => Lesson, (lesson) => lesson.subject)
   @Field(() => [Lesson])
   lessons: Relation<Lesson>[];
+
+  @Field()
+  @Column()
+  colorName: string;
 }

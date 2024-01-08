@@ -5,4 +5,5 @@ fragment Reminder on Reminder {
   body
   date
   taskId
+  eventId
 }

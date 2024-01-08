@@ -3,6 +3,7 @@ import {
   DeleteTaskMutation,
   GetAllTasksDocument,
   GetAllTasksQuery,
+  TaskFragmentDoc,
 } from '../../generated/graphql';
 import {DeleteTaskMutationVariables} from '../../generated/graphql';
 import {FetchResult, MutationResult, useApolloClient} from '@apollo/client';
@@ -39,12 +40,11 @@ export const useDeleteTask: () => [
         if (!data) {
           return;
         }
-        const normalizedTaskId = `Task:${variables.id}`;
-        cache.evict({id: normalizedTaskId});
-        subtasks?.forEach(item => {
-          const normalizedSubtaskId = `Subtask:${item.id}`;
-          cache.evict({id: normalizedSubtaskId});
-        });
+        if (data.deleteTask) {
+          const normalizedTaskId = `Task:${variables.id}`;
+          cache.evict({id: normalizedTaskId});
+          cache.gc();
+        }
       },
     });
     return result;

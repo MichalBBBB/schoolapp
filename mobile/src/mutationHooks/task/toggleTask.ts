@@ -1,5 +1,4 @@
 import {FetchResult, MutationResult, useApolloClient} from '@apollo/client';
-import Task from '../../components/task';
 import {
   SubjectFragmentDoc,
   TaskFragment,

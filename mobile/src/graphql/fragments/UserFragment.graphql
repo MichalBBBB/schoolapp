@@ -1,0 +1,13 @@
+fragment User on User {
+  id
+  email
+  imageURL
+  usesOAuth
+  fullName
+  createdAt
+  updatedAt
+  emailVerified
+  settings {
+    ...Settings
+  }
+}

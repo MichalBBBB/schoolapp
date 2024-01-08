@@ -1,7 +1,9 @@
 import {FetchResult, MutationResult} from '@apollo/client';
 import {
-  DeleteLessonTimeMutation,
   DeleteLessonTimeMutationVariables,
+  DeleteLessonTimeMutation,
+  GetAllLessonsQuery,
+  GetAllLessonsDocument,
   useDeleteLessonTimeMutation,
 } from '../../generated/graphql';
 
@@ -29,6 +31,20 @@ export const useDeleteLessonTime: () => [
         }
         const normalizedLessonTimeId = `LessonTime:${variables.id}`;
         cache.evict({id: normalizedLessonTimeId});
+        // delete all lessons with this lesson time
+        const lessons = cache.readQuery<GetAllLessonsQuery>({
+          query: GetAllLessonsDocument,
+        });
+        cache.writeQuery<GetAllLessonsQuery>({
+          query: GetAllLessonsDocument,
+          data: {
+            getAllLessons:
+              lessons?.getAllLessons.filter(item => {
+                return item.lessonTime.id !== variables.id;
+              }) || [],
+          },
+        });
+        cache.gc();
       },
     });
     return result;

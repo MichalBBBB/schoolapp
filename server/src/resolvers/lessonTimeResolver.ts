@@ -3,6 +3,8 @@ import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../utils/MyContext";
 import {
   Arg,
+  Args,
+  ArgsType,
   Ctx,
   Field,
   InputType,
@@ -13,9 +15,11 @@ import {
 } from "type-graphql";
 import { AppDataSource } from "../TypeORM";
 import { queueMiddleware } from "../middleware/queueMiddleware";
+import { ErrorInterceptor } from "../middleware/errorInterceptor";
+import { ValidateNested } from "class-validator";
 
 @InputType()
-class LessonTimeInput implements Partial<LessonTime> {
+class LessonTimeInput {
   @Field()
   id: string;
 
@@ -24,6 +28,13 @@ class LessonTimeInput implements Partial<LessonTime> {
 
   @Field()
   endTime: string;
+}
+
+@ArgsType()
+class EditLessonTimesArgs {
+  @Field(() => [LessonTimeInput])
+  @ValidateNested({ each: true })
+  lessonTimes: LessonTimeInput[];
 }
 
 @Resolver(LessonTime)
@@ -47,6 +58,7 @@ export class lessonTimeResolver {
     @Arg("id") id: string,
     @Arg("startTime") startTime: string,
     @Arg("endTime") endTime: string,
+    @Arg("scheduleId") scheduleId: string,
     @Ctx() { payload }: MyContext
   ) {
     const lessonTime = await LessonTime.create({
@@ -54,6 +66,7 @@ export class lessonTimeResolver {
       startTime,
       endTime,
       userId: payload?.userId,
+      scheduleId,
     }).save();
     return lessonTime;
   }
@@ -76,8 +89,9 @@ export class lessonTimeResolver {
   @Mutation(() => [LessonTime])
   @UseMiddleware(isAuth)
   @UseMiddleware(queueMiddleware)
+  @UseMiddleware(ErrorInterceptor)
   async editLessonTimes(
-    @Arg("lessonTimes", () => [LessonTimeInput]) lessonTimes: LessonTimeInput[],
+    @Args() { lessonTimes }: EditLessonTimesArgs,
     @Ctx() { payload }: MyContext
   ) {
     await AppDataSource.transaction(async (transactionEntityManager) => {

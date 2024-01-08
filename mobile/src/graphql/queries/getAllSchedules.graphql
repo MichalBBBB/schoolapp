@@ -1,0 +1,5 @@
+query GetAllSchedules {
+  getAllSchedules {
+    ...Schedule
+  }
+}

@@ -1,4 +1,3 @@
-import { WEEK_DAYS } from "../types/weekDays";
 import { Field, ObjectType } from "type-graphql";
 import {
   BaseEntity,
@@ -19,12 +18,17 @@ export class Lesson extends BaseEntity {
   @Field()
   id!: string;
 
-  @Column({
-    type: "varchar",
-    enum: WEEK_DAYS,
-  })
-  @Field(() => String)
-  dayOfTheWeek!: WEEK_DAYS;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  extraInfo?: string;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  dayNumber?: number;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  date?: Date;
 
   @ManyToOne(() => LessonTime, (lessonTime) => lessonTime.lessons, {
     onDelete: "CASCADE",
@@ -46,7 +50,7 @@ export class Lesson extends BaseEntity {
   @Field()
   subjectId: string;
 
-  @ManyToOne(() => User, (user) => user.lessons)
+  @ManyToOne(() => User, (user) => user.lessons, { onDelete: "CASCADE" })
   user: Relation<User>;
 
   @Column()

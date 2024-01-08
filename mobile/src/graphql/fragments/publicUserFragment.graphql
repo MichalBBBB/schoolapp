@@ -2,4 +2,6 @@ fragment PublicUser on PublicUser {
   name
   email
   id
+  userId
+  isAdmin
 }

@@ -1,25 +1,43 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useLayoutEffect} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {StyleSheet, Text} from 'react-native';
-import {TaskStackParamList} from '../../routes/TaskStack';
+import {ScrollView, StyleSheet, Text} from 'react-native';
 import {View, TextInput} from 'react-native';
 import {useState} from 'react';
 import {BasicButton} from '../../components/basicViews/BasicButton';
-import {
-  GetProjectsDocument,
-  useCreateProjectMutation,
-} from '../../generated/graphql';
 import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {BasicCard} from '../../components/basicViews/BasicCard';
+import {ProjectStackScreenProps} from '../../utils/types';
+import {useCreateProject} from '../../mutationHooks/project/createProject';
+import {v4 as uuidv4} from 'uuid';
+import {BasicIcon} from '../../components/basicViews/BasicIcon';
 
 export const NewProjectScreen: React.FC<
-  NativeStackScreenProps<TaskStackParamList, 'NewProjectScreen'>
-> = () => {
+  ProjectStackScreenProps<'NewProjectScreen'>
+> = ({navigation}) => {
   const [name, setName] = useState('');
   const [members, setMembers] = useState<string[]>([]);
   const [email, setEmail] = useState('');
-  const [createProject, {error}] = useCreateProjectMutation();
+  const [createProject, {error}] = useCreateProject();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <BasicButton
+          variant="unstyled"
+          onPress={() => {
+            createProject({
+              name: name,
+              memberEmails: members,
+              id: uuidv4(),
+            });
+            navigation.goBack();
+          }}>
+          <BasicText textVariant="button">Create</BasicText>
+        </BasicButton>
+      ),
+    });
+  });
 
   useEffect(() => {
     console.log(JSON.stringify(error));
@@ -30,8 +48,11 @@ export const NewProjectScreen: React.FC<
         placeholder="Name"
         onChangeText={setName}
         spacing="m"
-        marginBottom={30}
+        marginBottom={20}
       />
+      <BasicText color="textSecondary" style={{marginBottom: 5, marginLeft: 5}}>
+        Add members
+      </BasicText>
       <View style={[styles.horizontalContainer, {marginBottom: 10}]}>
         <BasicTextInput
           spacing="m"
@@ -40,9 +61,11 @@ export const NewProjectScreen: React.FC<
           onChangeText={setEmail}
           textContentType="emailAddress"
           autoCapitalize="none"
-          style={{flex: 1, marginRight: 10}}
+          containerStyle={{flex: 1, marginRight: 10}}
         />
         <BasicButton
+          spacing="none"
+          variant="unstyled"
           onPress={() => {
             console.log(email);
             if (!members.includes(email)) {
@@ -51,43 +74,50 @@ export const NewProjectScreen: React.FC<
 
             setEmail('');
           }}>
-          <Text style={{color: 'white'}}>Invite</Text>
+          <BasicIcon
+            style={{height: 35, width: 35}}
+            source={require('../../../assets/Plus.png')}
+          />
         </BasicButton>
       </View>
-      {members.length > 0 && (
-        <BasicCard gap={10} spacing="m" marginBottom={10}>
-          {members.map((item, memberIndex) => (
-            <View style={styles.emailContainer} key={memberIndex}>
-              <BasicText>{item}</BasicText>
-              <BasicButton
-                spacing="none"
-                variant="unstyled"
-                onPress={() => {
-                  setMembers(
-                    members.filter((_, index) => index !== memberIndex),
-                  );
-                }}>
-                <BasicText color="dangerous">Remove</BasicText>
-              </BasicButton>
-            </View>
-          ))}
-        </BasicCard>
-      )}
+      <ScrollView style={{flex: 1}}>
+        {members.length > 0 && (
+          <BasicCard gap={10} spacing="m" marginBottom={10}>
+            {members.map((item, memberIndex) => (
+              <View style={styles.emailContainer} key={memberIndex}>
+                <BasicText>{item}</BasicText>
+                <BasicButton
+                  spacing="none"
+                  variant="unstyled"
+                  onPress={() => {
+                    setMembers(
+                      members.filter((_, index) => index !== memberIndex),
+                    );
+                  }}>
+                  <BasicText color="dangerous">Remove</BasicText>
+                </BasicButton>
+              </View>
+            ))}
+          </BasicCard>
+        )}
+      </ScrollView>
 
-      <View style={styles.addButtonContainer}>
+      {/* <View style={styles.addButtonContainer}>
         <BasicButton
           spacing="m"
           onPress={() => {
             createProject({
-              variables: {name: name, memberEmails: members},
-              refetchQueries: [GetProjectsDocument],
+              name: name,
+              memberEmails: members,
+              id: uuidv4(),
             });
+            navigation.goBack();
           }}>
           <BasicText textVariant="button" color="textContrast">
-            Add Project
+            Create Project
           </BasicText>
         </BasicButton>
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -95,10 +125,7 @@ const styles = StyleSheet.create({
   horizontalContainer: {
     flexDirection: 'row',
   },
-  addButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
+  addButtonContainer: {},
   emailContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -106,5 +133,6 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 20,
+    flex: 1,
   },
 });

@@ -2,19 +2,19 @@ import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import BackButton from '../components/backButton';
+import {CalendarEventFragment} from '../generated/graphql';
 import {TabStackParamList} from '../Routes';
-import AddEventScreen from '../screens/Calendar/AddEventScreen';
 import CalendarHomeScreen from '../screens/Calendar/CalendarHomeScreen';
-
-export type CalendarStackParamList = {
-  CalendarHomeScreen: undefined;
-  AddEventScreen: undefined;
-};
+import EventDetailScreen from '../screens/Calendar/EventDetailScreen';
+import ProjectDetailScreen from '../screens/Projects/ProjectDetailScreen';
+import {ProjectMembersScreen} from '../screens/Projects/ProjectMembersScreen';
+import TaskDetailScreen from '../screens/Tasks/TaskDetailScreen';
+import {CalendarStackParamList} from '../utils/types';
 
 const CalendarStack: React.FC<
   BottomTabScreenProps<TabStackParamList, 'CalendarStack'>
 > = () => {
-  const Stack = createNativeStackNavigator();
+  const Stack = createNativeStackNavigator<CalendarStackParamList>();
   return (
     <Stack.Navigator
       screenOptions={({navigation}) => ({
@@ -27,8 +27,27 @@ const CalendarStack: React.FC<
           }
         },
       })}>
-      <Stack.Screen name="CalendarHomeScreen" component={CalendarHomeScreen} />
-      <Stack.Screen name="AddEventScreen" component={AddEventScreen} />
+      <Stack.Screen
+        name="CalendarHomeScreen"
+        options={{title: 'Calendar'}}
+        component={CalendarHomeScreen}
+      />
+      <Stack.Screen
+        name="EventDetailScreen"
+        component={EventDetailScreen}
+        options={{
+          title: 'Edit Event',
+        }}
+      />
+      <Stack.Screen name="TaskDetailScreen" component={TaskDetailScreen} />
+      <Stack.Screen
+        name="ProjectDetailScreen"
+        component={ProjectDetailScreen}
+      />
+      <Stack.Screen
+        name="ProjectMembersScreen"
+        component={ProjectMembersScreen}
+      />
     </Stack.Navigator>
   );
 };

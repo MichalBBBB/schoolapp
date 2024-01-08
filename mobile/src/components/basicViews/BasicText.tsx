@@ -7,7 +7,7 @@ import type {
   TextVariantsObject,
 } from '../../types/Theme';
 
-interface BasicTextProps extends TextProps {
+export interface BasicTextProps extends TextProps {
   spacing?: keyof SpacingObject;
   textVariant?: keyof TextVariantsObject;
   color?: keyof ColorsObject;
@@ -21,10 +21,12 @@ export const BasicText = forwardRef<Text, BasicTextProps>((props, ref) => {
     textVariant = 'body',
     color = 'primary',
     style,
+    ...rest
   } = props;
   const [theme] = useTheme();
   return (
     <Text
+      {...rest}
       style={[
         {
           padding: theme.spacing[spacing],

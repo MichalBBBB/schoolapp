@@ -1,6 +1,8 @@
 fragment Lesson on Lesson {
   id
-  dayOfTheWeek
+  dayNumber
+  extraInfo
+  date
   subject {
     ...Subject
   }

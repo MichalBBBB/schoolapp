@@ -1,0 +1,13 @@
+fragment Settings on Settings {
+  id
+  startOfWeek
+  startOfRotationDate
+  lengthOfRotation
+  skipWeekends
+  darkMode
+  sortTasksBy
+  showDoDate
+  showCompletedTasks
+  isFirstTime
+  showCalendarView
+}

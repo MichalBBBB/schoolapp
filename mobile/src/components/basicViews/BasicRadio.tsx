@@ -5,7 +5,7 @@ import {ColorsObject} from '../../types/Theme';
 
 interface BasicRadioProps extends ViewProps {
   toggled: boolean;
-  onToggle: (toggled: boolean) => void;
+  onToggle?: (toggled: boolean) => void;
   color?: keyof ColorsObject;
 }
 
@@ -19,8 +19,9 @@ export const BasicRadio: React.FC<BasicRadioProps> = ({
   const [theme] = useTheme();
   return (
     <Pressable
+      disabled={!onToggle}
       onPress={() => {
-        onToggle(!toggled);
+        onToggle?.(!toggled);
       }}
       style={[
         style,

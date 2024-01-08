@@ -7,6 +7,8 @@ import {
   GetAllTasksDocument,
   GetAllTasksQuery,
   RemindersInput,
+  SubjectFragment,
+  SubjectFragmentDoc,
   TaskFragmentDoc,
   useEditTaskMutation,
 } from '../../generated/graphql';
@@ -31,6 +33,10 @@ export const useEditTask: () => [
       return item.id == variables.id;
     });
     if (task) {
+      const subject = client.readFragment<SubjectFragment>({
+        id: `Subject:${variables.subjectId}`,
+        fragment: SubjectFragmentDoc,
+      });
       var remindersArray: RemindersInput[] = [];
       if (variables.reminders) {
         remindersArray =
@@ -50,15 +56,17 @@ export const useEditTask: () => [
             __typename: 'Task',
             id: variables.id,
             name: variables.name,
-            userId: '',
             createdAt: task.createdAt,
-            done: false,
+            done: task.done,
             updatedAt: new Date().toISOString(),
             text: variables.text,
             dueDate: variables.dueDate || null,
+            dueDateIncludesTime: variables.dueDateIncludesTime || false,
             doDate: variables.doDate || null,
-            subtasks: task?.subtasks || [],
-            subject: task?.subject,
+            duration: variables.duration || null,
+            doDateIncludesTime: variables.doDateIncludesTime || false,
+            subtasks: task.subtasks,
+            subject: subject,
             reminders: remindersArray.map(item => {
               return {
                 __typename: 'Reminder',
@@ -68,6 +76,7 @@ export const useEditTask: () => [
                 body: item.body || null,
                 date: item.date,
                 taskId: task.id,
+                eventId: null,
               };
             }),
           },

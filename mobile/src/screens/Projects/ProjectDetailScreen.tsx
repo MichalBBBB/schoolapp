@@ -1,57 +1,108 @@
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {
   FlatList,
-  Image,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {AssignMembersWindow} from '../../components/assignMembersWindow';
-import BasicInputWindow from '../../components/basicInputWindow';
-import {BasicText} from '../../components/basicViews/BasicText';
+import BackButton from '../../components/backButton';
+import {BasicIcon} from '../../components/basicViews/BasicIcon';
+import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
+import EditProjectTaskWindow from '../../components/modals/editProjectTaskWindow';
 import {Menu} from '../../components/menu';
 import {MenuItem} from '../../components/menu/MenuItem';
-import ProjectTask from '../../components/projectTask';
-import {
-  GetProjectsDocument,
-  useAddProjectTaskMutation,
-  useGetProjectsQuery,
-} from '../../generated/graphql';
-import {ProjectStackParamList} from '../../routes/ProjectStack';
+import {Popup} from '../../components/popup';
+import ProjectTask from '../../components/listItems/projectTask';
+import {useTheme} from '../../contexts/ThemeContext';
+import {useGetProjectsQuery} from '../../generated/graphql';
+import {useDeleteProject} from '../../mutationHooks/project/deleteProject';
+import {useEditProject} from '../../mutationHooks/project/editProject';
+import {ProjectStackScreenProps} from '../../utils/types';
+import {AlertObject, useAlert} from '../../contexts/AlertContext';
+import {Alert} from '../../components/modals/alert';
 
 const ProjectDetailScreen: React.FC<
-  NativeStackScreenProps<ProjectStackParamList, 'ProjectDetailScreen'>
+  ProjectStackScreenProps<'ProjectDetailScreen'>
 > = ({route, navigation}) => {
   const {data: projects} = useGetProjectsQuery();
-  const [addProjectTask, {error}] = useAddProjectTaskMutation();
+  const [editProject] = useEditProject();
+  const [deleteProject] = useDeleteProject();
 
   const project = projects?.getProjects.find(
     item => item.id == route.params.projectId,
   );
   const [addTaskModalIsVisible, setAddTaskModalIsVisible] = useState(false);
-  const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
+  const [theme] = useTheme();
+
+  const [text, setText] = useState(project?.text);
+  const [name, setName] = useState(project?.name || '');
+
+  const showAlert = useAlert();
+
+  const [alertVisible, setAlertVisible] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <Menu
-          trigger={
-            <Image
-              source={require('../../../assets/Options.png')}
-              style={styles.options}
-            />
-          }>
-          <MenuItem
-            text={'Members'}
-            onPress={() =>
-              navigation.navigate('ProjectMembersScreen', {
-                projectId: route.params.projectId,
-              })
+      title: project?.name,
+      headerLeft: () => (
+        <BackButton
+          onPress={() => {
+            navigation.goBack();
+            if (project) {
+              editProject({
+                id: project?.id,
+                name,
+                text,
+              });
             }
-          />
-        </Menu>
+          }}
+        />
+      ),
+      headerRight: () => (
+        <Popup
+          trigger={
+            <Pressable>
+              <BasicIcon
+                source={require('../../../assets/Options.png')}
+                style={styles.options}
+              />
+            </Pressable>
+          }>
+          <Menu>
+            <MenuItem
+              text={'Members'}
+              onPress={() =>
+                navigation.navigate('ProjectMembersScreen', {
+                  projectId: route.params.projectId,
+                })
+              }
+            />
+            {false && (
+              <MenuItem
+                text={'Delete project'}
+                color="dangerous"
+                onPress={() => {
+                  if (project) {
+                    showAlert(
+                      new AlertObject({
+                        text: 'Are you sure you want to delete this project?',
+                        submitText: 'Delete',
+                        cancelText: 'Cancel',
+                        submitDangerous: true,
+                      }).onSubmit(() => {
+                        deleteProject({id: project.id});
+                        navigation.goBack();
+                      }),
+                    );
+                    setAlertVisible(true);
+                  }
+                }}
+              />
+            )}
+          </Menu>
+        </Popup>
       ),
     });
   });
@@ -68,53 +119,79 @@ const ProjectDetailScreen: React.FC<
     <>
       <View style={styles.container}>
         <View style={styles.titleContainer}>
-          <BasicText textVariant="title">{project?.name}</BasicText>
+          <BasicTextInput
+            style={{flex: 1}}
+            spacing="none"
+            textVariant="title"
+            variant="unstyled"
+            onChangeText={setName}
+            defaultValue={project.name}
+            onEndEditing={() => {
+              editProject({
+                id: project.id,
+                name,
+                text,
+              });
+            }}
+          />
+
           <TouchableOpacity
             onPress={() => {
               setAddTaskModalIsVisible(true);
             }}>
-            <Image
+            <BasicIcon
               source={require('../../../assets/Plus.png')}
               style={styles.plusButton}
             />
           </TouchableOpacity>
         </View>
+        <BasicTextInput
+          placeholder="Description"
+          variant="unstyled"
+          multiline={true}
+          onChangeText={setText}
+          defaultValue={project.text || ''}
+          onEndEditing={() => {
+            editProject({
+              id: project.id,
+              name,
+              text,
+            });
+          }}
+        />
         <FlatList
+          style={{marginTop: 5}}
+          contentContainerStyle={{
+            borderRadius: 15,
+            overflow: 'hidden',
+            backgroundColor: theme.colors.accentBackground1,
+          }}
           data={project?.tasks}
           renderItem={({item}) => (
             <ProjectTask
               projectTask={item}
-              onUsersPress={() => {
-                setActiveTaskId(item.id);
-              }}
+              backgroundColor={'accentBackground1'}
             />
           )}
         />
       </View>
-      <BasicInputWindow
-        placeholder="Task name"
+      <EditProjectTaskWindow
+        projectId={project.id}
         visible={addTaskModalIsVisible}
         onClose={() => {
           setAddTaskModalIsVisible(false);
         }}
-        onSubmit={text => {
-          addProjectTask({
-            variables: {
-              name: text,
-              projectId: project.id,
-            },
-            refetchQueries: [GetProjectsDocument],
-          });
-        }}
       />
-      <AssignMembersWindow
-        isVisible={Boolean(activeTaskId)}
-        taskId={activeTaskId}
+      {/* <Alert
+        isVisible
         onClose={() => {
-          setActiveTaskId(null);
+          setAlertVisible(false);
         }}
-        project={project}
-      />
+        onSubmit={() => {
+          setAlertVisible(false);
+        }}
+        text={'Are you sure?'}
+      /> */}
     </>
   );
 };
@@ -124,6 +201,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginBottom: 10,
   },
   container: {
     margin: 10,
