@@ -18,7 +18,6 @@ import { isAuth } from "../middleware/isAuth";
 import { queueMiddleware } from "../middleware/queueMiddleware";
 import { AppDataSource } from "../TypeORM";
 import { MyContext } from "../utils/MyContext";
-import { ProjectTask } from "../entities/ProjectTask";
 
 @ObjectType()
 class Invite {
