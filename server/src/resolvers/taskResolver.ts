@@ -21,7 +21,7 @@ import { queueMiddleware } from "../middleware/queueMiddleware";
 import { Reminder } from "../entities/Reminder";
 
 @InputType()
-class RemindersInput implements Partial<Reminder> {
+export class RemindersInput implements Partial<Reminder> {
   @Field()
   id: string;
 
@@ -121,7 +121,11 @@ export class taskResolver {
     @Arg("name") name: string,
     @Arg("subjectId", { nullable: true }) subjectId?: string,
     @Arg("dueDate", { nullable: true }) dueDate?: Date,
-    @Arg("doDate", { nullable: true }) doDate?: Date
+    @Arg("dueDateIncludesTime", { nullable: true })
+    dueDateIncludesTime?: boolean,
+    @Arg("doDate", { nullable: true }) doDate?: Date,
+    @Arg("doDateIncludesTime", { nullable: true })
+    doDateIncludesTime?: boolean
   ) {
     const result = await AppDataSource.createQueryBuilder()
       .insert()
@@ -133,6 +137,8 @@ export class taskResolver {
         subjectId,
         dueDate: dueDate,
         doDate,
+        doDateIncludesTime: doDateIncludesTime || false,
+        dueDateIncludesTime: dueDateIncludesTime || false,
       })
       .returning("*")
       .execute();
@@ -192,9 +198,14 @@ export class taskResolver {
     @Arg("text", { nullable: true }) text: string,
     @Arg("id") id: string,
     @Arg("dueDate", { nullable: true }) dueDate?: Date,
+    @Arg("dueDateIncludesTime", { nullable: true })
+    dueDateIncludesTime?: boolean,
     @Arg("doDate", { nullable: true }) doDate?: Date,
+    @Arg("doDateIncludesTime", { nullable: true }) doDateIncludesTime?: boolean,
+    @Arg("duration", { nullable: true }) duration?: number,
     @Arg("reminders", () => [RemindersInput], { nullable: true })
-    reminders?: RemindersInput[]
+    reminders?: RemindersInput[],
+    @Arg("subjectId", { nullable: true }) subjectId?: string
   ) {
     const task = await Task.findOne({ where: { id } });
     if (task?.userId === payload?.userId && task) {
@@ -216,10 +227,15 @@ export class taskResolver {
           }
         });
       }
+      console.log(subjectId);
       task.name = name;
       task.text = text;
       task.doDate = doDate;
+      task.duration = duration;
+      task.doDateIncludesTime = doDateIncludesTime || false;
+      task.dueDateIncludesTime = dueDateIncludesTime || false;
       task.dueDate = dueDate;
+      task.subjectId = subjectId;
       await task.save();
       return task;
     } else {

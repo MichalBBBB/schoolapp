@@ -9,7 +9,6 @@ import {
 } from "type-graphql";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../utils/MyContext";
-import { WEEK_DAYS } from "../types/weekDays";
 import { queueMiddleware } from "../middleware/queueMiddleware";
 
 @Resolver(() => Lesson)
@@ -31,13 +30,19 @@ export class lessonResolver {
     @Arg("id") id: string,
     @Arg("subjectId") subjectId: string,
     @Arg("lessonTimeId") lessonTimeId: string,
-    @Arg("dayOfTheWeek") dayOfTheWeek: string
+    @Arg("dayNumber", { nullable: true }) dayNumber?: number,
+    @Arg("date", { nullable: true }) date?: Date
   ) {
+    console.log(dayNumber, date);
+    if (!date && (dayNumber == null || dayNumber == undefined)) {
+      throw new Error("You have to provide dayNumber of date");
+    }
     const lesson = await Lesson.create({
       id,
       subjectId,
       lessonTimeId,
-      dayOfTheWeek: dayOfTheWeek as WEEK_DAYS,
+      dayNumber,
+      date,
       userId: payload?.userId,
     }).save();
     const lessonWithRelations = await Lesson.findOne({
@@ -68,9 +73,13 @@ export class lessonResolver {
   async editLesson(
     @Arg("subjectId") subjectId: string,
     @Arg("id") id: string,
-    @Ctx() { payload }: MyContext
+    @Ctx() { payload }: MyContext,
+    @Arg("extraInfo", { nullable: true }) extraInfo?: string
   ) {
-    await Lesson.update({ id, userId: payload?.userId }, { subjectId });
+    await Lesson.update(
+      { id, userId: payload?.userId },
+      { subjectId, extraInfo }
+    );
     const lesson = Lesson.findOne({
       where: { id, userId: payload?.userId },
       relations: { subject: true, lessonTime: true },

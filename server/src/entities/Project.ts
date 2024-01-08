@@ -3,13 +3,12 @@ import {
   BaseEntity,
   Column,
   Entity,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
 } from "typeorm";
 import { ProjectTask } from "./ProjectTask";
-import { PublicUser, User } from "./User";
+import { PublicUser } from "./User";
 import { UserProject } from "./UserProject";
 
 @Entity()
@@ -23,6 +22,10 @@ export class Project extends BaseEntity {
   @Field()
   name: string;
 
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  text?: string;
+
   @OneToMany(() => UserProject, (userProject) => userProject.project)
   @Field(() => [UserProject])
   userProjects: Relation<UserProject>[];
@@ -30,13 +33,16 @@ export class Project extends BaseEntity {
   @Field(() => [PublicUser])
   members: PublicUser[];
 
-  @ManyToOne(() => User, (user) => user.ownedProjects)
-  @Field(() => User)
-  owner: Relation<User>;
+  @Field(() => Boolean)
+  isAdmin: Boolean;
 
-  @Column()
-  @Field()
-  ownerId: string;
+  // @ManyToOne(() => User, (user) => user.ownedProjects)
+  // @Field(() => User)
+  // owner: Relation<User>;
+
+  // @Column()
+  // @Field()
+  // ownerId: string;
 
   @OneToMany(() => ProjectTask, (projectTask) => projectTask.project)
   @Field(() => [ProjectTask])

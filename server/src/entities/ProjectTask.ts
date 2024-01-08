@@ -4,15 +4,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from "typeorm";
 import { Project } from "./Project";
-import { PublicUser, User } from "./User";
+import { PublicUser } from "./User";
+import { UserProjectTask } from "./UserProjectTask";
 
 @Entity()
 @ObjectType()
@@ -33,15 +33,28 @@ export class ProjectTask extends BaseEntity {
   @Field({ nullable: true })
   dueDate?: Date;
 
+  @Column({ default: true })
+  @Field()
+  dueDateIncludesTime: boolean;
+
   @Column({ nullable: true })
   @Field({ nullable: true })
   doDate?: Date;
 
-  @JoinTable()
-  @ManyToMany(() => User, (user) => user.projectTasks, {
-    onDelete: "CASCADE",
-  })
-  users: Relation<User>[];
+  @Column({ default: true })
+  @Field()
+  doDateIncludesTime: boolean;
+
+  @Column({ nullable: true })
+  @Field(() => Number, { nullable: true })
+  duration?: number;
+
+  @OneToMany(
+    () => UserProjectTask,
+    (userProjectTask) => userProjectTask.projectTask
+  )
+  @Field(() => [UserProjectTask])
+  userProjectTasks: Relation<UserProjectTask>[];
 
   @Field(() => [PublicUser])
   publicUsers: PublicUser[];
