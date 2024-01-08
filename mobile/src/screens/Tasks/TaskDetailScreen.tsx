@@ -26,6 +26,7 @@ import {SelectSubjectPopup} from '../../components/popups/selectSubject/selectSu
 import {TaskStackScreenProps} from '../../utils/types';
 import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {SubjectColorsObject} from '../../types/Theme';
+import {useSetBadge} from '../../utils/useSetBadge';
 
 const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
   navigation,
@@ -34,6 +35,8 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
   const {data: Tasks} = useGetAllTasksQuery();
   const task = Tasks?.getAllTasks.find(item => item.id == route.params.task.id);
   const [addSubtask] = useCreateSubtask();
+
+  const setBadge = useSetBadge();
 
   const client = useApolloClient();
 

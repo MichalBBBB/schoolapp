@@ -1,0 +1,10 @@
+mutation AppleSignIn($idToken: String!, $nonce: String!, $fullName: String!) {
+  appleSignIn(idToken: $idToken, nonce: $nonce, fullName: $fullName) {
+    user {
+      id
+      email
+      fullName
+    }
+    accessToken
+  }
+}

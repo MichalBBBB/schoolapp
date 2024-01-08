@@ -14,6 +14,7 @@
   "dependencies": {
     "@apollo/client": "3.4.16",
     "@gorhom/portal": "^1.0.14",
+    "@invertase/react-native-apple-authentication": "^2.3.0",
     "@notifee/react-native": "^7.4.0",
     "@react-native-community/netinfo": "^9.3.7",
     "@react-native-picker/picker": "^2.4.0",

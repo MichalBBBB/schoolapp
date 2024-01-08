@@ -86,6 +86,7 @@ export type Mutation = {
   acceptProjectInvite: Project;
   addMemberToProject: Project;
   addProjectTask: ProjectTask;
+  appleSignIn: UserSuccess;
   assignMember: ProjectTask;
   changePassword: ChangePasswordResponse;
   createEvent: CalendarEvent;
@@ -158,6 +159,13 @@ export type MutationAddProjectTaskArgs = {
   id?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   projectId: Scalars['String'];
+};
+
+
+export type MutationAppleSignInArgs = {
+  fullName: Scalars['String'];
+  idToken: Scalars['String'];
+  nonce: Scalars['String'];
 };
 
 
@@ -627,6 +635,7 @@ export type Task = {
 
 export type User = {
   __typename?: 'User';
+  appleIdToken?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   email: Scalars['String'];
   emailVerified: Scalars['Boolean'];
@@ -1063,6 +1072,15 @@ export type ToggleTaskMutationVariables = Exact<{
 
 
 export type ToggleTaskMutation = { __typename?: 'Mutation', toggleTask: { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, duration?: number | null, doDateIncludesTime: boolean, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> } };
+
+export type AppleSignInMutationVariables = Exact<{
+  idToken: Scalars['String'];
+  nonce: Scalars['String'];
+  fullName: Scalars['String'];
+}>;
+
+
+export type AppleSignInMutation = { __typename?: 'Mutation', appleSignIn: { __typename?: 'UserSuccess', accessToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
 
 export type ChangePasswordMutationVariables = Exact<{
   oldPassword: Scalars['String'];
@@ -2790,6 +2808,46 @@ export function useToggleTaskMutation(baseOptions?: Apollo.MutationHookOptions<T
 export type ToggleTaskMutationHookResult = ReturnType<typeof useToggleTaskMutation>;
 export type ToggleTaskMutationResult = Apollo.MutationResult<ToggleTaskMutation>;
 export type ToggleTaskMutationOptions = Apollo.BaseMutationOptions<ToggleTaskMutation, ToggleTaskMutationVariables>;
+export const AppleSignInDocument = gql`
+    mutation AppleSignIn($idToken: String!, $nonce: String!, $fullName: String!) {
+  appleSignIn(idToken: $idToken, nonce: $nonce, fullName: $fullName) {
+    user {
+      id
+      email
+      fullName
+    }
+    accessToken
+  }
+}
+    `;
+export type AppleSignInMutationFn = Apollo.MutationFunction<AppleSignInMutation, AppleSignInMutationVariables>;
+
+/**
+ * __useAppleSignInMutation__
+ *
+ * To run a mutation, you first call `useAppleSignInMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAppleSignInMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [appleSignInMutation, { data, loading, error }] = useAppleSignInMutation({
+ *   variables: {
+ *      idToken: // value for 'idToken'
+ *      nonce: // value for 'nonce'
+ *      fullName: // value for 'fullName'
+ *   },
+ * });
+ */
+export function useAppleSignInMutation(baseOptions?: Apollo.MutationHookOptions<AppleSignInMutation, AppleSignInMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AppleSignInMutation, AppleSignInMutationVariables>(AppleSignInDocument, options);
+      }
+export type AppleSignInMutationHookResult = ReturnType<typeof useAppleSignInMutation>;
+export type AppleSignInMutationResult = Apollo.MutationResult<AppleSignInMutation>;
+export type AppleSignInMutationOptions = Apollo.BaseMutationOptions<AppleSignInMutation, AppleSignInMutationVariables>;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($oldPassword: String!, $newPassword: String!) {
   changePassword(oldPassword: $oldPassword, newPassword: $newPassword) {

@@ -27,13 +27,18 @@ import {baseUri} from './utils/createApolloClient';
 import {setRemindersFromApollo} from './utils/reminderUtils';
 import {useSettings} from './utils/useSettings';
 import dayjs from 'dayjs';
-import {useMeQuery} from './generated/graphql';
+import {
+  GetAllTasksDocument,
+  GetAllTasksQuery,
+  useMeQuery,
+} from './generated/graphql';
 import {is24HourFormat} from 'react-native-device-time-format';
 import {useSetSettings} from './mutationHooks/settings/setSettings';
 import {v4 as uuidv4} from 'uuid';
 import {AlertProvider} from './contexts/AlertContext';
 import {isVersionHighEnough} from './utils/isVersionHighEnough';
 import {UpdateAppScreen} from './screens/UpdateAppScreen';
+import {setBadgeCount} from './utils/notifications';
 
 const is12hourConfig = {
   // abbreviated format options allowing localization
@@ -114,6 +119,24 @@ export const Content: React.FC = () => {
   const minVersion = useReactiveVar(minVersionVar);
 
   const [setSettings] = useSetSettings();
+
+  client
+    .watchQuery<GetAllTasksQuery>({
+      query: GetAllTasksDocument,
+    })
+    .subscribe({
+      next: tasks => {
+        let number = 0;
+
+        tasks.data.getAllTasks.forEach(task => {
+          if (dayjs(task.doDate).isSame(dayjs(), 'date')) {
+            number += 1;
+          }
+        });
+        setBadgeCount(number);
+        console.log(number);
+      },
+    });
 
   const updateLocale = async () => {
     const is24hour = await is24HourFormat();

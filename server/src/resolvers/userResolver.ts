@@ -43,6 +43,8 @@ import {
   ForgotPasswordSuccess,
 } from "../types/userResponseTypes";
 import { Schedule } from "../entities/Schedule";
+import appleSignin from "apple-signin-auth";
+import crypto from "node:crypto";
 
 const client = new OAuth2Client({
   clientId: process.env.GOOGLE_CLIENT_ID,
@@ -289,6 +291,47 @@ export class userResolver {
         fullName: response.name,
         googleId: response.userId,
         imageURL: response.pictureURL,
+        emailVerified: true,
+        settings,
+      }).save();
+      await Schedule.create({
+        name: "Default Schedule",
+        default: true,
+        userId: user.id,
+      }).save();
+    }
+    if (user) {
+      sendRefreshToken(res, createRefreshToken(user));
+      return {
+        user,
+        accessToken: createAccesToken(user),
+      };
+    } else {
+      throw new Error("an error occured");
+    }
+  }
+
+  @Mutation(() => UserSuccess)
+  async appleSignIn(
+    @Arg("idToken") idToken: string,
+    @Arg("nonce") nonce: string,
+    @Arg("fullName") fullName: string,
+    @Ctx() { res }: MyContext
+  ) {
+    const result = await appleSignin.verifyIdToken(idToken, {
+      clientId: "app.dayto.dayto",
+      nonce: crypto.createHash("sha256").update(nonce).digest("hex"),
+    });
+    let user;
+    user = await User.findOne({ where: { appleIdToken: idToken } });
+    if (!user) {
+      const settings = await Settings.create({
+        startOfRotationDate: dayjs().set("day", 1).toDate(),
+      }).save();
+      user = await User.create({
+        email: result.email,
+        fullName: fullName,
+        appleIdToken: idToken,
         emailVerified: true,
         settings,
       }).save();

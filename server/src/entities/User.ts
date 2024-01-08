@@ -69,6 +69,10 @@ export class User extends BaseEntity {
   @Field({ nullable: true })
   googleId: string;
 
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  appleIdToken: string;
+
   @Field()
   usesOAuth: boolean;
 

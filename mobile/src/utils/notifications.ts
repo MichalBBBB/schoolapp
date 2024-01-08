@@ -93,3 +93,7 @@ export const setNotificationTrigger = async ({
     trigger,
   );
 };
+
+export const setBadgeCount = (number: number) => {
+  notifee.setBadgeCount(number);
+};
