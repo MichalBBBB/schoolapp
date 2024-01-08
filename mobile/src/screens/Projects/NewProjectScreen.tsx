@@ -33,7 +33,9 @@ export const NewProjectScreen: React.FC<
             });
             navigation.goBack();
           }}>
-          <BasicText textVariant="button">Create</BasicText>
+          <BasicText textVariant="button" color="accent">
+            Create
+          </BasicText>
         </BasicButton>
       ),
     });
@@ -53,33 +55,37 @@ export const NewProjectScreen: React.FC<
       <BasicText color="textSecondary" style={{marginBottom: 5, marginLeft: 5}}>
         Add members
       </BasicText>
-      <View style={[styles.horizontalContainer, {marginBottom: 10}]}>
-        <BasicTextInput
-          spacing="m"
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          textContentType="emailAddress"
-          autoCapitalize="none"
-          containerStyle={{flex: 1, marginRight: 10}}
-        />
-        <BasicButton
-          spacing="none"
-          variant="unstyled"
-          onPress={() => {
-            console.log(email);
-            if (!members.includes(email)) {
-              setMembers([...members, email]);
-            }
-
-            setEmail('');
-          }}>
-          <BasicIcon
-            style={{height: 35, width: 35}}
-            source={require('../../../assets/Plus.png')}
+      <BasicCard style={{marginBottom: 15}}>
+        <View style={styles.horizontalContainer}>
+          <BasicTextInput
+            spacing="m"
+            variant="unstyled"
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            textContentType="emailAddress"
+            autoCapitalize="none"
+            containerStyle={{flex: 1, marginRight: 10}}
           />
-        </BasicButton>
-      </View>
+          <BasicButton
+            style={{marginRight: 5}}
+            spacing="none"
+            variant="unstyled"
+            onPress={() => {
+              console.log(email);
+              if (!members.includes(email)) {
+                setMembers([...members, email]);
+              }
+
+              setEmail('');
+            }}>
+            <BasicIcon
+              style={{height: 35, width: 35}}
+              source={require('../../../assets/Plus.png')}
+            />
+          </BasicButton>
+        </View>
+      </BasicCard>
       <ScrollView style={{flex: 1}}>
         {members.length > 0 && (
           <BasicCard gap={10} spacing="m" marginBottom={10}>
@@ -94,7 +100,10 @@ export const NewProjectScreen: React.FC<
                       members.filter((_, index) => index !== memberIndex),
                     );
                   }}>
-                  <BasicText color="dangerous">Remove</BasicText>
+                  <BasicIcon
+                    source={require('../../../assets/Minus.png')}
+                    style={{height: 25, width: 25}}
+                  />
                 </BasicButton>
               </View>
             ))}
@@ -124,12 +133,15 @@ export const NewProjectScreen: React.FC<
 const styles = StyleSheet.create({
   horizontalContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   addButtonContainer: {},
   emailContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    padding: 5,
+    paddingLeft: 10,
   },
   container: {
     padding: 20,

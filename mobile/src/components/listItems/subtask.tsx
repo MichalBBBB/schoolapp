@@ -3,12 +3,14 @@ import {
   Image,
   Text,
   View,
-  TouchableOpacity,
   StyleSheet,
   LayoutAnimation,
   Pressable,
 } from 'react-native';
-import {TouchableHighlight} from 'react-native-gesture-handler';
+import {
+  TouchableHighlight,
+  TouchableOpacity,
+} from 'react-native-gesture-handler';
 import {useTheme} from '../../contexts/ThemeContext';
 import {
   SubtaskFragment,

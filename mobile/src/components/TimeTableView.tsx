@@ -223,7 +223,9 @@ export const TimeTableView = () => {
             flexDirection: 'row',
             height: '100%',
             paddingLeft:
-              140 + (60 - parseInt(earliestTime.split(':')[1])) * widthConstant,
+              140 +
+              (60 - parseInt(earliestTime.split(':')[1])) * widthConstant -
+              1,
           }}>
           {topTimes.map((item, index) => (
             <View
@@ -341,6 +343,7 @@ export const TimeTableView = () => {
                       height: '100%',
                     }}>
                     <SelectSubjectPopup
+                      backgroundColor="accentBackground2"
                       onSubmit={subject => {
                         if (subject) {
                           createLesson({

@@ -17,6 +17,7 @@ import {
   useGetProjectsQuery,
 } from '../../generated/graphql';
 import {ProjectStackScreenProps} from '../../utils/types';
+import AddButton from '../../components/addButton';
 
 const ProjectHomeScreen: React.FC<
   ProjectStackScreenProps<'ProjectHomeScreen'>
@@ -28,22 +29,6 @@ const ProjectHomeScreen: React.FC<
 
   const client = useApolloClient();
   const [refreshing, setRefreshing] = useState(false);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <BasicButton
-          variant="unstyled"
-          onPress={() => {
-            if (isOnline) {
-              navigation.navigate('NewProjectScreen');
-            }
-          }}>
-          <BasicText>Add</BasicText>
-        </BasicButton>
-      ),
-    });
-  });
 
   const MyFlatList = FlatList<ProjectFragment | InviteFragment>;
 
@@ -121,6 +106,15 @@ const ProjectHomeScreen: React.FC<
               return <Invite invite={item} />;
             } else {
               return <View></View>;
+            }
+          }}
+        />
+      </View>
+      <View style={{position: 'absolute', right: 0, bottom: 0, margin: 20}}>
+        <AddButton
+          onPress={() => {
+            if (isOnline) {
+              navigation.navigate('NewProjectScreen');
             }
           }}
         />

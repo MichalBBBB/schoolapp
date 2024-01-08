@@ -19,6 +19,7 @@ export type ColorsObject = {
   notification: string;
   accentBackground1: string;
   accentBackground2: string;
+  accentBackground3: string;
   icon: string;
   modal: string;
   cardView: string;
@@ -27,6 +28,7 @@ export type ColorsObject = {
   dangerous: string;
   dangerousBackground: string;
   lightBorder: string;
+  selection: string;
 };
 
 export type SubjectColor = {
@@ -40,7 +42,9 @@ export type SubjectColorsObject = {
   grey: SubjectColor;
   brown: SubjectColor;
   pink: SubjectColor;
+  darkPink: SubjectColor;
   yellow: SubjectColor;
+  darkYellow: SubjectColor;
   green: SubjectColor;
   red: SubjectColor;
   purple: SubjectColor;

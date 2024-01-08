@@ -120,6 +120,7 @@ export const AdvancedTimeTableScreen: React.FC<
               setStartDateModalVisible(true);
             }}
             backgroundColor="lightBorder"
+            borderColor="lightBorder"
             borderWidth={1}
             variant="outlined"
             spacing="s"

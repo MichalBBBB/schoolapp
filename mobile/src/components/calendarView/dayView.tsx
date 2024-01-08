@@ -308,6 +308,7 @@ const DayView: React.FC<DayEventsProps> = ({date}) => {
           }}>
           {blocks.length > 0 ? (
             <>
+              {/* Horizontal lines */}
               <View
                 style={{
                   width: '100%',
@@ -328,6 +329,7 @@ const DayView: React.FC<DayEventsProps> = ({date}) => {
                   />
                 ))}
               </View>
+              {/* Times on the side */}
               <View
                 style={{
                   position: 'absolute',
