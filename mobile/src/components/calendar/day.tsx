@@ -64,14 +64,9 @@ const Day: React.FC<DayProps> = ({
 };
 
 export default memo(Day, (prevProps, nextProps) => {
-  if (prevProps.day.dot !== nextProps.day.dot) {
+  if (prevProps.isSelected == nextProps.isSelected) {
+    return true;
+  } else {
     return false;
   }
-  if (prevProps.isSelected !== nextProps.isSelected) {
-    return false;
-  }
-  if (!prevProps.day.date.isSame(nextProps.day.date)) {
-    return false;
-  }
-  return true;
 });
