@@ -1,5 +1,0 @@
-query GetAllLessonTimes {
-  getAllLessonTimes {
-    ...LessonTime
-  }
-}

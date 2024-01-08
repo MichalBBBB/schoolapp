@@ -1,8 +1,19 @@
 import {useNavigation} from '@react-navigation/native';
+import {FlashList} from '@shopify/flash-list';
 import dayjs from 'dayjs';
-import React, {createRef, useEffect, useState} from 'react';
-import {View, FlatList} from 'react-native';
+import React, {
+  createRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
+import {View, FlatList, Platform} from 'react-native';
+import {CalendarHandle} from '.';
+import {SettingsFragment} from '../../generated/graphql';
+import {useSettings} from '../../utils/useSettings';
 import Week from './week';
+import {WeekViewItem} from './weekViewItem';
 
 interface weekViewProps {
   week: dayjs.Dayjs;
@@ -11,37 +22,56 @@ interface weekViewProps {
   calendarWidth: number;
   weekHeight: number;
   onChangeActiveWeek?: (newWeek: dayjs.Dayjs) => void | undefined;
-  scrollToDate?: dayjs.Dayjs | undefined | null;
+  pastScrollRange: number;
+  futureScrollRange: number;
+  daysWithDots?: dayjs.Dayjs[];
 }
 
-const createWeek = (date: dayjs.Dayjs | string) => {
-  if (typeof date == 'string') {
-    return date;
-  }
-  let day = date.startOf('week');
-  let week = [];
-  for (var i = 0; i < 7; i++) {
-    week.push(day);
-    day = day.add(1, 'day');
-  }
-  return week;
-};
+const WeekView = forwardRef<CalendarHandle, weekViewProps>((props, ref) => {
+  const {
+    week,
+    selectedDay,
+    onDayPress,
+    calendarWidth,
+    weekHeight,
+    onChangeActiveWeek,
+    pastScrollRange,
+    futureScrollRange,
+    daysWithDots,
+  } = props;
 
-const pastScrollRange = 10;
-const futureScrollRange = 20;
+  useImperativeHandle(ref, () => {
+    return {
+      goForward() {
+        if (index + 1 <= weeks.length - 1) {
+          flatListRef.current?.scrollToIndex({
+            index: index + 1,
+            animated: true,
+          });
+          if (Platform.OS === 'android') {
+            updateWeeks(index + 1);
+          }
+        }
+      },
+      goBackwards() {
+        if (index - 1 >= 0) {
+          flatListRef.current?.scrollToIndex({
+            index: index - 1,
+            animated: true,
+          });
+          if (Platform.OS === 'android') {
+            updateWeeks(index - 1);
+          }
+        }
+      },
+    };
+  });
 
-const WeekView: React.FC<weekViewProps> = ({
-  week,
-  selectedDay,
-  onDayPress,
-  calendarWidth,
-  weekHeight,
-  onChangeActiveWeek,
-  scrollToDate,
-}) => {
   const [weeks, setWeeks] = useState<Array<dayjs.Dayjs | string>>([week]);
   const [index, setIndex] = useState(pastScrollRange);
-  const flatListRef = createRef<FlatList>();
+  const flatListRef = createRef<FlashList<any>>();
+
+  const settings = useSettings();
 
   const createDateFromString = (string: string) => {
     const date = string
@@ -50,6 +80,30 @@ const WeekView: React.FC<weekViewProps> = ({
       .map(item => parseInt(item));
     return dayjs(new Date(date[0], date[1] - 1, date[2]));
   };
+
+  useEffect(() => {
+    const newIndex = weeks.findIndex(value => {
+      if (typeof value == 'string') {
+        const date = createDateFromString(value);
+        if (date.isSame(selectedDay, 'week')) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        if (value.isSame(selectedDay, 'week')) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    });
+    setWeeks(changeVisibility(newIndex));
+    flatListRef.current?.scrollToIndex({
+      index: newIndex,
+      animated: false,
+    });
+  }, [selectedDay]);
 
   const changeVisibility = (newIndex: number) => {
     const weeksCopy = [...weeks];
@@ -85,42 +139,30 @@ const WeekView: React.FC<weekViewProps> = ({
       }
       weeksCopy.push(newWeek);
     }
-    console.log(weeksCopy);
     setWeeks(weeksCopy);
   }, []);
 
-  useEffect(() => {
-    if (scrollToDate) {
-      const newIndex = weeks.findIndex(value => {
-        if (typeof value == 'string') {
-          const date = createDateFromString(value);
-          if (date.isSame(scrollToDate, 'week')) {
-            return true;
-          } else {
-            return false;
-          }
-        } else {
-          if (value.isSame(scrollToDate, 'week')) {
-            return true;
-          } else {
-            return false;
-          }
-        }
-      });
-      console.log(newIndex);
-      setWeeks(changeVisibility(newIndex));
-      flatListRef.current?.scrollToIndex({
-        index: newIndex,
-        animated: false,
-      });
+  const updateWeeks = (newIndex: number) => {
+    // go through the data array and change months close to viewable to full dates to render full calendars
+    const weeksCopy = changeVisibility(newIndex);
+
+    if (
+      index !== newIndex &&
+      onChangeActiveWeek &&
+      typeof weeks[newIndex] !== 'string'
+    ) {
+      onChangeActiveWeek(weeksCopy[newIndex] as dayjs.Dayjs);
     }
-  }, [scrollToDate]);
+    setIndex(newIndex);
+    setWeeks(weeksCopy);
+  };
 
   const renderItem = ({item}: {item: dayjs.Dayjs | string}) => {
     return (
       <View style={{width: calendarWidth}}>
-        <Week
-          week={createWeek(item)}
+        <WeekViewItem
+          daysWithDots={daysWithDots || []}
+          week={item}
           selectedDay={selectedDay}
           onDayPress={date => {
             onDayPress(date);
@@ -132,16 +174,21 @@ const WeekView: React.FC<weekViewProps> = ({
     );
   };
 
+  if (weeks.length == 1) {
+    return <View style={{height: weekHeight, width: calendarWidth}} />;
+  }
+
   return (
-    <FlatList
+    <FlashList
       ref={flatListRef}
       data={weeks}
       renderItem={renderItem}
-      getItemLayout={(item, index) => ({
-        length: calendarWidth,
-        offset: calendarWidth * index,
-        index: index,
-      })}
+      estimatedItemSize={calendarWidth}
+      // getItemLayout={(item, index) => ({
+      //   length: calendarWidth,
+      //   offset: calendarWidth * index,
+      //   index: index,
+      // })}
       horizontal={true}
       initialScrollIndex={pastScrollRange}
       snapToOffsets={weeks.map((item, index) => index * calendarWidth)}
@@ -151,22 +198,11 @@ const WeekView: React.FC<weekViewProps> = ({
       onMomentumScrollEnd={item => {
         // change data in months on every scroll
         const newIndex = item.nativeEvent.contentOffset.x / calendarWidth;
-
-        // go through the data array and change months close to viewable to full dates to render full calendars
-        const weeksCopy = changeVisibility(newIndex);
-
-        if (
-          index !== newIndex &&
-          onChangeActiveWeek &&
-          typeof weeks[newIndex] !== 'string'
-        ) {
-          onChangeActiveWeek(weeks[newIndex] as dayjs.Dayjs);
-        }
-        setIndex(newIndex);
-        setWeeks(weeksCopy);
+        updateWeeks(newIndex);
       }}
+      extraData={[index, daysWithDots, settings, selectedDay]}
     />
   );
-};
+});
 
 export default WeekView;

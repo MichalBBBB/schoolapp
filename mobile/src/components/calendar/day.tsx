@@ -1,45 +1,72 @@
 import dayjs from 'dayjs';
-import React, {memo, useContext} from 'react';
-import {TouchableOpacity, View, Text} from 'react-native';
+import React, {memo, useContext, useEffect} from 'react';
+import {TouchableOpacity, View, Text, Pressable} from 'react-native';
+import {DayWithDot} from '.';
+import {useTheme} from '../../contexts/ThemeContext';
 import {BasicText} from '../basicViews/BasicText';
 
 interface DayProps {
-  day: dayjs.Dayjs;
+  day: DayWithDot;
   isSelected: boolean;
   monthNum: number | undefined;
   onPress: (date: dayjs.Dayjs) => void;
+  weekHeight: number;
 }
 
-const Day: React.FC<DayProps> = ({day, isSelected, monthNum, onPress}) => {
+const Day: React.FC<DayProps> = ({
+  day,
+  isSelected,
+  monthNum,
+  onPress,
+  weekHeight,
+}) => {
+  const [theme] = useTheme();
   return (
-    <TouchableOpacity
+    <Pressable
+      style={{
+        width: weekHeight,
+        height: weekHeight,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: isSelected ? weekHeight / 2 : undefined,
+        backgroundColor: isSelected
+          ? theme.colors.accentBackground2
+          : undefined,
+      }}
       onPress={() => {
-        console.log(day);
-        onPress(day);
+        onPress(day.date);
       }}>
-      <View
-        style={{
-          width: 30,
-          height: 30,
-          justifyContent: 'center',
-          alignItems: 'center',
-          borderRadius: isSelected ? 15 : undefined,
-          backgroundColor: isSelected ? '#ddd' : undefined,
-          marginVertical: 2,
-        }}>
-        <BasicText
-          color={
-            !monthNum
-              ? 'text'
-              : day.get('month') + 1 == monthNum
-              ? 'text'
-              : 'textSecondary'
-          }>
-          {day.get('date').toString()}
-        </BasicText>
-      </View>
-    </TouchableOpacity>
+      <BasicText
+        color={
+          !monthNum
+            ? 'text'
+            : day.date.get('month') + 1 == monthNum
+            ? 'text'
+            : 'textSecondary'
+        }>
+        {day.date.get('date').toString()}
+      </BasicText>
+
+      {day.dot && (
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 3,
+            borderRadius: 5,
+            height: 5,
+            width: 5,
+            backgroundColor: theme.colors.textTerciary,
+          }}
+        />
+      )}
+    </Pressable>
   );
 };
 
-export default memo(Day);
+export default memo(Day, (prevProps, nextProps) => {
+  if (prevProps.isSelected == nextProps.isSelected) {
+    return true;
+  } else {
+    return false;
+  }
+});

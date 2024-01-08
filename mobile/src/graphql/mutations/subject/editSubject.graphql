@@ -1,0 +1,15 @@
+mutation EditSubject(
+  $name: String!
+  $id: String!
+  $colorName: String!
+  $extraInfo: String
+) {
+  editSubject(
+    name: $name
+    id: $id
+    colorName: $colorName
+    extraInfo: $extraInfo
+  ) {
+    ...Subject
+  }
+}

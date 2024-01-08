@@ -1,23 +1,25 @@
 import {
   GetAllEventsDocument,
   GetAllLessonsDocument,
-  GetAllLessonTimesDocument,
   GetAllRemindersDocument,
+  GetAllSchedulesDocument,
   GetAllSubjectsDocument,
   GetAllTasksDocument,
   GetInvitesDocument,
   GetProjectsDocument,
+  GetProjectTasksOfUserDocument,
   MeDocument,
 } from '../generated/graphql';
 
 export const allQueries = [
   GetAllEventsDocument,
   GetAllLessonsDocument,
-  GetAllLessonTimesDocument,
   GetAllSubjectsDocument,
   GetAllTasksDocument,
   GetInvitesDocument,
   GetProjectsDocument,
   GetAllRemindersDocument,
+  GetProjectTasksOfUserDocument,
+  GetAllSchedulesDocument,
   MeDocument,
 ];

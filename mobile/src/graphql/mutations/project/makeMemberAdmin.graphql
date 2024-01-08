@@ -1,0 +1,3 @@
+mutation MakeMemberAdmin($memberId: String!, $projectId: String!) {
+  makeMemberAdmin(memberId: $memberId, projectId: $projectId)
+}

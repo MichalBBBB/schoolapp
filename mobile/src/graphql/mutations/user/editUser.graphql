@@ -1,0 +1,5 @@
+mutation EditUser($email: String, $fullName: String) {
+  editUser(email: $email, fullName: $fullName) {
+    ...User
+  }
+}

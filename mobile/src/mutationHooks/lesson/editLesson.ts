@@ -45,7 +45,9 @@ export const useEditLesson: () => [
             id: variables.id,
             subject: subject,
             lessonTime: lesson.lessonTime,
-            dayOfTheWeek: lesson.dayOfTheWeek,
+            dayNumber: lesson.dayNumber || null,
+            extraInfo: variables.extraInfo || null,
+            date: lesson.date || null,
           },
         },
         update: (cache, {data}) => {

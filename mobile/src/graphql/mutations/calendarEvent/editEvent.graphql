@@ -1,0 +1,23 @@
+mutation EditEvent(
+  $startDate: DateTime!
+  $endDate: DateTime
+  $wholeDay: Boolean
+  $name: String!
+  $subjectId: String
+  $id: String!
+  $reminders: [RemindersInput!]
+  $text: String
+) {
+  editEvent(
+    id: $id
+    startDate: $startDate
+    endDate: $endDate
+    wholeDay: $wholeDay
+    name: $name
+    subjectId: $subjectId
+    reminders: $reminders
+    text: $text
+  ) {
+    ...CalendarEvent
+  }
+}

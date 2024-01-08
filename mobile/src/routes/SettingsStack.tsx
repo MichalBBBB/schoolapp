@@ -3,17 +3,17 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import BackButton from '../components/backButton';
 import {TabStackParamList} from '../Routes';
+import {DateSettingsScreen} from '../screens/Settings/DateAndTime';
+import {StartOfWeekScreen} from '../screens/Settings/DateAndTime/StartOfWeekScreen';
+import {ProfileScreen} from '../screens/Settings/Profile';
+import {ChangePasswordScreen} from '../screens/Settings/Profile/ChangePasswordScreen';
+
 import SettingsHomeScreen from '../screens/Settings/SettingsHomeScreen';
-import {SubjectScreen} from '../screens/Settings/SubjectScreen';
+import {TimeTableHomeScreen} from '../screens/Settings/Timetable';
+import {AdvancedTimeTableScreen} from '../screens/Settings/Timetable/AdvancedTimeTableScreen';
 import LessonTimesScreen from '../screens/Settings/Timetable/LessonTimesScreen';
 import TimeTableScreen from '../screens/Settings/Timetable/TimeTableScreen';
-
-export type SettingsStackParamList = {
-  SettingsHomeScreen: undefined;
-  LessonTimesScreen: undefined;
-  TimeTableScreen: undefined;
-  SubjectScreen: undefined;
-};
+import {SettingsStackParamList} from '../utils/types';
 
 const SettingsStack: React.FC<
   BottomTabScreenProps<TabStackParamList, 'SettingsStack'>
@@ -31,10 +31,51 @@ const SettingsStack: React.FC<
           }
         },
       })}>
-      <Stack.Screen name="SettingsHomeScreen" component={SettingsHomeScreen} />
-      <Stack.Screen name="LessonTimesScreen" component={LessonTimesScreen} />
-      <Stack.Screen name="TimeTableScreen" component={TimeTableScreen} />
-      <Stack.Screen name="SubjectScreen" component={SubjectScreen} />
+      <Stack.Screen
+        name="SettingsHomeScreen"
+        options={{title: 'Settings'}}
+        component={SettingsHomeScreen}
+      />
+      <Stack.Screen
+        name="TimeTableHomeScreen"
+        options={{title: 'Timetable'}}
+        component={TimeTableHomeScreen}
+      />
+      <Stack.Screen
+        name="LessonTimesScreen"
+        options={{title: 'Lesson times'}}
+        component={LessonTimesScreen}
+      />
+      <Stack.Screen
+        name="TimeTableScreen"
+        options={{title: 'Timetable'}}
+        component={TimeTableScreen}
+      />
+      <Stack.Screen
+        name="DateSettingsScreen"
+        options={{title: 'Date and time'}}
+        component={DateSettingsScreen}
+      />
+      <Stack.Screen
+        name="StartOfWeekScreen"
+        options={{title: 'Start of week'}}
+        component={StartOfWeekScreen}
+      />
+      <Stack.Screen
+        name="AdvancedTimeTableScreen"
+        options={{title: 'Advanced'}}
+        component={AdvancedTimeTableScreen}
+      />
+      <Stack.Screen
+        name="ProfileScreen"
+        component={ProfileScreen}
+        options={{title: 'Profile'}}
+      />
+      <Stack.Screen
+        name="ChangePasswordScreen"
+        component={ChangePasswordScreen}
+        options={{title: 'Change Password'}}
+      />
     </Stack.Navigator>
   );
 };

@@ -5,6 +5,7 @@ export type MyTheme = {
   colors: ColorsObject;
   spacing: SpacingObject;
   textVariants: TextVariantsObject;
+  subjectColors: SubjectColorsObject;
 };
 
 export type ColorsObject = {
@@ -13,14 +14,39 @@ export type ColorsObject = {
   card: string;
   text: string;
   textSecondary: string;
+  textTerciary: string;
   border: string;
   notification: string;
-  accentBackground: string;
+  accentBackground1: string;
+  accentBackground2: string;
+  icon: string;
+  modal: string;
   cardView: string;
   accent: string;
   textContrast: string;
   dangerous: string;
+  dangerousBackground: string;
   lightBorder: string;
+};
+
+export type SubjectColor = {
+  primary: string;
+  secondary: string;
+};
+
+export type SubjectColorsObject = {
+  blue: SubjectColor;
+  beige: SubjectColor;
+  grey: SubjectColor;
+  brown: SubjectColor;
+  pink: SubjectColor;
+  yellow: SubjectColor;
+  green: SubjectColor;
+  red: SubjectColor;
+  purple: SubjectColor;
+  darkBlue: SubjectColor;
+  darkGreen: SubjectColor;
+  orange: SubjectColor;
 };
 
 export type SpacingObject = {

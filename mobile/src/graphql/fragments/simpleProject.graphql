@@ -1,0 +1,4 @@
+fragment SimpleProject on Project {
+  id
+  name
+}

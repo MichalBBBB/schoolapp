@@ -1,0 +1,12 @@
+fragment Schedule on Schedule {
+  id
+  name
+  default
+  lessonTimes {
+    ...LessonTime
+  }
+  dayNumbers
+  dates
+  createdAt
+  updatedAt
+}

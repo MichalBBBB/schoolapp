@@ -3,6 +3,7 @@ import {
   ApolloLink,
   createHttpLink,
   InMemoryCache,
+  Reference,
 } from '@apollo/client';
 import {setContext} from '@apollo/client/link/context';
 import {TokenRefreshLink} from 'apollo-link-token-refresh';
@@ -14,7 +15,7 @@ import {
 } from 'apollo3-cache-persist';
 import jwtDecode from 'jwt-decode';
 import {Platform} from 'react-native';
-import {isLoggedInVar, storage} from '../App';
+import {isLoggedInVar, isOnlineVar, persistentQueueLink, storage} from '../App';
 import {getAccessToken, setAccessToken} from './AccessToken';
 import {onError} from '@apollo/client/link/error';
 import {RetryLink} from '@apollo/client/link/retry';
@@ -22,26 +23,31 @@ import NetInfo from '@react-native-community/netinfo';
 import SerializingLink from 'apollo-link-serialize';
 import {PersistentQueueLink} from './persistentQueueLink';
 import {BatchHttpLink} from '@apollo/client/link/batch-http';
+import {API_URI_ANDROID, API_URI_DEFAULT} from '@env';
+
+// export const baseUri =
+//   Platform.OS == 'ios' ? 'http://localhost:5002' : 'http://10.0.2.2:5002';
+
+// export const baseUri = 'https://api.dayto.app';
 
 export const baseUri =
-  Platform.OS == 'ios' ? 'http://localhost:5002' : 'http://10.0.2.2:5002';
+  Platform.OS == 'android' ? API_URI_ANDROID : API_URI_DEFAULT;
 
 export const uri = baseUri + '/graphql';
-
-const httpLink = createHttpLink({
-  uri: uri,
-});
 
 const batchHttpLink = new BatchHttpLink({
   uri,
 });
 
-const retryLink = new RetryLink();
-
-const serializingLink = new SerializingLink();
-
 const errorLink = onError(error => {
-  console.warn(error);
+  console.log(
+    JSON.stringify(error.graphQLErrors),
+    JSON.stringify(error.networkError?.stack),
+  );
+  if (error.networkError) {
+    isOnlineVar(false);
+    persistentQueueLink.close();
+  }
 });
 
 const authLink = setContext((_, {headers}) => {
@@ -90,9 +96,8 @@ const refreshLink = new TokenRefreshLink({
         !state.isConnected ||
         (err instanceof TypeError && err.message == 'Network request failed')
       ) {
-        console.warn('you are offline');
+        isOnlineVar(false);
       } else {
-        console.warn('Your refresh token is invalid. Try to relogin');
         isLoggedInVar(false);
       }
     });
@@ -102,7 +107,53 @@ const refreshLink = new TokenRefreshLink({
 export const createApolloClient = async (
   persistentQueueLink: PersistentQueueLink,
 ) => {
-  const cache = new InMemoryCache();
+  const cache = new InMemoryCache({
+    // if an object is removed from the cache, it is not automatically removed from its references
+    // here we specifify read functions, that filter out all unreachable objects
+    typePolicies: {
+      Task: {
+        fields: {
+          subtasks(existingSubtasks: Reference[], {canRead}) {
+            return existingSubtasks ? existingSubtasks.filter(canRead) : [];
+          },
+        },
+      },
+      Project: {
+        fields: {
+          tasks(existingProjectTasks: Reference[], {canRead}) {
+            return existingProjectTasks
+              ? existingProjectTasks.filter(canRead)
+              : [];
+          },
+        },
+      },
+      Schedule: {
+        fields: {
+          lessonTimes(existingLessonTimes: Reference[], {canRead}) {
+            return existingLessonTimes
+              ? existingLessonTimes.filter(canRead)
+              : [];
+          },
+        },
+      },
+      Query: {
+        fields: {
+          getAllTasks(existingTasks: Reference[], {canRead}) {
+            return existingTasks ? existingTasks.filter(canRead) : [];
+          },
+          getAllSubjects(existinSubjects: Reference[], {canRead}) {
+            return existinSubjects ? existinSubjects.filter(canRead) : [];
+          },
+          getAllLessons(existingLessons: Reference[], {canRead}) {
+            return existingLessons ? existingLessons.filter(canRead) : [];
+          },
+          getAllEvents(existingEvents: Reference[], {canRead}) {
+            return existingEvents ? existingEvents.filter(canRead) : [];
+          },
+        },
+      },
+    },
+  });
 
   await persistCache({
     cache,
@@ -113,8 +164,6 @@ export const createApolloClient = async (
     link: ApolloLink.from([
       errorLink,
       persistentQueueLink,
-      // serializingLink as any as ApolloLink,
-      // retryLink,
       refreshLink,
       authLink,
       batchHttpLink,

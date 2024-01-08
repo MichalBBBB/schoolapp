@@ -8,10 +8,16 @@ import {
 import React, {useEffect, useState} from 'react';
 import {Platform, Text, UIManager, View} from 'react-native';
 import Routes from './Routes';
-import {createApolloClient} from './utils/createApolloClient';
+import {baseUri, createApolloClient} from './utils/createApolloClient';
 import {ThemeProvider} from './contexts/ThemeContext';
 import dayjs from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
+import updateLocale from 'dayjs/plugin/updateLocale';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+import CustomParseFormat from 'dayjs/plugin/customParseFormat';
+import RelativeTime from 'dayjs/plugin/relativeTime';
+import calendar from 'dayjs/plugin/calendar';
+import weekOfYear from 'dayjs/plugin/weekOfYear';
 import 'dayjs/locale/sk';
 import {PortalHost, PortalProvider} from '@gorhom/portal';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
@@ -22,12 +28,24 @@ import {MMKV} from 'react-native-mmkv';
 import {allQueries} from './utils/allQueries';
 import {Content} from './Content';
 import notifee from '@notifee/react-native';
+import NetInfo from '@react-native-community/netinfo';
+import {createRemindersChannel} from './utils/notifications';
+import 'dayjs/locale/en';
+import KeyboardManager from 'react-native-keyboard-manager/dist';
 
 export const isLoggedInVar = makeVar(true);
 export const isOnlineVar = makeVar(true);
+export const isLoadingVar = makeVar(true);
+export const minVersionVar = makeVar('1.0.0');
 export const persistentQueueLink = new PersistentQueueLink();
 dayjs.extend(weekday);
-dayjs.locale('sk');
+dayjs.extend(updateLocale);
+dayjs.extend(localizedFormat);
+dayjs.extend(CustomParseFormat);
+dayjs.extend(RelativeTime);
+dayjs.extend(calendar);
+dayjs.extend(weekOfYear);
+dayjs.locale('en');
 
 export const storage = new MMKV();
 
@@ -36,6 +54,11 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental
 ) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+if (Platform.OS === 'ios') {
+  KeyboardManager.setEnable(true);
+  KeyboardManager.setEnableAutoToolbar(false);
 }
 
 const App = () => {
@@ -50,6 +73,11 @@ const App = () => {
 
   useEffect(() => {
     initializeApolloClient();
+    createRemindersChannel();
+  }, []);
+
+  useEffect(() => {
+    console.log('storage', storage.getString('queue'));
   }, []);
 
   if (!client) {
@@ -64,7 +92,9 @@ const App = () => {
 
   return (
     <ApolloProvider client={client}>
-      <Content />
+      <ThemeProvider>
+        <Content />
+      </ThemeProvider>
     </ApolloProvider>
   );
 };

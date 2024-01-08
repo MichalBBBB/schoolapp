@@ -7,22 +7,42 @@ import React, {
   useState,
 } from 'react';
 import {TextStyle} from 'react-native';
-import {MyTheme} from '../types/Theme';
+import {MyTheme, SubjectColorsObject} from '../types/Theme';
 
-const LightTheme: MyTheme = {
+const lightSubjectColors: SubjectColorsObject = {
+  purple: {primary: '#b981da', secondary: '#b981da55'},
+  pink: {primary: '#efa7cf', secondary: '#efa7cf55'},
+  darkBlue: {primary: '#698de8', secondary: '#698de855'},
+  blue: {primary: '#a2cffe', secondary: '#a2cffe55'},
+  darkGreen: {primary: '#479253', secondary: '#47925355'},
+  green: {primary: '#95e3c0', secondary: '#95e3c055'},
+  yellow: {primary: '#e9d32a', secondary: '#e9d32a55'},
+  beige: {primary: '#efc5b5', secondary: '#efc5b555'},
+  orange: {primary: '#f6a265', secondary: '#f6a26555'},
+  red: {primary: '#f66565', secondary: '#f6656555'},
+  brown: {primary: '#ad8d56', secondary: '#ad8d5655'},
+  grey: {primary: '#a5a49f', secondary: '#a5a49f55'},
+};
+
+export const LightTheme: MyTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
     primary: 'black',
-    background: 'white',
-    card: 'white',
-    accentBackground: '#eee',
+    background: '#eeeeee',
+    card: '#eee',
+    accentBackground1: 'white',
+    accentBackground2: 'white',
+    modal: '#eee',
     textSecondary: 'grey',
+    textTerciary: '#c8c8c8',
     cardView: '#eee',
     accent: 'black',
     textContrast: 'white',
     dangerous: 'red',
+    dangerousBackground: '#FF000055',
     lightBorder: '#aaa',
+    icon: 'black',
   },
   spacing: {
     none: 0,
@@ -40,30 +60,40 @@ const LightTheme: MyTheme = {
       fontSize: 24,
       fontWeight: 'bold',
     },
-    subHeading: {},
+    subHeading: {
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
     body: {},
     subText: {},
     button: {
       fontWeight: 'bold',
     },
   },
+  subjectColors: lightSubjectColors,
 };
 
-const DarkTheme: MyTheme = {
+export const DarkTheme: MyTheme = {
   ...LightTheme,
+  dark: true,
   colors: {
     ...DefaultTheme.colors,
     text: 'white',
     primary: 'white',
     background: 'black',
     card: 'black',
-    accentBackground: '#eee',
-    textSecondary: 'green',
+    accentBackground1: '#181818',
+    accentBackground2: '#232323',
+    modal: '#181818',
+    textSecondary: 'grey',
+    textTerciary: '#535353',
     cardView: '#eee',
-    accent: 'black',
-    textContrast: 'white',
+    accent: '#c4c4c4',
+    textContrast: 'black',
     dangerous: 'red',
+    dangerousBackground: '#FF000055',
     lightBorder: '#aaa',
+    icon: 'grey',
   },
 };
 
@@ -77,7 +107,7 @@ export const useTheme = () => {
 };
 
 export const ThemeProvider: React.FC<{}> = ({children}) => {
-  const [theme, setTheme] = useState<MyTheme>(LightTheme);
+  const [theme, setTheme] = useState<MyTheme>(DarkTheme);
   return (
     <ThemeContext.Provider value={[theme, setTheme]}>
       {children}

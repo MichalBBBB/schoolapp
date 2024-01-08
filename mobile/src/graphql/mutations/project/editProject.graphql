@@ -1,0 +1,5 @@
+mutation EditProject($id: String!, $name: String!, $text: String) {
+  editProject(id: $id, name: $name, text: $text) {
+    ...Project
+  }
+}

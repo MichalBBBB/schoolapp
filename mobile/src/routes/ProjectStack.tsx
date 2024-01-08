@@ -3,15 +3,11 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import BackButton from '../components/backButton';
 import {TabStackParamList} from '../Routes';
+import {NewProjectScreen} from '../screens/Projects/NewProjectScreen';
 import ProjectDetailScreen from '../screens/Projects/ProjectDetailScreen';
 import ProjectHomeScreen from '../screens/Projects/ProjectHomeScreen';
 import {ProjectMembersScreen} from '../screens/Projects/ProjectMembersScreen';
-
-export type ProjectStackParamList = {
-  ProjectHomeScreen: undefined;
-  ProjectDetailScreen: {projectId: string};
-  ProjectMembersScreen: {projectId: string};
-};
+import {ProjectStackParamList} from '../utils/types';
 
 const ProjectStack: React.FC<
   BottomTabScreenProps<TabStackParamList, 'ProjectStack'>
@@ -29,7 +25,13 @@ const ProjectStack: React.FC<
           }
         },
       })}>
-      <Stack.Screen name="ProjectHomeScreen" component={ProjectHomeScreen} />
+      <Stack.Screen
+        name="ProjectHomeScreen"
+        component={ProjectHomeScreen}
+        options={{
+          title: 'Projects',
+        }}
+      />
       <Stack.Screen
         name="ProjectDetailScreen"
         component={ProjectDetailScreen}
@@ -37,6 +39,13 @@ const ProjectStack: React.FC<
       <Stack.Screen
         name="ProjectMembersScreen"
         component={ProjectMembersScreen}
+      />
+      <Stack.Screen
+        name="NewProjectScreen"
+        component={NewProjectScreen}
+        options={{
+          title: 'New Project',
+        }}
       />
     </Stack.Navigator>
   );

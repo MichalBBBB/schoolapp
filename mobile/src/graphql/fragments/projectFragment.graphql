@@ -1,6 +1,8 @@
 fragment Project on Project {
+  isAdmin
   name
   id
+  text
   tasks {
     ...ProjectTask
   }

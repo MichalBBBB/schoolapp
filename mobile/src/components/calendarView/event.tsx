@@ -1,53 +1,82 @@
 import dayjs from 'dayjs';
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import {
-  CalendarEventFragment,
-  GetAllEventsDocument,
-  useDeleteEventMutation,
-} from '../../generated/graphql';
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Pressable,
+  LayoutAnimation,
+} from 'react-native';
+import {
+  TouchableHighlight,
+  TouchableOpacity,
+} from 'react-native-gesture-handler';
+import {CalendarEventFragment} from '../../generated/graphql';
 import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
 import {useCreateTask} from '../../mutationHooks/task/createTask';
 import {BasicText} from '../basicViews/BasicText';
-import EditDateModal from '../editDateWindow';
-import {Menu} from '../menu';
-import {MenuItem} from '../menu/MenuItem';
+import EditDateModal from '../modals/editDateWindow';
 import SlidingView from '../slidingView';
 import {v4 as uuidv4} from 'uuid';
+import {useNavigation} from '@react-navigation/native';
+import {CalendarNavigationProp} from '../../utils/types';
+import {BasicCard} from '../basicViews/BasicCard';
+import {useTheme} from '../../contexts/ThemeContext';
+import {BasicIcon} from '../basicViews/BasicIcon';
 
 interface EventProps {
   event: CalendarEventFragment;
+  height?: number;
+  variant?: 'list' | 'calendar';
 }
 
-const Event: React.FC<EventProps> = ({event}) => {
+const Event: React.FC<EventProps> = ({event, height, variant = 'list'}) => {
   const [deleteEvent] = useDeleteEvent();
   const [addTask] = useCreateTask();
+
+  const navigation = useNavigation<CalendarNavigationProp>();
+
+  const [theme] = useTheme();
 
   const [studyTimeModalVisible, setStudyTimeModalVisible] = useState(false);
 
   const frontView = (
-    <View style={styles.frontViewContainer}>
-      <BasicText>{event.name}</BasicText>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <BasicText color="textSecondary" style={{marginRight: 5}}>
-          {dayjs(event.startDate).format('HH:mm')}
-        </BasicText>
-        <Menu
-          trigger={
-            <Image
-              source={require('../../../assets/Options.png')}
-              style={styles.options}
-            />
-          }>
-          <MenuItem
-            text={'Add time to study'}
-            onPress={() => {
-              setStudyTimeModalVisible(true);
-            }}
-          />
-        </Menu>
-      </View>
-    </View>
+    <TouchableHighlight
+      onPress={() => {
+        navigation.navigate('EventDetailScreen', {event});
+      }}>
+      <BasicCard
+        backgroundColor="accentBackground1"
+        borderRadius={0}
+        style={{
+          height,
+          padding: height && height >= 40 ? 12 : 0,
+          paddingHorizontal: 10,
+          justifyContent: height && height >= 40 ? 'space-between' : 'center',
+        }}>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <BasicText style={{marginRight: 5}} numberOfLines={1}>
+            {event.name}
+          </BasicText>
+          {variant == 'list' ||
+            (height && height <= 40 && (
+              <BasicText color="textSecondary">
+                {`${dayjs(event.startDate).format('HH:mm')} - ${dayjs(
+                  event.endDate,
+                ).format('HH:mm')}`}
+              </BasicText>
+            ))}
+        </View>
+        {variant == 'calendar' && height && height >= 40 && (
+          <BasicText color="textSecondary" style={{marginRight: 8}}>
+            {`${dayjs(event.startDate).format('HH:mm')} - ${dayjs(
+              event.endDate,
+            ).format('HH:mm')}`}
+          </BasicText>
+        )}
+      </BasicCard>
+    </TouchableHighlight>
   );
 
   return (
@@ -58,6 +87,9 @@ const Event: React.FC<EventProps> = ({event}) => {
           backView={[
             <TouchableOpacity
               onPress={() => {
+                LayoutAnimation.configureNext(
+                  LayoutAnimation.Presets.easeInEaseOut,
+                );
                 deleteEvent({id: event.id});
               }}>
               <View style={styles.backViewContainer}>
@@ -73,18 +105,19 @@ const Event: React.FC<EventProps> = ({event}) => {
         />
       </View>
       <EditDateModal
+        clearButton={false}
         isVisible={studyTimeModalVisible}
         onClose={() => {
           setStudyTimeModalVisible(false);
         }}
-        onSubmit={date => {
+        onSubmit={({date}) => {
           setStudyTimeModalVisible(false);
           addTask({
             id: uuidv4(),
             name: `Study for ${event?.name}`,
             subjectId: event.subject?.id,
             dueDate: event?.startDate,
-            doDate: date.toDate(),
+            doDate: date!.toDate(),
           });
         }}
       />
@@ -94,15 +127,14 @@ const Event: React.FC<EventProps> = ({event}) => {
 
 const styles = StyleSheet.create({
   container: {
-    margin: 5,
-    marginHorizontal: 10,
-    borderRadius: 10,
+    borderRadius: 15,
     overflow: 'hidden',
   },
   image: {
     resizeMode: 'stretch',
     height: 25,
     width: 25,
+    tintColor: 'white',
   },
   backViewContainer: {
     backgroundColor: 'red',
@@ -110,16 +142,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: '100%',
   },
-  frontViewContainer: {
-    backgroundColor: '#eee',
-    padding: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
+  frontViewContainer: {},
   options: {
     resizeMode: 'stretch',
-    height: 15,
-    width: 15,
+    height: 20,
+    width: 20,
   },
 });
 

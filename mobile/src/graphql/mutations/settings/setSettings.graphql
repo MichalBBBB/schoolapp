@@ -1,0 +1,27 @@
+mutation SetSettings(
+  $startOfWeek: String
+  $startOfRotationDate: DateTime
+  $lengthOfRotation: Float
+  $skipWeekends: Boolean
+  $darkMode: Boolean
+  $sortTasksBy: String
+  $showDoDate: Boolean
+  $showCompletedTasks: Boolean
+  $isFirstTime: Boolean
+  $showCalendarView: Boolean
+) {
+  setSettings(
+    startOfWeek: $startOfWeek
+    startOfRotationDate: $startOfRotationDate
+    lengthOfRotation: $lengthOfRotation
+    skipWeekends: $skipWeekends
+    darkMode: $darkMode
+    sortTasksBy: $sortTasksBy
+    showDoDate: $showDoDate
+    showCompletedTasks: $showCompletedTasks
+    isFirstTime: $isFirstTime
+    showCalendarView: $showCalendarView
+  ) {
+    ...Settings
+  }
+}

@@ -1,12 +1,18 @@
 import dayjs from 'dayjs';
-import React, {createRef, useCallback, useEffect, useState} from 'react';
-import {FlatList, View} from 'react-native';
+import React, {
+  createRef,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
+import {FlatList, Platform, View} from 'react-native';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Month from './month';
 import {FlashList} from '@shopify/flash-list';
 import {BasicText} from '../basicViews/BasicText';
-
-dayjs.extend(relativeTime);
+import {useSettings} from '../../utils/useSettings';
 
 interface CalendarProps {
   calendarWidth: number;
@@ -16,24 +22,63 @@ interface CalendarProps {
   onChangeSelectedDay: (day: dayjs.Dayjs) => void;
   weekHeight: number;
   onChangeActiveMonth?: (newMonth: dayjs.Dayjs) => void | undefined;
-  scrollToDate?: dayjs.Dayjs | null | undefined;
+  daysWithDots?: dayjs.Dayjs[];
 }
 
 const calendarHeight = 204;
 
-const Calendar: React.FC<CalendarProps> = ({
-  calendarWidth,
-  pastScrollRange,
-  futureScrollRange,
-  selectedDay,
-  onChangeSelectedDay,
-  weekHeight,
-  onChangeActiveMonth,
-  scrollToDate,
-}) => {
+export type CalendarHandle = {
+  goForward: () => void;
+  goBackwards: () => void;
+};
+
+export type DayWithDot = {
+  date: dayjs.Dayjs;
+  dot: boolean;
+};
+
+const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
+  const {
+    calendarWidth,
+    pastScrollRange,
+    futureScrollRange,
+    selectedDay,
+    onChangeSelectedDay,
+    weekHeight,
+    onChangeActiveMonth,
+    daysWithDots,
+  } = props;
+  const settings = useSettings();
   const [month, setMonth] = useState(dayjs());
   const [months, setMonths] = useState<Array<dayjs.Dayjs | string>>([]);
   const [index, setIndex] = useState(pastScrollRange);
+
+  useImperativeHandle(ref, () => {
+    return {
+      goForward() {
+        if (index + 1 <= months.length - 1) {
+          flatListRef.current?.scrollToIndex({
+            index: index + 1,
+            animated: true,
+          });
+          if (Platform.OS === 'android') {
+            updateMonths(index + 1);
+          }
+        }
+      },
+      goBackwards() {
+        if (index - 1 >= 0) {
+          flatListRef.current?.scrollToIndex({
+            index: index - 1,
+            animated: true,
+          });
+          if (Platform.OS === 'android') {
+            updateMonths(index - 1);
+          }
+        }
+      },
+    };
+  });
 
   // months that are not rendered are stored as string instead of date
   const createDateFromString = (string: string) => {
@@ -87,17 +132,17 @@ const Calendar: React.FC<CalendarProps> = ({
   }, []);
 
   useEffect(() => {
-    if (scrollToDate) {
+    if (months.length !== 0) {
       const newIndex = months.findIndex(value => {
         if (typeof value == 'string') {
           const date = createDateFromString(value);
-          if (date.isSame(scrollToDate, 'month')) {
+          if (date.isSame(selectedDay, 'month')) {
             return true;
           } else {
             return false;
           }
         } else {
-          if (value.isSame(scrollToDate, 'month')) {
+          if (value.isSame(selectedDay, 'month')) {
             return true;
           } else {
             return false;
@@ -110,7 +155,7 @@ const Calendar: React.FC<CalendarProps> = ({
         animated: false,
       });
     }
-  }, [scrollToDate]);
+  }, [selectedDay]);
 
   const flatListRef = createRef<FlashList<any>>();
 
@@ -127,15 +172,34 @@ const Calendar: React.FC<CalendarProps> = ({
     [months],
   );
 
+  const updateMonths = (newIndex: number) => {
+    const monthsCopy = changeVisibility(newIndex);
+    if (index !== newIndex && onChangeActiveMonth) {
+      if (typeof months[newIndex] !== 'string') {
+        onChangeActiveMonth(months[newIndex] as dayjs.Dayjs);
+      } else {
+        onChangeActiveMonth(createDateFromString(months[newIndex] as string));
+      }
+    }
+    setIndex(newIndex);
+    setMonths(monthsCopy);
+  };
+
   const renderItem = ({item}: {item: dayjs.Dayjs | string}) => {
     return (
       <View style={{width: calendarWidth}}>
         <Month
+          startOfWeek={settings?.startOfWeek || 'MON'}
           weekHeight={weekHeight}
           calendarWidth={calendarWidth}
           month={item}
           selectedDay={selectedDay}
           onDayPress={onDayPress}
+          daysWithDots={
+            typeof item !== 'string'
+              ? daysWithDots?.filter(day => day.isSame(item, 'month'))
+              : undefined
+          }
         />
       </View>
     );
@@ -172,23 +236,14 @@ const Calendar: React.FC<CalendarProps> = ({
           );
 
           // go through the data array and change months close to viewable to full dates to render full calendars
-          const monthsCopy = changeVisibility(newIndex);
-          if (
-            index !== newIndex &&
-            onChangeActiveMonth &&
-            typeof months[newIndex] !== 'string'
-          ) {
-            onChangeActiveMonth(months[newIndex] as dayjs.Dayjs);
-          }
-          setIndex(newIndex);
-          setMonths(monthsCopy);
+          updateMonths(newIndex);
         }}
         ref={flatListRef}
-        // rerender when indes changes
-        extraData={[index, selectedDay]}
+        // rerender when index changes
+        extraData={[index, selectedDay, daysWithDots, settings]}
       />
     </View>
   );
-};
+});
 
 export default Calendar;

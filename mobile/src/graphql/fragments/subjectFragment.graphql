@@ -1,4 +1,6 @@
 fragment Subject on Subject {
   id
   name
+  colorName
+  extraInfo
 }

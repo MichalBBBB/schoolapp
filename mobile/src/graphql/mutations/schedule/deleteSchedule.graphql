@@ -1,0 +1,3 @@
+mutation DeleteSchedule($id: String!) {
+  deleteSchedule(id: $id)
+}
