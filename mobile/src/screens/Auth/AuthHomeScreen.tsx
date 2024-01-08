@@ -7,9 +7,16 @@ import {isLoggedInVar} from '../../App';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {useTheme} from '../../contexts/ThemeContext';
-import {useGoogleSignInMutation} from '../../generated/graphql';
+import {
+  useAppleSignInMutation,
+  useGoogleSignInMutation,
+} from '../../generated/graphql';
 import {AuthStackParamList} from '../../routes/AuthStack';
 import {setAccessToken} from '../../utils/AccessToken';
+import appleAuth, {
+  AppleButton,
+  AppleButtonStyle,
+} from '@invertase/react-native-apple-authentication';
 
 const config = {
   issuer: 'https://accounts.google.com',
@@ -23,7 +30,10 @@ const config = {
 const AuthHomeScreen: React.FC<
   NativeStackScreenProps<AuthStackParamList, 'AuthHome'>
 > = ({navigation}) => {
+  const [theme] = useTheme();
+
   const [googleSignIn] = useGoogleSignInMutation();
+  const [appleSignIn] = useAppleSignInMutation();
 
   const signInWithGoogle = async () => {
     try {
@@ -37,6 +47,30 @@ const AuthHomeScreen: React.FC<
       }
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const onAppleButtonPress = async () => {
+    const {identityToken, nonce, email, fullName} =
+      await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+      });
+    // const credentialState = await appleAuth.getCredentialStateForUser(
+    //   appleAuthRequestResponse.user,
+    // );
+    if (identityToken && nonce && fullName) {
+      const response = await appleSignIn({
+        variables: {
+          idToken: identityToken,
+          nonce: nonce,
+          fullName: fullName.givenName + ' ' + fullName.familyName,
+        },
+      });
+      if (response.data) {
+        setAccessToken(response.data.appleSignIn.accessToken);
+        isLoggedInVar(true);
+      }
     }
   };
 
@@ -63,7 +97,7 @@ const AuthHomeScreen: React.FC<
         </BasicText>
       </BasicButton>
       <BasicButton
-        style={{width: 250}}
+        style={{width: 250, marginBottom: 5}}
         onPress={() => {
           signInWithGoogle();
         }}
@@ -72,6 +106,16 @@ const AuthHomeScreen: React.FC<
           Sign in with google
         </BasicText>
       </BasicButton>
+      <AppleButton
+        buttonStyle={
+          theme.dark ? AppleButton.Style.WHITE : AppleButton.Style.BLACK
+        }
+        buttonType={AppleButton.Type.CONTINUE}
+        style={{width: 250, height: 40}}
+        onPress={() => {
+          onAppleButtonPress();
+        }}
+      />
     </View>
   );
 };

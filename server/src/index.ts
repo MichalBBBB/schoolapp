@@ -35,7 +35,7 @@ import { MyContext } from "./utils/MyContext";
 import { Schedule } from "./entities/Schedule";
 import { LessonTime } from "./entities/LessonTime";
 import { ScheduleResolver } from "./resolvers/scheduleResolver";
-
+import appleSignin from "apple-signin-auth";
 export type UserQueueObject = {
   resolveObject: DefferedObject;
   req: any;
@@ -126,6 +126,35 @@ const main = async () => {
       return res.send({ ok: true, accesToken: createAccesToken(user) });
     } catch (err) {
       return res.send({ ok: false, accesToken: "" });
+    }
+  });
+
+  app.get("/apple-signin-webhook", async (req, res) => {
+    const { events } = await appleSignin.verifyWebhookToken(req.body.payload, {
+      audience: "app.dayto.dayto",
+    });
+    const { sub: userAppleId, type, email } = events;
+    const user = await User.findOne({ where: { appleIdToken: userAppleId } });
+    if (user) {
+      switch (type) {
+        case "email-disabled":
+          if (email) {
+            user.email = email;
+            await user.save();
+          }
+          break;
+        case "email-enabled":
+          if (email) {
+            user.email = email;
+            await user.save();
+          }
+          break;
+        case "consent-revoked":
+          break;
+        case "account-delete":
+          await user;
+          break;
+      }
     }
   });
 
