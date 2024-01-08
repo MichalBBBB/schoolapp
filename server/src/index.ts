@@ -129,7 +129,7 @@ const main = async () => {
     }
   });
 
-  app.get("/apple-signin-webhook", async (req, res) => {
+  app.get("/apple-signin-webhook", async (req, _) => {
     const { events } = await appleSignin.verifyWebhookToken(req.body.payload, {
       audience: "app.dayto.dayto",
     });
