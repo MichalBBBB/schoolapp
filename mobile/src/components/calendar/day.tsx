@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import React, {memo, useContext} from 'react';
+import React, {memo, useContext, useEffect} from 'react';
 import {TouchableOpacity, View, Text} from 'react-native';
 import {BasicText} from '../basicViews/BasicText';
 
@@ -42,4 +42,10 @@ const Day: React.FC<DayProps> = ({day, isSelected, monthNum, onPress}) => {
   );
 };
 
-export default memo(Day);
+export default memo(Day, (prevProps, nextProps) => {
+  if (prevProps.isSelected == nextProps.isSelected) {
+    return true;
+  } else {
+    return false;
+  }
+});
