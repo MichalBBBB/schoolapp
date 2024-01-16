@@ -65,8 +65,8 @@ export const BasicTextInput = forwardRef<TextInput, BasicTextInputProps>(
             {
               // there is a bug that if you don't include this in a text input
               // and the data contains a linebreak, only two lines will be rendered sometimes
-              alignSelf: 'center',
-
+              alignSelf: 'flex-start',
+              width: '100%',
               backgroundColor:
                 variant == 'filled'
                   ? error
