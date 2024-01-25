@@ -39,6 +39,7 @@ import {AlertProvider} from './contexts/AlertContext';
 import {isVersionHighEnough} from './utils/isVersionHighEnough';
 import {UpdateAppScreen} from './screens/UpdateAppScreen';
 import {setBadgeCount} from './utils/notifications';
+import messaging from '@react-native-firebase/messaging';
 
 const is12hourConfig = {
   // abbreviated format options allowing localization
@@ -219,6 +220,16 @@ export const Content: React.FC = () => {
     return () => {
       unsubscribe();
     };
+  }, []);
+
+  const registerMessaging = async () => {
+    await messaging().registerDeviceForRemoteMessages();
+
+    const token = await messaging().getToken();
+  };
+
+  useEffect(() => {
+    registerMessaging();
   }, []);
 
   return (

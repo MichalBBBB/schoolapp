@@ -80,6 +80,10 @@ export class User extends BaseEntity {
   @Field({ nullable: true })
   imageURL: string;
 
+  @Field(() => [String], { nullable: true })
+  @Column({ nullable: true, array: true, type: "varchar", default: [] })
+  tokens: string[];
+
   @Field(() => [Task])
   @OneToMany(() => Task, (task) => task.user)
   tasks: Task[];
