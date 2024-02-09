@@ -36,6 +36,8 @@ import { Schedule } from "./entities/Schedule";
 import { LessonTime } from "./entities/LessonTime";
 import { ScheduleResolver } from "./resolvers/scheduleResolver";
 import appleSignin from "apple-signin-auth";
+import admin from "firebase-admin";
+import { applicationDefault } from "firebase-admin/app";
 export type UserQueueObject = {
   resolveObject: DefferedObject;
   req: any;
@@ -180,6 +182,10 @@ const main = async () => {
   });
 
   await apolloServer.start();
+
+  const fbApp = admin.initializeApp({
+    credential: applicationDefault(),
+  });
 
   app.use(
     "/graphql",

@@ -30,6 +30,7 @@ import dayjs from 'dayjs';
 import {
   GetAllTasksDocument,
   GetAllTasksQuery,
+  useAddNotificationTokenMutation,
   useMeQuery,
 } from './generated/graphql';
 import {is24HourFormat} from 'react-native-device-time-format';
@@ -39,7 +40,9 @@ import {AlertProvider} from './contexts/AlertContext';
 import {isVersionHighEnough} from './utils/isVersionHighEnough';
 import {UpdateAppScreen} from './screens/UpdateAppScreen';
 import {setBadgeCount} from './utils/notifications';
-import messaging from '@react-native-firebase/messaging';
+import messaging, {
+  FirebaseMessagingTypes,
+} from '@react-native-firebase/messaging';
 
 const is12hourConfig = {
   // abbreviated format options allowing localization
@@ -120,6 +123,9 @@ export const Content: React.FC = () => {
   const minVersion = useReactiveVar(minVersionVar);
 
   const [setSettings] = useSetSettings();
+  const [addNotificationToken] = useAddNotificationTokenMutation({
+    context: {skipQueue: true},
+  });
 
   client
     .watchQuery<GetAllTasksQuery>({
@@ -223,13 +229,27 @@ export const Content: React.FC = () => {
   }, []);
 
   const registerMessaging = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
     await messaging().registerDeviceForRemoteMessages();
 
     const token = await messaging().getToken();
+    addNotificationToken({variables: {token}});
+  };
+
+  const handler = async (message: FirebaseMessagingTypes.RemoteMessage) => {
+    setBadgeCount(4);
+    console.log(message);
   };
 
   useEffect(() => {
     registerMessaging();
+
+    messaging().onMessage(handler);
+    messaging().setBackgroundMessageHandler(handler);
+    console.log('registered for messaging');
   }, []);
 
   return (
