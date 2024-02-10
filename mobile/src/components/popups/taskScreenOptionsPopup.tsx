@@ -4,6 +4,7 @@ import {
   Pressable,
   Touchable,
   TouchableHighlight,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import {useTheme} from '../../contexts/ThemeContext';
@@ -32,15 +33,15 @@ export const TaskScreenOptionsPopup: React.FC<{
     <Popup
       triggerContainerStyle={{width: '100%'}}
       trigger={
-        <TouchableHighlight
-          underlayColor={theme.dark ? '#444' : '#ddd'}
+        <TouchableOpacity
+          // underlayColor={theme.dark ? '#444' : '#ddd'}
           style={{width: '100%'}}>
           <View
             style={{
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-              paddingHorizontal: 12,
+              paddingHorizontal: 14,
               paddingVertical: 8,
               width: '100%',
             }}>
@@ -49,7 +50,7 @@ export const TaskScreenOptionsPopup: React.FC<{
               {settings?.showDoDate ? 'Do Date' : 'Due Date'}
             </BasicText>
           </View>
-        </TouchableHighlight>
+        </TouchableOpacity>
       }>
       <BasicCard
         backgroundColor="accentBackground2"
@@ -99,15 +100,15 @@ export const TaskScreenOptionsPopup: React.FC<{
     <Popup
       triggerContainerStyle={{width: '100%'}}
       trigger={
-        <TouchableHighlight
-          underlayColor={theme.dark ? '#444' : '#ddd'}
+        <TouchableOpacity
+          // underlayColor={theme.dark ? '#444' : '#ddd'}
           style={{width: '100%'}}>
           <View
             style={{
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-              paddingHorizontal: 12,
+              paddingHorizontal: 14,
               paddingVertical: 8,
             }}>
             <BasicText>Sort by: </BasicText>
@@ -119,7 +120,7 @@ export const TaskScreenOptionsPopup: React.FC<{
               }
             </BasicText>
           </View>
-        </TouchableHighlight>
+        </TouchableOpacity>
       }>
       <BasicCard
         style={{
@@ -204,11 +205,11 @@ export const TaskScreenOptionsPopup: React.FC<{
           spacing="none"
           style={{
             paddingVertical: 5,
-            width: 190,
+            width: 200,
             overflow: 'hidden',
           }}>
-          <TouchableHighlight
-            underlayColor={theme.dark ? '#444' : '#ddd'}
+          <TouchableOpacity
+            // underlayColor={theme.dark ? '#444' : '#ddd'}
             onPress={() => {
               setSettings({showCompletedTasks: !settings?.showCompletedTasks});
             }}>
@@ -217,8 +218,8 @@ export const TaskScreenOptionsPopup: React.FC<{
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                paddingHorizontal: 12,
-                paddingVertical: 6,
+                paddingHorizontal: 14,
+                paddingVertical: 8,
               }}>
               <BasicText>Show Completed</BasicText>
               <BasicRadio
@@ -226,7 +227,7 @@ export const TaskScreenOptionsPopup: React.FC<{
                 toggled={settings?.showCompletedTasks || false}
               />
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
           <View style={{flexDirection: 'row'}}>{showDoDateItem}</View>
           <View style={{flexDirection: 'row'}}>{sortItem}</View>
         </BasicCard>

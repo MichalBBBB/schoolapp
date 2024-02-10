@@ -222,6 +222,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
       style={{
         flexDirection: 'row',
         justifyContent: 'space-between',
+        paddingVertical: 8,
         // width: '100%',
         alignItems: 'center',
       }}>
@@ -244,6 +245,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '100%',
+        paddingVertical: 8,
       }}>
       <BasicText>Reminder</BasicText>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -268,6 +270,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '100%',
+        paddingVertical: 8,
       }}>
       <BasicText>Duration</BasicText>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -394,6 +397,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
         <View style={styles.submitButtonContainer}>
           <BasicButton
             style={{flex: 1}}
+            spacing="m"
             onPress={() => {
               onClose();
             }}
@@ -404,6 +408,8 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
           </BasicButton>
           <BasicButton
             style={{flex: 1}}
+            backgroundColor="accentBackground"
+            spacing="m"
             onPress={() => {
               const date: dayjs.Dayjs = selectedDay;
               onSubmit({
@@ -414,7 +420,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
                 duration,
               });
             }}
-            variant={'unstyled'}>
+            variant={'filled'}>
             <BasicText color="accent" style={{fontWeight: 'bold'}}>
               Select
             </BasicText>

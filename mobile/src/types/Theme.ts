@@ -24,6 +24,7 @@ export type ColorsObject = {
   modal: string;
   cardView: string;
   accent: string;
+  accentBackground: string;
   textContrast: string;
   dangerous: string;
   dangerousBackground: string;
@@ -68,4 +69,5 @@ export type TextVariantsObject = {
   subText: TextStyle;
   button: TextStyle;
   title: TextStyle;
+  menuItem: TextStyle;
 };

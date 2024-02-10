@@ -37,9 +37,8 @@ const CalendarHomeScreen: React.FC<
   const settings = useSettings();
   const [setSettings] = useSetSettings();
 
-  const showDoDateItem = (
-    <TouchableHighlight
-      underlayColor={theme.dark ? '#444' : '#ddd'}
+  const showAsOptionsItem = (
+    <TouchableOpacity
       style={{width: '100%'}}
       onPress={() => {
         setSettings({showCalendarView: !settings?.showCalendarView});
@@ -49,16 +48,16 @@ const CalendarHomeScreen: React.FC<
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
-          paddingHorizontal: 12,
+          paddingHorizontal: 14,
           paddingVertical: 8,
           width: '100%',
         }}>
-        <BasicText>Show as: </BasicText>
-        <BasicText color="textSecondary">
+        <BasicText textVariant="menuItem">Show as: </BasicText>
+        <BasicText textVariant="menuItem" color="textSecondary">
           {settings?.showCalendarView ? 'Calendar' : 'List'}
         </BasicText>
       </View>
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
 
   useLayoutEffect(() => {
@@ -81,17 +80,17 @@ const CalendarHomeScreen: React.FC<
               shadowOpacity: 0.1,
               shadowOffset: {width: 0, height: 0},
               shadowRadius: 20,
-              width: 190,
+              width: 200,
               paddingVertical: 5,
             }}>
             <TouchableOpacity
               onPress={() => {
                 setSpecialScheduleWindowVisible(true);
               }}
-              style={{paddingHorizontal: 12, paddingVertical: 6}}>
-              <BasicText>Special Schedule</BasicText>
+              style={{paddingHorizontal: 14, paddingVertical: 8}}>
+              <BasicText textVariant="menuItem">Special Schedule</BasicText>
             </TouchableOpacity>
-            {showDoDateItem}
+            {showAsOptionsItem}
           </BasicCard>
         </Popup>
       ),

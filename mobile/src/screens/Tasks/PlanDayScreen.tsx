@@ -33,7 +33,9 @@ export const PlanDayScreen: React.FC<
     <View style={{padding: 10, flex: 1}}>
       <FlatList
         ListHeaderComponent={
-          <BasicCard backgroundColor="accentBackground1">
+          <BasicCard
+            backgroundColor="accentBackground1"
+            style={{marginBottom: 10}}>
             <View style={styles.topContainer}>
               <BasicButton
                 variant="unstyled"
