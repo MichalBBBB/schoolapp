@@ -45,7 +45,7 @@ const textVariants: TextVariantsObject = {
     fontWeight: 'bold',
   },
   menuItem: {
-    fontSize: 16,
+    fontSize: 15,
   },
 };
 

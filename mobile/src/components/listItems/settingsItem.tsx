@@ -40,7 +40,7 @@ export const SettingsItem = forwardRef<View, SettingsItemProps>(
           },
           style,
         ]}>
-        <BasicText color={textColor} {...leftTextProps}>
+        <BasicText color={textColor} {...leftTextProps} textVariant="menuItem">
           {text}
         </BasicText>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>

@@ -427,6 +427,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
           </BasicButton>
         </View>
         <RemindersWindow
+          backgroundColor="accentBackground2"
           initialReminderTimes={reminderTimes}
           isVisible={remindersWindowOpen}
           onClose={() => setRemindersWindowOpen(false)}
@@ -448,6 +449,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
           }}
         />
         <SelectTimeModal
+          backgroundColor="accentBackground2"
           allowClear={allowNoTime}
           onClose={() => {
             setTimePopupOpen(false);

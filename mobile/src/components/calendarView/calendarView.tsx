@@ -266,7 +266,9 @@ const CalendarView: React.FC<calendarProps> = ({
                 flexDirection: 'row',
                 alignItems: 'center',
               }}>
-              <BasicText style={{marginRight: 5}}>{monthString}</BasicText>
+              <BasicText style={{marginRight: 5, fontSize: 15}}>
+                {monthString}
+              </BasicText>
               <Animated.View style={chevronAnimatedStyle}>
                 <BasicIcon
                   source={require('../../../assets/Chevron-down.png')}

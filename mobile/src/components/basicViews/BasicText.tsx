@@ -31,7 +31,7 @@ export const BasicText = forwardRef<Text, BasicTextProps>((props, ref) => {
         {
           padding: theme.spacing[spacing],
           color: theme.colors[color],
-          fontSize: 16,
+          fontSize: 14,
           ...theme.textVariants[textVariant],
         },
         style,

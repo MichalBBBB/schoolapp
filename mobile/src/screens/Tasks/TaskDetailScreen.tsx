@@ -66,6 +66,7 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
           <BasicIcon
             source={require('../../../assets/Plus.png')}
             style={styles.plusButton}
+            color="accent"
           />
         </TouchableOpacity>
       ),

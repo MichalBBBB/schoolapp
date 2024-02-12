@@ -284,6 +284,7 @@ export const LessonTimesView: React.FC<LessonTimesViewProps> = ({
                     marginRight: 5,
                     padding: 3,
                   }}
+                  fullWidth={false}
                   variant="outlined"
                   borderWidth={1}
                   backgroundColor="lightBorder"

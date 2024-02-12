@@ -45,8 +45,8 @@ export const TaskScreenOptionsPopup: React.FC<{
               paddingVertical: 8,
               width: '100%',
             }}>
-            <BasicText>Show: </BasicText>
-            <BasicText color="textSecondary">
+            <BasicText textVariant="menuItem">Show: </BasicText>
+            <BasicText color="textSecondary" textVariant="menuItem">
               {settings?.showDoDate ? 'Do Date' : 'Due Date'}
             </BasicText>
           </View>
@@ -74,7 +74,7 @@ export const TaskScreenOptionsPopup: React.FC<{
             style={{marginRight: 10}}
             color="icon"
           />
-          <BasicText>Due Date</BasicText>
+          <BasicText textVariant="menuItem">Due Date</BasicText>
         </Pressable>
         <Pressable
           style={{
@@ -90,7 +90,7 @@ export const TaskScreenOptionsPopup: React.FC<{
             style={{marginRight: 10}}
             color="icon"
           />
-          <BasicText>Do Date</BasicText>
+          <BasicText textVariant="menuItem">Do Date</BasicText>
         </Pressable>
       </BasicCard>
     </Popup>
@@ -111,8 +111,8 @@ export const TaskScreenOptionsPopup: React.FC<{
               paddingHorizontal: 14,
               paddingVertical: 8,
             }}>
-            <BasicText>Sort by: </BasicText>
-            <BasicText color="textSecondary">
+            <BasicText textVariant="menuItem">Sort by: </BasicText>
+            <BasicText color="textSecondary" textVariant="menuItem">
               {
                 sortableParams[
                   settings?.sortTasksBy as keyof typeof sortableParams
@@ -221,7 +221,7 @@ export const TaskScreenOptionsPopup: React.FC<{
                 paddingHorizontal: 14,
                 paddingVertical: 8,
               }}>
-              <BasicText>Show Completed</BasicText>
+              <BasicText textVariant="menuItem">Show Completed</BasicText>
               <BasicRadio
                 color="textSecondary"
                 toggled={settings?.showCompletedTasks || false}

@@ -10,12 +10,14 @@ import {BasicRadio} from '../basicViews/BasicRadio';
 import {BasicCardProps} from '../basicViews/BasicCard';
 import {BasicText} from '../basicViews/BasicText';
 import {BasicButton} from '../basicViews/BasicButton';
+import {ColorsObject} from '../../types/Theme';
 
 interface RemindersWindowProps {
   onSubmit: (reminderTImes: number[]) => void;
   onClose: () => void;
   isVisible: boolean;
   initialReminderTimes?: number[];
+  backgroundColor?: keyof ColorsObject;
 }
 
 type ReminderTime = {
@@ -55,12 +57,14 @@ export const RemindersWindow: React.FC<RemindersWindowProps> = ({
   onClose,
   onSubmit,
   initialReminderTimes = [],
+  backgroundColor,
 }) => {
   const [selectedReminderTimes, setSelectedReminderTimes] =
     useState<number[]>(initialReminderTimes);
 
   return (
     <BasicModalCard
+      backgroundColor={backgroundColor}
       style={{marginHorizontal: 20}}
       alignCard="center"
       isVisible={isVisible}
@@ -124,8 +128,10 @@ export const RemindersWindow: React.FC<RemindersWindowProps> = ({
           onPress={() => {
             onSubmit(selectedReminderTimes);
           }}
-          variant={'unstyled'}>
-          <BasicText color="primary" style={{fontWeight: 'bold'}}>
+          variant={'filled'}
+          spacing="m"
+          backgroundColor="accentBackground">
+          <BasicText color="accent" style={{fontWeight: 'bold'}}>
             Select
           </BasicText>
         </BasicButton>
