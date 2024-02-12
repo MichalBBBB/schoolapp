@@ -281,8 +281,12 @@ export class userResolver {
     @Ctx() { payload }: MyContext
   ) {
     const user = await User.findOne({ where: { id: payload?.userId } });
+
     if (user) {
-      if (token in user.tokens) {
+      console.log("tokens", user.tokens);
+      // user.tokens = [];
+      // await user.save();
+      if (user.tokens.includes(token)) {
         return true;
       } else {
         user.tokens = [...user.tokens, token];

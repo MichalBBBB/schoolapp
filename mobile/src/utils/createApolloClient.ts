@@ -33,6 +33,8 @@ import {API_URI_ANDROID, API_URI_DEFAULT} from '@env';
 export const baseUri =
   Platform.OS == 'android' ? API_URI_ANDROID : API_URI_DEFAULT;
 
+console.log(baseUri);
+
 export const uri = baseUri + '/graphql';
 
 const batchHttpLink = new BatchHttpLink({

@@ -127,22 +127,22 @@ export const Content: React.FC = () => {
     context: {skipQueue: true},
   });
 
-  client
-    .watchQuery<GetAllTasksQuery>({
-      query: GetAllTasksDocument,
-    })
-    .subscribe({
-      next: tasks => {
-        let number = 0;
+  // client
+  //   .watchQuery<GetAllTasksQuery>({
+  //     query: GetAllTasksDocument,
+  //   })
+  //   .subscribe({
+  //     next: tasks => {
+  //       let number = 0;
 
-        tasks.data.getAllTasks.forEach(task => {
-          if (dayjs(task.doDate).isSame(dayjs(), 'date')) {
-            number += 1;
-          }
-        });
-        setBadgeCount(number);
-      },
-    });
+  //       tasks.data.getAllTasks.forEach(task => {
+  //         if (dayjs(task.doDate).isSame(dayjs(), 'date')) {
+  //           number += 1;
+  //         }
+  //       });
+  //       setBadgeCount(number);
+  //     },
+  //   });
 
   const updateLocale = async () => {
     const is24hour = await is24HourFormat();

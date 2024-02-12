@@ -183,7 +183,7 @@ const main = async () => {
 
   await apolloServer.start();
 
-  const fbApp = admin.initializeApp({
+  admin.initializeApp({
     credential: applicationDefault(),
   });
 
