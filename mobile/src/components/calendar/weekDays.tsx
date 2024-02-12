@@ -43,7 +43,9 @@ const WeekDays: React.FC<weekDaysProps> = ({weekHeaderHeight, width}) => {
             justifyContent: 'center',
           }}
           key={index}>
-          <BasicText color="textSecondary">{item}</BasicText>
+          <BasicText color="textSecondary" style={{fontSize: 15}}>
+            {item}
+          </BasicText>
         </View>
       ))}
     </View>

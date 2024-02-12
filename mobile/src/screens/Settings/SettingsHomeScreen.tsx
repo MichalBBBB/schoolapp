@@ -120,7 +120,7 @@ const SettingsHomeScreen: React.FC<
                 alignItems: 'center',
                 paddingHorizontal: 5,
               }}>
-              <BasicText>Dark mode</BasicText>
+              <BasicText textVariant="menuItem">Dark mode</BasicText>
               <Switch
                 value={theme.dark}
                 onValueChange={value => {
@@ -137,7 +137,9 @@ const SettingsHomeScreen: React.FC<
                 setAccessToken('');
                 isLoggedInVar(false);
               }}>
-              <BasicText color="dangerous">Log out</BasicText>
+              <BasicText color="dangerous" textVariant="menuItem">
+                Log out
+              </BasicText>
             </Pressable>
           </BasicCard>
         </View>

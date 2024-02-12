@@ -37,6 +37,7 @@ const Day: React.FC<DayProps> = ({
         onPress(day.date);
       }}>
       <BasicText
+        style={{fontSize: 15}}
         color={
           !monthNum
             ? 'text'
@@ -63,10 +64,4 @@ const Day: React.FC<DayProps> = ({
   );
 };
 
-export default memo(Day, (prevProps, nextProps) => {
-  if (prevProps.isSelected == nextProps.isSelected) {
-    return true;
-  } else {
-    return false;
-  }
-});
+export default memo(Day);

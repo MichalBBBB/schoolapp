@@ -141,7 +141,6 @@ export const Content: React.FC = () => {
           }
         });
         setBadgeCount(number);
-        console.log(number);
       },
     });
 

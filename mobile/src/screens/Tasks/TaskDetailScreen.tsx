@@ -66,6 +66,7 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
           <BasicIcon
             source={require('../../../assets/Plus.png')}
             style={styles.plusButton}
+            color="accent"
           />
         </TouchableOpacity>
       ),
@@ -116,8 +117,8 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
               Keyboard.dismiss();
               setEditDueDateModalIsVisible(true);
             }}
-            spacing="s"
-            borderRadius={10}
+            spacing="m"
+            borderRadius={15}
             style={styles.action}>
             <BasicText>
               {task.dueDate
@@ -135,8 +136,8 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
               Keyboard.dismiss();
               setEditDoDateModalIsVisible(true);
             }}
-            spacing="s"
-            borderRadius={10}>
+            spacing="m"
+            borderRadius={15}>
             <BasicText>
               {task.doDate
                 ? `Do: ${dayjs(task.doDate).calendar(
@@ -160,8 +161,8 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
                 variant={task.subject ? 'subject' : 'filled'}
                 borderWidth={1}
                 backgroundColor="accentBackground1"
-                spacing="s"
-                borderRadius={10}>
+                spacing="m"
+                borderRadius={15}>
                 <BasicText>
                   {task.subject ? task.subject.name : 'Subject'}
                 </BasicText>
@@ -254,7 +255,7 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
             });
           }
           setEditDoDateModalIsVisible(false);
-          console.log(duration);
+          // console.log(duration);
           await editTask({
             id: task.id,
             name,
@@ -290,9 +291,11 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
 const styles = StyleSheet.create({
   action: {
     marginRight: 5,
+    marginBottom: 5,
   },
   actionContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     marginBottom: 5,
   },
   separator: {

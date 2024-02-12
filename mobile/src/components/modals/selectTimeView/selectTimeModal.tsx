@@ -1,6 +1,7 @@
 import React from 'react';
 import SelectTimeView from '.';
 import {BasicModalCard} from '../../basicViews/BasicModalCard';
+import {ColorsObject} from '../../../types/Theme';
 
 interface SelectTimeModalProps {
   isVisible: boolean;
@@ -8,6 +9,7 @@ interface SelectTimeModalProps {
   onClose: () => void;
   initialTime?: string | undefined;
   allowClear?: boolean;
+  backgroundColor?: keyof ColorsObject;
 }
 
 const SelectTimeModal: React.FC<SelectTimeModalProps> = ({
@@ -16,9 +18,11 @@ const SelectTimeModal: React.FC<SelectTimeModalProps> = ({
   isVisible,
   initialTime,
   allowClear,
+  backgroundColor,
 }) => {
   return (
     <BasicModalCard
+      backgroundColor={backgroundColor}
       onBackdropPress={() => {
         onClose();
       }}

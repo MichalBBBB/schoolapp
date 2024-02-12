@@ -193,7 +193,7 @@ const CalendarView: React.FC<calendarProps> = ({
       style={[
         {
           position: 'absolute',
-          marginTop: weekHeaderHeight + 34,
+          marginTop: weekHeaderHeight + 48,
           zIndex: !isWeekView ? maxCalendarZIndex : 1,
         },
         calendarAnimatedStyle,
@@ -231,9 +231,10 @@ const CalendarView: React.FC<calendarProps> = ({
       <View style={{backgroundColor: theme.colors.background, zIndex: 10}}>
         <View
           style={{
-            height: 34,
+            height: 44,
             alignItems: 'center',
             paddingHorizontal: 20,
+            marginBottom: 4,
             flexDirection: 'row',
             justifyContent: 'space-between',
             width: '100%',
@@ -259,9 +260,15 @@ const CalendarView: React.FC<calendarProps> = ({
             onPress={() => {
               toggleMonthView();
             }}
-            spacing="s">
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <BasicText style={{marginRight: 5}}>{monthString}</BasicText>
+            spacing="m">
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              <BasicText style={{marginRight: 5, fontSize: 15}}>
+                {monthString}
+              </BasicText>
               <Animated.View style={chevronAnimatedStyle}>
                 <BasicIcon
                   source={require('../../../assets/Chevron-down.png')}
@@ -290,7 +297,7 @@ const CalendarView: React.FC<calendarProps> = ({
         style={[
           {
             position: 'absolute',
-            marginTop: weekHeaderHeight + 34,
+            marginTop: weekHeaderHeight + 48,
             zIndex: isMonthView ? 1 : maxCalendarZIndex,
           },
           weekViewAnimatedStyle,

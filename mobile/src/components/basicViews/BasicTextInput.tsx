@@ -28,6 +28,7 @@ interface BasicTextInputProps extends TextInputProps {
   error?: string;
   containerStyle?: ViewStyle;
   title?: string;
+  fullWidth?: boolean;
 }
 
 export const BasicTextInput = forwardRef<TextInput, BasicTextInputProps>(
@@ -46,6 +47,7 @@ export const BasicTextInput = forwardRef<TextInput, BasicTextInputProps>(
       error,
       containerStyle,
       placeholderColor = 'textSecondary',
+      fullWidth = true,
       title,
       ...restProps
     } = props;
@@ -66,7 +68,7 @@ export const BasicTextInput = forwardRef<TextInput, BasicTextInputProps>(
               // there is a bug that if you don't include this in a text input
               // and the data contains a linebreak, only two lines will be rendered sometimes
               alignSelf: 'flex-start',
-              width: '100%',
+              width: fullWidth ? '100%' : undefined,
               backgroundColor:
                 variant == 'filled'
                   ? error

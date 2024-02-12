@@ -78,7 +78,9 @@ const SelectTimeView: React.FC<SelectTimeViewModalProps> = ({
               onSubmit(dayjs(date).format('HH:mm'));
             }
           }}
-          variant={'unstyled'}>
+          spacing="m"
+          backgroundColor="accentBackground"
+          variant={'filled'}>
           <BasicText color="accent" style={{fontWeight: 'bold'}}>
             Select
           </BasicText>
