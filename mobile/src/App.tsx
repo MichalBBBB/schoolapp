@@ -6,7 +6,13 @@ import {
   useReactiveVar,
 } from '@apollo/client';
 import React, {useEffect, useState} from 'react';
-import {Platform, Text, UIManager, View} from 'react-native';
+import {
+  PermissionsAndroid,
+  Platform,
+  Text,
+  UIManager,
+  View,
+} from 'react-native';
 import Routes from './Routes';
 import {baseUri, createApolloClient} from './utils/createApolloClient';
 import {ThemeProvider} from './contexts/ThemeContext';
@@ -23,7 +29,12 @@ import {PortalHost, PortalProvider} from '@gorhom/portal';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import 'react-native-get-random-values';
 import {PersistentQueueLink} from './utils/persistentQueueLink';
-import {GetAllTasksDocument, GetAllTasksQuery} from './generated/graphql';
+import {
+  AddNotificationTokenDocument,
+  AddNotificationTokenMutation,
+  GetAllTasksDocument,
+  GetAllTasksQuery,
+} from './generated/graphql';
 import {MMKV} from 'react-native-mmkv';
 import {allQueries} from './utils/allQueries';
 import {Content} from './Content';
@@ -35,6 +46,14 @@ import KeyboardManager from 'react-native-keyboard-manager/dist';
 import messaging, {
   FirebaseMessagingTypes,
 } from '@react-native-firebase/messaging';
+import {
+  checkNotifications,
+  PERMISSIONS,
+  request,
+} from 'react-native-permissions';
+import {handler} from './utils/registerNotificationHandlers';
+
+// PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
 export const isLoggedInVar = makeVar(true);
 export const isOnlineVar = makeVar(true);
@@ -52,6 +71,28 @@ dayjs.locale('en');
 
 export const storage = new MMKV();
 
+export const registerMessaging = async (client: ApolloClient<any>) => {
+  request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS).then(result => {
+    console.log('result', result);
+  });
+  checkNotifications().then(result => {
+    console.log('result', result);
+  });
+  const authStatus = await messaging().requestPermission();
+  const enabled =
+    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  await messaging().registerDeviceForRemoteMessages();
+
+  const token = await messaging().getToken();
+  console.log('token', token);
+  await client.mutate<AddNotificationTokenMutation>({
+    mutation: AddNotificationTokenDocument,
+    variables: {token},
+    context: {skipQueue: true},
+  });
+};
+
 if (
   Platform.OS === 'android' &&
   UIManager.setLayoutAnimationEnabledExperimental
@@ -67,55 +108,37 @@ if (Platform.OS === 'ios') {
 const App = () => {
   const [client, setClient] =
     useState<ApolloClient<NormalizedCacheObject> | null>(null);
-  const [isHeadless, setIsHeadless] = useState(false);
+  const [isHeadless, setIsHeadless] = useState(true);
 
   const initializeApolloClient = async () => {
     await createApolloClient(persistentQueueLink).then(apolloClient => {
       setClient(apolloClient);
+      registerMessaging(apolloClient);
     });
   };
 
   // initialize the Apollo client only if app is not headless
   // if it is, the message handler has to intialize it on its own
   useEffect(() => {
-    messaging()
-      .getIsHeadless()
-      .then(isH => {
-        setIsHeadless(isH);
-        if (!isH) {
-          initializeApolloClient();
-          createRemindersChannel();
-        }
-      });
-  }, []);
-
-  const handler = async (message: FirebaseMessagingTypes.RemoteMessage) => {
-    // if received notification to refresh badge, check if it's start of the day
-    // if yes, set the badge number
-    console.log('message', message);
-    if (message.data && message.data.action == 'refresh') {
-      if (dayjs().get('hours') == 0) {
-        const client = await createApolloClient(persistentQueueLink);
-        const tasks = client.readQuery<GetAllTasksQuery>({
-          query: GetAllTasksDocument,
+    if (Platform.OS == 'ios') {
+      messaging()
+        .getIsHeadless()
+        .then(isH => {
+          setIsHeadless(isH);
+          if (!isH) {
+            initializeApolloClient();
+            createRemindersChannel();
+          }
         });
-        if (tasks) {
-          let number = 0;
-
-          tasks.getAllTasks.forEach(task => {
-            if (dayjs(task.doDate).isSame(dayjs(), 'date')) {
-              number += 1;
-            }
-          });
-          setBadgeCount(number);
-        }
-      }
+    } else {
+      setIsHeadless(false);
+      initializeApolloClient();
+      createRemindersChannel();
     }
-  };
+  }, []);
 
   useEffect(() => {
     messaging().onMessage(handler);
-    messaging().setBackgroundMessageHandler(handler);
   }, []);
 
   useEffect(() => {

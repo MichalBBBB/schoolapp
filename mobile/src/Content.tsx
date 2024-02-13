@@ -13,6 +13,7 @@ import {
   isOnlineVar,
   minVersionVar,
   persistentQueueLink,
+  registerMessaging,
 } from './App';
 import {
   DarkTheme,
@@ -40,9 +41,6 @@ import {AlertProvider} from './contexts/AlertContext';
 import {isVersionHighEnough} from './utils/isVersionHighEnough';
 import {UpdateAppScreen} from './screens/UpdateAppScreen';
 import {setBadgeCount} from './utils/notifications';
-import messaging, {
-  FirebaseMessagingTypes,
-} from '@react-native-firebase/messaging';
 
 const is12hourConfig = {
   // abbreviated format options allowing localization
@@ -176,7 +174,14 @@ export const Content: React.FC = () => {
     if (!isLoggedIn) {
       client.resetStore();
     }
-  }, [isLoggedInVar]);
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      replaceAllData(client);
+      registerMessaging(client);
+    }
+  }, [isLoggedIn]);
 
   // set the locale based on settings
   useEffect(() => {
@@ -190,12 +195,6 @@ export const Content: React.FC = () => {
       }
     }
   }, [settings]);
-
-  messaging()
-    .getIsHeadless()
-    .then(isHeadless => {
-      console.log('is headless: ', isHeadless);
-    });
 
   // if the server is down or something similar,
   // set a timer that checks connectivity every 10 seconds
@@ -231,23 +230,6 @@ export const Content: React.FC = () => {
     return () => {
       unsubscribe();
     };
-  }, []);
-
-  const registerMessaging = async () => {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-    await messaging().registerDeviceForRemoteMessages();
-
-    const token = await messaging().getToken();
-    addNotificationToken({variables: {token}});
-  };
-
-  useEffect(() => {
-    registerMessaging();
-
-    console.log('registered for messaging');
   }, []);
 
   return (

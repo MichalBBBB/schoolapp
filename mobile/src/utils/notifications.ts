@@ -6,6 +6,7 @@ import notifee, {
 } from '@notifee/react-native';
 
 export const reminderChannelId = 'reminders';
+export const messagesChannelId = 'messages';
 
 let channel;
 
@@ -13,6 +14,15 @@ export const createRemindersChannel = async () => {
   channel = await notifee.createChannel({
     id: reminderChannelId,
     name: 'Reminders',
+    sound: 'default',
+    importance: AndroidImportance.HIGH,
+  });
+};
+
+export const messagesChannel = async () => {
+  await notifee.createChannel({
+    id: messagesChannelId,
+    name: 'Messages',
     sound: 'default',
     importance: AndroidImportance.HIGH,
   });
