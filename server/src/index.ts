@@ -186,6 +186,30 @@ const main = async () => {
   admin.initializeApp({
     credential: applicationDefault(),
   });
+  // send a refresh notification every hour to every device
+  setInterval(() => {
+    admin.messaging().send({
+      topic: "refresh",
+      data: {
+        action: "refresh",
+      },
+      apns: {
+        headers: {
+          "apns-push-type": "background",
+          "apns-priority": "5",
+          "apns-topic": "app.dayto.dayto",
+        },
+        payload: {
+          aps: {
+            contentAvailable: true,
+          },
+        },
+      },
+      android: {
+        priority: "high",
+      },
+    });
+  }, 60 * 60 * 1000);
 
   app.use(
     "/graphql",

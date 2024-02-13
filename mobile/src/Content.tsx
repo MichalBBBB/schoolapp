@@ -127,22 +127,22 @@ export const Content: React.FC = () => {
     context: {skipQueue: true},
   });
 
-  // client
-  //   .watchQuery<GetAllTasksQuery>({
-  //     query: GetAllTasksDocument,
-  //   })
-  //   .subscribe({
-  //     next: tasks => {
-  //       let number = 0;
+  client
+    .watchQuery<GetAllTasksQuery>({
+      query: GetAllTasksDocument,
+    })
+    .subscribe({
+      next: tasks => {
+        let number = 0;
 
-  //       tasks.data.getAllTasks.forEach(task => {
-  //         if (dayjs(task.doDate).isSame(dayjs(), 'date')) {
-  //           number += 1;
-  //         }
-  //       });
-  //       setBadgeCount(number);
-  //     },
-  //   });
+        tasks.data.getAllTasks.forEach(task => {
+          if (dayjs(task.doDate).isSame(dayjs(), 'date')) {
+            number += 1;
+          }
+        });
+        setBadgeCount(number);
+      },
+    });
 
   const updateLocale = async () => {
     const is24hour = await is24HourFormat();
@@ -191,6 +191,12 @@ export const Content: React.FC = () => {
     }
   }, [settings]);
 
+  messaging()
+    .getIsHeadless()
+    .then(isHeadless => {
+      console.log('is headless: ', isHeadless);
+    });
+
   // if the server is down or something similar,
   // set a timer that checks connectivity every 10 seconds
   useEffect(() => {
@@ -238,16 +244,9 @@ export const Content: React.FC = () => {
     addNotificationToken({variables: {token}});
   };
 
-  const handler = async (message: FirebaseMessagingTypes.RemoteMessage) => {
-    setBadgeCount(4);
-    console.log(message);
-  };
-
   useEffect(() => {
     registerMessaging();
 
-    messaging().onMessage(handler);
-    messaging().setBackgroundMessageHandler(handler);
     console.log('registered for messaging');
   }, []);
 

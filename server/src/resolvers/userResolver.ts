@@ -45,6 +45,7 @@ import {
 import { Schedule } from "../entities/Schedule";
 import appleSignin from "apple-signin-auth";
 import crypto from "node:crypto";
+import { messaging } from "firebase-admin";
 
 const client = new OAuth2Client({
   clientId: process.env.GOOGLE_CLIENT_ID,
@@ -284,12 +285,12 @@ export class userResolver {
 
     if (user) {
       console.log("tokens", user.tokens);
-      // user.tokens = [];
-      // await user.save();
       if (user.tokens.includes(token)) {
+        messaging().subscribeToTopic(token, "refresh");
         return true;
       } else {
         user.tokens = [...user.tokens, token];
+        messaging().subscribeToTopic(token, "refresh");
         await user.save();
         return true;
       }
@@ -497,6 +498,7 @@ export class userResolver {
     const user = await User.findOne({ where: { id: payload?.userId } });
     if (user) {
       user.tokens = user.tokens.filter((item) => item !== token);
+      messaging().unsubscribeFromTopic(token, "refresh");
       await user.save();
     }
     sendRefreshToken(res, "");
