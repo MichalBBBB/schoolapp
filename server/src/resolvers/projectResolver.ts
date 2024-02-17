@@ -169,6 +169,7 @@ export class projectResolver {
               notification: {
                 channelId: "messages",
                 sound: "default",
+                icon: "ic_small_icon",
               },
             },
           });
