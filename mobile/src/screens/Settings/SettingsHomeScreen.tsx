@@ -20,6 +20,7 @@ import {useLogoutMutation, useMeQuery} from '../../generated/graphql';
 import {useSetSettings} from '../../mutationHooks/settings/setSettings';
 import {setAccessToken} from '../../utils/AccessToken';
 import {SettingsStackScreenProps} from '../../utils/types';
+import messaging from '@react-native-firebase/messaging';
 
 const SettingsHomeScreen: React.FC<
   SettingsStackScreenProps<'SettingsHomeScreen'>
@@ -31,6 +32,17 @@ const SettingsHomeScreen: React.FC<
   const [setSettings] = useSetSettings();
 
   const [subjectModalVisible, setSubjectModalVisible] = useState(false);
+
+  const logoutFunc = async () => {
+    logout({
+      variables: {
+        notificationToken: await messaging().getToken(),
+      },
+    }).then(() => {
+      setAccessToken('');
+      isLoggedInVar(false);
+    });
+  };
 
   const profile = (
     <Pressable
@@ -133,9 +145,7 @@ const SettingsHomeScreen: React.FC<
             <Pressable
               style={styles.listItem}
               onPress={() => {
-                logout();
-                setAccessToken('');
-                isLoggedInVar(false);
+                logoutFunc();
               }}>
               <BasicText color="dangerous" textVariant="menuItem">
                 Log out

@@ -133,11 +133,14 @@ export const Content: React.FC = () => {
       next: tasks => {
         let number = 0;
 
-        tasks.data.getAllTasks.forEach(task => {
-          if (dayjs(task.doDate).isSame(dayjs(), 'date')) {
-            number += 1;
-          }
-        });
+        if (tasks.data) {
+          tasks.data.getAllTasks.forEach(task => {
+            if (dayjs(task.doDate).isSame(dayjs(), 'date')) {
+              number += 1;
+            }
+          });
+        }
+
         setBadgeCount(number);
       },
     });
