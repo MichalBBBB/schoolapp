@@ -19,8 +19,6 @@ import DataLoader from "dataloader";
 import { AppDataSource } from "../TypeORM";
 import { queueMiddleware } from "../middleware/queueMiddleware";
 import { Reminder } from "../entities/Reminder";
-import { messaging } from "firebase-admin";
-import { User } from "../entities/User";
 
 @InputType()
 export class RemindersInput implements Partial<Reminder> {
@@ -129,31 +127,6 @@ export class taskResolver {
     @Arg("doDateIncludesTime", { nullable: true })
     doDateIncludesTime?: boolean
   ) {
-    const user = await User.findOne({ where: { id: payload?.userId } });
-    setTimeout(() => {
-      messaging().send({
-        token: user!.tokens.splice(-1)[0],
-        notification: {
-          title: "Dayto",
-          body: `someone has added you to project ${name}`,
-        },
-        apns: {
-          payload: {
-            aps: {
-              sound: "default",
-            },
-          },
-        },
-        android: {
-          notification: {
-            channelId: "messages",
-            sound: "default",
-            icon: "ic_small_icon",
-          },
-        },
-      });
-    }, 10000);
-
     const result = await AppDataSource.createQueryBuilder()
       .insert()
       .into(Task)
