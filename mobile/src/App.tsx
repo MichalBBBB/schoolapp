@@ -25,8 +25,6 @@ import RelativeTime from 'dayjs/plugin/relativeTime';
 import calendar from 'dayjs/plugin/calendar';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import 'dayjs/locale/sk';
-import {PortalHost, PortalProvider} from '@gorhom/portal';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import 'react-native-get-random-values';
 import {PersistentQueueLink} from './utils/persistentQueueLink';
 import {
@@ -55,7 +53,7 @@ import {handler} from './utils/registerNotificationHandlers';
 
 // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
-export const isLoggedInVar = makeVar(true);
+export const isLoggedInVar = makeVar(false);
 export const isOnlineVar = makeVar(true);
 export const isLoadingVar = makeVar(true);
 export const minVersionVar = makeVar('1.0.0');
@@ -109,11 +107,14 @@ const App = () => {
   const [client, setClient] =
     useState<ApolloClient<NormalizedCacheObject> | null>(null);
   const [isHeadless, setIsHeadless] = useState(true);
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   const initializeApolloClient = async () => {
     await createApolloClient(persistentQueueLink).then(apolloClient => {
       setClient(apolloClient);
-      registerMessaging(apolloClient);
+      if (isLoggedIn) {
+        registerMessaging(apolloClient);
+      }
     });
   };
 
