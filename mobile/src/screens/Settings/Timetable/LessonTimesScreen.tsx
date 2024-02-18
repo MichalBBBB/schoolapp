@@ -12,7 +12,7 @@ import {MenuItem} from '../../../components/menu/MenuItem';
 import {Popup} from '../../../components/popup';
 import {useDeleteSchedule} from '../../../mutationHooks/schedule/deleteSchedule';
 import {useEditSchedule} from '../../../mutationHooks/schedule/editSchedule';
-import {SettingsStackScreenProps} from '../../../types/navigationTypes';
+import {SettingsStackScreenProps} from '../../../utils/types';
 
 const LessonTimesScreen: React.FC<
   SettingsStackScreenProps<'LessonTimesScreen'>

@@ -5,7 +5,7 @@ import {BasicButton} from '../../../components/basicViews/BasicButton';
 import {BasicText} from '../../../components/basicViews/BasicText';
 import {BasicTextInput} from '../../../components/basicViews/BasicTextInput';
 import {useChangePasswordMutation, UserError} from '../../../generated/graphql';
-import {SettingsStackScreenProps} from '../../../types/navigationTypes';
+import {SettingsStackScreenProps} from '../../../utils/types';
 
 export const ChangePasswordScreen: React.FC<
   SettingsStackScreenProps<'ChangePasswordScreen'>

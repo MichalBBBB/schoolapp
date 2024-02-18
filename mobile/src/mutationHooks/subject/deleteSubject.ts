@@ -35,19 +35,19 @@ export const useDeleteSubject: () => [
         if (!data) {
           return;
         }
-        const normalizedSubjectId = `Subject:${variables.id}`;
-        cache.evict({id: normalizedSubjectId});
+
         // delete all lessons with this subject
         const lessons = cache.readQuery<GetAllLessonsQuery>({
           query: GetAllLessonsDocument,
         });
+        const newLessons =
+          lessons?.getAllLessons.filter(item => {
+            return item.subject.id !== variables.id;
+          }) || [];
         cache.writeQuery<GetAllLessonsQuery>({
           query: GetAllLessonsDocument,
           data: {
-            getAllLessons:
-              lessons?.getAllLessons.filter(item => {
-                return item.subject.id !== variables.id;
-              }) || [],
+            getAllLessons: newLessons,
           },
         });
 
@@ -92,6 +92,8 @@ export const useDeleteSubject: () => [
               }) || [],
           },
         });
+        const normalizedSubjectId = `Subject:${variables.id}`;
+        cache.evict({id: normalizedSubjectId});
         cache.gc();
       },
     });

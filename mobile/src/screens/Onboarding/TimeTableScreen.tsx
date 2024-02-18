@@ -4,7 +4,7 @@ import {BasicText} from '../../components/basicViews/BasicText';
 import {OnboardingContinueButton} from '../../components/onboardingContinueButton';
 import {TimeTableView} from '../../components/TimeTableView';
 import {useSetSettings} from '../../mutationHooks/settings/setSettings';
-import {OnboardingStackScreenProps} from '../../types/navigationTypes';
+import {OnboardingStackScreenProps} from '../../utils/types';
 
 export const TimeTableScreen: React.FC<
   OnboardingStackScreenProps<'TimeTableScreen'>

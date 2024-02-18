@@ -12,10 +12,9 @@ import EditDateModal from '../../../components/modals/editDateWindow';
 import {Popup} from '../../../components/popup';
 import {SettingsItem} from '../../../components/listItems/settingsItem';
 import {useSetSettings} from '../../../mutationHooks/settings/setSettings';
-import {SubjectColorsObject} from '../../../types/Theme';
-import {useSettings} from '../../../utils/hooks/useSettings';
+import {useSettings} from '../../../utils/useSettings';
 import {BasicLoading} from '../../../components/basicViews/BasicLoading';
-import {SettingsStackScreenProps} from '../../../types/navigationTypes';
+import {SettingsStackScreenProps} from '../../../utils/types';
 
 export const AdvancedTimeTableScreen: React.FC<
   SettingsStackScreenProps<'AdvancedTimeTableScreen'>
@@ -121,6 +120,7 @@ export const AdvancedTimeTableScreen: React.FC<
               setStartDateModalVisible(true);
             }}
             backgroundColor="lightBorder"
+            borderColor="lightBorder"
             borderWidth={1}
             variant="outlined"
             spacing="s"
@@ -140,7 +140,7 @@ export const AdvancedTimeTableScreen: React.FC<
         onClose={() => {
           setStartDateModalVisible(false);
         }}
-        onSubmit={date => {
+        onSubmit={({date}) => {
           setSettings({
             startOfRotationDate: date!.toDate(),
           });

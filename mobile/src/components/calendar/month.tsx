@@ -8,7 +8,7 @@ import {
   useGetAllEventsQuery,
   useGetAllTasksQuery,
 } from '../../generated/graphql';
-import {useSettings} from '../../utils/hooks/useSettings';
+import {useSettings} from '../../utils/useSettings';
 import {BasicText} from '../basicViews/BasicText';
 import Week from './week';
 

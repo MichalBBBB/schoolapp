@@ -126,7 +126,9 @@ const Task: React.FC<{
                       name: task.name,
                       text: task.text,
                       dueDate: task.dueDate,
+                      dueDateIncludesTime: task.dueDateIncludesTime,
                       doDate: task.doDate ? null : planningDay.toDate(),
+                      doDateIncludesTime: false,
                       subjectId: task.subject?.id,
                     });
                   } else {

@@ -9,6 +9,9 @@ production = ENV["PRODUCTION"] == "1"
 target 'dayto' do
   config = use_native_modules!
 
+  use_frameworks! :linkage => :static
+  $RNFirebaseAsStaticFramework = true
+
   # Flags change depending on the env values.
   flags = get_default_flags()
 
@@ -18,7 +21,7 @@ target 'dayto' do
     :production => production,
     :hermes_enabled => flags[:hermes_enabled],
     :fabric_enabled => flags[:fabric_enabled],
-    :flipper_configuration => FlipperConfiguration.enabled,
+#   :flipper_configuration => FlipperConfiguration.enabled,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )

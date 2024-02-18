@@ -10,12 +10,14 @@ import {BasicRadio} from '../basicViews/BasicRadio';
 import {BasicCardProps} from '../basicViews/BasicCard';
 import {BasicText} from '../basicViews/BasicText';
 import {BasicButton} from '../basicViews/BasicButton';
+import {ColorsObject} from '../../types/Theme';
 
 interface RemindersWindowProps {
   onSubmit: (reminderTImes: number[]) => void;
   onClose: () => void;
   isVisible: boolean;
   initialReminderTimes?: number[];
+  backgroundColor?: keyof ColorsObject;
 }
 
 type ReminderTime = {
@@ -55,12 +57,14 @@ export const RemindersWindow: React.FC<RemindersWindowProps> = ({
   onClose,
   onSubmit,
   initialReminderTimes = [],
+  backgroundColor,
 }) => {
   const [selectedReminderTimes, setSelectedReminderTimes] =
     useState<number[]>(initialReminderTimes);
 
   return (
     <BasicModalCard
+      backgroundColor={backgroundColor}
       style={{marginHorizontal: 20}}
       alignCard="center"
       isVisible={isVisible}
@@ -71,16 +75,17 @@ export const RemindersWindow: React.FC<RemindersWindowProps> = ({
         <BasicText textVariant="heading">Reminders</BasicText>
       </View>
       <View style={styles.reminderTimesContainer}>
-        <View style={{flexDirection: 'row', marginBottom: 10}}>
+        <Pressable
+          style={{flexDirection: 'row', marginBottom: 10}}
+          onPress={() => {
+            setSelectedReminderTimes([]);
+          }}>
           <BasicRadio
             style={{marginRight: 10}}
             toggled={selectedReminderTimes.length == 0}
-            onToggle={toggled => {
-              setSelectedReminderTimes([]);
-            }}
           />
           <BasicText>None</BasicText>
-        </View>
+        </Pressable>
         {reminderTimes.map((item, index) => (
           <Pressable
             key={index}
@@ -123,8 +128,10 @@ export const RemindersWindow: React.FC<RemindersWindowProps> = ({
           onPress={() => {
             onSubmit(selectedReminderTimes);
           }}
-          variant={'unstyled'}>
-          <BasicText color="primary" style={{fontWeight: 'bold'}}>
+          variant={'filled'}
+          spacing="m"
+          backgroundColor="accentBackground">
+          <BasicText color="accent" style={{fontWeight: 'bold'}}>
             Select
           </BasicText>
         </BasicButton>

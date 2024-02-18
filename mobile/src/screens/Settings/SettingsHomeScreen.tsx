@@ -19,7 +19,8 @@ import {DarkTheme, LightTheme, useTheme} from '../../contexts/ThemeContext';
 import {useLogoutMutation, useMeQuery} from '../../generated/graphql';
 import {useSetSettings} from '../../mutationHooks/settings/setSettings';
 import {setAccessToken} from '../../utils/AccessToken';
-import {SettingsStackScreenProps} from '../../types/navigationTypes';
+import {SettingsStackScreenProps} from '../../utils/types';
+import messaging from '@react-native-firebase/messaging';
 
 const SettingsHomeScreen: React.FC<
   SettingsStackScreenProps<'SettingsHomeScreen'>
@@ -31,6 +32,17 @@ const SettingsHomeScreen: React.FC<
   const [setSettings] = useSetSettings();
 
   const [subjectModalVisible, setSubjectModalVisible] = useState(false);
+
+  const logoutFunc = async () => {
+    logout({
+      variables: {
+        notificationToken: await messaging().getToken(),
+      },
+    }).then(() => {
+      setAccessToken('');
+      isLoggedInVar(false);
+    });
+  };
 
   const profile = (
     <Pressable
@@ -120,7 +132,7 @@ const SettingsHomeScreen: React.FC<
                 alignItems: 'center',
                 paddingHorizontal: 5,
               }}>
-              <BasicText>Dark mode</BasicText>
+              <BasicText textVariant="menuItem">Dark mode</BasicText>
               <Switch
                 value={theme.dark}
                 onValueChange={value => {
@@ -133,9 +145,11 @@ const SettingsHomeScreen: React.FC<
             <Pressable
               style={styles.listItem}
               onPress={() => {
-                isLoggedInVar(false);
+                logoutFunc();
               }}>
-              <BasicText color="dangerous">Log out</BasicText>
+              <BasicText color="dangerous" textVariant="menuItem">
+                Log out
+              </BasicText>
             </Pressable>
           </BasicCard>
         </View>

@@ -26,7 +26,7 @@ import {
   useMakeMemberAdminMutation,
   useRemoveMemberFromProjectMutation,
 } from '../../generated/graphql';
-import {ProjectStackScreenProps} from '../../types/navigationTypes';
+import {ProjectStackScreenProps} from '../../utils/types';
 import {isLoadingVar} from '../../App';
 
 export const ProjectMembersScreen: React.FC<

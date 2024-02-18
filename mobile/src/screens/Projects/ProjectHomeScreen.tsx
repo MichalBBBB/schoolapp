@@ -2,7 +2,6 @@ import {useApolloClient, useReactiveVar} from '@apollo/client';
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {FlatList, Pressable, StyleSheet, Text, View} from 'react-native';
 import {isOnlineVar} from '../../App';
-import AddButton from '../../components/addButton';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicRefreshControl} from '../../components/basicViews/BasicRefreshControl';
 import {BasicText} from '../../components/basicViews/BasicText';
@@ -17,8 +16,9 @@ import {
   useGetInvitesQuery,
   useGetProjectsQuery,
 } from '../../generated/graphql';
-import {ProjectStackScreenProps} from '../../types/navigationTypes';
-import {usePremiumFeature} from '../../utils/hooks/usePremiumFeature';
+import {ProjectStackScreenProps} from '../../utils/types';
+import {usePremiumFeature} from '../../utils/usePremiumFeature';
+import AddButton from '../../components/addButton';
 
 const ProjectHomeScreen: React.FC<
   ProjectStackScreenProps<'ProjectHomeScreen'>

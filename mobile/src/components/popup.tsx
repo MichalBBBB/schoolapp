@@ -8,6 +8,8 @@ import {
   ViewStyle,
 } from 'react-native';
 import Animated, {
+  FadeIn,
+  FadeOut,
   interpolate,
   runOnJS,
   useAnimatedStyle,
@@ -16,7 +18,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {ColorsObject} from '../types/Theme';
-import useKeyboardHeight, {isIOS} from '../utils/hooks/useKeyboardHeight';
+import useKeyboardHeight, {isIOS} from '../utils/useKeyboardHeight';
 
 export interface PopupProps {
   trigger: React.ReactElement;
@@ -236,8 +238,16 @@ export const Popup: React.FC<PopupProps> = ({
             <TouchableOpacity
               activeOpacity={1}
               onPress={closeModal}
-              style={styles.modalWrapper}
-            />
+              style={[styles.modalWrapper]}>
+              <Animated.View
+                entering={FadeIn}
+                exiting={FadeOut}
+                style={[
+                  styles.modalWrapper,
+                  {backgroundColor: 'rgba(0,0,0,0.3)'},
+                ]}
+              />
+            </TouchableOpacity>
             <View
               style={{position: 'absolute', top: 0, left: 0, opacity: 0}}
               onLayout={event => {

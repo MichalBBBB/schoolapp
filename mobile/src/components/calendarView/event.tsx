@@ -1,6 +1,13 @@
 import dayjs from 'dayjs';
 import React, {useState} from 'react';
-import {View, Text, Image, StyleSheet, Pressable} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Pressable,
+  LayoutAnimation,
+} from 'react-native';
 import {
   TouchableHighlight,
   TouchableOpacity,
@@ -10,22 +17,21 @@ import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
 import {useCreateTask} from '../../mutationHooks/task/createTask';
 import {BasicText} from '../basicViews/BasicText';
 import EditDateModal from '../modals/editDateWindow';
-import {Menu} from '../menu';
-import {MenuItem} from '../menu/MenuItem';
 import SlidingView from '../slidingView';
 import {v4 as uuidv4} from 'uuid';
-import {Popup} from '../popup';
 import {useNavigation} from '@react-navigation/native';
-import {CalendarNavigationProp} from '../../types/navigationTypes';
+import {CalendarNavigationProp} from '../../utils/types';
 import {BasicCard} from '../basicViews/BasicCard';
 import {useTheme} from '../../contexts/ThemeContext';
 import {BasicIcon} from '../basicViews/BasicIcon';
 
 interface EventProps {
   event: CalendarEventFragment;
+  height?: number;
+  variant?: 'list' | 'calendar';
 }
 
-const Event: React.FC<EventProps> = ({event}) => {
+const Event: React.FC<EventProps> = ({event, height, variant = 'list'}) => {
   const [deleteEvent] = useDeleteEvent();
   const [addTask] = useCreateTask();
 
@@ -40,36 +46,36 @@ const Event: React.FC<EventProps> = ({event}) => {
       onPress={() => {
         navigation.navigate('EventDetailScreen', {event});
       }}>
-      <View
-        style={[
-          styles.frontViewContainer,
-          {backgroundColor: theme.colors.accentBackground1},
-        ]}>
-        <BasicText>{event.name}</BasicText>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <BasicText color="textSecondary" style={{marginRight: 8}}>
-            {dayjs(event.startDate).format('HH:mm')}
+      <BasicCard
+        backgroundColor="accentBackground1"
+        borderRadius={0}
+        style={{
+          height,
+          padding:
+            variant == 'calendar' ? (height && height >= 40 ? 12 : 0) : 12,
+          paddingHorizontal: 10,
+          justifyContent: height && height >= 40 ? 'space-between' : 'center',
+        }}>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <BasicText style={{marginRight: 5}} numberOfLines={1}>
+            {event.name}
           </BasicText>
-          <Popup
-            trigger={
-              <TouchableOpacity>
-                <BasicIcon
-                  source={require('../../../assets/Options.png')}
-                  style={styles.options}
-                />
-              </TouchableOpacity>
-            }>
-            <Menu>
-              <MenuItem
-                text={'Add time to study'}
-                onPress={() => {
-                  setStudyTimeModalVisible(true);
-                }}
-              />
-            </Menu>
-          </Popup>
+          {variant == 'list' && (
+            <BasicText color="textSecondary">
+              {`${dayjs(event.startDate).format('HH:mm')} - ${dayjs(
+                event.endDate,
+              ).format('HH:mm')}`}
+            </BasicText>
+          )}
         </View>
-      </View>
+        {variant == 'calendar' && height && height >= 40 && (
+          <BasicText color="textSecondary" style={{marginRight: 8}}>
+            {`${dayjs(event.startDate).format('HH:mm')} - ${dayjs(
+              event.endDate,
+            ).format('HH:mm')}`}
+          </BasicText>
+        )}
+      </BasicCard>
     </TouchableHighlight>
   );
 
@@ -81,6 +87,9 @@ const Event: React.FC<EventProps> = ({event}) => {
           backView={[
             <TouchableOpacity
               onPress={() => {
+                LayoutAnimation.configureNext(
+                  LayoutAnimation.Presets.easeInEaseOut,
+                );
                 deleteEvent({id: event.id});
               }}>
               <View style={styles.backViewContainer}>
@@ -101,7 +110,7 @@ const Event: React.FC<EventProps> = ({event}) => {
         onClose={() => {
           setStudyTimeModalVisible(false);
         }}
-        onSubmit={date => {
+        onSubmit={({date}) => {
           setStudyTimeModalVisible(false);
           addTask({
             id: uuidv4(),
@@ -118,8 +127,6 @@ const Event: React.FC<EventProps> = ({event}) => {
 
 const styles = StyleSheet.create({
   container: {
-    margin: 5,
-    marginHorizontal: 10,
     borderRadius: 15,
     overflow: 'hidden',
   },
@@ -135,12 +142,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: '100%',
   },
-  frontViewContainer: {
-    padding: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
+  frontViewContainer: {},
   options: {
     resizeMode: 'stretch',
     height: 20,

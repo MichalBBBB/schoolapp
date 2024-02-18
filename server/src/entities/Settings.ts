@@ -54,4 +54,8 @@ export class Settings extends BaseEntity {
   @Column({ default: true })
   @Field()
   isFirstTime: boolean;
+
+  @Column({ default: false })
+  @Field()
+  showCalendarView: boolean;
 }

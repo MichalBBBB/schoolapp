@@ -14,21 +14,28 @@ import {
   isOnlineVar,
   minVersionVar,
   persistentQueueLink,
+  registerMessaging,
 } from './App';
 import {DarkTheme, LightTheme, useTheme} from './contexts/ThemeContext';
 import Routes from './Routes';
-import {allQueries} from './utils/constants/allQueries';
+import {allQueries} from './utils/allQueries';
 import NetInfo from '@react-native-community/netinfo';
-import {baseUri} from './utils/services/createApolloClient';
-import {setRemindersFromApollo} from './utils/helperFunctions/reminderUtils';
-import {useSettings} from './utils/hooks/useSettings';
+import {baseUri} from './utils/createApolloClient';
+import {setRemindersFromApollo} from './utils/reminderUtils';
+import {useSettings} from './utils/useSettings';
 import dayjs from 'dayjs';
-import {useLogoutMutation, useMeQuery} from './generated/graphql';
+import {
+  useLogoutMutation,
+  GetAllTasksDocument,
+  GetAllTasksQuery,
+  useAddNotificationTokenMutation,
+  useMeQuery,
+} from './generated/graphql';
 import {is24HourFormat} from 'react-native-device-time-format';
 import {useSetSettings} from './mutationHooks/settings/setSettings';
 import {v4 as uuidv4} from 'uuid';
 import {AlertProvider} from './contexts/AlertContext';
-import {isVersionHighEnough} from './utils/helperFunctions/isVersionHighEnough';
+import {isVersionHighEnough} from './utils/isVersionHighEnough';
 import {UpdateAppScreen} from './screens/UpdateAppScreen';
 import Purchases, {
   PurchasesOffering,
@@ -38,6 +45,7 @@ import {RC_API_KEY} from '@env';
 import {setAccessToken} from './utils/AccessToken';
 import {View, StyleSheet} from 'react-native';
 import {BasicLoading} from './components/basicViews/BasicLoading';
+import {setBadgeCount} from './utils/notifications';
 
 const is12hourConfig = {
   // abbreviated format options allowing localization
@@ -125,6 +133,30 @@ export const Content: React.FC = () => {
   const [logout] = useLogoutMutation();
 
   const {data: me} = useMeQuery();
+  const [setSettings] = useSetSettings();
+  const [addNotificationToken] = useAddNotificationTokenMutation({
+    context: {skipQueue: true},
+  });
+
+  client
+    .watchQuery<GetAllTasksQuery>({
+      query: GetAllTasksDocument,
+    })
+    .subscribe({
+      next: tasks => {
+        let number = 0;
+
+        if (tasks.data) {
+          tasks.data.getAllTasks.forEach(task => {
+            if (dayjs(task.doDate).isSame(dayjs(), 'date')) {
+              number += 1;
+            }
+          });
+        }
+
+        setBadgeCount(number);
+      },
+    });
 
   const updateLocale = async () => {
     const is24hour = await is24HourFormat();
@@ -177,6 +209,13 @@ export const Content: React.FC = () => {
       })();
     }
   }, [me, isPurchasesConfigured, isLoggedIn]);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      replaceAllData(client);
+      registerMessaging(client);
+    }
+  }, [isLoggedIn]);
 
   // set the locale based on settings
   useEffect(() => {

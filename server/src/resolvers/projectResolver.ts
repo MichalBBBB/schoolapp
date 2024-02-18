@@ -18,6 +18,8 @@ import { isAuth } from "../middleware/isAuth";
 import { queueMiddleware } from "../middleware/queueMiddleware";
 import { AppDataSource } from "../TypeORM";
 import { MyContext } from "../utils/MyContext";
+import { In } from "typeorm";
+import { messaging } from "firebase-admin";
 
 @ObjectType()
 class Invite {
@@ -98,6 +100,7 @@ export class projectResolver {
       )
       .leftJoinAndSelect("project.tasks", "projectTask")
       .getMany();
+    // console.log(projects);
     return projects;
   }
 
@@ -127,6 +130,8 @@ export class projectResolver {
               accepted: false,
             })
             .save();
+        } else {
+          throw new Error("User not found");
         }
       });
       await transactionEntityManager
@@ -138,6 +143,40 @@ export class projectResolver {
         })
         .save();
     });
+    // send push notification to each added member
+    const addedMembers = await User.find({
+      where: { email: In(memberEmails) },
+    });
+    const admin = await User.findOne({ where: { id: payload?.userId } });
+    if (admin && addedMembers) {
+      console.log("should send notification");
+      addedMembers.forEach((member) => {
+        member.tokens.forEach((token) => {
+          messaging().send({
+            token,
+            notification: {
+              title: "Dayto",
+              body: `${admin.fullName} has added you to project ${name}`,
+            },
+            apns: {
+              payload: {
+                aps: {
+                  sound: "default",
+                },
+              },
+            },
+            android: {
+              notification: {
+                channelId: "messages",
+                sound: "default",
+                icon: "ic_small_icon",
+              },
+            },
+          });
+        });
+      });
+    }
+
     return Project.findOne({
       where: { id: project.id },
       relations: { tasks: true },
@@ -213,7 +252,32 @@ export class projectResolver {
         projectId,
         accepted: false,
       }).save();
+      const admin = await User.findOne({ where: { id: payload?.userId } });
+      if (admin) {
+        user.tokens.forEach((token) => {
+          messaging().send({
+            token,
+            notification: {
+              title: "Dayto",
+              body: `${admin.fullName} has added you to project ${project.name}`,
+            },
+            apns: {
+              payload: {
+                aps: {
+                  sound: "default",
+                },
+              },
+            },
+            android: {
+              notification: {
+                sound: "default",
+              },
+            },
+          });
+        });
+      }
     }
+
     return Project.findOne({
       where: { id: projectId },
       relations: { tasks: true },

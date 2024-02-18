@@ -35,7 +35,9 @@ import { MyContext } from "./utils/MyContext";
 import { Schedule } from "./entities/Schedule";
 import { LessonTime } from "./entities/LessonTime";
 import { ScheduleResolver } from "./resolvers/scheduleResolver";
-
+import appleSignin from "apple-signin-auth";
+import admin from "firebase-admin";
+import { applicationDefault } from "firebase-admin/app";
 export type UserQueueObject = {
   resolveObject: DefferedObject;
   req: any;
@@ -130,6 +132,35 @@ const main = async () => {
     }
   });
 
+  app.get("/apple-signin-webhook", async (req, _) => {
+    const { events } = await appleSignin.verifyWebhookToken(req.body.payload, {
+      audience: "app.dayto.dayto",
+    });
+    const { sub: userAppleId, type, email } = events;
+    const user = await User.findOne({ where: { appleIdToken: userAppleId } });
+    if (user) {
+      switch (type) {
+        case "email-disabled":
+          if (email) {
+            user.email = email;
+            await user.save();
+          }
+          break;
+        case "email-enabled":
+          if (email) {
+            user.email = email;
+            await user.save();
+          }
+          break;
+        case "consent-revoked":
+          break;
+        case "account-delete":
+          await user;
+          break;
+      }
+    }
+  });
+
   const apolloServer = new ApolloServer({
     allowBatchedHttpRequests: true,
     schema: await buildSchema({
@@ -152,6 +183,34 @@ const main = async () => {
   });
 
   await apolloServer.start();
+
+  admin.initializeApp({
+    credential: applicationDefault(),
+  });
+  // send a refresh notification every hour to every device
+  setInterval(() => {
+    admin.messaging().send({
+      topic: "refresh",
+      data: {
+        action: "refresh",
+      },
+      apns: {
+        headers: {
+          "apns-push-type": "background",
+          "apns-priority": "5",
+          "apns-topic": "app.dayto.dayto",
+        },
+        payload: {
+          aps: {
+            contentAvailable: true,
+          },
+        },
+      },
+      android: {
+        priority: "high",
+      },
+    });
+  }, 60 * 60 * 1000);
 
   app.use(
     "/graphql",

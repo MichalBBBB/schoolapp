@@ -8,6 +8,7 @@ mutation SetSettings(
   $showDoDate: Boolean
   $showCompletedTasks: Boolean
   $isFirstTime: Boolean
+  $showCalendarView: Boolean
 ) {
   setSettings(
     startOfWeek: $startOfWeek
@@ -19,6 +20,7 @@ mutation SetSettings(
     showDoDate: $showDoDate
     showCompletedTasks: $showCompletedTasks
     isFirstTime: $isFirstTime
+    showCalendarView: $showCalendarView
   ) {
     ...Settings
   }

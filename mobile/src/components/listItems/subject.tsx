@@ -7,6 +7,8 @@ import {useEditSubject} from '../../mutationHooks/subject/editSubject';
 import {SubjectColorsObject} from '../../types/Theme';
 import {BasicTextInput} from '../basicViews/BasicTextInput';
 import {ColorPickerPopup} from '../popups/colorPickerPopup';
+import {BasicButton} from '../basicViews/BasicButton';
+import {BasicIcon} from '../basicViews/BasicIcon';
 
 interface SubjectProps {
   subject: SubjectFragment;
@@ -87,12 +89,18 @@ export const Subject: React.FC<SubjectProps> = ({subject}) => {
           placeholderColor="textTerciary"
         />
       </View>
-      <Pressable onPress={() => deleteSubject({id: subject.id})}>
-        <Image
-          source={require('../../../assets/Delete.png')}
+      <BasicButton
+        variant="unstyled"
+        spacing="none"
+        onPress={() => {
+          deleteSubject({id: subject.id});
+        }}>
+        <BasicIcon
+          source={require('../../../assets/Minus.png')}
           style={{height: 30, width: 30}}
+          color="dangerous"
         />
-      </Pressable>
+      </BasicButton>
     </View>
   );
 };

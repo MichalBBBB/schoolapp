@@ -6,9 +6,15 @@ import {
   useReactiveVar,
 } from '@apollo/client';
 import React, {useEffect, useState} from 'react';
-import {Platform, Text, UIManager, View} from 'react-native';
+import {
+  PermissionsAndroid,
+  Platform,
+  Text,
+  UIManager,
+  View,
+} from 'react-native';
 import Routes from './Routes';
-import {baseUri, createApolloClient} from './utils/services/createApolloClient';
+import {baseUri, createApolloClient} from './utils/createApolloClient';
 import {ThemeProvider} from './contexts/ThemeContext';
 import dayjs from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
@@ -23,17 +29,33 @@ import {PortalHost, PortalProvider} from '@gorhom/portal';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import 'react-native-get-random-values';
 import {PersistentQueueLink} from './utils/persistentQueueLink';
-import {GetAllTasksDocument} from './generated/graphql';
+import {
+  AddNotificationTokenDocument,
+  AddNotificationTokenMutation,
+  GetAllTasksDocument,
+  GetAllTasksQuery,
+} from './generated/graphql';
 import {MMKV} from 'react-native-mmkv';
-import {allQueries} from './utils/constants/allQueries';
+import {allQueries} from './utils/allQueries';
 import {Content} from './Content';
 import notifee from '@notifee/react-native';
 import NetInfo from '@react-native-community/netinfo';
-import {createRemindersChannel} from './utils/services/notifications';
+import 'dayjs/locale/en';
+import {RC_API_KEY} from '@env';
+import {createRemindersChannel, setBadgeCount} from './utils/notifications';
 import 'dayjs/locale/en';
 import KeyboardManager from 'react-native-keyboard-manager/dist';
-import Purchases from 'react-native-purchases';
-import {RC_API_KEY} from '@env';
+import messaging, {
+  FirebaseMessagingTypes,
+} from '@react-native-firebase/messaging';
+import {
+  checkNotifications,
+  PERMISSIONS,
+  request,
+} from 'react-native-permissions';
+import {handler} from './utils/registerNotificationHandlers';
+
+// PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
 export const isLoggedInVar = makeVar(true);
 export const isOnlineVar = makeVar(true);
@@ -51,6 +73,28 @@ dayjs.locale('en');
 
 export const storage = new MMKV();
 
+export const registerMessaging = async (client: ApolloClient<any>) => {
+  request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS).then(result => {
+    console.log('result', result);
+  });
+  checkNotifications().then(result => {
+    console.log('result', result);
+  });
+  const authStatus = await messaging().requestPermission();
+  const enabled =
+    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  await messaging().registerDeviceForRemoteMessages();
+
+  const token = await messaging().getToken();
+  console.log('token', token);
+  await client.mutate<AddNotificationTokenMutation>({
+    mutation: AddNotificationTokenDocument,
+    variables: {token},
+    context: {skipQueue: true},
+  });
+};
+
 if (
   Platform.OS === 'android' &&
   UIManager.setLayoutAnimationEnabledExperimental
@@ -66,16 +110,37 @@ if (Platform.OS === 'ios') {
 const App = () => {
   const [client, setClient] =
     useState<ApolloClient<NormalizedCacheObject> | null>(null);
+  const [isHeadless, setIsHeadless] = useState(true);
 
   const initializeApolloClient = async () => {
     await createApolloClient(persistentQueueLink).then(apolloClient => {
       setClient(apolloClient);
+      registerMessaging(apolloClient);
     });
   };
 
+  // initialize the Apollo client only if app is not headless
+  // if it is, the message handler has to intialize it on its own
   useEffect(() => {
-    initializeApolloClient();
-    createRemindersChannel();
+    if (Platform.OS == 'ios') {
+      messaging()
+        .getIsHeadless()
+        .then(isH => {
+          setIsHeadless(isH);
+          if (!isH) {
+            initializeApolloClient();
+            createRemindersChannel();
+          }
+        });
+    } else {
+      setIsHeadless(false);
+      initializeApolloClient();
+      createRemindersChannel();
+    }
+  }, []);
+
+  useEffect(() => {
+    messaging().onMessage(handler);
   }, []);
 
   useEffect(() => {
@@ -91,6 +156,10 @@ const App = () => {
   }
 
   persistentQueueLink.setClient(client);
+
+  if (isHeadless) {
+    return null;
+  }
 
   return (
     <ApolloProvider client={client}>

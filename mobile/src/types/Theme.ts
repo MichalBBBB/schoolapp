@@ -19,14 +19,17 @@ export type ColorsObject = {
   notification: string;
   accentBackground1: string;
   accentBackground2: string;
+  accentBackground3: string;
   icon: string;
   modal: string;
   cardView: string;
   accent: string;
+  accentBackground: string;
   textContrast: string;
   dangerous: string;
   dangerousBackground: string;
   lightBorder: string;
+  selection: string;
 };
 
 export type SubjectColor = {
@@ -40,7 +43,9 @@ export type SubjectColorsObject = {
   grey: SubjectColor;
   brown: SubjectColor;
   pink: SubjectColor;
+  darkPink: SubjectColor;
   yellow: SubjectColor;
+  darkYellow: SubjectColor;
   green: SubjectColor;
   red: SubjectColor;
   purple: SubjectColor;
@@ -64,4 +69,5 @@ export type TextVariantsObject = {
   subText: TextStyle;
   button: TextStyle;
   title: TextStyle;
+  menuItem: TextStyle;
 };

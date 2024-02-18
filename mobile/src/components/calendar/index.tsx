@@ -12,7 +12,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import Month from './month';
 import {FlashList} from '@shopify/flash-list';
 import {BasicText} from '../basicViews/BasicText';
-import {useSettings} from '../../utils/hooks/useSettings';
+import {useSettings} from '../../utils/useSettings';
 
 interface CalendarProps {
   calendarWidth: number;
@@ -77,6 +77,7 @@ const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
           }
         }
       },
+      scrollToSelectedDate() {},
     };
   });
 
@@ -240,7 +241,7 @@ const Calendar = forwardRef<CalendarHandle, CalendarProps>((props, ref) => {
         }}
         ref={flatListRef}
         // rerender when index changes
-        extraData={[index, selectedDay, daysWithDots]}
+        extraData={[index, selectedDay, daysWithDots, settings]}
       />
     </View>
   );

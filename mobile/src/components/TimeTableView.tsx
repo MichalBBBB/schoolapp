@@ -8,7 +8,7 @@ import {
   LessonTimeFragment,
 } from '../generated/graphql';
 import {useCreateLesson} from '../mutationHooks/lesson/createLesson';
-import {useSettings} from '../utils/hooks/useSettings';
+import {useSettings} from '../utils/useSettings';
 import {BasicButton} from './basicViews/BasicButton';
 import {BasicIcon} from './basicViews/BasicIcon';
 import {BasicText} from './basicViews/BasicText';
@@ -29,8 +29,6 @@ export const TimeTableView = () => {
   const [editSchedule] = useEditSchedule();
   const [deleteLesson] = useDeleteLesson();
 
-  const [isLoaded, setIsLoaded] = useState(false);
-
   const [theme] = useTheme();
 
   const settings = useSettings();
@@ -42,7 +40,7 @@ export const TimeTableView = () => {
     if (assignedSchedule) {
       return assignedSchedule;
     } else {
-      return schedules?.getAllSchedules.find(item => item.default)!;
+      return schedules?.getAllSchedules.find(item => item.default) || undefined;
     }
   };
 
@@ -55,7 +53,7 @@ export const TimeTableView = () => {
     // we populate the map with only lessonTimes
     dayNumbers.forEach(item => {
       const schedule = getScheduleOfDay(item);
-      tempMap.push(schedule.lessonTimes);
+      tempMap.push(schedule?.lessonTimes || []);
     });
     // we go through all lessons, find their location and replace the lessonTime with the lesson
     data?.getAllLessons.forEach(item => {
@@ -223,7 +221,9 @@ export const TimeTableView = () => {
             flexDirection: 'row',
             height: '100%',
             paddingLeft:
-              140 + (60 - parseInt(earliestTime.split(':')[1])) * widthConstant,
+              140 +
+              (60 - parseInt(earliestTime.split(':')[1])) * widthConstant -
+              1,
           }}>
           {topTimes.map((item, index) => (
             <View
@@ -282,7 +282,7 @@ export const TimeTableView = () => {
                 rowIndex + 1
               }`}</BasicText>
               <SchedulesPopup
-                selectedScheduleId={getScheduleOfDay(rowIndex).id}
+                selectedScheduleId={getScheduleOfDay(rowIndex)?.id || ''}
                 onSubmit={schedule => {
                   LayoutAnimation.configureNext(
                     LayoutAnimation.Presets.easeInEaseOut,
@@ -313,7 +313,7 @@ export const TimeTableView = () => {
                 trigger={
                   <BasicButton backgroundColor="accentBackground1" spacing="m">
                     <BasicText numberOfLines={1} style={{textAlign: 'center'}}>
-                      {getScheduleOfDay(rowIndex).name}
+                      {getScheduleOfDay(rowIndex)?.name || 'No schedule'}
                     </BasicText>
                   </BasicButton>
                 }
@@ -341,6 +341,7 @@ export const TimeTableView = () => {
                       height: '100%',
                     }}>
                     <SelectSubjectPopup
+                      backgroundColor="accentBackground2"
                       onSubmit={subject => {
                         if (subject) {
                           createLesson({

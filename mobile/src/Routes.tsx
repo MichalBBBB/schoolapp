@@ -24,7 +24,7 @@ import {BasicText} from './components/basicViews/BasicText';
 import {BasicButton} from './components/basicViews/BasicButton';
 import {setAccessToken} from './utils/AccessToken';
 import {replaceAllData} from './Content';
-import {useSettings} from './utils/hooks/useSettings';
+import {useSettings} from './utils/useSettings';
 import {OnboardingStack} from './routes/OnboardingStack';
 import BasicInputWindow from './components/modals/basicInputWindow';
 import {VerifyEmailScreen} from './screens/VerifyEmailScreen';

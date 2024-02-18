@@ -29,8 +29,7 @@ export const useDeleteLessonTime: () => [
         if (!data) {
           return;
         }
-        const normalizedLessonTimeId = `LessonTime:${variables.id}`;
-        cache.evict({id: normalizedLessonTimeId});
+
         // delete all lessons with this lesson time
         const lessons = cache.readQuery<GetAllLessonsQuery>({
           query: GetAllLessonsDocument,
@@ -44,6 +43,8 @@ export const useDeleteLessonTime: () => [
               }) || [],
           },
         });
+        const normalizedLessonTimeId = `LessonTime:${variables.id}`;
+        cache.evict({id: normalizedLessonTimeId});
         cache.gc();
       },
     });

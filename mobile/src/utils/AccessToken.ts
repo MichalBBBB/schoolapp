@@ -1,4 +1,4 @@
-import {baseUri} from './services/createApolloClient';
+import {baseUri} from './createApolloClient';
 
 let accessToken = '';
 

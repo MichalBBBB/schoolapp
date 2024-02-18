@@ -17,22 +17,22 @@ import {WEEK_DAY_NUMBERS} from '../../types/weekDays';
 import {Lesson} from './lesson';
 import Task from '../listItems/task';
 import {BasicText} from '../basicViews/BasicText';
-import {useSettings} from '../../utils/hooks/useSettings';
-import {getDayNumber} from '../../utils/helperFunctions/lessonUtils';
+import {useSettings} from '../../utils/useSettings';
+import {getDayNumber} from '../../utils/lessonUtils';
 import {useTheme} from '../../contexts/ThemeContext';
 import {useNavigation} from '@react-navigation/native';
-import {CalendarNavigationProp} from '../../types/navigationTypes';
+import {CalendarNavigationProp} from '../../utils/types';
 import {replaceAllData} from '../../Content';
 import {useApolloClient} from '@apollo/client';
 import {BasicRefreshControl} from '../basicViews/BasicRefreshControl';
 import TaskListProjectTask from '../listItems/taskListProjectTask';
-import {useGetSpecialScheduleForDay} from '../../utils/hooks/useSpecialScheduleForDay';
+import {useGetSpecialScheduleForDay} from '../../utils/useSpecialScheduleForDay';
+import {getEventGroups, getEventMap} from '../../utils/eventMap';
 
 export const width = Dimensions.get('screen').width;
 
 interface DayEventsProps {
   date: dayjs.Dayjs;
-  scrollEnabled: boolean;
 }
 
 type section = {
@@ -43,7 +43,7 @@ type section = {
     | Array<TaskFragment | ProjectTaskWithProjectFragment>;
 };
 
-const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
+const DayEvents: React.FC<DayEventsProps> = ({date}) => {
   const {data} = useGetAllEventsQuery();
   const {data: lessons} = useGetAllLessonsQuery();
   const {data: tasks} = useGetAllTasksQuery();
@@ -119,6 +119,7 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
           }
         }) || [];
     const sections: section[] = [];
+
     if (lessonsThisDay.length > 0) {
       sections.push({
         title: specialSchedule ? `Lessons - Special Schedule` : 'Lessons',
@@ -183,20 +184,30 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
       renderItem={({item, index}) => {
         if (item.__typename == 'Lesson') {
           return (
-            <Lesson
-              lesson={item}
-              event={data?.getAllEvents.find(event => {
-                return (
-                  event.subject?.id == item.subject.id &&
-                  dayjs(event.startDate).format('HH:mm') ==
-                    item.lessonTime.startTime &&
-                  dayjs(event.startDate).isSame(date, 'day')
-                );
-              })}
-            />
+            <View style={{margin: 5, marginHorizontal: 10}}>
+              <Lesson
+                navigation={navigation}
+                lesson={item}
+                event={data?.getAllEvents.find(event => {
+                  return (
+                    event.subject?.id == item.subject.id &&
+                    dayjs(event.startDate).format('HH:mm') ==
+                      item.lessonTime.startTime &&
+                    dayjs(event.startDate).isSame(date, 'day')
+                  );
+                })}
+                onEventPress={event => {
+                  navigation.navigate('EventDetailScreen', {event});
+                }}
+              />
+            </View>
           );
         } else if (item.__typename == 'CalendarEvent') {
-          return <Event event={item} />;
+          return (
+            <View style={{marginHorizontal: 10, margin: 5}}>
+              <Event event={item} variant="list" />
+            </View>
+          );
         } else if (item.__typename == 'ProjectTask') {
           return (
             <TaskListProjectTask
@@ -222,7 +233,6 @@ const DayEvents: React.FC<DayEventsProps> = ({date, scrollEnabled}) => {
         }
       }}
       renderSectionFooter={() => <View style={styles.sectionFooter}></View>}
-      scrollEnabled={scrollEnabled}
       disableVirtualization={true}
     />
   );

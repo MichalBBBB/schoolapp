@@ -1,15 +1,7 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
-import BackButton from '../../components/backButton';
+import {Keyboard, Pressable, ScrollView, StyleSheet, View} from 'react-native';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
@@ -22,18 +14,16 @@ import {
 } from '../../generated/graphql';
 
 import {v4 as uuidv4} from 'uuid';
-import {setRemindersFromApollo} from '../../utils/helperFunctions/reminderUtils';
+import {setRemindersFromApollo} from '../../utils/reminderUtils';
 import {useApolloClient} from '@apollo/client';
 import {SelectSubjectPopup} from '../../components/popups/selectSubject/selectSubjectPopup';
 import {useEditEvent} from '../../mutationHooks/calendarEvent/editEvent';
 import {BasicCard} from '../../components/basicViews/BasicCard';
-import {
-  CalendarStackParamList,
-  CalendarStackScreenProps,
-} from '../../types/navigationTypes';
+import {CalendarStackScreenProps} from '../../utils/types';
 import {useCreateEvent} from '../../mutationHooks/calendarEvent/createEvent';
 import {RemindersWindow} from '../../components/modals/remindersWindow';
-import {checkPermissions} from '../../utils/services/notifications';
+import {checkPermissions} from '../../utils/notifications';
+import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
 
 const EventDetailScreen: React.FC<
   CalendarStackScreenProps<'EventDetailScreen'>
@@ -50,12 +40,15 @@ const EventDetailScreen: React.FC<
   const client = useApolloClient();
 
   const [createEvent] = useCreateEvent();
+  const [deleteEvent] = useDeleteEvent();
 
   const [startDate, setStartDate] = useState(
-    dayjs(event?.startDate) || dayjs(),
+    event ? dayjs(event.startDate) : route.params.date || dayjs(),
   );
   const [endDate, setEndDate] = useState(
-    dayjs(event?.endDate) || dayjs().add(1, 'hour'),
+    event
+      ? dayjs(event.endDate)
+      : route.params.date?.add(1, 'hour') || dayjs().add(1, 'hour'),
   );
   const [subject, setSubject] = useState<SubjectFragment | null>(
     event?.subject || null,
@@ -216,7 +209,8 @@ const EventDetailScreen: React.FC<
             </BasicText>
           </Pressable>
         </BasicCard>
-        <BasicCard backgroundColor="accentBackground1">
+
+        <BasicCard backgroundColor="accentBackground1" marginBottom={10}>
           <BasicTextInput
             value={text || ''}
             variant="unstyled"
@@ -228,21 +222,41 @@ const EventDetailScreen: React.FC<
             multiline={true}
           />
         </BasicCard>
+        {event && (
+          <BasicCard backgroundColor="accentBackground1">
+            <BasicButton
+              variant="unstyled"
+              onPress={() => {
+                deleteEvent({id: event.id});
+                navigation.goBack();
+              }}>
+              <BasicText style={{textAlign: 'center'}} color="dangerous">
+                Delete Event
+              </BasicText>
+            </BasicButton>
+          </BasicCard>
+        )}
       </ScrollView>
       <EditDateModal
+        allowNoTime={false}
         clearButton={false}
         initialDate={startDate ? dayjs(startDate) : dayjs()}
         subject={subject}
         onClose={() => {
           setEditStartDateModalIsVisible(false);
         }}
-        onSubmit={date => {
+        onSubmit={({date, lesson}) => {
           setStartDate(date!);
           if (isNew) {
             if (!endDateHasBeenChanged) {
               setEndDate(date!.add(1, 'hour'));
             }
           }
+          if (lesson) {
+            const [hour, minute] = lesson?.lessonTime.endTime.split(':');
+            setEndDate(date!.hour(parseInt(hour)).minute(parseInt(minute)));
+          }
+
           setEditStartDateModalIsVisible(false);
         }}
         isVisible={editStartDateModalIsVisible}
@@ -253,7 +267,7 @@ const EventDetailScreen: React.FC<
         onClose={() => {
           setEditEndDateModalIsVisible(false);
         }}
-        onSubmit={date => {
+        onSubmit={({date}) => {
           setEditEndDateModalIsVisible(false);
           if (!endDate.isSame(date)) {
             setEndDateHasBeenChanged(true);

@@ -9,17 +9,16 @@ import {
   TouchableOpacity,
   Pressable,
   Image,
+  LayoutAnimation,
 } from 'react-native';
 import {
+  LessonFragment,
   Reminder,
   ReminderFragment,
   SubjectFragment,
   useGetAllLessonsQuery,
 } from '../../../generated/graphql';
-import {
-  closestLesson,
-  getTimeOfLessonThisDay,
-} from '../../../utils/helperFunctions/lessonUtils';
+import {closestLesson, getLessonThisDay} from '../../../utils/lessonUtils';
 import {BasicButton} from '../../basicViews/BasicButton';
 import {BasicCard} from '../../basicViews/BasicCard';
 import {BasicModalCard} from '../../basicViews/BasicModalCard';
@@ -29,12 +28,19 @@ import WeekDays from '../../calendar/weekDays';
 import {RemindersWindow} from '../remindersWindow';
 import SelectTimeModal from '../selectTimeView/selectTimeModal';
 import notifee, {AndroidNotificationSetting} from '@notifee/react-native';
-import {useSettings} from '../../../utils/hooks/useSettings';
+import {useSettings} from '../../../utils/useSettings';
 import {BasicIcon} from '../../basicViews/BasicIcon';
-import {checkPermissions} from '../../../utils/services/notifications';
+import {checkPermissions} from '../../../utils/notifications';
+import {DurationWindow} from '../durationWindow';
 
 interface EditDateWindowProps {
-  onSubmit: (date: dayjs.Dayjs | null, reminderTimes?: number[]) => void;
+  onSubmit: (data: {
+    date: dayjs.Dayjs | null;
+    includesTime: boolean;
+    reminderTimes?: number[];
+    lesson?: LessonFragment;
+    duration?: number | null;
+  }) => void;
   initialDate?: dayjs.Dayjs | null;
   subject?: SubjectFragment | undefined | null;
   onClose: () => void;
@@ -44,6 +50,10 @@ interface EditDateWindowProps {
   showTime?: boolean;
   showSpecialDays?: boolean;
   clearButton?: boolean;
+  allowNoTime?: boolean;
+  includesTime?: boolean;
+  showDuration?: boolean;
+  initialDuration?: number | null;
 }
 
 type SpecialDate = {
@@ -85,6 +95,10 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
   showTime = true,
   showReminders = false,
   clearButton = true,
+  allowNoTime = false,
+  includesTime = true,
+  showDuration = false,
+  initialDuration,
 }) => {
   const {data: lessons} = useGetAllLessonsQuery();
 
@@ -102,6 +116,9 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
   const [reminderTimes, setReminderTimes] = useState<number[] | undefined>(
     initialReminderTimes,
   );
+  const [includeTime, setIncludeTime] = useState(includesTime);
+  const [duration, setDuration] = useState(initialDuration || null);
+  const [durationWindowOpen, setDurationWindowOpen] = useState(false);
 
   const calendarRef = useRef<CalendarHandle>(null);
 
@@ -124,11 +141,41 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
           },
         ]);
       } else if (!subject && specialDays.length == 4) {
-        console.log('here');
         setSpecialDays(specialDays.filter((item, index) => index !== 3));
       }
     }
   }, [subject, settings]);
+
+  useEffect(() => {
+    if (isVisible) {
+    }
+  }, [isVisible]);
+
+  const getLesson = () => {
+    if (subject && settings) {
+      const lesson = getLessonThisDay(
+        subject,
+        selectedDay,
+        lessons?.getAllLessons || [],
+        settings,
+      );
+      if (lesson) {
+        const [hours, minutes] = lesson.lessonTime.startTime.split(':');
+        if (
+          selectedDay.hour() == parseInt(hours) &&
+          selectedDay.minute() == parseInt(minutes)
+        ) {
+          return lesson;
+        } else {
+          return undefined;
+        }
+      } else {
+        return undefined;
+      }
+    } else {
+      return undefined;
+    }
+  };
 
   const specialDaysView = (
     <View style={{flexDirection: 'row'}}>
@@ -145,6 +192,9 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             variant={selectedSpecialDay == item ? 'filled' : 'unstyled'}
             backgroundColor={'accentBackground2'}
             onPress={() => {
+              if (index == 3) {
+                setIncludeTime(true);
+              }
               setSelectedSpecialDay(item);
               setSelectedDay(item.date);
             }}
@@ -172,12 +222,13 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
       style={{
         flexDirection: 'row',
         justifyContent: 'space-between',
+        paddingVertical: 8,
         // width: '100%',
         alignItems: 'center',
       }}>
       <BasicText>Time</BasicText>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <BasicText>{selectedDay.format('LT')}</BasicText>
+        <BasicText>{includeTime ? selectedDay.format('LT') : 'None'}</BasicText>
         <BasicIcon
           source={require('../../../../assets/Chevron-right.png')}
           style={{height: 20, width: 20}}
@@ -194,6 +245,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '100%',
+        paddingVertical: 8,
       }}>
       <BasicText>Reminder</BasicText>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -202,6 +254,27 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             ? 'None'
             : `${reminderTimes?.length} selected`}
         </BasicText>
+        <BasicIcon
+          source={require('../../../../assets/Chevron-right.png')}
+          style={{height: 20, width: 20}}
+        />
+      </View>
+    </BasicButton>
+  );
+
+  const durationView = (
+    <BasicButton
+      variant="unstyled"
+      onPress={() => setDurationWindowOpen(true)}
+      style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        paddingVertical: 8,
+      }}>
+      <BasicText>Duration</BasicText>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <BasicText>{duration ? `${duration} minutes` : 'None'}</BasicText>
         <BasicIcon
           source={require('../../../../assets/Chevron-right.png')}
           style={{height: 20, width: 20}}
@@ -228,13 +301,15 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             alignItems: 'center',
           }}>
           <BasicText textVariant="heading">Select Date</BasicText>
-          <BasicButton
-            variant="unstyled"
-            onPress={() => {
-              onSubmit(null);
-            }}>
-            <BasicText>Clear</BasicText>
-          </BasicButton>
+          {clearButton && (
+            <BasicButton
+              variant="unstyled"
+              onPress={() => {
+                onSubmit({date: null, includesTime: false});
+              }}>
+              <BasicText>Clear</BasicText>
+            </BasicButton>
+          )}
         </View>
         <View
           style={{
@@ -272,19 +347,20 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             ref={calendarRef}
             weekHeight={weekHeight}
             calendarWidth={windowWidth - 20}
-            pastScrollRange={2}
+            pastScrollRange={20}
             futureScrollRange={20}
             selectedDay={selectedDay}
             onChangeSelectedDay={date => {
               if (subject && settings) {
-                const timeOfLesson = getTimeOfLessonThisDay(
+                const timeOfLesson = getLessonThisDay(
                   subject,
                   date,
                   lessons?.getAllLessons || [],
                   settings,
                 );
                 if (timeOfLesson) {
-                  const [hours, minutes] = timeOfLesson.split(':');
+                  const [hours, minutes] =
+                    timeOfLesson.lessonTime.startTime.split(':');
                   setSelectedDay(
                     date.hour(parseInt(hours)).minute(parseInt(minutes)),
                   );
@@ -313,6 +389,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
               backgroundColor="accentBackground2"
               style={{marginHorizontal: 10, marginTop: 10}}>
               {showTime && timeView}
+              {showDuration && includeTime && durationView}
               {showReminders && remindersView}
             </BasicCard>
           )}
@@ -320,6 +397,7 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
         <View style={styles.submitButtonContainer}>
           <BasicButton
             style={{flex: 1}}
+            spacing="m"
             onPress={() => {
               onClose();
             }}
@@ -330,17 +408,26 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
           </BasicButton>
           <BasicButton
             style={{flex: 1}}
+            backgroundColor="accentBackground"
+            spacing="m"
             onPress={() => {
               const date: dayjs.Dayjs = selectedDay;
-              onSubmit(date, reminderTimes);
+              onSubmit({
+                date,
+                includesTime: includeTime,
+                reminderTimes,
+                lesson: getLesson(),
+                duration,
+              });
             }}
-            variant={'unstyled'}>
-            <BasicText color="primary" style={{fontWeight: 'bold'}}>
+            variant={'filled'}>
+            <BasicText color="accent" style={{fontWeight: 'bold'}}>
               Select
             </BasicText>
           </BasicButton>
         </View>
         <RemindersWindow
+          backgroundColor="accentBackground2"
           initialReminderTimes={reminderTimes}
           isVisible={remindersWindowOpen}
           onClose={() => setRemindersWindowOpen(false)}
@@ -350,17 +437,38 @@ const EditDateModal: React.FC<EditDateWindowProps> = ({
             setRemindersWindowOpen(false);
           }}
         />
+        <DurationWindow
+          initialDuration={duration}
+          isVisible={durationWindowOpen}
+          onClose={() => {
+            setDurationWindowOpen(false);
+          }}
+          onSubmit={duration => {
+            setDuration(duration);
+            setDurationWindowOpen(false);
+          }}
+        />
         <SelectTimeModal
+          backgroundColor="accentBackground2"
+          allowClear={allowNoTime}
           onClose={() => {
             setTimePopupOpen(false);
           }}
           onSubmit={time => {
-            setTimePopupOpen(false);
-            setSelectedDay(
-              selectedDay
-                .hour(parseInt(time.split(':')[0]))
-                .minute(parseInt(time.split(':')[1])),
+            LayoutAnimation.configureNext(
+              LayoutAnimation.Presets.easeInEaseOut,
             );
+            setTimePopupOpen(false);
+            if (time) {
+              setIncludeTime(true);
+              setSelectedDay(
+                selectedDay
+                  .hour(parseInt(time.split(':')[0]))
+                  .minute(parseInt(time.split(':')[1])),
+              );
+            } else {
+              setIncludeTime(false);
+            }
           }}
           isVisible={timePopupOpen}
           initialTime={selectedDay.format('HH:mm')}

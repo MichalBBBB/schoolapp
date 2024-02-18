@@ -2,22 +2,11 @@ import dayjs from 'dayjs';
 import React, {useEffect, useState} from 'react';
 import {
   View,
-  Text,
-  TouchableOpacity,
-  Image,
   StyleSheet,
   Pressable,
-  TouchableHighlight,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {
-  CalendarEventFragment,
-  GetAllEventsDocument,
-  GetAllTasksDocument,
-  LessonFragment,
-  useCreateTaskMutation,
-  useDeleteEventMutation,
-} from '../../generated/graphql';
+import {CalendarEventFragment, LessonFragment} from '../../generated/graphql';
 import {BasicCard} from '../basicViews/BasicCard';
 import {BasicText} from '../basicViews/BasicText';
 import EditDateModal from '../modals/editDateWindow';
@@ -28,107 +17,196 @@ import {useCreateTask} from '../../mutationHooks/task/createTask';
 import {SubjectColorsObject} from '../../types/Theme';
 import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
 import {Popup} from '../popup';
-import {useNavigation} from '@react-navigation/native';
-import {CalendarNavigationProp} from '../../types/navigationTypes';
 import {BasicIcon} from '../basicViews/BasicIcon';
 import {useTheme} from '../../contexts/ThemeContext';
+import {LessonDetailView} from '../modals/lessonDetailView';
+import {BasicButton} from '../basicViews/BasicButton';
+import {CalendarNavigationProp} from '../../utils/types';
 
 interface LessonProps {
   lesson: LessonFragment;
   event?: CalendarEventFragment;
+  height?: number;
+  variant?: 'list' | 'calendar';
+  onEventPress: (event: CalendarEventFragment) => void;
+  navigation: CalendarNavigationProp;
 }
 
-export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
+export const Lesson: React.FC<LessonProps> = ({
+  lesson,
+  event,
+  height,
+  variant = 'list',
+  onEventPress,
+  navigation,
+}) => {
   const [studyTimeModalVisible, setStudyTimeModalVisible] = useState(false);
+  const [lessonDetailViewVisible, setLessonDetailViewVisible] = useState(false);
   const [addTask] = useCreateTask();
   const [deleteEvent] = useDeleteEvent();
-  const navigation = useNavigation<CalendarNavigationProp>();
   const [theme] = useTheme();
+
+  const extraInfoView = (
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}>
+      <BasicText color="textSecondary">{lesson.subject.extraInfo}</BasicText>
+      {lesson.extraInfo && lesson.subject.extraInfo && (
+        <View
+          style={{
+            backgroundColor: theme.colors.textSecondary,
+            height: 5,
+            width: 5,
+            borderRadius: 10,
+            marginLeft: 5,
+          }}
+        />
+      )}
+      {lesson.extraInfo && (
+        <BasicText style={{marginLeft: 5}} color={'textSecondary'}>
+          {lesson.extraInfo}
+        </BasicText>
+      )}
+    </View>
+  );
+
   return (
     <>
-      <BasicCard
-        subjectColor={lesson.subject.colorName as keyof SubjectColorsObject}
-        borderWidth={1}
-        style={styles.container}>
-        <View style={styles.horizontalContainer}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <BasicText>{lesson.subject.name}</BasicText>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginLeft: 5,
-              }}>
-              <BasicText color="textSecondary" style={{marginLeft: 5}}>
-                {lesson.subject.extraInfo}
-              </BasicText>
-              {lesson.extraInfo && lesson.subject.extraInfo && (
-                <View
-                  style={{
-                    backgroundColor: theme.colors.textSecondary,
-                    height: 5,
-                    width: 5,
-                    borderRadius: 10,
-                    marginLeft: 5,
-                  }}
-                />
-              )}
-              {lesson.extraInfo && (
-                <BasicText style={{marginLeft: 5}} color={'textSecondary'}>
-                  {lesson.extraInfo}
+      <BasicButton
+        backgroundColor="background"
+        onPress={() => {
+          if (variant == 'calendar') {
+            setLessonDetailViewVisible(true);
+          }
+        }}
+        style={{height}}
+        spacing="none"
+        disabled={variant == 'list'}>
+        <BasicCard
+          subjectColor={lesson.subject.colorName as keyof SubjectColorsObject}
+          borderWidth={1}
+          spacing="none"
+          style={[
+            styles.container,
+            {
+              justifyContent:
+                height && height >= 40 ? 'space-between' : 'center',
+              width: '100%',
+              padding: (height && height >= 40) || !height ? 12 : 0,
+              paddingHorizontal: 10,
+              height: height ? '100%' : undefined,
+            },
+          ]}>
+          <View>
+            <View style={styles.horizontalContainer}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <View>
+                  <BasicText style={{marginRight: 5}}>
+                    {lesson.subject.name}
+                  </BasicText>
+                  {variant == 'calendar' &&
+                    height &&
+                    height >= 40 &&
+                    extraInfoView}
+                </View>
+                {(variant == 'list' || (height && height <= 40)) &&
+                  extraInfoView}
+              </View>
+              {(variant == 'list' || (height && height <= 40)) && (
+                <BasicText color="textSecondary">
+                  {`${dayjs(lesson.lessonTime.startTime, 'HH:mm').format(
+                    'HH:mm',
+                  )} - ${dayjs(lesson.lessonTime.endTime, 'HH:mm').format(
+                    'HH:mm',
+                  )}`}
                 </BasicText>
               )}
+              {variant == 'calendar' && event && (
+                <View
+                  style={{
+                    backgroundColor: theme.colors.accentBackground1,
+                    borderRadius: 20,
+                    width: 25,
+                    height: 25,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <BasicText>1</BasicText>
+                </View>
+              )}
             </View>
+
+            {variant == 'list' && event && (
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  onEventPress(event);
+                }}>
+                <BasicCard
+                  style={[styles.eventContainer]}
+                  backgroundColor="accentBackground1">
+                  <BasicText>{event.name}</BasicText>
+                  <Popup
+                    trigger={
+                      <Pressable>
+                        <BasicIcon
+                          source={require('../../../assets/Options.png')}
+                          style={styles.options}
+                        />
+                      </Pressable>
+                    }>
+                    <Menu>
+                      <MenuItem
+                        text={'Add time to study'}
+                        onPress={() => {
+                          setStudyTimeModalVisible(true);
+                        }}
+                      />
+                      <MenuItem
+                        color="dangerous"
+                        text={'Delete'}
+                        onPress={() => {
+                          deleteEvent({id: event.id});
+                        }}
+                      />
+                    </Menu>
+                  </Popup>
+                </BasicCard>
+              </TouchableWithoutFeedback>
+            )}
           </View>
-          <BasicText color="textSecondary">
-            {dayjs(lesson.lessonTime.startTime, 'HH:mm').format('HH:mm')}
-          </BasicText>
-        </View>
-        {event && (
-          <TouchableWithoutFeedback
-            onPress={() => {
-              navigation.navigate('EventDetailScreen', {event});
-            }}>
-            <BasicCard
-              style={[styles.eventContainer]}
-              backgroundColor="accentBackground1">
-              <BasicText>{event.name}</BasicText>
-              <Popup
-                trigger={
-                  <Pressable>
-                    <BasicIcon
-                      source={require('../../../assets/Options.png')}
-                      style={styles.options}
-                    />
-                  </Pressable>
-                }>
-                <Menu>
-                  <MenuItem
-                    text={'Add time to study'}
-                    onPress={() => {
-                      setStudyTimeModalVisible(true);
-                    }}
-                  />
-                  <MenuItem
-                    color="dangerous"
-                    text={'Delete'}
-                    onPress={() => {
-                      deleteEvent({id: event.id});
-                    }}
-                  />
-                </Menu>
-              </Popup>
-            </BasicCard>
-          </TouchableWithoutFeedback>
-        )}
-      </BasicCard>
+          {variant == 'calendar' && height && height >= 40 && (
+            <BasicText color="textSecondary">
+              {`${dayjs(lesson.lessonTime.startTime, 'HH:mm').format(
+                'HH:mm',
+              )} - ${dayjs(lesson.lessonTime.endTime, 'HH:mm').format(
+                'HH:mm',
+              )}`}
+            </BasicText>
+          )}
+        </BasicCard>
+      </BasicButton>
+      <LessonDetailView
+        navigation={navigation}
+        onClose={() => {
+          setLessonDetailViewVisible(false);
+        }}
+        visible={lessonDetailViewVisible}
+        lesson={lesson}
+        event={event}
+      />
       <EditDateModal
         clearButton={false}
         isVisible={studyTimeModalVisible}
         onClose={() => {
           setStudyTimeModalVisible(false);
         }}
-        onSubmit={date => {
+        onSubmit={({date}) => {
           setStudyTimeModalVisible(false);
           addTask({
             id: uuidv4(),
@@ -145,8 +223,6 @@ export const Lesson: React.FC<LessonProps> = ({lesson, event}) => {
 
 const styles = StyleSheet.create({
   container: {
-    margin: 5,
-    marginHorizontal: 10,
     borderRadius: 10,
     overflow: 'hidden',
     padding: 10,
@@ -165,6 +241,7 @@ const styles = StyleSheet.create({
   horizontalContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   eventContainer: {
     flexDirection: 'row',

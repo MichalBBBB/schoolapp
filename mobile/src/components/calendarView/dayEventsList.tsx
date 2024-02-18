@@ -3,8 +3,10 @@ import dayjs from 'dayjs';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {Dimensions, FlatList, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useSettings} from '../../utils/useSettings';
 import {BasicText} from '../basicViews/BasicText';
 import DayEvents from './dayEvents';
+import DayView from './dayView';
 
 export const width = Dimensions.get('screen').width;
 
@@ -46,7 +48,9 @@ export const DayEventsList: React.FC<DayEventsListProps> = ({
   const [days, setDays] = useState<Array<string | dayjs.Dayjs>>([]);
   const [index, setIndex] = useState(pastScrollRange);
 
-  const flatListRef = useRef<FlashList<any>>(null);
+  const flatListRef = useRef<FlatList<any>>(null);
+
+  const settings = useSettings();
 
   useEffect(() => {
     const newDays = createList(pastScrollRange, futureScrollRange);
@@ -114,9 +118,14 @@ export const DayEventsList: React.FC<DayEventsListProps> = ({
   }
 
   return (
-    <View style={{width, height}}>
-      <FlashList
-        estimatedItemSize={width}
+    <View style={{width, height, flex: 1}}>
+      <FlatList
+        // estimatedItemSize={width}
+        getItemLayout={(item, index) => ({
+          length: width,
+          offset: width * index,
+          index: index,
+        })}
         removeClippedSubviews={true}
         scrollEnabled={scrollEnabled}
         ref={flatListRef}
@@ -134,6 +143,7 @@ export const DayEventsList: React.FC<DayEventsListProps> = ({
           setIndex(newIndex);
         }}
         data={days}
+        extraData={settings?.showCalendarView}
         renderItem={({item, index}) => {
           if (typeof item == 'string') {
             return (
@@ -149,13 +159,11 @@ export const DayEventsList: React.FC<DayEventsListProps> = ({
               </View>
             );
           } else {
-            return (
-              <DayEvents
-                date={item}
-                scrollEnabled={scrollEnabled}
-                key={index}
-              />
-            );
+            if (settings?.showCalendarView) {
+              return <DayView date={item} key={index} />;
+            } else {
+              return <DayEvents date={item} key={index} />;
+            }
           }
         }}
       />

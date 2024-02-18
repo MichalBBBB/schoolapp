@@ -2,7 +2,9 @@ mutation CreateTask(
   $name: String!
   $subjectId: String
   $dueDate: DateTime
+  $dueDateIncludesTime: Boolean
   $doDate: DateTime
+  $doDateIncludesTime: Boolean
   $id: String!
 ) {
   createTask(
@@ -10,7 +12,9 @@ mutation CreateTask(
     name: $name
     subjectId: $subjectId
     dueDate: $dueDate
+    dueDateIncludesTime: $dueDateIncludesTime
     doDate: $doDate
+    doDateIncludesTime: $doDateIncludesTime
   ) {
     ...Task
   }

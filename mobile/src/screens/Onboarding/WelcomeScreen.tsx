@@ -4,7 +4,7 @@ import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {BasicText} from '../../components/basicViews/BasicText';
 import {OnboardingContinueButton} from '../../components/onboardingContinueButton';
-import {OnboardingStackScreenProps} from '../../types/navigationTypes';
+import {OnboardingStackScreenProps} from '../../utils/types';
 
 export const WelcomeScreen: React.FC<
   OnboardingStackScreenProps<'WelcomeScreen'>

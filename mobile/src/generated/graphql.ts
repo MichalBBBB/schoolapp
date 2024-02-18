@@ -85,7 +85,9 @@ export type Mutation = {
   __typename?: 'Mutation';
   acceptProjectInvite: Project;
   addMemberToProject: Project;
+  addNotificationToken: Scalars['Boolean'];
   addProjectTask: ProjectTask;
+  appleSignIn: UserSuccess;
   assignMember: ProjectTask;
   changePassword: ChangePasswordResponse;
   createEvent: CalendarEvent;
@@ -149,12 +151,27 @@ export type MutationAddMemberToProjectArgs = {
 };
 
 
+export type MutationAddNotificationTokenArgs = {
+  token: Scalars['String'];
+};
+
+
 export type MutationAddProjectTaskArgs = {
   doDate?: InputMaybe<Scalars['DateTime']>;
+  doDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
   dueDate?: InputMaybe<Scalars['DateTime']>;
+  dueDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
+  duration?: InputMaybe<Scalars['Float']>;
   id?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   projectId: Scalars['String'];
+};
+
+
+export type MutationAppleSignInArgs = {
+  fullName: Scalars['String'];
+  idToken: Scalars['String'];
+  nonce: Scalars['String'];
 };
 
 
@@ -229,7 +246,9 @@ export type MutationCreateSubtaskArgs = {
 
 export type MutationCreateTaskArgs = {
   doDate?: InputMaybe<Scalars['DateTime']>;
+  doDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
   dueDate?: InputMaybe<Scalars['DateTime']>;
+  dueDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
   id: Scalars['String'];
   name: Scalars['String'];
   subjectId?: InputMaybe<Scalars['String']>;
@@ -329,7 +348,10 @@ export type MutationEditProjectArgs = {
 
 export type MutationEditProjectTaskArgs = {
   doDate?: InputMaybe<Scalars['DateTime']>;
+  doDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
   dueDate?: InputMaybe<Scalars['DateTime']>;
+  dueDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
+  duration?: InputMaybe<Scalars['Float']>;
   id: Scalars['String'];
   name: Scalars['String'];
 };
@@ -359,7 +381,10 @@ export type MutationEditSubtaskArgs = {
 
 export type MutationEditTaskArgs = {
   doDate?: InputMaybe<Scalars['DateTime']>;
+  doDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
   dueDate?: InputMaybe<Scalars['DateTime']>;
+  dueDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
+  duration?: InputMaybe<Scalars['Float']>;
   id: Scalars['String'];
   name: Scalars['String'];
   reminders?: InputMaybe<Array<RemindersInput>>;
@@ -387,6 +412,11 @@ export type MutationGoogleSignInArgs = {
 export type MutationLoginArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type MutationLogoutArgs = {
+  notificationToken?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -425,6 +455,7 @@ export type MutationSetSettingsArgs = {
   darkMode?: InputMaybe<Scalars['Boolean']>;
   isFirstTime?: InputMaybe<Scalars['Boolean']>;
   lengthOfRotation?: InputMaybe<Scalars['Float']>;
+  showCalendarView?: InputMaybe<Scalars['Boolean']>;
   showCompletedTasks?: InputMaybe<Scalars['Boolean']>;
   showDoDate?: InputMaybe<Scalars['Boolean']>;
   skipWeekends?: InputMaybe<Scalars['Boolean']>;
@@ -473,8 +504,11 @@ export type ProjectTask = {
   __typename?: 'ProjectTask';
   createdAt: Scalars['DateTime'];
   doDate?: Maybe<Scalars['DateTime']>;
+  doDateIncludesTime: Scalars['Boolean'];
   done: Scalars['Boolean'];
   dueDate?: Maybe<Scalars['DateTime']>;
+  dueDateIncludesTime: Scalars['Boolean'];
+  duration?: Maybe<Scalars['Float']>;
   id: Scalars['String'];
   name: Scalars['String'];
   project: Project;
@@ -561,6 +595,7 @@ export type Settings = {
   id: Scalars['String'];
   isFirstTime: Scalars['Boolean'];
   lengthOfRotation: Scalars['Float'];
+  showCalendarView: Scalars['Boolean'];
   showCompletedTasks: Scalars['Boolean'];
   showDoDate: Scalars['Boolean'];
   skipWeekends: Scalars['Boolean'];
@@ -592,8 +627,11 @@ export type Task = {
   __typename?: 'Task';
   createdAt: Scalars['DateTime'];
   doDate?: Maybe<Scalars['DateTime']>;
+  doDateIncludesTime: Scalars['Boolean'];
   done: Scalars['Boolean'];
   dueDate?: Maybe<Scalars['DateTime']>;
+  dueDateIncludesTime: Scalars['Boolean'];
+  duration?: Maybe<Scalars['Float']>;
   id: Scalars['String'];
   name: Scalars['String'];
   reminders: Array<Reminder>;
@@ -608,6 +646,7 @@ export type Task = {
 
 export type User = {
   __typename?: 'User';
+  appleIdToken?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   email: Scalars['String'];
   emailVerified: Scalars['Boolean'];
@@ -624,6 +663,7 @@ export type User = {
   settingsId: Scalars['String'];
   subjects: Array<Subject>;
   tasks: Array<Task>;
+  tokens?: Maybe<Array<Scalars['String']>>;
   updatedAt: Scalars['DateTime'];
   userProjectTasks: Array<UserProjectTask>;
   userProjects: Array<UserProject>;
@@ -665,7 +705,7 @@ export type UserSuccess = {
   user: User;
 };
 
-export type UserFragment = { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, emailVerified: boolean, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } };
+export type UserFragment = { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, emailVerified: boolean, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean, showCalendarView: boolean } };
 
 export type CalendarEventFragment = { __typename?: 'CalendarEvent', id: string, name: string, text?: string | null, startDate: any, endDate?: any | null, wholeDay: boolean, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> };
 
@@ -675,11 +715,11 @@ export type LessonFragment = { __typename?: 'Lesson', id: string, dayNumber?: nu
 
 export type LessonTimeFragment = { __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null };
 
-export type ProjectFragment = { __typename?: 'Project', isAdmin: boolean, name: string, id: string, text?: string | null, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, doDate?: any | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> };
+export type ProjectFragment = { __typename?: 'Project', isAdmin: boolean, name: string, id: string, text?: string | null, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, duration?: number | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> };
 
-export type ProjectTaskFragment = { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, doDate?: any | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> };
+export type ProjectTaskFragment = { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, duration?: number | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> };
 
-export type ProjectTaskWithProjectFragment = { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, doDate?: any | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, project: { __typename?: 'Project', id: string, name: string }, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> };
+export type ProjectTaskWithProjectFragment = { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, duration?: number | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, project: { __typename?: 'Project', id: string, name: string }, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> };
 
 export type PublicUserFragment = { __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null };
 
@@ -687,7 +727,7 @@ export type ReminderFragment = { __typename?: 'Reminder', id: string, minutesBef
 
 export type ScheduleFragment = { __typename?: 'Schedule', id: string, name: string, default: boolean, dayNumbers?: Array<number> | null, dates?: Array<any> | null, createdAt: any, updatedAt: any, lessonTimes: Array<{ __typename?: 'LessonTime', id: string, startTime: string, endTime: string, scheduleId?: string | null }> };
 
-export type SettingsFragment = { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean };
+export type SettingsFragment = { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean, showCalendarView: boolean };
 
 export type SimpleProjectFragment = { __typename?: 'Project', id: string, name: string };
 
@@ -695,7 +735,7 @@ export type SubjectFragment = { __typename?: 'Subject', id: string, name: string
 
 export type SubtaskFragment = { __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean };
 
-export type TaskFragment = { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, doDate?: any | null, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> };
+export type TaskFragment = { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, duration?: number | null, doDateIncludesTime: boolean, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> };
 
 export type CreateEventMutationVariables = Exact<{
   startDate: Scalars['DateTime'];
@@ -788,7 +828,7 @@ export type AcceptProjectInviteMutationVariables = Exact<{
 }>;
 
 
-export type AcceptProjectInviteMutation = { __typename?: 'Mutation', acceptProjectInvite: { __typename?: 'Project', isAdmin: boolean, name: string, id: string, text?: string | null, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, doDate?: any | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
+export type AcceptProjectInviteMutation = { __typename?: 'Mutation', acceptProjectInvite: { __typename?: 'Project', isAdmin: boolean, name: string, id: string, text?: string | null, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, duration?: number | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
 
 export type AddMemberToProjectMutationVariables = Exact<{
   projectId: Scalars['String'];
@@ -796,7 +836,7 @@ export type AddMemberToProjectMutationVariables = Exact<{
 }>;
 
 
-export type AddMemberToProjectMutation = { __typename?: 'Mutation', addMemberToProject: { __typename?: 'Project', isAdmin: boolean, name: string, id: string, text?: string | null, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, doDate?: any | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
+export type AddMemberToProjectMutation = { __typename?: 'Mutation', addMemberToProject: { __typename?: 'Project', isAdmin: boolean, name: string, id: string, text?: string | null, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, duration?: number | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
 
 export type CreateProjectMutationVariables = Exact<{
   name: Scalars['String'];
@@ -805,7 +845,7 @@ export type CreateProjectMutationVariables = Exact<{
 }>;
 
 
-export type CreateProjectMutation = { __typename?: 'Mutation', createProject: { __typename?: 'Project', isAdmin: boolean, name: string, id: string, text?: string | null, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, doDate?: any | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
+export type CreateProjectMutation = { __typename?: 'Mutation', createProject: { __typename?: 'Project', isAdmin: boolean, name: string, id: string, text?: string | null, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, duration?: number | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
 
 export type DeclineProjectInviteMutationVariables = Exact<{
   id: Scalars['String'];
@@ -828,7 +868,7 @@ export type EditProjectMutationVariables = Exact<{
 }>;
 
 
-export type EditProjectMutation = { __typename?: 'Mutation', editProject: { __typename?: 'Project', isAdmin: boolean, name: string, id: string, text?: string | null, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, doDate?: any | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
+export type EditProjectMutation = { __typename?: 'Mutation', editProject: { __typename?: 'Project', isAdmin: boolean, name: string, id: string, text?: string | null, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, duration?: number | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
 
 export type MakeMemberAdminMutationVariables = Exact<{
   memberId: Scalars['String'];
@@ -844,18 +884,21 @@ export type RemoveMemberFromProjectMutationVariables = Exact<{
 }>;
 
 
-export type RemoveMemberFromProjectMutation = { __typename?: 'Mutation', removeMemberFromProject: { __typename?: 'Project', isAdmin: boolean, name: string, id: string, text?: string | null, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, doDate?: any | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
+export type RemoveMemberFromProjectMutation = { __typename?: 'Mutation', removeMemberFromProject: { __typename?: 'Project', isAdmin: boolean, name: string, id: string, text?: string | null, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, duration?: number | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
 
 export type AddProjectTaskMutationVariables = Exact<{
   id: Scalars['String'];
   name: Scalars['String'];
   dueDate?: InputMaybe<Scalars['DateTime']>;
+  dueDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
   doDate?: InputMaybe<Scalars['DateTime']>;
+  doDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
+  duration?: InputMaybe<Scalars['Float']>;
   projectId: Scalars['String'];
 }>;
 
 
-export type AddProjectTaskMutation = { __typename?: 'Mutation', addProjectTask: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, doDate?: any | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
+export type AddProjectTaskMutation = { __typename?: 'Mutation', addProjectTask: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, duration?: number | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
 
 export type AssignMemberMutationVariables = Exact<{
   userId: Scalars['String'];
@@ -863,7 +906,7 @@ export type AssignMemberMutationVariables = Exact<{
 }>;
 
 
-export type AssignMemberMutation = { __typename?: 'Mutation', assignMember: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, doDate?: any | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
+export type AssignMemberMutation = { __typename?: 'Mutation', assignMember: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, duration?: number | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
 
 export type DeleteProjectTaskMutationVariables = Exact<{
   id: Scalars['String'];
@@ -876,11 +919,14 @@ export type EditProjectTaskMutationVariables = Exact<{
   id: Scalars['String'];
   name: Scalars['String'];
   dueDate?: InputMaybe<Scalars['DateTime']>;
+  dueDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
   doDate?: InputMaybe<Scalars['DateTime']>;
+  duration?: InputMaybe<Scalars['Float']>;
+  doDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type EditProjectTaskMutation = { __typename?: 'Mutation', editProjectTask: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, doDate?: any | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
+export type EditProjectTaskMutation = { __typename?: 'Mutation', editProjectTask: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, duration?: number | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
 
 export type RemoveAssignedMemberMutationVariables = Exact<{
   userId: Scalars['String'];
@@ -888,14 +934,14 @@ export type RemoveAssignedMemberMutationVariables = Exact<{
 }>;
 
 
-export type RemoveAssignedMemberMutation = { __typename?: 'Mutation', removeAssignedMember: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, doDate?: any | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
+export type RemoveAssignedMemberMutation = { __typename?: 'Mutation', removeAssignedMember: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, duration?: number | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
 
 export type ToggleProjectTaskMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type ToggleProjectTaskMutation = { __typename?: 'Mutation', toggleProjectTask: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, doDate?: any | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
+export type ToggleProjectTaskMutation = { __typename?: 'Mutation', toggleProjectTask: { __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, duration?: number | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> } };
 
 export type CreateScheduleMutationVariables = Exact<{
   name: Scalars['String'];
@@ -932,10 +978,11 @@ export type SetSettingsMutationVariables = Exact<{
   showDoDate?: InputMaybe<Scalars['Boolean']>;
   showCompletedTasks?: InputMaybe<Scalars['Boolean']>;
   isFirstTime?: InputMaybe<Scalars['Boolean']>;
+  showCalendarView?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type SetSettingsMutation = { __typename?: 'Mutation', setSettings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } };
+export type SetSettingsMutation = { __typename?: 'Mutation', setSettings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean, showCalendarView: boolean } };
 
 export type CreateSubjectMutationVariables = Exact<{
   name: Scalars['String'];
@@ -977,12 +1024,14 @@ export type CreateTaskMutationVariables = Exact<{
   name: Scalars['String'];
   subjectId?: InputMaybe<Scalars['String']>;
   dueDate?: InputMaybe<Scalars['DateTime']>;
+  dueDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
   doDate?: InputMaybe<Scalars['DateTime']>;
+  doDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
   id: Scalars['String'];
 }>;
 
 
-export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, doDate?: any | null, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> } };
+export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, duration?: number | null, doDateIncludesTime: boolean, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> } };
 
 export type DeleteSubtaskMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1011,13 +1060,16 @@ export type EditTaskMutationVariables = Exact<{
   name: Scalars['String'];
   text?: InputMaybe<Scalars['String']>;
   dueDate?: InputMaybe<Scalars['DateTime']>;
+  dueDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
   doDate?: InputMaybe<Scalars['DateTime']>;
+  duration?: InputMaybe<Scalars['Float']>;
+  doDateIncludesTime?: InputMaybe<Scalars['Boolean']>;
   reminders?: InputMaybe<Array<RemindersInput> | RemindersInput>;
   subjectId?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type EditTaskMutation = { __typename?: 'Mutation', editTask: { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, doDate?: any | null, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> } };
+export type EditTaskMutation = { __typename?: 'Mutation', editTask: { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, duration?: number | null, doDateIncludesTime: boolean, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> } };
 
 export type ToggleSubtaskMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1031,7 +1083,23 @@ export type ToggleTaskMutationVariables = Exact<{
 }>;
 
 
-export type ToggleTaskMutation = { __typename?: 'Mutation', toggleTask: { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, doDate?: any | null, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> } };
+export type ToggleTaskMutation = { __typename?: 'Mutation', toggleTask: { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, duration?: number | null, doDateIncludesTime: boolean, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> } };
+
+export type AddNotificationTokenMutationVariables = Exact<{
+  token: Scalars['String'];
+}>;
+
+
+export type AddNotificationTokenMutation = { __typename?: 'Mutation', addNotificationToken: boolean };
+
+export type AppleSignInMutationVariables = Exact<{
+  idToken: Scalars['String'];
+  nonce: Scalars['String'];
+  fullName: Scalars['String'];
+}>;
+
+
+export type AppleSignInMutation = { __typename?: 'Mutation', appleSignIn: { __typename?: 'UserSuccess', accessToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
 
 export type ChangePasswordMutationVariables = Exact<{
   oldPassword: Scalars['String'];
@@ -1052,7 +1120,7 @@ export type EditUserMutationVariables = Exact<{
 }>;
 
 
-export type EditUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, emailVerified: boolean, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } } };
+export type EditUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, emailVerified: boolean, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean, showCalendarView: boolean } } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
@@ -1076,7 +1144,9 @@ export type LoginMutationVariables = Exact<{
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null, message: string }> } | { __typename?: 'UserSuccess', accessToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
 
-export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+export type LogoutMutationVariables = Exact<{
+  notificationToken?: InputMaybe<Scalars['String']>;
+}>;
 
 
 export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
@@ -1123,7 +1193,7 @@ export type GetAllSubjectsQuery = { __typename?: 'Query', getAllSubjects: Array<
 export type GetAllTasksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllTasksQuery = { __typename?: 'Query', getAllTasks: Array<{ __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, doDate?: any | null, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> }> };
+export type GetAllTasksQuery = { __typename?: 'Query', getAllTasks: Array<{ __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, duration?: number | null, doDateIncludesTime: boolean, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> }> };
 
 export type GetInvitesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1133,12 +1203,12 @@ export type GetInvitesQuery = { __typename?: 'Query', getInvites: Array<{ __type
 export type GetProjectTasksOfUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProjectTasksOfUserQuery = { __typename?: 'Query', getProjectTasksOfUser: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, doDate?: any | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, project: { __typename?: 'Project', id: string, name: string }, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }> };
+export type GetProjectTasksOfUserQuery = { __typename?: 'Query', getProjectTasksOfUser: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, duration?: number | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, project: { __typename?: 'Project', id: string, name: string }, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }> };
 
 export type GetProjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProjectsQuery = { __typename?: 'Query', getProjects: Array<{ __typename?: 'Project', isAdmin: boolean, name: string, id: string, text?: string | null, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, doDate?: any | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }> };
+export type GetProjectsQuery = { __typename?: 'Query', getProjects: Array<{ __typename?: 'Project', isAdmin: boolean, name: string, id: string, text?: string | null, tasks: Array<{ __typename?: 'ProjectTask', id: string, name: string, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, doDateIncludesTime: boolean, duration?: number | null, done: boolean, projectId: string, createdAt: any, updatedAt: any, publicUsers: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }>, members: Array<{ __typename?: 'PublicUser', name: string, email: string, id: string, userId: string, isAdmin?: boolean | null }> }> };
 
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1148,7 +1218,7 @@ export type HelloQuery = { __typename?: 'Query', hello: string };
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, emailVerified: boolean, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean } } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, imageURL?: string | null, usesOAuth: boolean, fullName: string, createdAt: any, updatedAt: any, emailVerified: boolean, settings: { __typename?: 'Settings', id: string, startOfWeek: string, startOfRotationDate: any, lengthOfRotation: number, skipWeekends: boolean, darkMode: boolean, sortTasksBy: string, showDoDate: boolean, showCompletedTasks: boolean, isFirstTime: boolean, showCalendarView: boolean } } };
 
 export const SettingsFragmentDoc = gql`
     fragment Settings on Settings {
@@ -1162,6 +1232,7 @@ export const SettingsFragmentDoc = gql`
   showDoDate
   showCompletedTasks
   isFirstTime
+  showCalendarView
 }
     `;
 export const UserFragmentDoc = gql`
@@ -1259,7 +1330,10 @@ export const ProjectTaskFragmentDoc = gql`
   id
   name
   dueDate
+  dueDateIncludesTime
   doDate
+  doDateIncludesTime
+  duration
   done
   projectId
   createdAt
@@ -1295,7 +1369,10 @@ export const ProjectTaskWithProjectFragmentDoc = gql`
   id
   name
   dueDate
+  dueDateIncludesTime
   doDate
+  doDateIncludesTime
+  duration
   done
   projectId
   createdAt
@@ -1346,7 +1423,10 @@ export const TaskFragmentDoc = gql`
   }
   text
   dueDate
+  dueDateIncludesTime
   doDate
+  duration
+  doDateIncludesTime
   reminders {
     ...Reminder
   }
@@ -1963,12 +2043,15 @@ export type RemoveMemberFromProjectMutationHookResult = ReturnType<typeof useRem
 export type RemoveMemberFromProjectMutationResult = Apollo.MutationResult<RemoveMemberFromProjectMutation>;
 export type RemoveMemberFromProjectMutationOptions = Apollo.BaseMutationOptions<RemoveMemberFromProjectMutation, RemoveMemberFromProjectMutationVariables>;
 export const AddProjectTaskDocument = gql`
-    mutation AddProjectTask($id: String!, $name: String!, $dueDate: DateTime, $doDate: DateTime, $projectId: String!) {
+    mutation AddProjectTask($id: String!, $name: String!, $dueDate: DateTime, $dueDateIncludesTime: Boolean, $doDate: DateTime, $doDateIncludesTime: Boolean, $duration: Float, $projectId: String!) {
   addProjectTask(
     name: $name
     dueDate: $dueDate
+    dueDateIncludesTime: $dueDateIncludesTime
     projectId: $projectId
     doDate: $doDate
+    duration: $duration
+    doDateIncludesTime: $doDateIncludesTime
     id: $id
   ) {
     ...ProjectTask
@@ -1993,7 +2076,10 @@ export type AddProjectTaskMutationFn = Apollo.MutationFunction<AddProjectTaskMut
  *      id: // value for 'id'
  *      name: // value for 'name'
  *      dueDate: // value for 'dueDate'
+ *      dueDateIncludesTime: // value for 'dueDateIncludesTime'
  *      doDate: // value for 'doDate'
+ *      doDateIncludesTime: // value for 'doDateIncludesTime'
+ *      duration: // value for 'duration'
  *      projectId: // value for 'projectId'
  *   },
  * });
@@ -2071,8 +2157,16 @@ export type DeleteProjectTaskMutationHookResult = ReturnType<typeof useDeletePro
 export type DeleteProjectTaskMutationResult = Apollo.MutationResult<DeleteProjectTaskMutation>;
 export type DeleteProjectTaskMutationOptions = Apollo.BaseMutationOptions<DeleteProjectTaskMutation, DeleteProjectTaskMutationVariables>;
 export const EditProjectTaskDocument = gql`
-    mutation EditProjectTask($id: String!, $name: String!, $dueDate: DateTime, $doDate: DateTime) {
-  editProjectTask(id: $id, name: $name, dueDate: $dueDate, doDate: $doDate) {
+    mutation EditProjectTask($id: String!, $name: String!, $dueDate: DateTime, $dueDateIncludesTime: Boolean, $doDate: DateTime, $duration: Float, $doDateIncludesTime: Boolean) {
+  editProjectTask(
+    id: $id
+    name: $name
+    dueDate: $dueDate
+    doDate: $doDate
+    dueDateIncludesTime: $dueDateIncludesTime
+    doDateIncludesTime: $doDateIncludesTime
+    duration: $duration
+  ) {
     ...ProjectTask
   }
 }
@@ -2095,7 +2189,10 @@ export type EditProjectTaskMutationFn = Apollo.MutationFunction<EditProjectTaskM
  *      id: // value for 'id'
  *      name: // value for 'name'
  *      dueDate: // value for 'dueDate'
+ *      dueDateIncludesTime: // value for 'dueDateIncludesTime'
  *      doDate: // value for 'doDate'
+ *      duration: // value for 'duration'
+ *      doDateIncludesTime: // value for 'doDateIncludesTime'
  *   },
  * });
  */
@@ -2275,7 +2372,7 @@ export type EditScheduleMutationHookResult = ReturnType<typeof useEditScheduleMu
 export type EditScheduleMutationResult = Apollo.MutationResult<EditScheduleMutation>;
 export type EditScheduleMutationOptions = Apollo.BaseMutationOptions<EditScheduleMutation, EditScheduleMutationVariables>;
 export const SetSettingsDocument = gql`
-    mutation SetSettings($startOfWeek: String, $startOfRotationDate: DateTime, $lengthOfRotation: Float, $skipWeekends: Boolean, $darkMode: Boolean, $sortTasksBy: String, $showDoDate: Boolean, $showCompletedTasks: Boolean, $isFirstTime: Boolean) {
+    mutation SetSettings($startOfWeek: String, $startOfRotationDate: DateTime, $lengthOfRotation: Float, $skipWeekends: Boolean, $darkMode: Boolean, $sortTasksBy: String, $showDoDate: Boolean, $showCompletedTasks: Boolean, $isFirstTime: Boolean, $showCalendarView: Boolean) {
   setSettings(
     startOfWeek: $startOfWeek
     startOfRotationDate: $startOfRotationDate
@@ -2286,6 +2383,7 @@ export const SetSettingsDocument = gql`
     showDoDate: $showDoDate
     showCompletedTasks: $showCompletedTasks
     isFirstTime: $isFirstTime
+    showCalendarView: $showCalendarView
   ) {
     ...Settings
   }
@@ -2315,6 +2413,7 @@ export type SetSettingsMutationFn = Apollo.MutationFunction<SetSettingsMutation,
  *      showDoDate: // value for 'showDoDate'
  *      showCompletedTasks: // value for 'showCompletedTasks'
  *      isFirstTime: // value for 'isFirstTime'
+ *      showCalendarView: // value for 'showCalendarView'
  *   },
  * });
  */
@@ -2469,13 +2568,15 @@ export type CreateSubtaskMutationHookResult = ReturnType<typeof useCreateSubtask
 export type CreateSubtaskMutationResult = Apollo.MutationResult<CreateSubtaskMutation>;
 export type CreateSubtaskMutationOptions = Apollo.BaseMutationOptions<CreateSubtaskMutation, CreateSubtaskMutationVariables>;
 export const CreateTaskDocument = gql`
-    mutation CreateTask($name: String!, $subjectId: String, $dueDate: DateTime, $doDate: DateTime, $id: String!) {
+    mutation CreateTask($name: String!, $subjectId: String, $dueDate: DateTime, $dueDateIncludesTime: Boolean, $doDate: DateTime, $doDateIncludesTime: Boolean, $id: String!) {
   createTask(
     id: $id
     name: $name
     subjectId: $subjectId
     dueDate: $dueDate
+    dueDateIncludesTime: $dueDateIncludesTime
     doDate: $doDate
+    doDateIncludesTime: $doDateIncludesTime
   ) {
     ...Task
   }
@@ -2499,7 +2600,9 @@ export type CreateTaskMutationFn = Apollo.MutationFunction<CreateTaskMutation, C
  *      name: // value for 'name'
  *      subjectId: // value for 'subjectId'
  *      dueDate: // value for 'dueDate'
+ *      dueDateIncludesTime: // value for 'dueDateIncludesTime'
  *      doDate: // value for 'doDate'
+ *      doDateIncludesTime: // value for 'doDateIncludesTime'
  *      id: // value for 'id'
  *   },
  * });
@@ -2608,13 +2711,16 @@ export type EditSubtaskMutationHookResult = ReturnType<typeof useEditSubtaskMuta
 export type EditSubtaskMutationResult = Apollo.MutationResult<EditSubtaskMutation>;
 export type EditSubtaskMutationOptions = Apollo.BaseMutationOptions<EditSubtaskMutation, EditSubtaskMutationVariables>;
 export const EditTaskDocument = gql`
-    mutation EditTask($id: String!, $name: String!, $text: String, $dueDate: DateTime, $doDate: DateTime, $reminders: [RemindersInput!], $subjectId: String) {
+    mutation EditTask($id: String!, $name: String!, $text: String, $dueDate: DateTime, $dueDateIncludesTime: Boolean, $doDate: DateTime, $duration: Float, $doDateIncludesTime: Boolean, $reminders: [RemindersInput!], $subjectId: String) {
   editTask(
     id: $id
     name: $name
     text: $text
     dueDate: $dueDate
+    dueDateIncludesTime: $dueDateIncludesTime
     doDate: $doDate
+    duration: $duration
+    doDateIncludesTime: $doDateIncludesTime
     reminders: $reminders
     subjectId: $subjectId
   ) {
@@ -2641,7 +2747,10 @@ export type EditTaskMutationFn = Apollo.MutationFunction<EditTaskMutation, EditT
  *      name: // value for 'name'
  *      text: // value for 'text'
  *      dueDate: // value for 'dueDate'
+ *      dueDateIncludesTime: // value for 'dueDateIncludesTime'
  *      doDate: // value for 'doDate'
+ *      duration: // value for 'duration'
+ *      doDateIncludesTime: // value for 'doDateIncludesTime'
  *      reminders: // value for 'reminders'
  *      subjectId: // value for 'subjectId'
  *   },
@@ -2720,6 +2829,77 @@ export function useToggleTaskMutation(baseOptions?: Apollo.MutationHookOptions<T
 export type ToggleTaskMutationHookResult = ReturnType<typeof useToggleTaskMutation>;
 export type ToggleTaskMutationResult = Apollo.MutationResult<ToggleTaskMutation>;
 export type ToggleTaskMutationOptions = Apollo.BaseMutationOptions<ToggleTaskMutation, ToggleTaskMutationVariables>;
+export const AddNotificationTokenDocument = gql`
+    mutation AddNotificationToken($token: String!) {
+  addNotificationToken(token: $token)
+}
+    `;
+export type AddNotificationTokenMutationFn = Apollo.MutationFunction<AddNotificationTokenMutation, AddNotificationTokenMutationVariables>;
+
+/**
+ * __useAddNotificationTokenMutation__
+ *
+ * To run a mutation, you first call `useAddNotificationTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddNotificationTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addNotificationTokenMutation, { data, loading, error }] = useAddNotificationTokenMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useAddNotificationTokenMutation(baseOptions?: Apollo.MutationHookOptions<AddNotificationTokenMutation, AddNotificationTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddNotificationTokenMutation, AddNotificationTokenMutationVariables>(AddNotificationTokenDocument, options);
+      }
+export type AddNotificationTokenMutationHookResult = ReturnType<typeof useAddNotificationTokenMutation>;
+export type AddNotificationTokenMutationResult = Apollo.MutationResult<AddNotificationTokenMutation>;
+export type AddNotificationTokenMutationOptions = Apollo.BaseMutationOptions<AddNotificationTokenMutation, AddNotificationTokenMutationVariables>;
+export const AppleSignInDocument = gql`
+    mutation AppleSignIn($idToken: String!, $nonce: String!, $fullName: String!) {
+  appleSignIn(idToken: $idToken, nonce: $nonce, fullName: $fullName) {
+    user {
+      id
+      email
+      fullName
+    }
+    accessToken
+  }
+}
+    `;
+export type AppleSignInMutationFn = Apollo.MutationFunction<AppleSignInMutation, AppleSignInMutationVariables>;
+
+/**
+ * __useAppleSignInMutation__
+ *
+ * To run a mutation, you first call `useAppleSignInMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAppleSignInMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [appleSignInMutation, { data, loading, error }] = useAppleSignInMutation({
+ *   variables: {
+ *      idToken: // value for 'idToken'
+ *      nonce: // value for 'nonce'
+ *      fullName: // value for 'fullName'
+ *   },
+ * });
+ */
+export function useAppleSignInMutation(baseOptions?: Apollo.MutationHookOptions<AppleSignInMutation, AppleSignInMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AppleSignInMutation, AppleSignInMutationVariables>(AppleSignInDocument, options);
+      }
+export type AppleSignInMutationHookResult = ReturnType<typeof useAppleSignInMutation>;
+export type AppleSignInMutationResult = Apollo.MutationResult<AppleSignInMutation>;
+export type AppleSignInMutationOptions = Apollo.BaseMutationOptions<AppleSignInMutation, AppleSignInMutationVariables>;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($oldPassword: String!, $newPassword: String!) {
   changePassword(oldPassword: $oldPassword, newPassword: $newPassword) {
@@ -2947,8 +3127,8 @@ export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const LogoutDocument = gql`
-    mutation Logout {
-  logout
+    mutation Logout($notificationToken: String) {
+  logout(notificationToken: $notificationToken)
 }
     `;
 export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
@@ -2966,6 +3146,7 @@ export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMut
  * @example
  * const [logoutMutation, { data, loading, error }] = useLogoutMutation({
  *   variables: {
+ *      notificationToken: // value for 'notificationToken'
  *   },
  * });
  */

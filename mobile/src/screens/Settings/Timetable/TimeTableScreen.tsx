@@ -2,9 +2,9 @@ import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {Pressable} from 'react-native';
 import {BasicText} from '../../../components/basicViews/BasicText';
 import {BasicIcon} from '../../../components/basicViews/BasicIcon';
-import {SettingsStackScreenProps} from '../../../types/navigationTypes';
+import {SettingsStackScreenProps} from '../../../utils/types';
 import {TimeTableView} from '../../../components/TimeTableView';
-import {usePremiumFeature} from '../../../utils/hooks/usePremiumFeature';
+import {usePremiumFeature} from '../../../utils/usePremiumFeature';
 
 const TimeTableScreen: React.FC<
   SettingsStackScreenProps<'TimeTableScreen'>

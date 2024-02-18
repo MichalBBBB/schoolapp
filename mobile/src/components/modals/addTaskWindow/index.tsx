@@ -12,14 +12,14 @@ import {calendarConfigWithoutTime} from '../../listItems/task';
 import {BasicModalCard} from '../../basicViews/BasicModalCard';
 import {BasicTextInput} from '../../basicViews/BasicTextInput';
 import {BasicButton} from '../../basicViews/BasicButton';
-import {getCurrentLesson} from '../../../utils/helperFunctions/lessonUtils';
+import {getCurrentLesson} from '../../../utils/lessonUtils';
 import {BasicText} from '../../basicViews/BasicText';
 import {v4 as uuidv4} from 'uuid';
 import {useCreateTask} from '../../../mutationHooks/task/createTask';
 import {SelectSubjectPopup} from '../../popups/selectSubject/selectSubjectPopup';
 import {useTheme} from '../../../contexts/ThemeContext';
 import {SubjectColorsObject} from '../../../types/Theme';
-import {useSettings} from '../../../utils/hooks/useSettings';
+import {useSettings} from '../../../utils/useSettings';
 import {SubjectModal} from '../subjectModal';
 
 interface addTaskWindowProps {
@@ -32,16 +32,15 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
   const [createTask] = useCreateTask();
   const {data: lessons} = useGetAllLessonsQuery();
 
-  const [theme] = useTheme();
   const settings = useSettings();
 
-  const taskInputRef = useRef<TextInput>(null);
   const [name, setName] = useState('');
   const [subject, setSubject] = useState<SubjectFragment | null>(null);
   const [viewVisible, setViewVisible] = useState<
     'main' | 'editDate' | 'subject'
   >('main');
   const [taskDate, setTaskDate] = useState<dayjs.Dayjs | null>(null);
+  const [dueDateIncludesTime, setDueDateIncludesTime] = useState(false);
 
   useEffect(() => {
     // automatically set subject to current lesson
@@ -57,6 +56,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
     setSubject(null);
     setTaskDate(null);
     onClose();
+    setDueDateIncludesTime(false);
   };
 
   return (
@@ -130,6 +130,7 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
                 name,
                 subjectId: subject ? subject.id : undefined,
                 dueDate: taskDate,
+                dueDateIncludesTime,
               });
               closeWindow();
             }}
@@ -137,14 +138,17 @@ const AddTaskWindow: React.FC<addTaskWindowProps> = ({onClose, visible}) => {
         </View>
       </BasicModalCard>
       <EditDateModal
+        includesTime={dueDateIncludesTime}
+        allowNoTime={true}
         isVisible={visible && viewVisible == 'editDate'}
         initialDate={taskDate ? taskDate : undefined}
         subject={subject}
         onClose={() => {
           setViewVisible('main');
         }}
-        onSubmit={date => {
+        onSubmit={({date, includesTime}) => {
           setTaskDate(date);
+          setDueDateIncludesTime(includesTime);
           setViewVisible('main');
         }}
       />

@@ -25,7 +25,7 @@ export const SchedulesWindow: React.FC<SchedulesWindowProps> = ({
     dayjs(a.createdAt).diff(b.createdAt),
   );
   return (
-    <BasicCard backgroundColor="accentBackground1" style={{maxHeight: 250}}>
+    <BasicCard backgroundColor="accentBackground2" style={{maxHeight: 250}}>
       <View style={{width: '100%'}}>
         <BasicText spacing="s" textVariant="button">
           Choose a schedule
@@ -39,7 +39,7 @@ export const SchedulesWindow: React.FC<SchedulesWindowProps> = ({
           renderItem={({item}) => (
             <BasicButton
               spacing="none"
-              backgroundColor="background"
+              backgroundColor="selection"
               variant={selectedScheduleId == item.id ? 'filled' : 'unstyled'}
               style={{
                 marginBottom: 5,

@@ -284,6 +284,7 @@ export const LessonTimesView: React.FC<LessonTimesViewProps> = ({
                     marginRight: 5,
                     padding: 3,
                   }}
+                  fullWidth={false}
                   variant="outlined"
                   borderWidth={1}
                   backgroundColor="lightBorder"
@@ -319,13 +320,14 @@ export const LessonTimesView: React.FC<LessonTimesViewProps> = ({
         )}
       />
       <SelectTimeModal
+        allowClear={false}
         isVisible={timeModalVisible}
         onClose={() => setTimeModalVisible(false)}
         onSubmit={time => {
           shift(
             activeLesson?.time == 'start' ? 'lesson-start' : 'lesson-end',
             activeLesson?.index as number,
-            time,
+            time!,
           );
           setTimeModalVisible(false);
         }}

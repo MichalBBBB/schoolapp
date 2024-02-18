@@ -1,13 +1,8 @@
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {
-  Button,
   FlatList,
-  Image,
   StyleSheet,
-  Text,
-  TextInput,
   View,
   TouchableOpacity,
   Keyboard,
@@ -21,41 +16,32 @@ import {BasicTextInput} from '../../components/basicViews/BasicTextInput';
 import EditDateModal from '../../components/modals/editDateWindow';
 import Subtask from '../../components/listItems/subtask';
 import {calendarConfigWithoutTime} from '../../components/listItems/task';
-import {
-  GetAllTasksDocument,
-  RemindersInput,
-  SubtaskFragment,
-  useCreateSubtaskMutation,
-  useEditTaskMutation,
-  useGetAllTasksQuery,
-} from '../../generated/graphql';
+import {RemindersInput, useGetAllTasksQuery} from '../../generated/graphql';
 import {v4 as uuidv4} from 'uuid';
 import {useCreateSubtask} from '../../mutationHooks/task/createSubtask';
 import {useEditTask} from '../../mutationHooks/task/editTask';
-import {setRemindersFromApollo} from '../../utils/helperFunctions/reminderUtils';
+import {setRemindersFromApollo} from '../../utils/reminderUtils';
 import {useApolloClient} from '@apollo/client';
-import SelectSubjectWindow from '../../components/popups/selectSubject';
-import {Popup} from '../../components/popup';
 import {SelectSubjectPopup} from '../../components/popups/selectSubject/selectSubjectPopup';
-import {TaskStackScreenProps} from '../../types/navigationTypes';
+import {TaskStackScreenProps} from '../../utils/types';
 import {BasicIcon} from '../../components/basicViews/BasicIcon';
 import {SubjectColorsObject} from '../../types/Theme';
-import {useEditSubtask} from '../../mutationHooks/task/editSubtask';
+import {useSetBadge} from '../../utils/useSetBadge';
 
 const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
   navigation,
   route,
 }) => {
   const {data: Tasks} = useGetAllTasksQuery();
-  const task = Tasks?.getAllTasks.find(
-    item => item.id == route.params.task.id,
-  )!;
+  const task = Tasks?.getAllTasks.find(item => item.id == route.params.task.id);
   const [addSubtask] = useCreateSubtask();
+
+  const setBadge = useSetBadge();
 
   const client = useApolloClient();
 
-  const [name, setName] = useState(task.name);
-  const [text, setText] = useState(task.text);
+  const [name, setName] = useState(task?.name || '');
+  const [text, setText] = useState(task?.text || '');
   const [editTask] = useEditTask();
   const [editDueDateModalIsVisible, setEditDueDateModalIsVisible] =
     useState(false);
@@ -65,7 +51,9 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
     useState(false);
 
   useEffect(() => {
-    console.log(name);
+    if (!task) {
+      navigation.goBack();
+    }
   });
 
   useLayoutEffect(() => {
@@ -78,26 +66,46 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
           <BasicIcon
             source={require('../../../assets/Plus.png')}
             style={styles.plusButton}
+            color="accent"
           />
         </TouchableOpacity>
       ),
       headerLeft: () => (
         <BackButton
           onPress={() => {
-            editTask({
-              id: task.id,
-              name,
-              text,
-              dueDate: task.dueDate,
-              doDate: task.doDate,
-              subjectId: task.subject?.id,
-            });
+            if (task) {
+              editTask({
+                id: task.id,
+                name,
+                text,
+                dueDate: task.dueDate,
+                dueDateIncludesTime: task.dueDateIncludesTime,
+                doDateIncludesTime: task.doDateIncludesTime,
+                duration: task.duration,
+                doDate: task.doDate,
+                subjectId: task.subject?.id,
+              });
+            }
             navigation.goBack();
           }}
         />
       ),
     });
   });
+
+  if (!task) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <BasicText textVariant="heading">Task wasn't found</BasicText>
+      </View>
+    );
+  }
 
   return (
     <>
@@ -109,8 +117,8 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
               Keyboard.dismiss();
               setEditDueDateModalIsVisible(true);
             }}
-            spacing="s"
-            borderRadius={10}
+            spacing="m"
+            borderRadius={15}
             style={styles.action}>
             <BasicText>
               {task.dueDate
@@ -128,8 +136,8 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
               Keyboard.dismiss();
               setEditDoDateModalIsVisible(true);
             }}
-            spacing="s"
-            borderRadius={10}>
+            spacing="m"
+            borderRadius={15}>
             <BasicText>
               {task.doDate
                 ? `Do: ${dayjs(task.doDate).calendar(
@@ -153,8 +161,8 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
                 variant={task.subject ? 'subject' : 'filled'}
                 borderWidth={1}
                 backgroundColor="accentBackground1"
-                spacing="s"
-                borderRadius={10}>
+                spacing="m"
+                borderRadius={15}>
                 <BasicText>
                   {task.subject ? task.subject.name : 'Subject'}
                 </BasicText>
@@ -166,13 +174,16 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
                 name,
                 text,
                 dueDate: task.dueDate,
+                dueDateIncludesTime: task.dueDateIncludesTime,
                 doDate: task.doDate,
+                doDateIncludesTime: task.doDateIncludesTime,
                 subjectId: subject?.id || null,
               });
             }}
           />
         </View>
         <BasicTextInput
+          style={{marginLeft: 5}}
           variant="unstyled"
           spacing="none"
           textVariant="heading"
@@ -183,9 +194,11 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
         />
         <BasicTextInput
           variant="unstyled"
+          placeholder="Enter task details here"
           multiline={true}
           onChangeText={setText}
           defaultValue={task.text || ''}
+          marginBottom={5}
         />
         <FlatList
           contentContainerStyle={{borderRadius: 15, overflow: 'hidden'}}
@@ -194,18 +207,22 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
         />
       </View>
       <EditDateModal
+        includesTime={task.dueDateIncludesTime}
+        allowNoTime={true}
         initialDate={task.dueDate ? dayjs(task.dueDate) : dayjs()}
         subject={task.subject}
         onClose={() => {
           setEditDueDateModalIsVisible(false);
         }}
-        onSubmit={date => {
+        onSubmit={({date, includesTime}) => {
           editTask({
             id: task.id,
             name,
             text,
             dueDate: date?.toDate() || null,
+            dueDateIncludesTime: includesTime,
             doDate: task.doDate,
+            doDateIncludesTime: task.doDateIncludesTime,
             subjectId: task.subject?.id,
           });
           setEditDueDateModalIsVisible(false);
@@ -213,13 +230,17 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
         isVisible={editDueDateModalIsVisible}
       />
       <EditDateModal
+        showDuration={true}
+        initialDuration={task.duration}
+        includesTime={task.doDateIncludesTime}
+        allowNoTime={true}
         initialDate={task.doDate ? dayjs(task.doDate) : dayjs()}
         initialReminderTimes={task.reminders.map(item => item.minutesBefore)}
         showReminders
         onClose={() => {
           setEditDoDateModalIsVisible(false);
         }}
-        onSubmit={async (date, reminderTimes) => {
+        onSubmit={async ({date, includesTime, reminderTimes, duration}) => {
           let reminders: RemindersInput[] | undefined;
           if (reminderTimes) {
             reminders = reminderTimes.map(item => {
@@ -234,14 +255,18 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
             });
           }
           setEditDoDateModalIsVisible(false);
+          // console.log(duration);
           await editTask({
             id: task.id,
             name,
             text,
             dueDate: task.dueDate,
+            dueDateIncludesTime: task.dueDateIncludesTime,
             doDate: date?.toDate() || null,
+            doDateIncludesTime: includesTime,
             reminders,
             subjectId: task.subject?.id,
+            duration,
           });
           setRemindersFromApollo(client);
         }}
@@ -266,9 +291,11 @@ const TaskDetailScreen: React.FC<TaskStackScreenProps<'TaskDetailScreen'>> = ({
 const styles = StyleSheet.create({
   action: {
     marginRight: 5,
+    marginBottom: 5,
   },
   actionContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     marginBottom: 5,
   },
   separator: {

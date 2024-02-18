@@ -43,6 +43,9 @@ import {
   ForgotPasswordSuccess,
 } from "../types/userResponseTypes";
 import { Schedule } from "../entities/Schedule";
+import appleSignin from "apple-signin-auth";
+import crypto from "node:crypto";
+import { messaging } from "firebase-admin";
 
 const client = new OAuth2Client({
   clientId: process.env.GOOGLE_CLIENT_ID,
@@ -270,6 +273,30 @@ export class userResolver {
     }
   }
 
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async addNotificationToken(
+    @Arg("token") token: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    const user = await User.findOne({ where: { id: payload?.userId } });
+
+    if (user) {
+      console.log("tokens", user.tokens);
+      if (user.tokens.includes(token)) {
+        messaging().subscribeToTopic(token, "refresh");
+        return true;
+      } else {
+        user.tokens = [...user.tokens, token];
+        messaging().subscribeToTopic(token, "refresh");
+        await user.save();
+        return true;
+      }
+    } else {
+      throw new Error("User not found");
+    }
+  }
+
   @Mutation(() => UserSuccess)
   async googleSignIn(
     @Arg("idToken") idToken: string,
@@ -301,6 +328,47 @@ export class userResolver {
       return {
         user,
         accessToken: await createAccesToken(user),
+      };
+    } else {
+      throw new Error("an error occured");
+    }
+  }
+
+  @Mutation(() => UserSuccess)
+  async appleSignIn(
+    @Arg("idToken") idToken: string,
+    @Arg("nonce") nonce: string,
+    @Arg("fullName") fullName: string,
+    @Ctx() { res }: MyContext
+  ) {
+    const result = await appleSignin.verifyIdToken(idToken, {
+      clientId: "app.dayto.dayto",
+      nonce: crypto.createHash("sha256").update(nonce).digest("hex"),
+    });
+    let user;
+    user = await User.findOne({ where: { appleIdToken: idToken } });
+    if (!user) {
+      const settings = await Settings.create({
+        startOfRotationDate: dayjs().set("day", 1).toDate(),
+      }).save();
+      user = await User.create({
+        email: result.email,
+        fullName: fullName,
+        appleIdToken: idToken,
+        emailVerified: true,
+        settings,
+      }).save();
+      await Schedule.create({
+        name: "Default Schedule",
+        default: true,
+        userId: user.id,
+      }).save();
+    }
+    if (user) {
+      sendRefreshToken(res, createRefreshToken(user));
+      return {
+        user,
+        accessToken: createAccesToken(user),
       };
     } else {
       throw new Error("an error occured");
@@ -419,7 +487,16 @@ export class userResolver {
   }
 
   @Mutation(() => Boolean)
-  logout(@Ctx() { res }: MyContext) {
+  async logout(
+    @Ctx() { payload, res }: MyContext,
+    @Arg("notificationToken", { nullable: true }) token: string
+  ) {
+    const user = await User.findOne({ where: { id: payload?.userId } });
+    if (user) {
+      user.tokens = user.tokens.filter((item) => item !== token);
+      messaging().unsubscribeFromTopic(token, "refresh");
+      await user.save();
+    }
     sendRefreshToken(res, "");
     return true;
   }

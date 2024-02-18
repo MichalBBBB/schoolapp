@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "493949977537",
+    "project_id": "dayto-6ee39",
+    "storage_bucket": "dayto-6ee39.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:493949977537:android:5207a6ab3a6c81b4b22540",
+        "android_client_info": {
+          "package_name": "app.dayto.dayto"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4cqePOae5SiUgO5wN4EFY6LVDPo-WHyg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

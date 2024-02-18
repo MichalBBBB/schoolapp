@@ -19,7 +19,7 @@ import {useTheme} from '../../contexts/ThemeContext';
 import {useGetProjectsQuery} from '../../generated/graphql';
 import {useDeleteProject} from '../../mutationHooks/project/deleteProject';
 import {useEditProject} from '../../mutationHooks/project/editProject';
-import {ProjectStackScreenProps} from '../../types/navigationTypes';
+import {ProjectStackScreenProps} from '../../utils/types';
 import {AlertObject, useAlert} from '../../contexts/AlertContext';
 import {Alert} from '../../components/modals/alert';
 
@@ -79,7 +79,7 @@ const ProjectDetailScreen: React.FC<
                 })
               }
             />
-            {false && (
+            {project?.isAdmin && (
               <MenuItem
                 text={'Delete project'}
                 color="dangerous"

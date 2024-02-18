@@ -53,8 +53,8 @@ import {
   TabParamList,
   TaskStackParamList,
   TaskStackScreenProps,
-} from '../../types/navigationTypes';
-import {useSettings} from '../../utils/hooks/useSettings';
+} from '../../utils/types';
+import {useSettings} from '../../utils/useSettings';
 import {replaceAllData} from '../../Content';
 import {
   NormalizedCacheObject,
@@ -63,7 +63,7 @@ import {
 } from '@apollo/client';
 import {BasicLoading} from '../../components/basicViews/BasicLoading';
 import {BasicRefreshControl} from '../../components/basicViews/BasicRefreshControl';
-import {usePremiumFeature} from '../../utils/hooks/usePremiumFeature';
+import {usePremiumFeature} from '../../utils/usePremiumFeature';
 
 if (
   Platform.OS === 'android' &&
@@ -198,16 +198,16 @@ const TaskHomeScreen: React.FC<TaskStackScreenProps<'TaskHomeScreen'>> = ({
             }}
           />
         }
-        contentContainerStyle={
+        contentContainerStyle={[
+          {marginHorizontal: 10},
           list.length == 0
             ? {flexGrow: 1}
             : {
                 borderRadius: 15,
                 overflow: 'hidden',
                 backgroundColor: theme.colors.accentBackground1,
-              }
-        }
-        style={{padding: 10}}
+              },
+        ]}
         data={list}
         renderItem={({item, index}) => {
           if ('projectId' in item) {
