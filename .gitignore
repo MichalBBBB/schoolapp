@@ -5,3 +5,4 @@ Pods
 .env
 .DS_Store
 .VSCodeCounter
+service-account-file.json

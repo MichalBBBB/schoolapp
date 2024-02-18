@@ -36,6 +36,8 @@ import { Schedule } from "./entities/Schedule";
 import { LessonTime } from "./entities/LessonTime";
 import { ScheduleResolver } from "./resolvers/scheduleResolver";
 import appleSignin from "apple-signin-auth";
+import admin from "firebase-admin";
+import { applicationDefault } from "firebase-admin/app";
 export type UserQueueObject = {
   resolveObject: DefferedObject;
   req: any;
@@ -180,6 +182,34 @@ const main = async () => {
   });
 
   await apolloServer.start();
+
+  admin.initializeApp({
+    credential: applicationDefault(),
+  });
+  // send a refresh notification every hour to every device
+  setInterval(() => {
+    admin.messaging().send({
+      topic: "refresh",
+      data: {
+        action: "refresh",
+      },
+      apns: {
+        headers: {
+          "apns-push-type": "background",
+          "apns-priority": "5",
+          "apns-topic": "app.dayto.dayto",
+        },
+        payload: {
+          aps: {
+            contentAvailable: true,
+          },
+        },
+      },
+      android: {
+        priority: "high",
+      },
+    });
+  }, 60 * 60 * 1000);
 
   app.use(
     "/graphql",

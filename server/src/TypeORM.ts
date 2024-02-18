@@ -23,7 +23,7 @@ export const AppDataSource = new DataSource({
   // database: "schoolappEmpty",
   migrations: ["dist/migrations/*.js"],
 
-  logging: true,
+  logging: false,
   synchronize: false,
   entities: [
     User,

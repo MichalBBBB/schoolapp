@@ -13,6 +13,7 @@ import {
   isOnlineVar,
   minVersionVar,
   persistentQueueLink,
+  registerMessaging,
 } from './App';
 import {
   DarkTheme,
@@ -30,6 +31,7 @@ import dayjs from 'dayjs';
 import {
   GetAllTasksDocument,
   GetAllTasksQuery,
+  useAddNotificationTokenMutation,
   useMeQuery,
 } from './generated/graphql';
 import {is24HourFormat} from 'react-native-device-time-format';
@@ -119,6 +121,9 @@ export const Content: React.FC = () => {
   const minVersion = useReactiveVar(minVersionVar);
 
   const [setSettings] = useSetSettings();
+  const [addNotificationToken] = useAddNotificationTokenMutation({
+    context: {skipQueue: true},
+  });
 
   client
     .watchQuery<GetAllTasksQuery>({
@@ -128,11 +133,14 @@ export const Content: React.FC = () => {
       next: tasks => {
         let number = 0;
 
-        tasks.data.getAllTasks.forEach(task => {
-          if (dayjs(task.doDate).isSame(dayjs(), 'date')) {
-            number += 1;
-          }
-        });
+        if (tasks.data) {
+          tasks.data.getAllTasks.forEach(task => {
+            if (dayjs(task.doDate).isSame(dayjs(), 'date')) {
+              number += 1;
+            }
+          });
+        }
+
         setBadgeCount(number);
       },
     });
@@ -169,7 +177,14 @@ export const Content: React.FC = () => {
     if (!isLoggedIn) {
       client.resetStore();
     }
-  }, [isLoggedInVar]);
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      replaceAllData(client);
+      registerMessaging(client);
+    }
+  }, [isLoggedIn]);
 
   // set the locale based on settings
   useEffect(() => {

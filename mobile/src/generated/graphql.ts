@@ -85,6 +85,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   acceptProjectInvite: Project;
   addMemberToProject: Project;
+  addNotificationToken: Scalars['Boolean'];
   addProjectTask: ProjectTask;
   appleSignIn: UserSuccess;
   assignMember: ProjectTask;
@@ -147,6 +148,11 @@ export type MutationAcceptProjectInviteArgs = {
 export type MutationAddMemberToProjectArgs = {
   memberEmail: Scalars['String'];
   projectId: Scalars['String'];
+};
+
+
+export type MutationAddNotificationTokenArgs = {
+  token: Scalars['String'];
 };
 
 
@@ -409,6 +415,11 @@ export type MutationLoginArgs = {
 };
 
 
+export type MutationLogoutArgs = {
+  notificationToken?: InputMaybe<Scalars['String']>;
+};
+
+
 export type MutationMakeMemberAdminArgs = {
   memberId: Scalars['String'];
   projectId: Scalars['String'];
@@ -652,6 +663,7 @@ export type User = {
   settingsId: Scalars['String'];
   subjects: Array<Subject>;
   tasks: Array<Task>;
+  tokens?: Maybe<Array<Scalars['String']>>;
   updatedAt: Scalars['DateTime'];
   userProjectTasks: Array<UserProjectTask>;
   userProjects: Array<UserProject>;
@@ -1073,6 +1085,13 @@ export type ToggleTaskMutationVariables = Exact<{
 
 export type ToggleTaskMutation = { __typename?: 'Mutation', toggleTask: { __typename?: 'Task', id: string, name: string, createdAt: any, done: boolean, updatedAt: any, text?: string | null, dueDate?: any | null, dueDateIncludesTime: boolean, doDate?: any | null, duration?: number | null, doDateIncludesTime: boolean, subtasks: Array<{ __typename?: 'Subtask', name: string, id: string, taskId: string, done: boolean }>, subject?: { __typename?: 'Subject', id: string, name: string, colorName: string, extraInfo?: string | null } | null, reminders: Array<{ __typename?: 'Reminder', id: string, minutesBefore: number, title: string, body?: string | null, date: any, taskId?: string | null, eventId?: string | null }> } };
 
+export type AddNotificationTokenMutationVariables = Exact<{
+  token: Scalars['String'];
+}>;
+
+
+export type AddNotificationTokenMutation = { __typename?: 'Mutation', addNotificationToken: boolean };
+
 export type AppleSignInMutationVariables = Exact<{
   idToken: Scalars['String'];
   nonce: Scalars['String'];
@@ -1125,7 +1144,9 @@ export type LoginMutationVariables = Exact<{
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserFail', errors: Array<{ __typename?: 'UserError', field?: string | null, message: string }> } | { __typename?: 'UserSuccess', accessToken: string, user: { __typename?: 'User', id: string, email: string, fullName: string } } };
 
-export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+export type LogoutMutationVariables = Exact<{
+  notificationToken?: InputMaybe<Scalars['String']>;
+}>;
 
 
 export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
@@ -2808,6 +2829,37 @@ export function useToggleTaskMutation(baseOptions?: Apollo.MutationHookOptions<T
 export type ToggleTaskMutationHookResult = ReturnType<typeof useToggleTaskMutation>;
 export type ToggleTaskMutationResult = Apollo.MutationResult<ToggleTaskMutation>;
 export type ToggleTaskMutationOptions = Apollo.BaseMutationOptions<ToggleTaskMutation, ToggleTaskMutationVariables>;
+export const AddNotificationTokenDocument = gql`
+    mutation AddNotificationToken($token: String!) {
+  addNotificationToken(token: $token)
+}
+    `;
+export type AddNotificationTokenMutationFn = Apollo.MutationFunction<AddNotificationTokenMutation, AddNotificationTokenMutationVariables>;
+
+/**
+ * __useAddNotificationTokenMutation__
+ *
+ * To run a mutation, you first call `useAddNotificationTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddNotificationTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addNotificationTokenMutation, { data, loading, error }] = useAddNotificationTokenMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useAddNotificationTokenMutation(baseOptions?: Apollo.MutationHookOptions<AddNotificationTokenMutation, AddNotificationTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddNotificationTokenMutation, AddNotificationTokenMutationVariables>(AddNotificationTokenDocument, options);
+      }
+export type AddNotificationTokenMutationHookResult = ReturnType<typeof useAddNotificationTokenMutation>;
+export type AddNotificationTokenMutationResult = Apollo.MutationResult<AddNotificationTokenMutation>;
+export type AddNotificationTokenMutationOptions = Apollo.BaseMutationOptions<AddNotificationTokenMutation, AddNotificationTokenMutationVariables>;
 export const AppleSignInDocument = gql`
     mutation AppleSignIn($idToken: String!, $nonce: String!, $fullName: String!) {
   appleSignIn(idToken: $idToken, nonce: $nonce, fullName: $fullName) {
@@ -3075,8 +3127,8 @@ export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const LogoutDocument = gql`
-    mutation Logout {
-  logout
+    mutation Logout($notificationToken: String) {
+  logout(notificationToken: $notificationToken)
 }
     `;
 export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
@@ -3094,6 +3146,7 @@ export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMut
  * @example
  * const [logoutMutation, { data, loading, error }] = useLogoutMutation({
  *   variables: {
+ *      notificationToken: // value for 'notificationToken'
  *   },
  * });
  */
