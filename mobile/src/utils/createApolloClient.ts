@@ -91,6 +91,7 @@ const refreshLink = new TokenRefreshLink({
   },
   handleFetch: accesToken => {
     setAccessToken(accesToken);
+    isLoggedInVar(true);
   },
   handleError: err => {
     NetInfo.fetch().then(state => {
