@@ -126,10 +126,6 @@ const App = () => {
         .getIsHeadless()
         .then(isH => {
           setIsHeadless(isH);
-          if (!isH) {
-            initializeApolloClient();
-            createRemindersChannel();
-          }
         });
     } else {
       setIsHeadless(false);
@@ -140,10 +136,6 @@ const App = () => {
 
   useEffect(() => {
     messaging().onMessage(handler);
-  }, []);
-
-  useEffect(() => {
-    console.log('storage', storage.getString('queue'));
   }, []);
 
   if (!client) {
