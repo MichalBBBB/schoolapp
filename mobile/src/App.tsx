@@ -126,6 +126,9 @@ const App = () => {
         .getIsHeadless()
         .then(isH => {
           setIsHeadless(isH);
+          if (!isH) {
+            initializeApolloClient();
+          }
         });
     } else {
       setIsHeadless(false);
