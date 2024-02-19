@@ -32,6 +32,7 @@ import {
   GetAllTasksDocument,
   GetAllTasksQuery,
   useAddNotificationTokenMutation,
+  useLogoutMutation,
   useMeQuery,
 } from './generated/graphql';
 import {is24HourFormat} from 'react-native-device-time-format';
@@ -41,6 +42,8 @@ import {AlertProvider} from './contexts/AlertContext';
 import {isVersionHighEnough} from './utils/isVersionHighEnough';
 import {UpdateAppScreen} from './screens/UpdateAppScreen';
 import {setBadgeCount} from './utils/notifications';
+import {setAccessToken} from './utils/AccessToken';
+import messaging from '@react-native-firebase/messaging';
 
 const is12hourConfig = {
   // abbreviated format options allowing localization
@@ -117,17 +120,15 @@ export const Content: React.FC = () => {
   const isOnline = useReactiveVar(isOnlineVar);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const settings = useSettings();
-  const {data: me} = useMeQuery();
   const minVersion = useReactiveVar(minVersionVar);
+  const [theme, setTheme] = useTheme();
+  const [logout] = useLogoutMutation();
 
-  const [setSettings] = useSetSettings();
-  const [addNotificationToken] = useAddNotificationTokenMutation({
-    context: {skipQueue: true},
-  });
-
+  // set badge count according to tasks scheduled for today
   client
     .watchQuery<GetAllTasksQuery>({
       query: GetAllTasksDocument,
+      fetchPolicy: 'cache-only',
     })
     .subscribe({
       next: tasks => {
@@ -160,29 +161,34 @@ export const Content: React.FC = () => {
     setForceRerenderingValue(uuidv4());
   };
 
-  const [theme, setTheme] = useTheme();
+  // isOnline listener
   useEffect(() => {
-    if (isOnline && isLoggedIn) {
-      openQueue(client);
-    } else if (!isOnline) {
-      persistentQueueLink.close();
-    } else if (!isLoggedIn) {
-      console.log('delete store');
-      client.resetStore();
+    if (isLoggedIn) {
+      if (isOnline) {
+        openQueue(client);
+        registerMessaging(client);
+      } else {
+        persistentQueueLink.close();
+      }
     }
   }, [isOnline, isLoggedIn]);
 
-  // if the user is logged out, delete all the data from this device
-  useEffect(() => {
-    if (!isLoggedIn) {
-      client.resetStore();
-    }
-  }, [isLoggedIn]);
+  const logoutFunc = async () => {
+    client.resetStore();
+    logout({
+      variables: {
+        notificationToken: await messaging().getToken(),
+      },
+    });
+    setAccessToken('');
+  };
 
+  // isLoggedIn listener
   useEffect(() => {
     if (isLoggedIn) {
       replaceAllData(client);
-      registerMessaging(client);
+    } else {
+      logoutFunc();
     }
   }, [isLoggedIn]);
 
