@@ -18,7 +18,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {ColorsObject} from '../types/Theme';
-import useKeyboardHeight, {isIOS} from '../utils/keyboardHeight';
+import useKeyboardHeight, {isIOS} from '../utils/useKeyboardHeight';
 
 export interface PopupProps {
   trigger: React.ReactElement;

@@ -17,11 +17,11 @@ import {useCreateTask} from '../../mutationHooks/task/createTask';
 import {SubjectColorsObject} from '../../types/Theme';
 import {useDeleteEvent} from '../../mutationHooks/calendarEvent/deleteEvent';
 import {Popup} from '../popup';
-import {CalendarNavigationProp} from '../../utils/types';
 import {BasicIcon} from '../basicViews/BasicIcon';
 import {useTheme} from '../../contexts/ThemeContext';
 import {LessonDetailView} from '../modals/lessonDetailView';
 import {BasicButton} from '../basicViews/BasicButton';
+import {CalendarNavigationProp} from '../../utils/types';
 
 interface LessonProps {
   lesson: LessonFragment;

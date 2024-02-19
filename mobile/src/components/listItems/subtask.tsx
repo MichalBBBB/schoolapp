@@ -20,7 +20,7 @@ import {
 import {useDeleteSubtask} from '../../mutationHooks/task/deleteSubtask';
 import {useEditSubtask} from '../../mutationHooks/task/editSubtask';
 import {useToggleSubtask} from '../../mutationHooks/task/toggleSubtask';
-import {TaskNavigationProp} from '../../utils/types';
+import {TaskNavigationProp} from '../../types/navigationTypes';
 import {BasicIcon} from '../basicViews/BasicIcon';
 import {BasicText} from '../basicViews/BasicText';
 import BasicInputWindow from '../modals/basicInputWindow';

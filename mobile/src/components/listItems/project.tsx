@@ -6,7 +6,7 @@ import {
   ProjectFragment,
   useDeleteProjectMutation,
 } from '../../generated/graphql';
-import {ProjectNavigationProp} from '../../utils/types';
+import {ProjectNavigationProp} from '../../types/navigationTypes';
 import {BasicButton} from '../basicViews/BasicButton';
 import {BasicCard} from '../basicViews/BasicCard';
 import {BasicText} from '../basicViews/BasicText';

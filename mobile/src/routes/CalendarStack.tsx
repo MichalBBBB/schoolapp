@@ -9,7 +9,7 @@ import EventDetailScreen from '../screens/Calendar/EventDetailScreen';
 import ProjectDetailScreen from '../screens/Projects/ProjectDetailScreen';
 import {ProjectMembersScreen} from '../screens/Projects/ProjectMembersScreen';
 import TaskDetailScreen from '../screens/Tasks/TaskDetailScreen';
-import {CalendarStackParamList} from '../utils/types';
+import {CalendarStackParamList} from '../types/navigationTypes';
 
 const CalendarStack: React.FC<
   BottomTabScreenProps<TabStackParamList, 'CalendarStack'>
@@ -29,7 +29,7 @@ const CalendarStack: React.FC<
       })}>
       <Stack.Screen
         name="CalendarHomeScreen"
-        options={{title: 'Calendar'}}
+        options={{title: 'Calendar1'}}
         component={CalendarHomeScreen}
       />
       <Stack.Screen

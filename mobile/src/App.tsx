@@ -38,6 +38,8 @@ import {allQueries} from './utils/allQueries';
 import {Content} from './Content';
 import notifee from '@notifee/react-native';
 import NetInfo from '@react-native-community/netinfo';
+import 'dayjs/locale/en';
+import {RC_API_KEY} from '@env';
 import {createRemindersChannel, setBadgeCount} from './utils/notifications';
 import 'dayjs/locale/en';
 import KeyboardManager from 'react-native-keyboard-manager/dist';

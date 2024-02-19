@@ -1,5 +1,6 @@
 import {
   ApolloClient,
+  makeVar,
   NormalizedCacheObject,
   useApolloClient,
   useReactiveVar,
@@ -15,12 +16,7 @@ import {
   persistentQueueLink,
   registerMessaging,
 } from './App';
-import {
-  DarkTheme,
-  LightTheme,
-  ThemeProvider,
-  useTheme,
-} from './contexts/ThemeContext';
+import {DarkTheme, LightTheme, useTheme} from './contexts/ThemeContext';
 import Routes from './Routes';
 import {allQueries} from './utils/allQueries';
 import NetInfo from '@react-native-community/netinfo';
@@ -29,6 +25,7 @@ import {setRemindersFromApollo} from './utils/reminderUtils';
 import {useSettings} from './utils/useSettings';
 import dayjs from 'dayjs';
 import {
+  useLogoutMutation,
   GetAllTasksDocument,
   GetAllTasksQuery,
   useAddNotificationTokenMutation,
@@ -40,6 +37,14 @@ import {v4 as uuidv4} from 'uuid';
 import {AlertProvider} from './contexts/AlertContext';
 import {isVersionHighEnough} from './utils/isVersionHighEnough';
 import {UpdateAppScreen} from './screens/UpdateAppScreen';
+import Purchases, {
+  PurchasesOffering,
+  PurchasesPackage,
+} from 'react-native-purchases';
+import {RC_API_KEY} from '@env';
+import {setAccessToken} from './utils/AccessToken';
+import {View, StyleSheet} from 'react-native';
+import {BasicLoading} from './components/basicViews/BasicLoading';
 import {setBadgeCount} from './utils/notifications';
 
 const is12hourConfig = {
@@ -92,6 +97,7 @@ export const replaceAllData = async (client: ApolloClient<any>) => {
     setRemindersFromApollo(client);
   } catch (e) {
     isOnlineVar(false);
+    isLoadingVar(false);
   }
 };
 
@@ -109,17 +115,24 @@ const openQueue = async (client: ApolloClient<any>) => {
   }
 };
 
+// variable that contains all purchasable packages
+export const packagesVar = makeVar<PurchasesPackage[]>([]);
+
 export const Content: React.FC = () => {
   // when we change global dayjs settings, the components don't automatically update
   // here we just make sure the whole app rerenders
   const [_forceRerenderingValue, setForceRerenderingValue] = useState('');
+  const [isPurchasesConfigured, setIsPurchasesConfigured] = useState(false);
   const client = useApolloClient();
   const isOnline = useReactiveVar(isOnlineVar);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isLoading = useReactiveVar(isLoadingVar);
   const settings = useSettings();
-  const {data: me} = useMeQuery();
   const minVersion = useReactiveVar(minVersionVar);
 
+  const [logout] = useLogoutMutation();
+
+  const {data: me} = useMeQuery();
   const [setSettings] = useSetSettings();
   const [addNotificationToken] = useAddNotificationTokenMutation({
     context: {skipQueue: true},
@@ -160,6 +173,10 @@ export const Content: React.FC = () => {
     setForceRerenderingValue(uuidv4());
   };
 
+  useEffect(() => {
+    console.log('me', JSON.stringify(me));
+  }, [me]);
+
   const [theme, setTheme] = useTheme();
   useEffect(() => {
     if (isOnline && isLoggedIn) {
@@ -168,16 +185,30 @@ export const Content: React.FC = () => {
       persistentQueueLink.close();
     } else if (!isLoggedIn) {
       console.log('delete store');
-      client.resetStore();
+      (async () => {
+        await logout();
+        setAccessToken('');
+        client.resetStore();
+      })();
     }
   }, [isOnline, isLoggedIn]);
 
-  // if the user is logged out, delete all the data from this device
   useEffect(() => {
-    if (!isLoggedIn) {
-      client.resetStore();
+    if (!isPurchasesConfigured && me && isLoggedIn) {
+      console.log('configure');
+      (async () => {
+        Purchases.configure({
+          apiKey: RC_API_KEY,
+          appUserID: me.me.id,
+          usesStoreKit2IfAvailable: true,
+        });
+        await Purchases.getOfferings().then(result => {
+          packagesVar(result.current?.availablePackages || []);
+        });
+        setIsPurchasesConfigured(true);
+      })();
     }
-  }, [isLoggedIn]);
+  }, [me, isPurchasesConfigured, isLoggedIn]);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -240,6 +271,18 @@ export const Content: React.FC = () => {
       <PortalProvider>
         {isVersionHighEnough(minVersion) ? <Routes /> : <UpdateAppScreen />}
       </PortalProvider>
+      {isLoading && (
+        <View
+          style={{
+            ...StyleSheet.absoluteFillObject,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0,0,0,0.1)',
+            zIndex: 100,
+          }}>
+          <BasicLoading />
+        </View>
+      )}
     </GestureHandlerRootView>
   );
 };

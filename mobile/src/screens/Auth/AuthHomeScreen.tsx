@@ -3,13 +3,16 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useEffect} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {authorize} from 'react-native-app-auth';
+import Purchases from 'react-native-purchases';
 import {isLoggedInVar} from '../../App';
 import {BasicButton} from '../../components/basicViews/BasicButton';
 import {BasicText} from '../../components/basicViews/BasicText';
+import {packagesVar} from '../../Content';
 import {useTheme} from '../../contexts/ThemeContext';
 import {
   useAppleSignInMutation,
   useGoogleSignInMutation,
+  UserSuccess
 } from '../../generated/graphql';
 import {AuthStackParamList} from '../../routes/AuthStack';
 import {setAccessToken} from '../../utils/AccessToken';
@@ -42,8 +45,16 @@ const AuthHomeScreen: React.FC<
         variables: {idToken: authState.idToken},
       });
       if (response.data) {
-        setAccessToken(response.data?.googleSignIn.accessToken);
+        setAccessToken(response.data.googleSignIn.accessToken);
         isLoggedInVar(true);
+        (async () => {
+          await Purchases.logIn(
+            (response.data?.googleSignIn as UserSuccess).user.id,
+          );
+          await Purchases.getOfferings().then(result => {
+            packagesVar(result.current?.availablePackages || []);
+          });
+        })();
       }
     } catch (err) {
       console.log(err);

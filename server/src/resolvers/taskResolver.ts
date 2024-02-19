@@ -227,7 +227,6 @@ export class taskResolver {
           }
         });
       }
-      console.log(subjectId);
       task.name = name;
       task.text = text;
       task.doDate = doDate;

@@ -230,7 +230,6 @@ export class projectTaskResolver {
         { id: payload?.userId }
       )
       .getMany();
-    console.log(projectTasks);
     return projectTasks;
   }
 }

@@ -125,7 +125,8 @@ const main = async () => {
       }
 
       sendRefreshToken(res, createRefreshToken(user));
-      return res.send({ ok: true, accesToken: createAccesToken(user) });
+      const accessToken = await createAccesToken(user);
+      return res.send({ ok: true, accesToken: accessToken });
     } catch (err) {
       return res.send({ ok: false, accesToken: "" });
     }

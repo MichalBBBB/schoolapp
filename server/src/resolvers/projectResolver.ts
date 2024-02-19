@@ -240,7 +240,6 @@ export class projectResolver {
       relations: { userProjects: true },
     });
     const user = await User.findOne({ where: { email: memberEmail } });
-    console.log(project);
     if (
       user &&
       project &&

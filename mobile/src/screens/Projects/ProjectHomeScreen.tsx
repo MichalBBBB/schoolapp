@@ -17,6 +17,7 @@ import {
   useGetProjectsQuery,
 } from '../../generated/graphql';
 import {ProjectStackScreenProps} from '../../utils/types';
+import {usePremiumFeature} from '../../utils/usePremiumFeature';
 import AddButton from '../../components/addButton';
 
 const ProjectHomeScreen: React.FC<
@@ -29,6 +30,8 @@ const ProjectHomeScreen: React.FC<
 
   const client = useApolloClient();
   const [refreshing, setRefreshing] = useState(false);
+
+  const premiumFeature = usePremiumFeature();
 
   const MyFlatList = FlatList<ProjectFragment | InviteFragment>;
 
@@ -114,7 +117,9 @@ const ProjectHomeScreen: React.FC<
         <AddButton
           onPress={() => {
             if (isOnline) {
-              navigation.navigate('NewProjectScreen');
+              premiumFeature(() => {
+                navigation.navigate('NewProjectScreen');
+              });
             }
           }}
         />

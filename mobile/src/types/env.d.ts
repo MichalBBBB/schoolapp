@@ -3,4 +3,5 @@ declare module '@env' {
   export const API_URI_DEFAULT: string;
   export const GOOGLE_CLIENT_ID: string;
   export const GOOGLE_REDIRECT_URL: string;
+  export const RC_API_KEY: string;
 }

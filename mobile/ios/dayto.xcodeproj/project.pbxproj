@@ -11,6 +11,8 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		3F0B760935180F0BA1F9400A /* libPods-dayto-daytoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2720257A12EAA61888BCAD8B /* libPods-dayto-daytoTests.a */; };
+		770D1CFB2A12F6DD00363CA8 /* StoreKitTestCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = 770D1CFA2A12F6DD00363CA8 /* StoreKitTestCertificate.cer */; };
 		2271CBAB72D023FF5D4E11EB /* Pods_dayto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EC90F0D9555FFF7C9A33B43 /* Pods_dayto.framework */; };
 		77B7DE922B5EFD0B009AB4AA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 77B7DE912B5EFD0B009AB4AA /* GoogleService-Info.plist */; };
 		77E5B0C229EB7B03006C970F /* EmptyFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77E5B0C129EB7B03006C970F /* EmptyFile.swift */; };
@@ -40,6 +42,8 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = dayto/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = dayto/main.m; sourceTree = "<group>"; };
 		34D8AF04D13CA2CC73133E39 /* Pods-dayto.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-dayto.release.xcconfig"; path = "Target Support Files/Pods-dayto/Pods-dayto.release.xcconfig"; sourceTree = "<group>"; };
+		770D1CF92A12F5FB00363CA8 /* SyncedProducts.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = SyncedProducts.storekit; sourceTree = "<group>"; };
+		770D1CFA2A12F6DD00363CA8 /* StoreKitTestCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = StoreKitTestCertificate.cer; sourceTree = "<group>"; };
 		7738E7D929D7C7610071AC44 /* dayto.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = dayto.entitlements; path = dayto/dayto.entitlements; sourceTree = "<group>"; };
 		77B7DE912B5EFD0B009AB4AA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		77E5B0C029EB7B02006C970F /* dayto-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "dayto-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -92,6 +96,8 @@
 		13B07FAE1A68108700A75B9A /* dayto */ = {
 			isa = PBXGroup;
 			children = (
+				770D1CF92A12F5FB00363CA8 /* SyncedProducts.storekit */,
+				770D1CFA2A12F6DD00363CA8 /* StoreKitTestCertificate.cer */,
 				7738E7D929D7C7610071AC44 /* dayto.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -253,7 +259,11 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+<<<<<<< HEAD
+				770D1CFB2A12F6DD00363CA8 /* StoreKitTestCertificate.cer in Resources */,
+=======
 				77B7DE922B5EFD0B009AB4AA /* GoogleService-Info.plist in Resources */,
+>>>>>>> development
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

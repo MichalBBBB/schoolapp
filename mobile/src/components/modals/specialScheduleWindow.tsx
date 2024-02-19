@@ -6,7 +6,7 @@ import {
   useGetAllSchedulesQuery,
 } from '../../generated/graphql';
 import {useEditSchedule} from '../../mutationHooks/schedule/editSchedule';
-import {useClearLessonsForDay} from '../../utils/clearLessonsForDay';
+import {useClearLessonsForDay} from '../../utils/useClearLessonsForDay';
 import {useClearSchedulesForDay} from '../../utils/useClearSchedulesForDay';
 import {useGetSpecialScheduleForDay} from '../../utils/useSpecialScheduleForDay';
 import {BasicButton} from '../basicViews/BasicButton';

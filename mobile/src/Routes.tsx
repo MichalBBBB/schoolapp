@@ -31,6 +31,7 @@ import {VerifyEmailScreen} from './screens/VerifyEmailScreen';
 import {Portal} from '@gorhom/portal';
 import {BasicCard} from './components/basicViews/BasicCard';
 import {BasicLoading} from './components/basicViews/BasicLoading';
+import {PremiumWindowProvider} from './contexts/PremiumWindowContext';
 
 export type TabStackParamList = {
   TaskStack: undefined;
@@ -158,21 +159,12 @@ const Routes = () => {
   return (
     <>
       <AlertProvider>
-        <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
-        <NavigationContainer theme={theme}>{getContent()}</NavigationContainer>
-        {/* {isLoading && (
-          <Portal>
-            <View
-              style={{
-                ...StyleSheet.absoluteFillObject,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'rgba(0,0,0,0.1)',
-              }}>
-              <BasicLoading />
-            </View>
-          </Portal>
-        )} */}
+        <PremiumWindowProvider>
+          <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
+          <NavigationContainer theme={theme}>
+            {getContent()}
+          </NavigationContainer>
+        </PremiumWindowProvider>
       </AlertProvider>
     </>
   );
