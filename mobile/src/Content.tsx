@@ -9,11 +9,13 @@ import React, {useEffect, useState} from 'react';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {
   isLoadingVar,
+  isLoggedInStorageKey,
   isLoggedInVar,
   isOnlineVar,
   minVersionVar,
   persistentQueueLink,
   registerMessaging,
+  storage,
 } from './App';
 import {
   DarkTheme,
@@ -187,8 +189,10 @@ export const Content: React.FC = () => {
   useEffect(() => {
     if (isLoggedIn) {
       replaceAllData(client);
+      storage.set(isLoggedInStorageKey, true);
     } else {
       logoutFunc();
+      storage.set(isLoggedInStorageKey, false);
     }
   }, [isLoggedIn]);
 
