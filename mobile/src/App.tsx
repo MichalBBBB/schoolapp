@@ -35,7 +35,7 @@ import {
 } from './generated/graphql';
 import {MMKV} from 'react-native-mmkv';
 import {allQueries} from './utils/allQueries';
-import {Content} from './Content';
+import {Content, replaceAllData} from './Content';
 import notifee from '@notifee/react-native';
 import NetInfo from '@react-native-community/netinfo';
 import 'dayjs/locale/en';
@@ -52,6 +52,7 @@ import {
   request,
 } from 'react-native-permissions';
 import {handler} from './utils/registerNotificationHandlers';
+import {setAccessToken} from './utils/AccessToken';
 
 // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
@@ -70,6 +71,8 @@ dayjs.extend(weekOfYear);
 dayjs.locale('en');
 
 export const storage = new MMKV();
+
+export const isLoggedInStorageKey = 'isLoggedIn';
 
 export const registerMessaging = async (client: ApolloClient<any>) => {
   request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS).then(result => {
@@ -108,47 +111,58 @@ if (Platform.OS === 'ios') {
 const App = () => {
   const [client, setClient] =
     useState<ApolloClient<NormalizedCacheObject> | null>(null);
-  const [isHeadless, setIsHeadless] = useState(true);
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const [appIsReady, setAppIsReady] = useState(false);
 
-  const initializeApolloClient = async () => {
-    await createApolloClient(persistentQueueLink).then(apolloClient => {
-      setClient(apolloClient);
-      if (isLoggedIn) {
-        registerMessaging(apolloClient);
-      }
-    });
-  };
+  const intializeApp = async () => {
+    const client = await createApolloClient(persistentQueueLink);
+    setClient(client);
+    try {
+      // app is online
+      await fetch(baseUri + '/check');
+      isOnlineVar(true);
+      // check if user has valid refresh_token
+      await fetch(baseUri + '/refresh_token', {
+        credentials: 'include',
+        method: 'post',
+      })
+        .then(response => {
+          return response.json();
+        })
+        .then(response => {
+          console.log(response);
 
-  // initialize the Apollo client only if app is not headless
-  // if it is, the message handler has to intialize it on its own
-  useEffect(() => {
-    if (Platform.OS == 'ios') {
-      messaging()
-        .getIsHeadless()
-        .then(isH => {
-          setIsHeadless(isH);
-          if (!isH) {
-            initializeApolloClient();
-            createRemindersChannel();
+          if (response.ok) {
+            // user is logged in
+            setAccessToken(response.accessToken);
+            isLoggedInVar(true);
+            registerMessaging(client);
+          } else {
+            // user isn't logged in
+            setAccessToken('');
+            isLoggedInVar(false);
           }
         });
-    } else {
-      setIsHeadless(false);
-      initializeApolloClient();
-      createRemindersChannel();
+    } catch {
+      isOnlineVar(false);
+      if (storage.getBoolean(isLoggedInStorageKey)) {
+        isLoggedInVar(true);
+      } else {
+        isLoggedInVar(false);
+      }
     }
+    setAppIsReady(true);
+  };
+
+  // initialize the app
+  useEffect(() => {
+    intializeApp();
   }, []);
 
   useEffect(() => {
     messaging().onMessage(handler);
   }, []);
 
-  useEffect(() => {
-    console.log('storage', storage.getString('queue'));
-  }, []);
-
-  if (!client) {
+  if (!client || !appIsReady) {
     return (
       <View>
         <Text>Loading...</Text>
@@ -157,10 +171,6 @@ const App = () => {
   }
 
   persistentQueueLink.setClient(client);
-
-  if (isHeadless) {
-    return null;
-  }
 
   return (
     <ApolloProvider client={client}>

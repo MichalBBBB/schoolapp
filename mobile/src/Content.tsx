@@ -10,11 +10,13 @@ import React, {useEffect, useState} from 'react';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {
   isLoadingVar,
+  isLoggedInStorageKey,
   isLoggedInVar,
   isOnlineVar,
   minVersionVar,
   persistentQueueLink,
   registerMessaging,
+  storage,
 } from './App';
 import {DarkTheme, LightTheme, useTheme} from './contexts/ThemeContext';
 import Routes from './Routes';
@@ -29,6 +31,7 @@ import {
   GetAllTasksDocument,
   GetAllTasksQuery,
   useAddNotificationTokenMutation,
+  useLogoutMutation,
   useMeQuery,
 } from './generated/graphql';
 import {is24HourFormat} from 'react-native-device-time-format';
@@ -46,6 +49,8 @@ import {setAccessToken} from './utils/AccessToken';
 import {View, StyleSheet} from 'react-native';
 import {BasicLoading} from './components/basicViews/BasicLoading';
 import {setBadgeCount} from './utils/notifications';
+import {setAccessToken} from './utils/AccessToken';
+import messaging from '@react-native-firebase/messaging';
 
 const is12hourConfig = {
   // abbreviated format options allowing localization
@@ -129,18 +134,14 @@ export const Content: React.FC = () => {
   const isLoading = useReactiveVar(isLoadingVar);
   const settings = useSettings();
   const minVersion = useReactiveVar(minVersionVar);
-
+  const [theme, setTheme] = useTheme();
   const [logout] = useLogoutMutation();
-
   const {data: me} = useMeQuery();
-  const [setSettings] = useSetSettings();
-  const [addNotificationToken] = useAddNotificationTokenMutation({
-    context: {skipQueue: true},
-  });
 
   client
     .watchQuery<GetAllTasksQuery>({
       query: GetAllTasksDocument,
+      fetchPolicy: 'cache-only',
     })
     .subscribe({
       next: tasks => {
@@ -174,26 +175,6 @@ export const Content: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log('me', JSON.stringify(me));
-  }, [me]);
-
-  const [theme, setTheme] = useTheme();
-  useEffect(() => {
-    if (isOnline && isLoggedIn) {
-      openQueue(client);
-    } else if (!isOnline) {
-      persistentQueueLink.close();
-    } else if (!isLoggedIn) {
-      console.log('delete store');
-      (async () => {
-        await logout();
-        setAccessToken('');
-        client.resetStore();
-      })();
-    }
-  }, [isOnline, isLoggedIn]);
-
-  useEffect(() => {
     if (!isPurchasesConfigured && me && isLoggedIn) {
       console.log('configure');
       (async () => {
@@ -209,11 +190,36 @@ export const Content: React.FC = () => {
       })();
     }
   }, [me, isPurchasesConfigured, isLoggedIn]);
+  // isOnline listener
+  useEffect(() => {
+    if (isLoggedIn) {
+      if (isOnline) {
+        openQueue(client);
+        registerMessaging(client);
+      } else {
+        persistentQueueLink.close();
+      }
+    }
+  }, [isOnline, isLoggedIn]);
 
+  const logoutFunc = async () => {
+    client.resetStore();
+    logout({
+      variables: {
+        notificationToken: await messaging().getToken(),
+      },
+    });
+    setAccessToken('');
+  };
+
+  // isLoggedIn listener
   useEffect(() => {
     if (isLoggedIn) {
       replaceAllData(client);
-      registerMessaging(client);
+      storage.set(isLoggedInStorageKey, true);
+    } else {
+      logoutFunc();
+      storage.set(isLoggedInStorageKey, false);
     }
   }, [isLoggedIn]);
 
