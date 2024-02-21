@@ -56,7 +56,7 @@ const Day: React.FC<DayProps> = ({
             borderRadius: 5,
             height: 5,
             width: 5,
-            backgroundColor: theme.colors.textTerciary,
+            backgroundColor: theme.colors.accent,
           }}
         />
       )}
