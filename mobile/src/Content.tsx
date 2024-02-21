@@ -31,25 +31,19 @@ import {
   GetAllTasksDocument,
   GetAllTasksQuery,
   useAddNotificationTokenMutation,
-  useLogoutMutation,
   useMeQuery,
 } from './generated/graphql';
 import {is24HourFormat} from 'react-native-device-time-format';
 import {useSetSettings} from './mutationHooks/settings/setSettings';
 import {v4 as uuidv4} from 'uuid';
-import {AlertProvider} from './contexts/AlertContext';
 import {isVersionHighEnough} from './utils/isVersionHighEnough';
 import {UpdateAppScreen} from './screens/UpdateAppScreen';
-import Purchases, {
-  PurchasesOffering,
-  PurchasesPackage,
-} from 'react-native-purchases';
+import Purchases, {PurchasesPackage} from 'react-native-purchases';
 import {RC_API_KEY} from '@env';
 import {setAccessToken} from './utils/AccessToken';
 import {View, StyleSheet} from 'react-native';
 import {BasicLoading} from './components/basicViews/BasicLoading';
 import {setBadgeCount} from './utils/notifications';
-import {setAccessToken} from './utils/AccessToken';
 import messaging from '@react-native-firebase/messaging';
 
 const is12hourConfig = {
