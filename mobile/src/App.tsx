@@ -120,6 +120,7 @@ const App = () => {
       // app is online
       await fetch(baseUri + '/check');
       isOnlineVar(true);
+
       // check if user has valid refresh_token
       await fetch(baseUri + '/refresh_token', {
         credentials: 'include',

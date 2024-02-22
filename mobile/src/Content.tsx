@@ -110,6 +110,7 @@ const openQueue = async (client: ApolloClient<any>) => {
     isLoadingVar(false);
   } catch {
     persistentQueueLink.close();
+    isLoadingVar(false);
     isOnlineVar(false);
   }
 };
@@ -271,7 +272,7 @@ export const Content: React.FC = () => {
       <PortalProvider>
         {isVersionHighEnough(minVersion) ? <Routes /> : <UpdateAppScreen />}
       </PortalProvider>
-      {isLoading && (
+      {/* {isLoading && (
         <View
           style={{
             ...StyleSheet.absoluteFillObject,
@@ -282,7 +283,7 @@ export const Content: React.FC = () => {
           }}>
           <BasicLoading />
         </View>
-      )}
+      )} */}
     </GestureHandlerRootView>
   );
 };
